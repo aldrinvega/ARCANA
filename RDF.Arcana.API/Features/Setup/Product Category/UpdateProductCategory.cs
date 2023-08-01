@@ -64,12 +64,13 @@ public class UpdateProductCategory : ControllerBase
         }
     }
     
-    [HttpPut("UpdateProductCategory")]
-    public async Task<IActionResult> Update(UpdateProductCategoryCommand command)
+    [HttpPut("UpdateProductCategory/{id:int}")]
+    public async Task<IActionResult> Update([FromBody]UpdateProductCategoryCommand command, [FromRoute]int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
+            command.ProductCategoryId = id;
             await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
             response.Messages.Add("Product Category has been updated successfully");

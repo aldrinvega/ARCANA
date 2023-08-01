@@ -64,10 +64,11 @@ public class NotificationService : ControllerBase
      }
 
     [HttpGet("NotificationService")]
-    public async Task<IActionResult> NotificationServices(NotificationServiceQuery query)
+    public async Task<IActionResult> NotificationServices()
     {
         try
         {
+            var query = new NotificationServiceQuery();
             var notification = await _mediator.Send(query);
             return Ok(notification);
         }
