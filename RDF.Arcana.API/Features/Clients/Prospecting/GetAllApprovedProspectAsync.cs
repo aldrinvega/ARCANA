@@ -1,0 +1,117 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Pagination;
+using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+
+namespace RDF.Arcana.API.Features.Clients.Prospecting;
+
+[Route("api/Prospecting")]
+[ApiController]
+
+public class GetAllApprovedProspectAsync : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public GetAllApprovedProspectAsync(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    public class GetAllApprovedProspectQuery : UserParams, IRequest<PagedList<GetAllApprovedProspectResult>>
+    {
+        public string Search { get; set; }
+        public bool? Status { get; set; }
+    }
+
+    public class GetAllApprovedProspectResult
+    {
+        public int Id { get; set; }
+        public string OwnersName { get; set; }
+        public string PhoneNumber { get; set; }
+        public int AddedBy { get; set; }
+        public string CustomerType { get; set; }
+        public string BusinessName { get; set; }
+        public string Address { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+    
+    public class Handler : IRequestHandler<GetAllApprovedProspectQuery, PagedList<GetAllApprovedProspectResult>>
+    {
+        private readonly DataContext _context;
+
+        public Handler(DataContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<PagedList<GetAllApprovedProspectResult>> Handle(GetAllApprovedProspectQuery request, CancellationToken cancellationToken)
+        {
+            IQueryable<ApprovedClient> approvedProspect = _context.ApprovedClients.Where(x => x.Status == 2)
+                .Include(x => x.Client);
+
+            if (!string.IsNullOrEmpty(request.Search))
+            {
+                approvedProspect = approvedProspect.Where(x => x.Client.OwnersName == request.Search && x.Client.CustomerType == "Prospect");
+            }
+
+            if (request.Status != null)
+            {
+                approvedProspect = approvedProspect.Where(x => x.IsActive == request.Status && x.Client.CustomerType == "Prospect");
+            }
+
+            var result = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());
+
+            return await PagedList<GetAllApprovedProspectResult>.CreateAsync(result, request.PageNumber,
+                request.PageSize);
+        }
+    }
+
+    [HttpGet("GetAllApprovedProspect")]
+    public async Task<IActionResult> GetAllRequestedProspect([FromQuery]GetAllApprovedProspectQuery query)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+           var approvedProspect =  await _mediator.Send(query);
+            
+            Response.AddPaginationHeader(
+                approvedProspect.CurrentPage,
+                approvedProspect.PageSize,
+                approvedProspect.TotalCount,
+                approvedProspect.TotalPages,
+                approvedProspect.HasPreviousPage,
+                approvedProspect.HasNextPage
+                );
+
+            var result = new QueryOrCommandResult<object>
+            {
+                Success = true,
+                Status = StatusCodes.Status200OK,
+                Data = new
+                {
+                    requestedProspect = approvedProspect,
+                    approvedProspect.CurrentPage,
+                    approvedProspect.PageSize,
+                    approvedProspect.TotalCount,
+                    approvedProspect.TotalPages,
+                    approvedProspect.HasPreviousPage,
+                    approvedProspect.HasNextPage
+                }
+            };
+            
+            result.Messages.Add("Successfully Fetch Data");
+
+            return Ok(result);
+        }
+        catch (System.Exception e)
+        {
+            response.Messages.Add(e.Message);
+            response.Status = StatusCodes.Status409Conflict;
+
+            return Ok(response);
+        }
+    }
+}
