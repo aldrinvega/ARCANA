@@ -1,11 +1,10 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations.Rules;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting;
+namespace RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
 
 [Route("api/Prospecting")]
 [ApiController]

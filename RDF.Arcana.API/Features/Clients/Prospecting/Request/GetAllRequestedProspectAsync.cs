@@ -5,7 +5,7 @@ using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting;
+namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
 [Route("api/Prospecting")]
 [ApiController]

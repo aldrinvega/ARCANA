@@ -1,4 +1,6 @@
 ﻿using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
+using RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting;
 

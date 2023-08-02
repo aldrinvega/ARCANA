@@ -3,7 +3,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting;
+namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
 [Route("api/Prospecting")]
 [ApiController]

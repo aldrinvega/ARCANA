@@ -50,7 +50,7 @@ public class UpdateMeatTypeStatus : ControllerBase
         }
     }
     
-    [HttpPut("UpdateMeatTypeStatus/{id:int}")]
+    [HttpPatch("UpdateMeatTypeStatus/{id:int}")]
     public async Task<IActionResult> UpdateStatus([FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
