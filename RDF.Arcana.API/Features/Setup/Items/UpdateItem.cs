@@ -19,6 +19,7 @@ public class UpdateItem : ControllerBase
 
     public class UpdateItemCommand : IRequest<Unit>
     {
+        public int Id { get; set; }
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }
         public string ModifiedBy { get; set; }
@@ -39,19 +40,16 @@ public class UpdateItem : ControllerBase
         public async Task<Unit> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
          {
              var existingItem = 
-                 await _context.Items.FirstOrDefaultAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
+                 await _context.Items.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
          
-             if (existingItem == null)
+             if (existingItem.ItemCode != request.ItemCode)
              {
-                 throw new ItemNotFoundException();
-             }
-         
-             var isItemCodeAlreadyExist = 
-                 await _context.Items.AnyAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
-         
-             if (isItemCodeAlreadyExist)
-             {
-                 throw new Exception("Item code already exists.");
+                 var validateItemCode =
+                     await _context.Items.FirstOrDefaultAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
+                 if (validateItemCode is not null)
+                 {
+                     throw new Exception("Item code already exists.");
+                 }
              }
          
              if (existingItem.ItemCode == request.ItemCode &&
@@ -63,7 +61,8 @@ public class UpdateItem : ControllerBase
              {
                  throw new Exception("No changes");
              }
-         
+
+             existingItem.ItemCode = existingItem.ItemCode;
              existingItem.ItemDescription = request.ItemDescription;
              existingItem.UomId = request.UomId;
              existingItem.ProductSubCategoryId = request.ProductSubCategoryId;
@@ -77,14 +76,14 @@ public class UpdateItem : ControllerBase
          }
     }
     
-    [HttpPut("UpdateItem/{itemCode}")]
-    public async Task<IActionResult> Update(UpdateItemCommand command, [FromRoute] string itemCode)
+    [HttpPut("UpdateItem/{id:int}")]
+    public async Task<IActionResult> Update(UpdateItemCommand command, [FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
             command.ModifiedBy = User.Identity?.Name;
-            command.ItemCode = itemCode;
+            command.Id = id;
             await _mediator.Send(command);
             response.Messages.Add("ItemCode has been updated successfully");
             response.Status = StatusCodes.Status200OK;
