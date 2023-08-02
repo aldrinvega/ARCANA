@@ -12,4 +12,5 @@ public class Status : BaseEntity
 
     public virtual User AddedByUser { get; set; }
     public virtual User ModifiedByUser { get; set; }
+    public virtual Freebies Freebies { get; set; }
 }

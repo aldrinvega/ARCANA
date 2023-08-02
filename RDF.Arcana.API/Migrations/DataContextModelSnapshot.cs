@@ -38,8 +38,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_approved");
 
-                    b.Property<int>("IsActive")
-                        .HasColumnType("int")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
 
                     b.Property<string>("Reason")
@@ -321,6 +321,65 @@ namespace RDF.Arcana.API.Migrations
                         .HasDatabaseName("ix_discounts_added_by");
 
                     b.ToTable("discounts", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Freebies", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int")
+                        .HasColumnName("client_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_active");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int")
+                        .HasColumnName("status_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_freebies");
+
+                    b.HasIndex("AddedBy")
+                        .IsUnique()
+                        .HasDatabaseName("ix_freebies_added_by");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_freebies_client_id");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_freebies_item_id");
+
+                    b.HasIndex("StatusId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_freebies_status_id");
+
+                    b.ToTable("freebies", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>
@@ -1055,6 +1114,45 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Freebies", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
+                        .WithOne("Freebies")
+                        .HasForeignKey("RDF.Arcana.API.Domain.Freebies", "AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebies_users_added_by_user_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.ApprovedClient", "Client")
+                        .WithMany("Freebies")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebies_approved_clients_client_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Items", "Items")
+                        .WithMany("Freebies")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebies_items_items_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Status", "FreebieStatus")
+                        .WithOne("Freebies")
+                        .HasForeignKey("RDF.Arcana.API.Domain.Freebies", "StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebies_status_status_id");
+
+                    b.Navigation("AddedByUser");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("FreebieStatus");
+
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>
                 {
                     b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
@@ -1321,6 +1419,11 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.ApprovedClient", b =>
+                {
+                    b.Navigation("Freebies");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
                 {
                     b.Navigation("Permit");
@@ -1336,6 +1439,11 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>
+                {
+                    b.Navigation("Freebies");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Location", b =>
                 {
                     b.Navigation("Users");
@@ -1346,6 +1454,11 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("ProductSubCategory");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Status", b =>
+                {
+                    b.Navigation("Freebies");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Uom", b =>
                 {
                     b.Navigation("Items");
@@ -1354,6 +1467,8 @@ namespace RDF.Arcana.API.Migrations
             modelBuilder.Entity("RDF.Arcana.API.Domain.User", b =>
                 {
                     b.Navigation("Clients");
+
+                    b.Navigation("Freebies");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.UserRoles", b =>

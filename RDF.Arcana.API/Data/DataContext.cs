@@ -27,7 +27,7 @@ public class DataContext : DbContext
     public virtual DbSet<RequestedClient> RequestedClients { get; set; }
     public virtual DbSet<RejectedClients> RejectedClients { get; set; }
     public virtual DbSet<ApprovedClient> ApprovedClients { get; set; }
-    
+    public virtual DbSet<Freebies> Freebies { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -159,12 +159,25 @@ public class DataContext : DbContext
             .HasOne(x => x.ApprovedStatus)
             .WithOne()
             .HasForeignKey<ApprovedClient>(x => x.Status);
-        
-        
-        
-        
-        
-        
-        
+
+        modelBuilder.Entity<Freebies>()
+            .HasOne(f => f.Client)
+            .WithMany(a => a.Freebies)
+            .HasForeignKey(f => f.ClientId);
+    
+        modelBuilder.Entity<Freebies>()
+            .HasOne(f => f.Items)
+            .WithMany(i => i.Freebies)
+            .HasForeignKey(f => f.ItemId);
+    
+        modelBuilder.Entity<Freebies>()
+            .HasOne(f => f.FreebieStatus)
+            .WithOne(s => s.Freebies)
+            .HasForeignKey<Freebies>(f => f.StatusId);
+    
+        modelBuilder.Entity<Freebies>()
+            .HasOne(f => f.AddedByUser)
+            .WithOne(u => u.Freebies)
+            .HasForeignKey<Freebies>(f => f.AddedBy);
     }
 }

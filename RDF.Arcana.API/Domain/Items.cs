@@ -20,4 +20,8 @@ public class Items : BaseEntity
     public Uom Uom { get; set; }
     public MeatType MeatType { get; set; }
     public virtual User AddedByUser { get; set; }
+    
+    
+    public virtual ICollection<Freebies> Freebies { get; set; }
+    
 }

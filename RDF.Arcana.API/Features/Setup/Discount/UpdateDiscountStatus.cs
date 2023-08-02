@@ -43,7 +43,7 @@ public class UpdateDiscountStatus : ControllerBase
                 throw new DiscountNotFoundException();
             }
 
-            existingDiscount.IsActive = request.Status;
+            existingDiscount.IsActive = !existingDiscount.IsActive;
             existingDiscount.UpdateAt = DateTime.Now;
             existingDiscount.ModifiedBy = request.ModifiedBy ?? "Admin";
 
