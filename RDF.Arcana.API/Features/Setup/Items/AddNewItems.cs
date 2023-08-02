@@ -27,7 +27,7 @@ public class AddNewItems : ControllerBase
         public string ItemDescription { get; set; }
         public int AddedBy { get; set; }
         public int UomId { get; set; }
-        public int ProductCategoryId { get; set; }
+        public int ProductSubCategoryId { get; set; }
         public int MeatTypeId { get; set; }
     }
     
@@ -75,7 +75,7 @@ public class AddNewItems : ControllerBase
                 ItemCode = request.ItemCode,
                 ItemDescription = request.ItemDescription,
                 UomId = request.UomId,
-                ProductSubCategoryId = request.ProductCategoryId,
+                ProductSubCategoryId = request.ProductSubCategoryId,
                 AddedBy = request.AddedBy,
                 MeatTypeId = request.MeatTypeId,
                 IsActive = true
