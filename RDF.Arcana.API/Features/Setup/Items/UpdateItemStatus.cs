@@ -19,7 +19,7 @@ public class UpdateItemStatus : ControllerBase
 
     public class UpdateItemStatusCommand : IRequest<Unit>
     {
-        public string ItemCode { get; set; }
+        public int Id { get; set; }
         public string ModifiedBy { get; set; }
     }
     public class Handler : IRequestHandler<UpdateItemStatusCommand, Unit>
@@ -33,7 +33,7 @@ public class UpdateItemStatus : ControllerBase
 
         public async Task<Unit> Handle(UpdateItemStatusCommand request, CancellationToken cancellationToken)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
+            var item = await _context.Items.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         
             if (item == null)
             {
@@ -48,15 +48,15 @@ public class UpdateItemStatus : ControllerBase
         }
     }
     
-    [HttpPatch("UpdateItemStatus/{itemCode}")]
-    public async Task<IActionResult> UpdateStatus([FromRoute]string itemCode)
+    [HttpPatch("UpdateItemStatus/{id:int}")]
+    public async Task<IActionResult> UpdateStatus([FromRoute]int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateItemStatusCommand
             {
-                ItemCode = itemCode,
+                Id = id,
                 ModifiedBy = User.Identity?.Name
             };
             await _mediator.Send(command);
