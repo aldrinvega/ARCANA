@@ -51,7 +51,7 @@ public class UpdateTermDaysStatus : ControllerBase
     }
     
     [HttpPatch("UpdateTermDaysStatus/{id:int}")]
-    public async Task<IActionResult> Update([FromQuery] int id)
+    public async Task<IActionResult> Update([FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
