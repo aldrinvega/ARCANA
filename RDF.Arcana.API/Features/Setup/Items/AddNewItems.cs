@@ -44,7 +44,7 @@ public class AddNewItems : ControllerBase
         {
             var existingItem = await _context.Items.FirstOrDefaultAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
             var validateProductCategory =
-                await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductCategoryId,
+                await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductSubCategoryId,
                     cancellationToken);
             var validateUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
             var validateMeatType =
