@@ -48,7 +48,6 @@
     <ItemGroup>
       <Folder Include="Features\Authenticate\Exception\" />
       <Folder Include="Features\Items\" />
-      <Folder Include="Features\Setup\Freebies\Exception\" />
     </ItemGroup>
 
 </Project>

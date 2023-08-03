@@ -34,7 +34,7 @@ public class UpdateRequestProspectStatus : ControllerBase
         public async Task<Unit> Handle(UpdateRequestProspectStatusCommand request, CancellationToken cancellationToken)
         {
             var existingRequestedProspect =
-                await _context.RequestedClients.FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);
+                await _context.RequestedClients.FirstOrDefaultAsync(x => x.ClientId == request.ClientId && x.IsActive == true, cancellationToken);
 
             if (existingRequestedProspect is null)
             {

@@ -27,6 +27,9 @@ public class NotificationService : ControllerBase
         public int ArchivedRejectedClient { get; set; }
         public int ApprovedClient { get; set; }
         public int ArchivedApprovedClient { get; set; }
+        
+        /// Freebies
+        public int RequestedFreebies { get; set; }
     }
 
     public class Handler : IRequestHandler<NotificationServiceQuery, NotificationServiceQueryResult>
@@ -48,6 +51,7 @@ public class NotificationService : ControllerBase
      
              var getAllApprovedClients = _context.ApprovedClients.Count(x => x.Status == 2 && x.IsActive == true);
              var getAllArchivedApprovedClients = _context.ApprovedClients.Count(x => x.Status == 2 && x.IsActive == false);
+             var getAllRequestedFreebies = _context.FreebieRequests.Count(x => x.StatusId == 2 && x.IsActive == true);
      
              var result = new NotificationServiceQueryResult
              {
@@ -56,7 +60,8 @@ public class NotificationService : ControllerBase
                  RejectedClient = getAllRejectedClients,
                  ArchivedRejectedClient = getAllArchivedRejectedClients,
                  ApprovedClient = getAllApprovedClients,
-                 ArchivedApprovedClient = getAllArchivedApprovedClients
+                 ArchivedApprovedClient = getAllArchivedApprovedClients,
+                 RequestedFreebies = getAllRequestedFreebies
              };
      
              return await Task.FromResult(result);

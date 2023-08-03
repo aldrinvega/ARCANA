@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 
-namespace RDF.Arcana.API.Features.Setup.Freebies;
+namespace RDF.Arcana.API.Features.Freebies;
 
 [Route("api/Freebies")]
 [ApiController]
@@ -21,8 +22,13 @@ public class RequestFreebies : ControllerBase
     public class RequestFreebiesCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public int ItemId { get; set; }
-        public int Quantity { get; set; }
+        public List<Freebie> Freebies { get; set; }
+        
+        public class Freebie
+        {
+            public int ItemId { get; set; }
+            public int Quantity { get; set; }
+        }
         public int AddedBy { get; set; }
     }
     
@@ -38,30 +44,46 @@ public class RequestFreebies : ControllerBase
         public async Task<Unit> Handle(RequestFreebiesCommand request, CancellationToken cancellationToken)
         {
             var validateClient =
-                await _context.RejectedClients.FirstOrDefaultAsync(x =>
+                await _context.ApprovedClients.FirstOrDefaultAsync(x =>
                     x.ClientId == request.ClientId && x.Status == 3, cancellationToken: cancellationToken);
             if (validateClient is not null)
             {
                 throw new Exception("User is rejected, cannot proceed request!");
             }
 
-            var freebies = new Domain.Freebies
+            var transactionNumber = GenerateTransactionNumber();
+
+            var freebieRequest = new FreebieRequest
             {
                 ClientId = request.ClientId,
-                ItemId = request.ItemId,
-                Quantity = request.Quantity,
-                AddedBy = request.AddedBy,
+                TransactionNumber = transactionNumber,
                 StatusId = 1,
-                IsActive = true
+                IsActive = true,
+                AddedBy = request.AddedBy
             };
-
-            await _context.Freebies.AddAsync(freebies, cancellationToken);
+    
+            foreach (var freebies in request.Freebies.Select(freebieItem => new Domain.Freebies
+                     {
+                         ItemId = freebieItem.ItemId,
+                         Quantity = freebieItem.Quantity,
+                         FreebieRequest = freebieRequest
+                     }))
+            {
+                await _context.Freebies.AddAsync(freebies, cancellationToken);
+            }
+            
             await _context.SaveChangesAsync(cancellationToken);
             
             return Unit.Value;
         }
-    }
 
+        private static string GenerateTransactionNumber()
+        {
+            var random = new Random();
+            return random.Next(1_000_000, 10_000_000).ToString("D7");
+        }
+    }
+    
     [HttpPost("RequestFreebies")]
     public async Task<IActionResult> Add(RequestFreebiesCommand command)
     {
