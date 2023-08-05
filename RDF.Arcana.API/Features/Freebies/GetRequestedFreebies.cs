@@ -27,6 +27,7 @@ public class GetRequestedFreebies : ControllerBase
 
     public class GetRequestedFreebiesQueryResult
     {
+        public int Id { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
         public string OwnersAddress { get; set; }

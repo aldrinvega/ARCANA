@@ -9,6 +9,7 @@ public static class FreebiesMappingExtension
     {
         return new GetRequestedFreebies.GetRequestedFreebiesQueryResult
         {
+            Id = freebies.Id,
             OwnersName = freebies.ApprovedClient.Client.OwnersName,
             PhoneNumber = freebies.ApprovedClient.Client.PhoneNumber,
             OwnersAddress = freebies.ApprovedClient.Client.OwnersAddress,

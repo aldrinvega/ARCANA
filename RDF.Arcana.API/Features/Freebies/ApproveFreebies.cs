@@ -74,15 +74,12 @@ public class ApproveFreebies : ControllerBase
     }
 
     [HttpPatch("ApproveFreebieRequest/{id:int}")]
-    public async Task<IActionResult> ApproveFreebieRequest([FromRoute] int id)
+    public async Task<IActionResult> ApproveFreebieRequest([FromBody]ApproveFreebiesCommand command, [FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-            var command = new ApproveFreebiesCommand
-            {
-                FreebieRequestId = id,
-            };
+            command.FreebieRequestId = id;
             
             if (User.Identity is ClaimsIdentity identity
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
