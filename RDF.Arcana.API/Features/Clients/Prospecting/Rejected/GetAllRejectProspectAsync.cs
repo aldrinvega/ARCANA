@@ -35,7 +35,7 @@ public class GetAllRejectProspectAsync : ControllerBase
         public string BusinessName { get; set; }
         public string Address { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public bool IsActive { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAllRejectProspectQuery, PagedList<GetAllRejectProspectResult>>

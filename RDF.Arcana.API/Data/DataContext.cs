@@ -29,6 +29,7 @@ public class DataContext : DbContext
     public virtual DbSet<ApprovedClient> ApprovedClients { get; set; }
     public virtual DbSet<Freebies> Freebies { get; set; }
     public virtual DbSet<FreebieRequest> FreebieRequests { get; set; }
+    public virtual DbSet<ApprovedFreebies> ApprovedFreebies { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -200,6 +201,52 @@ public class DataContext : DbContext
             entity.HasOne(f => f.FreebieRequest)
                 .WithMany(fr => fr.Freebies)
                 .HasForeignKey(f => f.FreebieRequestId);
+        });
+        
+        modelBuilder.Entity<Freebies>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(d => d.Item)
+                .WithMany(p => p.Freebies)
+                .HasForeignKey(d => d.ItemId);
+
+            entity.HasOne(d => d.FreebieRequest)
+                .WithMany(p => p.Freebies)
+                .HasForeignKey(d => d.FreebieRequestId);
+        });
+
+        modelBuilder.Entity<FreebieRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasMany(d => d.Freebies)
+                .WithOne(p => p.FreebieRequest)
+                .HasForeignKey(d => d.FreebieRequestId);
+        });
+
+        modelBuilder.Entity<ApprovedFreebies>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(d => d.FreebieRequest)
+                .WithMany()
+                .HasForeignKey(d => d.FreebieRequestId)
+                .OnDelete(DeleteBehavior.Cascade);
+        
+            entity.HasOne(d => d.ApprovedByUser)
+                .WithMany()
+                .HasForeignKey(d => d.ApprovedBy);
+        });
+
+        modelBuilder.Entity<RejectedFreebies>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(d => d.FreebieRequest)
+                .WithMany()
+                .HasForeignKey(d => d.FreebieRequestId)
+                .OnDelete(DeleteBehavior.Cascade);
+        
+            entity.HasOne(d => d.RejectedByUser)
+                .WithMany()
+                .HasForeignKey(d => d.RejectedBy);
         });
 
     }

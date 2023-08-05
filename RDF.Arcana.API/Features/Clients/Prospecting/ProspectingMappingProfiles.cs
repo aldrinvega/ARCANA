@@ -18,7 +18,8 @@ public static class ProspectingMappingProfiles
             PhoneNumber = requestedClient.Client.PhoneNumber,
             CustomerType = requestedClient.Client.CustomerType,
             AddedBy = requestedClient.Client.AddedBy,
-            Address = requestedClient.Client.OwnersAddress
+            Address = requestedClient.Client.OwnersAddress,
+            IsActive = requestedClient.IsActive
         };
     }
     
@@ -34,7 +35,8 @@ public static class ProspectingMappingProfiles
             PhoneNumber = approvedClient.Client.PhoneNumber,
             CustomerType = approvedClient.Client.CustomerType,
             AddedBy = approvedClient.Client.AddedBy,
-            Address = approvedClient.Client.OwnersAddress
+            Address = approvedClient.Client.OwnersAddress,
+            IsActive = approvedClient.IsActive
         };
     }
     
@@ -50,7 +52,8 @@ public static class ProspectingMappingProfiles
             PhoneNumber = rejectClient.Client.PhoneNumber,
             CustomerType = rejectClient.Client.CustomerType,
             AddedBy = rejectClient.Client.AddedBy,
-            Address = rejectClient.Client.OwnersAddress
+            Address = rejectClient.Client.OwnersAddress,
+            IsActive = rejectClient.IsActive
         };
     }
 }

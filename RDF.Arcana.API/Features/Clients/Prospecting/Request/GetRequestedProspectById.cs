@@ -31,6 +31,7 @@ public class GetRequestedProspectById : ControllerBase
         public string CustomerType { get; set; }
         public string BusinessName { get; set; }
         public string Address { get; set; }
+        public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
     }
     
@@ -60,7 +61,8 @@ public class GetRequestedProspectById : ControllerBase
                 CustomerType = requestedClient.Client.CustomerType,
                 BusinessName = requestedClient.Client.BusinessName,
                 Address = requestedClient.Client.OwnersAddress,
-                CreatedAt = requestedClient.DateRequest
+                CreatedAt = requestedClient.DateRequest,
+                IsActive = requestedClient.IsActive
             };
             return result;
         }
