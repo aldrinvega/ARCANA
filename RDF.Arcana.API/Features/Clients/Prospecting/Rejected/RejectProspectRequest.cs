@@ -75,7 +75,7 @@ public class RejectProspectRequest : ControllerBase
         }
     }
 
-    [HttpPut("RejectProspectRequest{id:int}")]
+    [HttpPut("RejectProspectRequest/{id:int}")]
     public async Task<IActionResult> Reject([FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();

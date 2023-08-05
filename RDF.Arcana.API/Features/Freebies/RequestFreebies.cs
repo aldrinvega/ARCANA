@@ -66,12 +66,12 @@ public class RequestFreebies : ControllerBase
                      {
                          ItemId = freebieItem.ItemId,
                          Quantity = freebieItem.Quantity,
-                         FreebieRequest = freebieRequest
                      }))
             {
                 await _context.Freebies.AddAsync(freebies, cancellationToken);
             }
-            
+
+            await _context.FreebieRequests.AddAsync(freebieRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             
             return Unit.Value;

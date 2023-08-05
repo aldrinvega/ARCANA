@@ -556,8 +556,7 @@ namespace RDF.Arcana.API.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_clients_added_by",
                 table: "clients",
-                column: "added_by",
-                unique: true);
+                column: "added_by");
 
             migrationBuilder.CreateIndex(
                 name: "ix_clients_department_id",

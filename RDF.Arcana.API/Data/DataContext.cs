@@ -194,59 +194,66 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<Freebies>(entity =>
         {
+            entity.HasKey(e => e.Id);
+   
+            entity.HasOne(f => f.ApprovedClient)
+                .WithMany()
+                .HasForeignKey(f => f.ClientId);
+   
             entity.HasOne(f => f.Item)
                 .WithMany()
                 .HasForeignKey(f => f.ItemId);
-
-            entity.HasOne(f => f.FreebieRequest)
-                .WithMany(fr => fr.Freebies)
-                .HasForeignKey(f => f.FreebieRequestId);
-        });
-        
-        modelBuilder.Entity<Freebies>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.HasOne(d => d.Item)
-                .WithMany(p => p.Freebies)
-                .HasForeignKey(d => d.ItemId);
-
-            entity.HasOne(d => d.FreebieRequest)
-                .WithMany(p => p.Freebies)
-                .HasForeignKey(d => d.FreebieRequestId);
         });
 
         modelBuilder.Entity<FreebieRequest>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasMany(d => d.Freebies)
-                .WithOne(p => p.FreebieRequest)
-                .HasForeignKey(d => d.FreebieRequestId);
+
+            entity.HasOne(d => d.ApprovedClient)
+                .WithMany()
+                .HasForeignKey(d => d.ClientId);
+
+            entity.HasOne(d => d.AddedByUser)
+                .WithMany()
+                .HasForeignKey(d => d.AddedBy);
+
+            entity.HasOne(d => d.FreebieStatus)
+                .WithMany()
+                .HasForeignKey(d => d.StatusId);
         });
 
         modelBuilder.Entity<ApprovedFreebies>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasOne(d => d.FreebieRequest)
+
+            entity.HasOne(d => d.Freebie)
                 .WithMany()
-                .HasForeignKey(d => d.FreebieRequestId)
-                .OnDelete(DeleteBehavior.Cascade);
-        
-            entity.HasOne(d => d.ApprovedByUser)
+                .HasForeignKey(d => d.FreebiesId);
+
+            entity.HasOne(d => d.AddedByUser)
                 .WithMany()
                 .HasForeignKey(d => d.ApprovedBy);
+
+            entity.HasOne(d => d.FreebieStatus)
+                .WithMany()
+                .HasForeignKey(d => d.StatusId);
         });
 
         modelBuilder.Entity<RejectedFreebies>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasOne(d => d.FreebieRequest)
+
+            entity.HasOne(d => d.Freebie)
                 .WithMany()
-                .HasForeignKey(d => d.FreebieRequestId)
-                .OnDelete(DeleteBehavior.Cascade);
-        
-            entity.HasOne(d => d.RejectedByUser)
+                .HasForeignKey(d => d.FreebiesId);
+
+            entity.HasOne(d => d.AddedByUser)
                 .WithMany()
-                .HasForeignKey(d => d.RejectedBy);
+                .HasForeignKey(d => d.AddedBy);
+
+            entity.HasOne(d => d.FreebieStatus)
+                .WithMany()
+                .HasForeignKey(d => d.StatusId);
         });
 
     }

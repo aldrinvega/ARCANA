@@ -32,13 +32,12 @@ public class ApproveFreebies : ControllerBase
 
         public async Task<Unit> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
         {
-            var freebieRequest = await _context.Freebies.Include(x => x.FreebieRequest)
-                .ThenInclude(x => x.ApprovedClient)
-                .FirstOrDefaultAsync(x => x.FreebieRequest.ClientId == request.FreebieRequestId, cancellationToken);
+            var freebieRequest = await _context.FreebieRequests.Include(x => x.ApprovedClient)
+                .FirstOrDefaultAsync(x => x.Id == request.FreebieRequestId, cancellationToken);
 
             if (freebieRequest is null)
             {
-                throw new Exception("No client found");
+                throw new Exception("No freebies found");
             }
 
             if (request.Image != null)
@@ -54,9 +53,8 @@ public class ApproveFreebies : ControllerBase
                 
                 var approvedFreebie = new ApprovedFreebies
                 {
-                    FreebieRequestId = freebieRequest.Id,
-                    ApprovedBy = request.AddedBy, // or whoever is approving the request
-                    ApprovedAt = DateTime.Now,
+                    FreebiesId = freebieRequest.Id,
+                    ApprovedBy = request.AddedBy,
                     PhotoProofPath = savePath
                 };
 
@@ -64,8 +62,8 @@ public class ApproveFreebies : ControllerBase
 
             }
 
-            freebieRequest.FreebieRequest.StatusId = 2;
-            freebieRequest.FreebieRequest.ApprovedClient.Status = 4;
+            freebieRequest.StatusId = 2;
+            freebieRequest.ApprovedClient.Status = 4;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
@@ -74,7 +72,7 @@ public class ApproveFreebies : ControllerBase
     }
 
     [HttpPatch("ApproveFreebieRequest/{id:int}")]
-    public async Task<IActionResult> ApproveFreebieRequest([FromBody]ApproveFreebiesCommand command, [FromRoute] int id)
+    public async Task<IActionResult> ApproveFreebieRequest([FromForm]ApproveFreebiesCommand command, [FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
