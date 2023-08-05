@@ -5,7 +5,7 @@ using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
 
-[Route("api/Propspecting")]
+[Route("api/Prospecting")]
 [ApiController]
 
 public class UpdateRejectProspectStatus : ControllerBase

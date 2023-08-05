@@ -54,7 +54,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                requestedProspect = requestedProspect.Where(x => x.Client.OwnersName == request.Search && x.Client.CustomerType == "Prospect");
+                requestedProspect = requestedProspect.Where(x => x.Client.OwnersName.Contains(request.Search) && x.Client.CustomerType == "Prospect");
             }
 
             if (request.IsActive != null)

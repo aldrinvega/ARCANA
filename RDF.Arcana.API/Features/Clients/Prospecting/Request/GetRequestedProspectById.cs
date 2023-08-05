@@ -5,7 +5,7 @@ using RDF.Arcana.API.Data;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
-[Route("api/Propspecting")]
+[Route("api/Prospecting")]
 [ApiController]
 
 public class GetRequestedProspectById : ControllerBase

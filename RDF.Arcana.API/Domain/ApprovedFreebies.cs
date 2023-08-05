@@ -10,7 +10,7 @@ public class ApprovedFreebies : BaseEntity
     
         public virtual FreebieRequest FreebieRequest { get; set; }
 
-        public byte[] PhotoProof { get; set; } //Store image on disk and store path in DB if the file size is large.
+        public string PhotoProofPath { get; set; }
 
         public DateTime ApprovedAt { get; set; }
     
