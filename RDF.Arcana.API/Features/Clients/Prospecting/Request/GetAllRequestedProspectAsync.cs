@@ -22,7 +22,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
     public class GetAllRequestedProspectQuery : UserParams, IRequest<PagedList<GetAllRequestedProspectResult>>
     {
         public string Search { get; set; }
-        public bool? Status { get; set; }
+        public bool? IsActive { get; set; }
     }
 
     public class GetAllRequestedProspectResult
@@ -57,9 +57,9 @@ public class GetAllRequestedProspectAsync : ControllerBase
                 requestedProspect = requestedProspect.Where(x => x.Client.OwnersName == request.Search && x.Client.CustomerType == "Prospect");
             }
 
-            if (request.Status != null)
+            if (request.IsActive != null)
             {
-                requestedProspect = requestedProspect.Where(x => x.IsActive == request.Status && x.Client.CustomerType == "Prospect");
+                requestedProspect = requestedProspect.Where(x => x.IsActive == request.IsActive && x.Client.CustomerType == "Prospect");
             }
 
             var result = requestedProspect.Select(x => x.ToGetGetAllProspectResult());

@@ -1,7 +1,5 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Notification;
 
@@ -28,7 +26,7 @@ public class NotificationService : ControllerBase
         public int ApprovedClient { get; set; }
         public int ArchivedApprovedClient { get; set; }
         
-        /// Freebies
+        /// Freebies  
         public int RequestedFreebies { get; set; }
     }
 
