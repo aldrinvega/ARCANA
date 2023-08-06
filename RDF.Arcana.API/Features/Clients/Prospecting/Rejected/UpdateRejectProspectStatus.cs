@@ -20,6 +20,7 @@ public class UpdateRejectProspectStatus : ControllerBase
     public class UpdateRejectProspectStatusCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
+        public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<UpdateRejectProspectStatusCommand, Unit>
@@ -47,6 +48,7 @@ public class UpdateRejectProspectStatus : ControllerBase
             }
 
             existingRequestedProspect.IsActive = !existingRequestedProspect.IsActive;
+            existingRequestedProspect.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;

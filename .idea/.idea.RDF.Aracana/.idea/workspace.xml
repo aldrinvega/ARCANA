@@ -11,43 +11,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Approvals.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/ClientDocuments.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/FixedDiscounts.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/FreebieItems.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/FreebieRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/VariableDiscounts.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectingRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ApprovedClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ApprovedClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model.">
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectRequest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateRequestProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateRequestProspectStatus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetRequestedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetRequestedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/NotificationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/NotificationService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230803064107_InitialCreate.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230803064107_InitialCreate.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230805055418_AddApprovalandRejectionEntityForFreebies.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230805055418_AddApprovalandRejectionEntityForFreebies.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230805071830_RenamePhototoPhotoPathinApprovedFreebiesEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230805071830_RenamePhototoPhotoPathinApprovedFreebiesEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230805091606_AdjustFreebies.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230805091606_AdjustFreebies.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -286,7 +255,7 @@
       <workItem from="1691021612449" duration="28651000" />
       <workItem from="1691105561860" duration="15282000" />
       <workItem from="1691213728220" duration="12548000" />
-      <workItem from="1691283757837" duration="25057000" />
+      <workItem from="1691283757837" duration="25641000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -440,7 +409,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691227674120</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model.">
+      <option name="closed" value="true" />
+      <created>1691316494375</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1691316494375</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -490,6 +467,7 @@
     <MESSAGE value="&quot;Refactor client status update and enable Freebies approval feature&quot;&#10;&#10;This commit includes changes across the client prospecting API, specifically updating the logic that checks the current status of a client and initiates the status change. The 'IsActive' check has been removed to streamline the update process. This allows for more flexibility when changing the status of a client.&#10;&#10;Additionally, in the Freebies feature, un-commented the code which had been previously suppressed, making the 'ApproveFreebies' feature available. It now supports image uploads and handles file-saving, providing a more robust solution for approving freebies. &#10;&#10;Both these changes are aimed at improving usability and simplifying the codebase." />
     <MESSAGE value="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called." />
     <MESSAGE value="Refactor Freebies, ApprovedFreebies, RejectedFreebies entities and relations&#10;&#10;Revised the structure of the `Freebies`, `ApprovedFreebies`, and `RejectedFreebies` entities, mainly focusing on renaming properties, refactoring foreign key relations, and eliminating unnecessary properties. This change aimed to simplify the domain model and align the entities more transparently with the business logic, leading to more clean and maintainable codebase. Several attribute names were updated to reduce confusion and improve readability. Query and transaction mechanisms have been adjusted to align with these changes ensuring smooth and efficient data flow." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor Freebies, ApprovedFreebies, RejectedFreebies entities and relations&#10;&#10;Revised the structure of the `Freebies`, `ApprovedFreebies`, and `RejectedFreebies` entities, mainly focusing on renaming properties, refactoring foreign key relations, and eliminating unnecessary properties. This change aimed to simplify the domain model and align the entities more transparently with the business logic, leading to more clean and maintainable codebase. Several attribute names were updated to reduce confusion and improve readability. Query and transaction mechanisms have been adjusted to align with these changes ensuring smooth and efficient data flow." />
+    <MESSAGE value="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model." />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model." />
   </component>
 </project>

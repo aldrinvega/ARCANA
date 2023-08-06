@@ -32,6 +32,8 @@ public class AddNewProspect : ControllerBase
         public string PhoneNumber { get; set; }
         [Required]
         public string BusinessName { get; set; }
+        [Required] 
+        public string StoreType { get; set; }
         public int AddedBy { get; set; }
     }
     public class Handler : IRequestHandler<AddNewProspectCommand, Unit>
@@ -65,6 +67,7 @@ public class AddNewProspect : ControllerBase
                 Address = request.OwnersAddress,
                 PhoneNumber = request.PhoneNumber,
                 BusinessName = request.BusinessName,
+                StoreType = request.StoreType,
                 CustomerType = "Prospect",
                 AddedBy = request.AddedBy
             };

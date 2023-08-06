@@ -60,6 +60,7 @@ public class RejectProspectRequest : ControllerBase
 
             // Set the status to "rejected" or an equivalent indicator for rejection in your system
             requestedClient.ApprovalType = "Rejected";
+            requestedClient.Reason = request.Reason;
             requestedClient.Client.RegistrationStatus = "Rejected";
             // Save the changes to the database
             await _context.SaveChangesAsync(cancellationToken);
