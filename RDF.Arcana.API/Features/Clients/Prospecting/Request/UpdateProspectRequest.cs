@@ -45,8 +45,8 @@ public class UpdateProspectRequest : ControllerBase
                 throw new ClientIsNotFound();
             }
 
-            existingClient.OwnersName = request.OwnersName;
-            existingClient.OwnersAddress = request.OwnersAddress;
+            existingClient.Fullname = request.OwnersName;
+            existingClient.Address = request.OwnersAddress;
             existingClient.PhoneNumber = request.PhoneNumber;
             existingClient.BusinessName = request.BusinessName;
 

@@ -22,7 +22,6 @@ public class ApproveProspectRequest : ControllerBase
     public class ApprovedProspectRequestCommand : IRequest<Unit>
     {
         public int ProspectId { get; set; }
-        public int ApprovedBy { get; set; }
     }
     public class Handler : IRequestHandler<ApprovedProspectRequestCommand, Unit>
     {
@@ -36,46 +35,31 @@ public class ApproveProspectRequest : ControllerBase
        public async Task<Unit> Handle(ApprovedProspectRequestCommand request, CancellationToken cancellationToken)
          {
              // Validate the approved by user
-             if (request.ApprovedBy < 1)
-             {
-                 throw new ArgumentException("Invalid user ID");
-             }
+             // if (request.ApprovedBy < 1)
+             // {
+             //     throw new ArgumentException("Invalid user ID");
+             // }
          
              var requestedClients =
-                 await _context.RequestedClients.FirstOrDefaultAsync(x => x.ClientId == request.ProspectId && x.Status == 1, cancellationToken);
+                 await _context.Approvals.FirstOrDefaultAsync(
+                     x => x.ClientId == request.ProspectId && 
+                          x.ApprovalType == "Approver Approval" &&
+                          x.IsActive == true &&
+                          x.IsApproved == true,
+                     cancellationToken);
          
              if (requestedClients is null)
              {
                  throw new NoProspectClientFound();
              }
 
-             if (requestedClients.Status == 2)
+             if (requestedClients.ApprovalType == "Approved")
              {
                  throw new System.Exception("This client is already approved");
              }
 
-             await using (var transaction = await _context.Database.BeginTransactionAsync(cancellationToken))
-             {
-                 // Modify client ID according to explanation above
-                 var approvedClient = new ApprovedClient
-                 {
-                     ClientId = requestedClients.ClientId,
-                     ApprovedBy = request.ApprovedBy,
-                     DateApproved = DateTime.Now,
-                     IsActive = true,
-                     Status = 2
-                 };
-         
-                 await _context.ApprovedClients.AddAsync(approvedClient, cancellationToken);
-                
-                 requestedClients.Status = 2;
-                 
-                 await _context.SaveChangesAsync(cancellationToken);
-                 
-                 // Only commit the transaction if all operations completed successfully
-                 await transaction.CommitAsync(cancellationToken);
-             }
-         
+             requestedClients.IsApproved = true;
+             await _context.SaveChangesAsync(cancellationToken);
              return Unit.Value;
          }
     }
@@ -91,11 +75,11 @@ public class ApproveProspectRequest : ControllerBase
                 ProspectId = id,
             };
             
-            if (User.Identity is ClaimsIdentity identity
-                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
-            {
-                command.ApprovedBy = userId;
-            };
+            // if (User.Identity is ClaimsIdentity identity
+            //     && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            // {
+            //     command.ApprovedBy = userId;
+            // };
 
             await _mediator.Send(command);
             

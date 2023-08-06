@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -42,40 +43,52 @@ public class RequestFreebies : ControllerBase
         }
 
         public async Task<Unit> Handle(RequestFreebiesCommand request, CancellationToken cancellationToken)
-        {
-            var validateClient =
-                await _context.ApprovedClients.FirstOrDefaultAsync(x =>
-                    x.ClientId == request.ClientId && x.Status == 3, cancellationToken: cancellationToken);
-            if (validateClient is not null)
-            {
-                throw new Exception("User is rejected, cannot proceed request!");
-            }
-
-            var transactionNumber = GenerateTransactionNumber();
-
-            var freebieRequest = new FreebieRequest
-            {
-                ClientId = request.ClientId,
-                TransactionNumber = transactionNumber,
-                StatusId = 1,
-                IsActive = true,
-                AddedBy = request.AddedBy
-            };
-    
-            foreach (var freebies in request.Freebies.Select(freebieItem => new Domain.Freebies
-                     {
-                         ItemId = freebieItem.ItemId,
-                         Quantity = freebieItem.Quantity,
-                     }))
-            {
-                await _context.Freebies.AddAsync(freebies, cancellationToken);
-            }
-
-            await _context.FreebieRequests.AddAsync(freebieRequest, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-            
-            return Unit.Value;
-        }
+         {
+             var validateClient =
+                 await _context.FreebieRequests.FirstOrDefaultAsync(x =>
+                     x.ClientId == request.ClientId &&
+                        x.IsDelivered == true,
+             cancellationToken);
+             if (validateClient is not null)
+             {
+                 throw new Exception("Delivered na yan ayy");
+             }
+             
+             var newApproval = new Approvals
+             {
+                 ClientId = request.ClientId,
+                 ApprovalType = "For Freebie Approval",
+                 IsApproved = false,
+                 IsActive = true
+             };
+             _context.Approvals.Add(newApproval);
+             await _context.SaveChangesAsync(cancellationToken);
+             
+             var transactionNumber = GenerateTransactionNumber();
+             var freebieRequest = new FreebieRequest
+             {
+                 ClientId = request.ClientId,
+                 TransactionNumber = transactionNumber,
+                 ApprovalId = newApproval.Id,
+                 IsDelivered = false
+             };
+             _context.FreebieRequests.Add(freebieRequest);
+             await _context.SaveChangesAsync(cancellationToken);
+         
+             foreach (var freebie in request.Freebies)
+             {
+                 var freebieItem = new FreebieItems
+                 {
+                     RequestId = freebieRequest.Id,
+                     ItemId = freebie.ItemId,
+                     Quantity = freebie.Quantity
+                 };
+                 await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
+             }
+             await _context.SaveChangesAsync(cancellationToken);
+             
+             return Unit.Value;
+         }
 
         private static string GenerateTransactionNumber()
         {

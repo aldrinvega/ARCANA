@@ -1,27 +1,29 @@
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
 public static class FreebiesMappingExtension
 {
     public static GetRequestedFreebies.GetRequestedFreebiesQueryResult
-        ToGetRequestedFreebiesQueryResult(this FreebieRequest freebies)
+        ToGetRequestedFreebiesQueryResult(this Approvals freebies)
     {
         return new GetRequestedFreebies.GetRequestedFreebiesQueryResult
         {
             Id = freebies.Id,
-            OwnersName = freebies.ApprovedClient.Client.OwnersName,
-            PhoneNumber = freebies.ApprovedClient.Client.PhoneNumber,
-            OwnersAddress = freebies.ApprovedClient.Client.OwnersAddress,
-            TransactionNumber = freebies.TransactionNumber,
-            Freebies = freebies.Freebies.Select(x => new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
+            OwnersName = freebies.Client.Fullname,
+            PhoneNumber = freebies.Client.PhoneNumber,
+            OwnersAddress = freebies.Client.Address,
+            TransactionNumber = freebies.FreebieRequest.TransactionNumber,
+            Freebies = freebies.FreebieRequest.FreebieItems.
+                Select(x => new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
             {
-                Id = x.Id,
-                ItemCode = x.Item.ItemCode,
+                Id = x.RequestId,
+                ItemCode = x.Items.ItemCode,
                 Quantity = x.Quantity,
 
             }).ToList(),
-            DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+            // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
         };
     }
 }

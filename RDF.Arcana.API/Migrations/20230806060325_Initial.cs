@@ -7,12 +7,61 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RDF.Arcana.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "fixed_discounts",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    discount_percentage = table.Column<decimal>(type: "decimal(65,30)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_fixed_discounts", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "variable_discounts",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    minimum_amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    maximum_amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    minimum_percentage = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    maximum_percentage = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    is_subject_to_approval = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_variable_discounts", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "approvals",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    client_id = table.Column<int>(type: "int", nullable: false),
+                    approval_type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    is_approved = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_approvals", x => x.id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -36,7 +85,30 @@ namespace RDF.Arcana.API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "clients",
+                name: "approved_freebies",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    freebies_id = table.Column<int>(type: "int", nullable: false),
+                    transaction_number = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    status_id = table.Column<int>(type: "int", nullable: false),
+                    approved_by = table.Column<int>(type: "int", nullable: false),
+                    photo_proof_path = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_approved_freebies", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "client",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -76,7 +148,110 @@ namespace RDF.Arcana.API.Migrations
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("pk_client", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "client_documents",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    client_id = table.Column<int>(type: "int", nullable: false),
+                    document_type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    document_path = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_client_documents", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "clients",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    fullname = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    address = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    phone_number = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    business_name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    representative_name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    representative_position = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    business_address = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    freezer = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    customer_type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    term_days = table.Column<int>(type: "int", nullable: true),
+                    discount_id = table.Column<int>(type: "int", nullable: true),
+                    client_type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    store_type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    registration_status = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    fixed_discount_id = table.Column<int>(type: "int", nullable: true),
+                    variable_discount_id = table.Column<int>(type: "int", nullable: true),
+                    added_by = table.Column<int>(type: "int", nullable: false),
+                    modified_by = table.Column<int>(type: "int", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    fixed_discounts_id = table.Column<int>(type: "int", nullable: true),
+                    variable_discounts_id = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
                     table.PrimaryKey("pk_clients", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_clients_fixed_discounts_fixed_discounts_id",
+                        column: x => x.fixed_discounts_id,
+                        principalTable: "fixed_discounts",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_clients_variable_discounts_variable_discounts_id",
+                        column: x => x.variable_discounts_id,
+                        principalTable: "variable_discounts",
+                        principalColumn: "id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "freebie_request",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    client_id = table.Column<int>(type: "int", nullable: false),
+                    approval_id = table.Column<int>(type: "int", nullable: false),
+                    approvals_id = table.Column<int>(type: "int", nullable: true),
+                    is_approved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    clients_id = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_freebie_request", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_freebie_request_approvals_approvals_id",
+                        column: x => x.approvals_id,
+                        principalTable: "approvals",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_freebie_request_clients_clients_id",
+                        column: x => x.clients_id,
+                        principalTable: "clients",
+                        principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -158,11 +333,17 @@ namespace RDF.Arcana.API.Migrations
                     added_by = table.Column<int>(type: "int", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    approved_client_id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_freebie_requests", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_freebie_requests_approved_clients_approved_client_id",
+                        column: x => x.approved_client_id,
+                        principalTable: "approved_clients",
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_freebie_requests_approved_clients_client_id",
                         column: x => x.client_id,
@@ -178,20 +359,33 @@ namespace RDF.Arcana.API.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    client_id = table.Column<int>(type: "int", nullable: false),
                     item_id = table.Column<int>(type: "int", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
-                    freebie_request_id = table.Column<int>(type: "int", nullable: false),
-                    items_id = table.Column<int>(type: "int", nullable: true)
+                    approved_freebies_id = table.Column<int>(type: "int", nullable: true),
+                    freebie_request_id = table.Column<int>(type: "int", nullable: true),
+                    items_id = table.Column<int>(type: "int", nullable: true),
+                    rejected_freebies_id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_freebies", x => x.id);
                     table.ForeignKey(
+                        name: "fk_freebies_approved_clients_approved_client_id",
+                        column: x => x.client_id,
+                        principalTable: "approved_clients",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_freebies_approved_freebies_approved_freebies_id",
+                        column: x => x.approved_freebies_id,
+                        principalTable: "approved_freebies",
+                        principalColumn: "id");
+                    table.ForeignKey(
                         name: "fk_freebies_freebie_requests_freebie_request_id",
                         column: x => x.freebie_request_id,
                         principalTable: "freebie_requests",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -280,9 +474,9 @@ namespace RDF.Arcana.API.Migrations
                 {
                     table.PrimaryKey("pk_permit", x => x.id);
                     table.ForeignKey(
-                        name: "fk_permit_clients_client_id",
+                        name: "fk_permit_client_client_id",
                         column: x => x.client_id,
-                        principalTable: "clients",
+                        principalTable: "client",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -355,9 +549,36 @@ namespace RDF.Arcana.API.Migrations
                 {
                     table.PrimaryKey("pk_rejected_clients", x => x.id);
                     table.ForeignKey(
-                        name: "fk_rejected_clients_clients_client_id",
+                        name: "fk_rejected_clients_client_client_id",
                         column: x => x.client_id,
-                        principalTable: "clients",
+                        principalTable: "client",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "rejected_freebies",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    freebies_id = table.Column<int>(type: "int", nullable: false),
+                    transaction_number = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    status_id = table.Column<int>(type: "int", nullable: false),
+                    added_by = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_rejected_freebies", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_rejected_freebies_freebies_freebies_id",
+                        column: x => x.freebies_id,
+                        principalTable: "freebies",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -381,9 +602,9 @@ namespace RDF.Arcana.API.Migrations
                 {
                     table.PrimaryKey("pk_requested_clients", x => x.id);
                     table.ForeignKey(
-                        name: "fk_requested_clients_clients_client_id",
+                        name: "fk_requested_clients_client_client_id",
                         column: x => x.client_id,
-                        principalTable: "clients",
+                        principalTable: "client",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -539,6 +760,11 @@ namespace RDF.Arcana.API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "ix_approvals_client_id",
+                table: "approvals",
+                column: "client_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_approved_clients_approved_by",
                 table: "approved_clients",
                 column: "approved_by");
@@ -554,19 +780,64 @@ namespace RDF.Arcana.API.Migrations
                 column: "status");
 
             migrationBuilder.CreateIndex(
+                name: "ix_approved_freebies_approved_by",
+                table: "approved_freebies",
+                column: "approved_by");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_approved_freebies_freebies_id",
+                table: "approved_freebies",
+                column: "freebies_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_approved_freebies_status_id",
+                table: "approved_freebies",
+                column: "status_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_added_by",
+                table: "client",
+                column: "added_by");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_department_id",
+                table: "client",
+                column: "department_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_discount_id",
+                table: "client",
+                column: "discount_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_modified_by",
+                table: "client",
+                column: "modified_by");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_term_days_id",
+                table: "client",
+                column: "term_days_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_user_id",
+                table: "client",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_documents_client_id",
+                table: "client_documents",
+                column: "client_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_clients_added_by",
                 table: "clients",
                 column: "added_by");
 
             migrationBuilder.CreateIndex(
-                name: "ix_clients_department_id",
+                name: "ix_clients_fixed_discounts_id",
                 table: "clients",
-                column: "department_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_clients_discount_id",
-                table: "clients",
-                column: "discount_id");
+                column: "fixed_discounts_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_clients_modified_by",
@@ -574,14 +845,9 @@ namespace RDF.Arcana.API.Migrations
                 column: "modified_by");
 
             migrationBuilder.CreateIndex(
-                name: "ix_clients_term_days_id",
+                name: "ix_clients_variable_discounts_id",
                 table: "clients",
-                column: "term_days_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_clients_user_id",
-                table: "clients",
-                column: "user_id");
+                column: "variable_discounts_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_companies_added_by",
@@ -599,9 +865,24 @@ namespace RDF.Arcana.API.Migrations
                 column: "added_by");
 
             migrationBuilder.CreateIndex(
+                name: "ix_freebie_request_approvals_id",
+                table: "freebie_request",
+                column: "approvals_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_freebie_request_clients_id",
+                table: "freebie_request",
+                column: "clients_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_freebie_requests_added_by",
                 table: "freebie_requests",
                 column: "added_by");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_freebie_requests_approved_client_id",
+                table: "freebie_requests",
+                column: "approved_client_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_freebie_requests_client_id",
@@ -612,6 +893,16 @@ namespace RDF.Arcana.API.Migrations
                 name: "ix_freebie_requests_status_id",
                 table: "freebie_requests",
                 column: "status_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_freebies_approved_freebies_id",
+                table: "freebies",
+                column: "approved_freebies_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_freebies_client_id",
+                table: "freebies",
+                column: "client_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_freebies_freebie_request_id",
@@ -627,6 +918,11 @@ namespace RDF.Arcana.API.Migrations
                 name: "ix_freebies_items_id",
                 table: "freebies",
                 column: "items_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_freebies_rejected_freebies_id",
+                table: "freebies",
+                column: "rejected_freebies_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_items_added_by",
@@ -697,6 +993,21 @@ namespace RDF.Arcana.API.Migrations
                 name: "ix_rejected_clients_status",
                 table: "rejected_clients",
                 column: "status");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_rejected_freebies_added_by",
+                table: "rejected_freebies",
+                column: "added_by");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_rejected_freebies_freebies_id",
+                table: "rejected_freebies",
+                column: "freebies_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_rejected_freebies_status_id",
+                table: "rejected_freebies",
+                column: "status_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_requested_clients_client_id",
@@ -775,10 +1086,18 @@ namespace RDF.Arcana.API.Migrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "fk_approved_clients_clients_client_id",
-                table: "approved_clients",
+                name: "fk_approvals_clients_client_id",
+                table: "approvals",
                 column: "client_id",
                 principalTable: "clients",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_approved_clients_client_client_id",
+                table: "approved_clients",
+                column: "client_id",
+                principalTable: "client",
                 principalColumn: "id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -799,31 +1118,77 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_departments_department_id",
-                table: "clients",
+                name: "fk_approved_freebies_freebies_freebies_id",
+                table: "approved_freebies",
+                column: "freebies_id",
+                principalTable: "freebies",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_approved_freebies_status_status_id",
+                table: "approved_freebies",
+                column: "status_id",
+                principalTable: "status",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_approved_freebies_users_approved_by",
+                table: "approved_freebies",
+                column: "approved_by",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_client_departments_department_id",
+                table: "client",
                 column: "department_id",
                 principalTable: "departments",
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_discounts_discount_id",
-                table: "clients",
+                name: "fk_client_discounts_discount_id",
+                table: "client",
                 column: "discount_id",
                 principalTable: "discounts",
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_term_days_term_days_id",
-                table: "clients",
+                name: "fk_client_term_days_term_days_id",
+                table: "client",
                 column: "term_days_id",
                 principalTable: "term_days",
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_users_added_by_user_id",
-                table: "clients",
+                name: "fk_client_users_added_by_user_id",
+                table: "client",
                 column: "added_by",
                 principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_client_users_modified_by_user_id",
+                table: "client",
+                column: "modified_by",
+                principalTable: "users",
+                principalColumn: "id");
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_client_users_user_id",
+                table: "client",
+                column: "user_id",
+                principalTable: "users",
+                principalColumn: "id");
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_client_documents_clients_clients_id",
+                table: "client_documents",
+                column: "client_id",
+                principalTable: "clients",
                 principalColumn: "id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -835,11 +1200,12 @@ namespace RDF.Arcana.API.Migrations
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_users_user_id",
+                name: "fk_clients_users_requested_by_user_id",
                 table: "clients",
-                column: "user_id",
+                column: "added_by",
                 principalTable: "users",
-                principalColumn: "id");
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_companies_users_added_by",
@@ -894,6 +1260,13 @@ namespace RDF.Arcana.API.Migrations
                 table: "freebies",
                 column: "items_id",
                 principalTable: "items",
+                principalColumn: "id");
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_freebies_rejected_freebies_rejected_freebies_id",
+                table: "freebies",
+                column: "rejected_freebies_id",
+                principalTable: "rejected_freebies",
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
@@ -984,6 +1357,22 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "fk_rejected_freebies_status_status_id",
+                table: "rejected_freebies",
+                column: "status_id",
+                principalTable: "status",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_rejected_freebies_users_added_by",
+                table: "rejected_freebies",
+                column: "added_by",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "fk_requested_clients_status_request_status_id",
                 table: "requested_clients",
                 column: "status",
@@ -1042,7 +1431,7 @@ namespace RDF.Arcana.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "fk_approved_clients_clients_client_id",
+                name: "fk_approved_clients_client_client_id",
                 table: "approved_clients");
 
             migrationBuilder.DropForeignKey(
@@ -1050,12 +1439,24 @@ namespace RDF.Arcana.API.Migrations
                 table: "approved_clients");
 
             migrationBuilder.DropForeignKey(
+                name: "fk_approved_freebies_status_status_id",
+                table: "approved_freebies");
+
+            migrationBuilder.DropForeignKey(
                 name: "fk_freebie_requests_status_status_id",
                 table: "freebie_requests");
 
             migrationBuilder.DropForeignKey(
+                name: "fk_rejected_freebies_status_status_id",
+                table: "rejected_freebies");
+
+            migrationBuilder.DropForeignKey(
                 name: "fk_approved_clients_users_approved_by_user_id",
                 table: "approved_clients");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_approved_freebies_users_approved_by",
+                table: "approved_freebies");
 
             migrationBuilder.DropForeignKey(
                 name: "fk_companies_users_added_by",
@@ -1090,12 +1491,30 @@ namespace RDF.Arcana.API.Migrations
                 table: "product_sub_categories");
 
             migrationBuilder.DropForeignKey(
+                name: "fk_rejected_freebies_users_added_by",
+                table: "rejected_freebies");
+
+            migrationBuilder.DropForeignKey(
                 name: "fk_uoms_users_added_by",
                 table: "uoms");
 
             migrationBuilder.DropForeignKey(
                 name: "fk_user_roles_users_added_by",
                 table: "user_roles");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_approved_freebies_freebies_freebies_id",
+                table: "approved_freebies");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_rejected_freebies_freebies_freebies_id",
+                table: "rejected_freebies");
+
+            migrationBuilder.DropTable(
+                name: "client_documents");
+
+            migrationBuilder.DropTable(
+                name: "freebie_request");
 
             migrationBuilder.DropTable(
                 name: "permit");
@@ -1107,7 +1526,19 @@ namespace RDF.Arcana.API.Migrations
                 name: "requested_clients");
 
             migrationBuilder.DropTable(
+                name: "approvals");
+
+            migrationBuilder.DropTable(
                 name: "clients");
+
+            migrationBuilder.DropTable(
+                name: "fixed_discounts");
+
+            migrationBuilder.DropTable(
+                name: "variable_discounts");
+
+            migrationBuilder.DropTable(
+                name: "client");
 
             migrationBuilder.DropTable(
                 name: "discounts");
@@ -1128,19 +1559,25 @@ namespace RDF.Arcana.API.Migrations
                 name: "departments");
 
             migrationBuilder.DropTable(
-                name: "freebies");
-
-            migrationBuilder.DropTable(
                 name: "locations");
 
             migrationBuilder.DropTable(
                 name: "user_roles");
 
             migrationBuilder.DropTable(
+                name: "freebies");
+
+            migrationBuilder.DropTable(
+                name: "approved_freebies");
+
+            migrationBuilder.DropTable(
                 name: "freebie_requests");
 
             migrationBuilder.DropTable(
                 name: "items");
+
+            migrationBuilder.DropTable(
+                name: "rejected_freebies");
 
             migrationBuilder.DropTable(
                 name: "approved_clients");

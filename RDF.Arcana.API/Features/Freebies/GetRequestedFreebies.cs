@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -55,16 +56,16 @@ public class GetRequestedFreebies : ControllerBase
 
         public async Task<PagedList<GetRequestedFreebiesQueryResult>> Handle(GetRequestedFreebiesQuery request, CancellationToken cancellationToken)
         {
-            IQueryable<FreebieRequest> freebies = _context.FreebieRequests
-                .Where(x => x.StatusId == 1)
-                .Include(x => x.Freebies)
-                .ThenInclude(x => x.Item)
-                .Include(x => x.ApprovedClient)
-                .ThenInclude(x => x.Client);
+            IQueryable<Approvals> freebies = _context.Approvals
+                .Where(x => x.ApprovalType == "For Freebie Approval")
+                .Include(x => x.Client)
+                .Include(x => x.FreebieRequest)
+                .ThenInclude(x => x.FreebieItems)
+                .ThenInclude(x => x.Items);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                freebies = freebies.Where(x => x.ApprovedClient.Client.OwnersName.Contains(request.Search));
+                freebies = freebies.Where(x => x.Client.Fullname.Contains(request.Search));
             }
 
             if (request.Status != null)

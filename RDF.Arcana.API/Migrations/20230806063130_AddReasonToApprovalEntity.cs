@@ -5,18 +5,14 @@
 namespace RDF.Arcana.API.Migrations
 {
     /// <inheritdoc />
-    public partial class RenamePhototoPhotoPathinApprovedFreebiesEntity : Migration
+    public partial class AddReasonToApprovalEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "photo_proof",
-                table: "approved_freebies");
-
             migrationBuilder.AddColumn<string>(
-                name: "photo_proof_path",
-                table: "approved_freebies",
+                name: "reason",
+                table: "approvals",
                 type: "longtext",
                 nullable: true)
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -26,14 +22,8 @@ namespace RDF.Arcana.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "photo_proof_path",
-                table: "approved_freebies");
-
-            migrationBuilder.AddColumn<byte[]>(
-                name: "photo_proof",
-                table: "approved_freebies",
-                type: "longblob",
-                nullable: true);
+                name: "reason",
+                table: "approvals");
         }
     }
 }

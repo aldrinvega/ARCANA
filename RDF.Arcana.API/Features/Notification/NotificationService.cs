@@ -49,7 +49,7 @@ public class NotificationService : ControllerBase
      
              var getAllApprovedClients = _context.ApprovedClients.Count(x => x.Status == 2 && x.IsActive == true);
              var getAllArchivedApprovedClients = _context.ApprovedClients.Count(x => x.Status == 2 && x.IsActive == false);
-             var getAllRequestedFreebies = _context.FreebieRequests.Count(x => x.StatusId == 2 && x.IsActive == true);
+             // var getAllRequestedFreebies = _context.FreebieRequests.Count(x => x.StatusId == 2 && x.IsActive == true);
      
              var result = new NotificationServiceQueryResult
              {
@@ -59,7 +59,7 @@ public class NotificationService : ControllerBase
                  ArchivedRejectedClient = getAllArchivedRejectedClients,
                  ApprovedClient = getAllApprovedClients,
                  ArchivedApprovedClient = getAllArchivedApprovedClients,
-                 RequestedFreebies = getAllRequestedFreebies
+                 // RequestedFreebies = getAllRequestedFreebies
              };
      
              return await Task.FromResult(result);

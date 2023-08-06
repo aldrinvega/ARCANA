@@ -34,7 +34,12 @@ public class UpdateRejectProspectStatus : ControllerBase
         public async Task<Unit> Handle(UpdateRejectProspectStatusCommand request, CancellationToken cancellationToken)
         {
             var existingRequestedProspect =
-                await _context.RejectedClients.FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);
+                await _context.Approvals.FirstOrDefaultAsync(
+                    x => x.ClientId == request.ClientId &&
+                    x.IsActive == true &&
+                    x.ApprovalType == "Rejected" &&
+                    x.IsApproved == false
+                    , cancellationToken);
 
             if (existingRequestedProspect is null)
             {

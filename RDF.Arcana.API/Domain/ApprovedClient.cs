@@ -15,5 +15,5 @@ public class ApprovedClient : BaseEntity
     public Client Client { get; set; }
     public User ApprovedByUser { get; set; }
     public Status ApprovedStatus { get; set; }
-    public virtual IEnumerable<FreebieRequest> Freebies { get; set; }
+    // public virtual IEnumerable<FreebieRequest> Freebies { get; set; }
 }

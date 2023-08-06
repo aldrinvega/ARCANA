@@ -38,7 +38,14 @@ public class RejectProspectRequest : ControllerBase
         {
             // Fetch the requested client by the prospectId
             var requestedClient =
-                await _context.RequestedClients.FirstOrDefaultAsync(x => x.ClientId == request.ProspectId && x.Status == 1, cancellationToken);
+                await _context.Approvals
+                    .Include(x => x.Client)
+                    .FirstOrDefaultAsync(
+                    x => x.ClientId == request.ProspectId && 
+                         x.ApprovalType == "Approver Approval" && 
+                         x.IsApproved == false && 
+                         x.IsActive == true, 
+                    cancellationToken);
 
             // If no matching client is found, throw an exception
             if (requestedClient is null)
@@ -46,29 +53,15 @@ public class RejectProspectRequest : ControllerBase
                 throw new System.Exception("No matching client found");
             }
 
-            if (requestedClient.Status == 2)
+            if (requestedClient.ApprovalType == "Rejected")
             {
                 throw new System.Exception("This client is already rejected");
             }
 
             // Set the status to "rejected" or an equivalent indicator for rejection in your system
-            requestedClient.Status = 3;
-
+            requestedClient.ApprovalType = "Rejected";
+            requestedClient.Client.RegistrationStatus = "Rejected";
             // Save the changes to the database
-            await _context.SaveChangesAsync(cancellationToken);
-
-            // Create a new RejectedClient record
-            var rejectedClient = new RejectedClients
-            {
-                ClientId = request.ProspectId,
-                Reason = request.Reason,
-                DateRejected = DateTime.Now,
-                RejectedBy = request.RejectedBy,
-                IsActive = true,
-                Status = 3
-            };
-
-            await _context.RejectedClients.AddAsync(rejectedClient, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

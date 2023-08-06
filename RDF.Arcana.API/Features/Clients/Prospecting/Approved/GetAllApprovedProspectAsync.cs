@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
 
@@ -49,12 +50,15 @@ public class GetAllApprovedProspectAsync : ControllerBase
 
         public async Task<PagedList<GetAllApprovedProspectResult>> Handle(GetAllApprovedProspectQuery request, CancellationToken cancellationToken)
         {
-            IQueryable<ApprovedClient> approvedProspect = _context.ApprovedClients.Where(x => x.Status == 2)
+            IQueryable<Approvals> approvedProspect = _context.Approvals.Where(
+                    x => x.ApprovalType == "Approver Approval" &&
+                    x.IsActive == true &&
+                    x.IsApproved == true)
                 .Include(x => x.Client);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                approvedProspect = approvedProspect.Where(x => x.Client.OwnersName == request.Search && x.Client.CustomerType == "Prospect");
+                approvedProspect = approvedProspect.Where(x => x.Client.Fullname == request.Search && x.Client.CustomerType == "Prospect");
             }
 
             if (request.Status != null)

@@ -1,9 +1,11 @@
-﻿using System.Security.Claims;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
@@ -22,9 +24,13 @@ public class AddNewProspect : ControllerBase
 
     public class AddNewProspectCommand : IRequest<Unit>
     {
+        [Required]
         public string OwnersName { get; set; }
+        [Required]
         public string OwnersAddress { get; set; }
+        [Required]
         public string PhoneNumber { get; set; }
+        [Required]
         public string BusinessName { get; set; }
         public int AddedBy { get; set; }
     }
@@ -53,31 +59,28 @@ public class AddNewProspect : ControllerBase
                 throw new System.Exception($"Client with business name {request.BusinessName} already exists.");
             }
 
-            var prospectingClients = new Client
+            var prospectingClients = new Domain.New_Doamin.Clients
             {
-                OwnersName = request.OwnersName,
-                OwnersAddress = request.OwnersAddress,
+                Fullname = request.OwnersName,
+                Address = request.OwnersAddress,
                 PhoneNumber = request.PhoneNumber,
                 BusinessName = request.BusinessName,
                 CustomerType = "Prospect",
                 AddedBy = request.AddedBy
             };
-
-            // Add the new client to the database
+            
             await _context.Clients.AddAsync(prospectingClients, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-
-            var requestedClient = new RequestedClient
+            var approval = new Approvals
             {
                 ClientId = prospectingClients.Id,
-                DateRequest = DateTime.Now,
-                RequestedBy = request.AddedBy,
-                IsActive = true,
-                Status = 1,
+                ApprovalType = "Approver Approval",
+                IsApproved = false,
+                IsActive = true 
             };
 
             // Add the new request to the database
-            await _context.RequestedClients.AddAsync(requestedClient, cancellationToken);
+            await _context.Approvals.AddAsync(approval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
