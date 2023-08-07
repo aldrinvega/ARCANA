@@ -20,7 +20,7 @@ public class UpdateRejectProspectStatus : ControllerBase
     public class UpdateRejectProspectStatusCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public string Reason { get; set; }
+        // public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<UpdateRejectProspectStatusCommand, Unit>

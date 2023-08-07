@@ -20,7 +20,7 @@ public class UpdateRequestProspectStatus : ControllerBase
     public class UpdateRequestProspectStatusCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public string Reason { get; set; }
+        // public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<UpdateRequestProspectStatusCommand, Unit>
@@ -43,7 +43,7 @@ public class UpdateRequestProspectStatus : ControllerBase
             }
 
             existingRequestedProspect.IsActive = !existingRequestedProspect.IsActive;
-            existingRequestedProspect.Reason = request.Reason;
+            // existingRequestedProspect.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
