@@ -11,12 +11,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="&quot;Updated approval type and refactored prospect reject request&quot;&#10;&#10;This update brings changes to a couple of areas of the application. First, an adjustment has been made to the 'approval type' changing the 'For Delivery' approval type to 'For Freebie Approval'. This was done to ensure better representation of the current business logic.&#10;&#10;The save path has also been optimized to include the client's full name for unique identification in ReleasedProspectingRequest.cs. This change ensures straightforward and easy tracking of each client's requests.&#10;&#10;A variable named 'Permission' has been renamed to 'Permissions' in AddNewUserRoles.cs to enhance readability and code consistency across the application. &#10;&#10;Lastly, In the RejectProspectRequest.cs, the approval type setting line has been commented out and the HTTP PUT method 'Reject' has been refactored to include the RejectProspectRequestCommand as a parameter.&#10;&#10;All of these changes aim to improve the efficiency, readability, maintainability, and to better align with the application's business logic.">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
-    </list>
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,6 +56,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -169,7 +165,7 @@
       <workItem from="1691105561860" duration="15282000" />
       <workItem from="1691213728220" duration="12548000" />
       <workItem from="1691283757837" duration="25956000" />
-      <workItem from="1691364172915" duration="9245000" />
+      <workItem from="1691364172915" duration="9967000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -355,7 +351,23 @@
       <option name="project" value="LOCAL" />
       <updated>1691375118003</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Add 'Reason' field to prospecting entities&#10;&#10;A 'Reason' field was added to the RecordClient, GetAllRequestedProspectResult, GetAllRejectProspectResult entities. This field stores the reason why a prospect status was updated, thus providing more context for status changes. Furthermore, a filter was added in 'Handle' method of GetAllRequestedProspectQuery and GetAllRejectProspectQuery, to only get records where 'IsActive' is true. This change makes sure that only relevant data is fetched.">
+      <option name="closed" value="true" />
+      <created>1691375785110</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1691375785110</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered.">
+      <option name="closed" value="true" />
+      <created>1691376418341</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1691376418341</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -409,6 +421,8 @@
     <MESSAGE value="&quot;Add 'Reason' and 'StoreType' fields to client prospecting feature&#10;&#10;The 'Reason' field was added to the 'UpdateRejectProspectStatus', 'UpdateApprovedProspectStatus', 'UpdateRequestProspectStatus', and 'RejectProspectRequest' classes. This is to keep a record of the reason why a prospect status was updated.&#10;&#10;A 'StoreType' field is added to the 'AddNewProspectCommand' class to allow identifying the type of store that is being added as a new prospect. For usability and data tracking purposes, this additional information has become necessary.&quot;" />
     <MESSAGE value="Update approval type, save paths, and variable names&#10;&#10;Adjusted the approval type from &quot;For Delivery&quot; to &quot;For Freebie Approval&quot; and optimized the save path to include client full name for unique identification in ReleasedProspectingRequest.cs. Renamed the variable &quot;Permission&quot; to &quot;Permissions&quot; in AddNewUserRoles.cs for better readability and code consistency. Further, fields in the new prospect request and code clean-up were performed to improve efficiency and maintainability." />
     <MESSAGE value="&quot;Updated approval type and refactored prospect reject request&quot;&#10;&#10;This update brings changes to a couple of areas of the application. First, an adjustment has been made to the 'approval type' changing the 'For Delivery' approval type to 'For Freebie Approval'. This was done to ensure better representation of the current business logic.&#10;&#10;The save path has also been optimized to include the client's full name for unique identification in ReleasedProspectingRequest.cs. This change ensures straightforward and easy tracking of each client's requests.&#10;&#10;A variable named 'Permission' has been renamed to 'Permissions' in AddNewUserRoles.cs to enhance readability and code consistency across the application. &#10;&#10;Lastly, In the RejectProspectRequest.cs, the approval type setting line has been commented out and the HTTP PUT method 'Reject' has been refactored to include the RejectProspectRequestCommand as a parameter.&#10;&#10;All of these changes aim to improve the efficiency, readability, maintainability, and to better align with the application's business logic." />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Updated approval type and refactored prospect reject request&quot;&#10;&#10;This update brings changes to a couple of areas of the application. First, an adjustment has been made to the 'approval type' changing the 'For Delivery' approval type to 'For Freebie Approval'. This was done to ensure better representation of the current business logic.&#10;&#10;The save path has also been optimized to include the client's full name for unique identification in ReleasedProspectingRequest.cs. This change ensures straightforward and easy tracking of each client's requests.&#10;&#10;A variable named 'Permission' has been renamed to 'Permissions' in AddNewUserRoles.cs to enhance readability and code consistency across the application. &#10;&#10;Lastly, In the RejectProspectRequest.cs, the approval type setting line has been commented out and the HTTP PUT method 'Reject' has been refactored to include the RejectProspectRequestCommand as a parameter.&#10;&#10;All of these changes aim to improve the efficiency, readability, maintainability, and to better align with the application's business logic." />
+    <MESSAGE value="Add 'Reason' field to prospecting entities&#10;&#10;A 'Reason' field was added to the RecordClient, GetAllRequestedProspectResult, GetAllRejectProspectResult entities. This field stores the reason why a prospect status was updated, thus providing more context for status changes. Furthermore, a filter was added in 'Handle' method of GetAllRequestedProspectQuery and GetAllRejectProspectQuery, to only get records where 'IsActive' is true. This change makes sure that only relevant data is fetched." />
+    <MESSAGE value="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered." />
   </component>
 </project>
