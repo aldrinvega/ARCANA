@@ -52,7 +52,8 @@ public class GetAllRejectProspectAsync : ControllerBase
         public async Task<PagedList<GetAllRejectProspectResult>> Handle(GetAllRejectProspectQuery request, CancellationToken cancellationToken)
         {
             IQueryable<Approvals> rejectProspect = _context.Approvals.Where(
-                    x => x.Client.RegistrationStatus == "Rejected")
+                    x => x.Client.RegistrationStatus == "Rejected"
+                    && x.IsApproved == false)
                 .Include(x => x.Client);
 
             if (!string.IsNullOrEmpty(request.Search))

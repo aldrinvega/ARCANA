@@ -62,8 +62,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         {
             IQueryable<Approvals> validateClient = _context.Approvals
                 .Where(a => 
-                               a.IsActive
-                            && a.IsApproved
+                            a.IsApproved
                             && a.Client.RegistrationStatus == "Released"
                             && a.FreebieRequest.IsDelivered)
                 .Include(a => a.Client)
