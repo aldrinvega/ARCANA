@@ -37,6 +37,7 @@ public class GetAllRejectProspectAsync : ControllerBase
         public string Address { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
+        public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAllRejectProspectQuery, PagedList<GetAllRejectProspectResult>>
@@ -51,7 +52,7 @@ public class GetAllRejectProspectAsync : ControllerBase
         public async Task<PagedList<GetAllRejectProspectResult>> Handle(GetAllRejectProspectQuery request, CancellationToken cancellationToken)
         {
             IQueryable<Approvals> rejectProspect = _context.Approvals.Where(
-                    x => x.ApprovalType == "Rejected" &&
+                    x => x.Client.RegistrationStatus == "Rejected" &&
                     x.IsActive == true &&
                     x.IsApproved == false
                     )

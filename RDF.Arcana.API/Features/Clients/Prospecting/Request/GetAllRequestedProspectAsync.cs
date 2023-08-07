@@ -37,6 +37,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
         public string Address { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
+        public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAllRequestedProspectQuery, PagedList<GetAllRequestedProspectResult>>
@@ -50,7 +51,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
 
         public async Task<PagedList<GetAllRequestedProspectResult>> Handle(GetAllRequestedProspectQuery request, CancellationToken cancellationToken)
         {
-            IQueryable<Approvals> requestedProspect = _context.Approvals.Where(x => x.ApprovalType == "Approver Approval" && x.IsApproved == false)
+            IQueryable<Approvals> requestedProspect = _context.Approvals.Where(x => x.ApprovalType == "Approver Approval" && x.IsApproved == false && x.IsActive)
                 .Include(x => x.Client);
 
             if (!string.IsNullOrEmpty(request.Search))

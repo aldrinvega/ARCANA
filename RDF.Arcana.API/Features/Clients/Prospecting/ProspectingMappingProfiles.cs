@@ -55,7 +55,8 @@ public static class ProspectingMappingProfiles
             CustomerType = rejectClient.Client.CustomerType,
             AddedBy = rejectClient.Client.AddedBy,
             Address = rejectClient.Client.Address,
-            IsActive = rejectClient.IsActive
+            IsActive = rejectClient.IsActive,
+            Reason = rejectClient.Reason
         };
     }
 }
