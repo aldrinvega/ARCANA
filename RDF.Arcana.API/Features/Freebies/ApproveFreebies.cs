@@ -37,8 +37,7 @@ public class ApproveFreebies : ControllerBase
             {
                 throw new Exception("No freebies found");
             }
-
-            freebieRequest.ApprovalType = "For Delivery";
+            
             freebieRequest.IsApproved = true;
 
             

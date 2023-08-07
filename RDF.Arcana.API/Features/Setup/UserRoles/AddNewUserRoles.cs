@@ -22,7 +22,7 @@ public class AddNewUserRoles : ControllerBase
     public class AddNewUserRolesCommand : IRequest<Unit>
     {
         public string RoleName { get; set; }
-        public List<string> Permission { get; set; }
+        public List<string> Permissions { get; set; }
         public int AddedBy { get; set; }
     }
     
@@ -46,7 +46,7 @@ public class AddNewUserRoles : ControllerBase
             var userRole = new Domain.UserRoles
             {
                 UserRoleName = request.RoleName,
-                Permissions = request.Permission,
+                Permissions = request.Permissions,
                 AddedBy = request.AddedBy,
                 IsActive = true
             };

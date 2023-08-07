@@ -41,11 +41,14 @@ public class ApproveProspectRequest : ControllerBase
              // }
          
              var requestedClients =
-                 await _context.Approvals.FirstOrDefaultAsync(
+                 await _context.Approvals
+                     .Include(x => x.Client)
+                     .FirstOrDefaultAsync(
                      x => x.ClientId == request.ProspectId && 
                           x.ApprovalType == "Approver Approval" &&
                           x.IsActive == true &&
-                          x.IsApproved == true,
+                          x.IsApproved == false &&
+                          x.Client.RegistrationStatus == "Requested",
                      cancellationToken);
          
              if (requestedClients is null)
@@ -53,7 +56,7 @@ public class ApproveProspectRequest : ControllerBase
                  throw new NoProspectClientFound();
              }
 
-             if (requestedClients.ApprovalType == "Approved")
+             if (requestedClients.IsApproved)
              {
                  throw new System.Exception("This client is already approved");
              }

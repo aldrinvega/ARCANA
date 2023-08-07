@@ -39,7 +39,7 @@ public class ReleasedProspectingRequest : ControllerBase
                 .Include(x => x.Client)
                 .FirstOrDefaultAsync(x =>
                     x.ClientId == request.ClientId &&
-                    x.ApprovalType == "For Delivery" &&
+                    x.ApprovalType == "For Freebie Approval" &&
                     x.IsActive == true &&
                     x.IsApproved == true, cancellationToken);
             
@@ -53,7 +53,7 @@ public class ReleasedProspectingRequest : ControllerBase
             
             if (request.PhotoProof != null)
             {
-                var savePath = Path.Combine(@"F:\images\", request.PhotoProof.FileName);
+                var savePath = Path.Combine($@"F:\images\{validateClientRequest.Client.Fullname}", request.PhotoProof.FileName);
             
                 var directory = Path.GetDirectoryName(savePath);
                 if (directory != null && !Directory.Exists(directory))

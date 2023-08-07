@@ -21,7 +21,7 @@ public class RejectProspectRequest : ControllerBase
     public class RejectProspectRequestCommand : IRequest<Unit>
     {
         public int ProspectId { get; set; }
-        public int RejectedBy { get; set; } 
+        public int RejectedBy { get; set; }
         public string Reason { get; set; }
     }
 

@@ -68,7 +68,9 @@ public class AddNewProspect : ControllerBase
                 PhoneNumber = request.PhoneNumber,
                 BusinessName = request.BusinessName,
                 StoreType = request.StoreType,
+                RegistrationStatus = "Requested",
                 CustomerType = "Prospect",
+                IsActive = true,
                 AddedBy = request.AddedBy
             };
             

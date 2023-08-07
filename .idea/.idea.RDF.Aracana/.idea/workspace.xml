@@ -11,12 +11,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model.">
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectMappingExtension.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectingRequest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateRequestProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateRequestProspectStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,98 +58,10 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -255,7 +170,8 @@
       <workItem from="1691021612449" duration="28651000" />
       <workItem from="1691105561860" duration="15282000" />
       <workItem from="1691213728220" duration="12548000" />
-      <workItem from="1691283757837" duration="25641000" />
+      <workItem from="1691283757837" duration="25956000" />
+      <workItem from="1691364172915" duration="6859000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -417,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691316494375</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="&quot;Add 'Reason' and 'StoreType' fields to client prospecting feature&#10;&#10;The 'Reason' field was added to the 'UpdateRejectProspectStatus', 'UpdateApprovedProspectStatus', 'UpdateRequestProspectStatus', and 'RejectProspectRequest' classes. This is to keep a record of the reason why a prospect status was updated.&#10;&#10;A 'StoreType' field is added to the 'AddNewProspectCommand' class to allow identifying the type of store that is being added as a new prospect. For usability and data tracking purposes, this additional information has become necessary.&quot;">
+      <option name="closed" value="true" />
+      <created>1691316827947</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1691316827947</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -468,6 +392,7 @@
     <MESSAGE value="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called." />
     <MESSAGE value="Refactor Freebies, ApprovedFreebies, RejectedFreebies entities and relations&#10;&#10;Revised the structure of the `Freebies`, `ApprovedFreebies`, and `RejectedFreebies` entities, mainly focusing on renaming properties, refactoring foreign key relations, and eliminating unnecessary properties. This change aimed to simplify the domain model and align the entities more transparently with the business logic, leading to more clean and maintainable codebase. Several attribute names were updated to reduce confusion and improve readability. Query and transaction mechanisms have been adjusted to align with these changes ensuring smooth and efficient data flow." />
     <MESSAGE value="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model." />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model." />
+    <MESSAGE value="&quot;Add 'Reason' and 'StoreType' fields to client prospecting feature&#10;&#10;The 'Reason' field was added to the 'UpdateRejectProspectStatus', 'UpdateApprovedProspectStatus', 'UpdateRequestProspectStatus', and 'RejectProspectRequest' classes. This is to keep a record of the reason why a prospect status was updated.&#10;&#10;A 'StoreType' field is added to the 'AddNewProspectCommand' class to allow identifying the type of store that is being added as a new prospect. For usability and data tracking purposes, this additional information has become necessary.&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Add 'Reason' and 'StoreType' fields to client prospecting feature&#10;&#10;The 'Reason' field was added to the 'UpdateRejectProspectStatus', 'UpdateApprovedProspectStatus', 'UpdateRequestProspectStatus', and 'RejectProspectRequest' classes. This is to keep a record of the reason why a prospect status was updated.&#10;&#10;A 'StoreType' field is added to the 'AddNewProspectCommand' class to allow identifying the type of store that is being added as a new prospect. For usability and data tracking purposes, this additional information has become necessary.&quot;" />
   </component>
 </project>
