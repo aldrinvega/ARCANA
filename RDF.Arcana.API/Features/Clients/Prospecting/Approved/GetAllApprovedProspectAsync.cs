@@ -51,7 +51,9 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public async Task<PagedList<GetAllApprovedProspectResult>> Handle(GetAllApprovedProspectQuery request, CancellationToken cancellationToken)
         {
             IQueryable<Approvals> approvedProspect = _context.Approvals.Where(
-                    x => x.ApprovalType == "Approver Approval")
+                    x => x.ApprovalType == "Approver Approval" &&
+                    x.IsActive == true &&
+                    x.IsApproved == true)
                 .Include(x => x.Client);
 
             if (!string.IsNullOrEmpty(request.Search))
