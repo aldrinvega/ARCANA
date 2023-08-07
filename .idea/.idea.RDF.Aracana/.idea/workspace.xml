@@ -11,8 +11,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy.">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active.">
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +58,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
@@ -169,7 +170,7 @@
       <workItem from="1691105561860" duration="15282000" />
       <workItem from="1691213728220" duration="12548000" />
       <workItem from="1691283757837" duration="25956000" />
-      <workItem from="1691364172915" duration="11029000" />
+      <workItem from="1691364172915" duration="11671000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -387,7 +388,23 @@
       <option name="project" value="LOCAL" />
       <updated>1691376789747</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Refine query filters for GetAllRequestedProspectAsync&#10;&#10;Simplified the query filters used in GetAllRequestedProspectAsync method for prospecting feature in the API. Removed redundant conditions (ApprovalType == &quot;Approver Approval&quot;, IsApproved == false, IsActive) in the method to get requested prospects, now only checking if Client.RegistrationStatus is &quot;Requested&quot;. This change was necessary to optimize the query execution and improve data accuracy by removing unnecessary conditions.">
+      <option name="closed" value="true" />
+      <created>1691377905944</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1691377905944</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active.">
+      <option name="closed" value="true" />
+      <created>1691378165601</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1691378165602</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -419,8 +436,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Initial" />
-    <MESSAGE value="Refactor API methods and remove unused imports&#10;&#10;This commit entails several changes across multiple files for better code readability and performance. The 'Update' method in 'UpdateProductCategory.cs' has been refactored to fetch the product category ID from the route rather than the body. This makes the method usage more RESTful. The 'NotificationServices' method in 'NotificationService.cs' has been updated to instantiate the 'NotificationServiceQuery' object within the method itself, hence reducing the dependencies. Redundant using directive in 'UpdateRejectProspectStatus.cs' has been removed, and a newline was added at the end of 'NoClientFoundException.cs' for POSIX compliance." />
     <MESSAGE value="&quot;Refactor prospecting feature files and update methods&#10;&#10;This commit relocates prospecting related files and organizes them into Request, Approved, and Rejected directories for better organization and maintainability. It also changes a method in UpdateMeatTypeStatus.cs from HTTP PUT to HTTP PATCH to align with REST principles. A new file, GetRequestedProspectById.cs, has been added to handle specific requests." />
     <MESSAGE value="Change ProductCategoryId to ProductSubCategoryId in AddNewItems&#10;&#10;Refactored the 'AddNewItems' class to replace 'ProductCategoryId' with 'ProductSubCategoryId' in response to a change in categorization logic. Instead of assigning items to a product category, they will now belong to a more specific sub-category, enhancing product management and filtering." />
     <MESSAGE value="&quot;Fixed incorrect query for ProductSubCategory in AddNewItems&#10;&#10;The query to validate the subcategory of the product was mistakenly using 'ProductCategoryId'. The correct field to use is 'ProductSubCategoryId'. This change ensures that the correct subcategory is validated before adding a new item.&quot;" />
@@ -444,6 +459,8 @@
     <MESSAGE value="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered." />
     <MESSAGE value="Refined status checks in prospect feature&#10;&#10;Enhanced the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' in order to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. The query now also checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions. All these changes are designed to ensure only relevant results are considered during the queries process, enhancing the overall efficiency of the prospecting feature." />
     <MESSAGE value="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy." />
+    <MESSAGE value="Refine query filters for GetAllRequestedProspectAsync&#10;&#10;Simplified the query filters used in GetAllRequestedProspectAsync method for prospecting feature in the API. Removed redundant conditions (ApprovalType == &quot;Approver Approval&quot;, IsApproved == false, IsActive) in the method to get requested prospects, now only checking if Client.RegistrationStatus is &quot;Requested&quot;. This change was necessary to optimize the query execution and improve data accuracy by removing unnecessary conditions." />
+    <MESSAGE value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
   </component>
 </project>

@@ -37,7 +37,6 @@ public class UpdateRejectProspectStatus : ControllerBase
             var existingRequestedProspect =
                 await _context.Approvals.FirstOrDefaultAsync(
                     x => x.ClientId == request.ClientId &&
-                    x.IsActive == true &&
                     x.Client.RegistrationStatus == "Rejected" &&
                     x.IsApproved == false
                     , cancellationToken);
@@ -48,7 +47,7 @@ public class UpdateRejectProspectStatus : ControllerBase
             }
 
             existingRequestedProspect.IsActive = !existingRequestedProspect.IsActive;
-            existingRequestedProspect.Reason = request.Reason;
+            // existingRequestedProspect.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
