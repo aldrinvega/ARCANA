@@ -59,7 +59,7 @@ public class RejectProspectRequest : ControllerBase
             }
 
             // Set the status to "rejected" or an equivalent indicator for rejection in your system
-            requestedClient.ApprovalType = "Rejected";
+            // requestedClient.ApprovalType = "Rejected";
             requestedClient.Reason = request.Reason;
             requestedClient.Client.RegistrationStatus = "Rejected";
             // Save the changes to the database
@@ -70,15 +70,12 @@ public class RejectProspectRequest : ControllerBase
     }
 
     [HttpPut("RejectProspectRequest/{id:int}")]
-    public async Task<IActionResult> Reject([FromRoute] int id)
+    public async Task<IActionResult> Reject([FromRoute] int id, [FromBody]RejectProspectRequestCommand command)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-            var command = new RejectProspectRequestCommand
-            {
-                ProspectId = id
-            };
+            command.ProspectId = id;
                 
             if (User.Identity is ClaimsIdentity identity 
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
