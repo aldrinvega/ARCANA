@@ -11,25 +11,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspect.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/FreebieRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/FreebieRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetRequestedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetRequestedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/a9884b7e-9fae-41f3-842a-c1e5b068d1cc.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectInformation.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,21 +53,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -190,7 +165,7 @@
       <workItem from="1691213728220" duration="12548000" />
       <workItem from="1691283757837" duration="25956000" />
       <workItem from="1691364172915" duration="15340000" />
-      <workItem from="1691453275256" duration="6819000" />
+      <workItem from="1691453275256" duration="8234000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -440,7 +415,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691378681257</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop.">
+      <option name="closed" value="true" />
+      <created>1691460157091</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1691460157091</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -472,7 +455,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="&quot;Fixed incorrect query for ProductSubCategory in AddNewItems&#10;&#10;The query to validate the subcategory of the product was mistakenly using 'ProductCategoryId'. The correct field to use is 'ProductSubCategoryId'. This change ensures that the correct subcategory is validated before adding a new item.&quot;" />
     <MESSAGE value="Add Id field to UpdateItemCommand class&#10;&#10;Added an Id property to the UpdateItemCommand class. Replaced the retrieval and validation of items with the Id property instead of ItemCode. The change was made because using an Id is a more reliable way to specifically identify items in the database. The item retrieval and validation have been updated accordingly, plus the Update method now accepts the Id as parameter for more accurate data handling." />
     <MESSAGE value="Update item identification from string to int&#10;&#10;Changed the ItemCode in UpdateItemStatusCommand and its related codes from string to int. This change is implemented to make the item identification more consistent and efficient across the application. Also, integer IDs are easier to manage and manipulate." />
     <MESSAGE value="Add functionality to request freebies by approved clients&#10;&#10;A new feature has been added. This new functionality allows approved clients to request freebies. This involves changes in multiple files involving domain, status, data context, RequestFreebies, ApprovedClient, and User files. This change was necessary to extend the shopping facility to reward dedicated customers with freebies based on their engagement in order to improve customer retention and increase repeat purchases. As a result, a new model 'Freebies' has been introduced with relationships to multiple existing entities in the system such firebase status, user, items, and approved clients. Furthermore, extra caution has been implemented to avoid allowing rejected clients from requesting freebies. New exceptions have been readied to handle such failures. Such changes provide a comprehensive and safe update to the system as well as the database schema via migrations." />
@@ -497,6 +479,7 @@
     <MESSAGE value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
     <MESSAGE value="Refactor prospect request query to improve data accuracy&#10;&#10;The query filters in prospect requests ('Requested', 'Rejected', and 'Released') were adjusted to better reflect the current approval status. The 'IsApproved' property is now included in the queries to ensure that the resulting data is not cluttered with prospects that have already been approved. Additionally, the 'IsActive' check was removed from the 'Released' prospect request query to prevent unnecessary filtering. These changes significantly improve the data precision and optimize query execution." />
     <MESSAGE value="Remove 'Reason' from Prospect Status Update &#10;&#10;No longer capturing 'Reason' in three different prospecting status updates: Rejected, Approved, and Request. The 'Reason' field has been commented out in 'UpdateRejectProspectStatusCommand', 'UpdateApprovedProspectStatusCommand' and 'UpdateRequestProspectStatusCommand'. Moreover, the 'Reason' assignment has been removed from the respective handlers.&#10;&#10;The requirement to record a reason for changing the prospecting status was dropped, simplifying code and the user interface." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove 'Reason' from Prospect Status Update &#10;&#10;No longer capturing 'Reason' in three different prospecting status updates: Rejected, Approved, and Request. The 'Reason' field has been commented out in 'UpdateRejectProspectStatusCommand', 'UpdateApprovedProspectStatusCommand' and 'UpdateRequestProspectStatusCommand'. Moreover, the 'Reason' assignment has been removed from the respective handlers.&#10;&#10;The requirement to record a reason for changing the prospecting status was dropped, simplifying code and the user interface." />
+    <MESSAGE value="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop." />
   </component>
 </project>

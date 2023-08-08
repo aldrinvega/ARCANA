@@ -8,11 +8,11 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
 [Route("api/Prospecting")]
 [ApiController]
 
-public class UpdateProspectRequest : ControllerBase
+public class UpdateProspectInformation : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UpdateProspectRequest(IMediator mediator)
+    public UpdateProspectInformation(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -38,24 +38,32 @@ public class UpdateProspectRequest : ControllerBase
         public async Task<Unit> Handle(UpdateProspectRequestCommand request, CancellationToken cancellationToken)
         {
             var existingClient =
-                await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId && x.IsActive == true, cancellationToken);
+                await _context.Approvals
+                    .Include(x => x.Client)
+                    .FirstOrDefaultAsync(
+                    x => x.ClientId == request.ClientId 
+                         && x.IsActive == true
+                         && x.ApprovalType == "Approver Approval",
+                    cancellationToken);
 
             if (existingClient is null)
             {
                 throw new ClientIsNotFound();
             }
 
-            existingClient.Fullname = request.OwnersName;
-            existingClient.Address = request.OwnersAddress;
-            existingClient.PhoneNumber = request.PhoneNumber;
-            existingClient.BusinessName = request.BusinessName;
+            existingClient.Client.Fullname = request.OwnersName;
+            existingClient.Client.Address = request.OwnersAddress;
+            existingClient.Client.PhoneNumber = request.PhoneNumber;
+            existingClient.Client.BusinessName = request.BusinessName;
+            existingClient.IsApproved = false;
+            existingClient.Client.RegistrationStatus = "Requested";
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }
 
-    [HttpPut("UpdateProspectRequest/{id:int}")]
+    [HttpPut("UpdateProspectInformation/{id:int}")]
     public async Task<IActionResult> UpdateProspect([FromRoute] int id, [FromBody] UpdateProspectRequestCommand command)
     {
         var response = new QueryOrCommandResult<object>();
