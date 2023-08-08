@@ -37,9 +37,9 @@ public class ApproveFreebies : ControllerBase
             {
                 throw new Exception("No freebies found");
             }
-            
-            freebieRequest.IsApproved = true;
 
+            freebieRequest.FreebieRequest.Status = "Approved";
+            freebieRequest.IsApproved = true;
             
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;

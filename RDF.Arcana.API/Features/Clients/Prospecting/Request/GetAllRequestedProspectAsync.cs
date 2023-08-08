@@ -35,6 +35,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
         public string CustomerType { get; set; }
         public string BusinessName { get; set; }
         public string Address { get; set; }
+        public string StoreType { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
         public string Reason { get; set; }
@@ -67,7 +68,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
                 requestedProspect = requestedProspect.Where(x => x.IsActive == request.IsActive && x.Client.CustomerType == "Prospect");
             }
 
-            var result = requestedProspect.Select(x => x.ToGetGetAllProspectResult());
+            var result = requestedProspect.Select(x => x.ToGetAllRequestedProspectResult());
 
             return await PagedList<GetAllRequestedProspectResult>.CreateAsync(result, request.PageNumber,
                 request.PageSize);

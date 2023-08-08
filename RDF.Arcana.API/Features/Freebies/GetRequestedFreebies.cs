@@ -61,7 +61,8 @@ public class GetRequestedFreebies : ControllerBase
                 .Include(x => x.Client)
                 .Include(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
-                .ThenInclude(x => x.Items);
+                .ThenInclude(x => x.Items)
+                .Where(x => x.FreebieRequest.Status == "Requested");
 
             if (!string.IsNullOrEmpty(request.Search))
             {

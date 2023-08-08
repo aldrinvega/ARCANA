@@ -62,6 +62,7 @@ public class ApproveProspectRequest : ControllerBase
              }
 
              requestedClients.IsApproved = true;
+             requestedClients.Client.RegistrationStatus = "Approved";
              await _context.SaveChangesAsync(cancellationToken);
              return Unit.Value;
          }

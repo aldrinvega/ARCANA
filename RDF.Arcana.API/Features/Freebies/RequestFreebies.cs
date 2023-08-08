@@ -70,6 +70,7 @@ public class RequestFreebies : ControllerBase
                  ClientId = request.ClientId,
                  TransactionNumber = transactionNumber,
                  ApprovalId = newApproval.Id,
+                 Status = "Requested",
                  IsDelivered = false
              };
              _context.FreebieRequests.Add(freebieRequest);

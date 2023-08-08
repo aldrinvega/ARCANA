@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RDF.Arcana.API.Data;
 
@@ -10,9 +11,11 @@ using RDF.Arcana.API.Data;
 namespace RDF.Arcana.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230808015510_AddStatusToFreebiesRequestEntity")]
+    partial class AddStatusToFreebiesRequestEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -809,6 +812,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("client_id");
 
+                    b.Property<int?>("ClientsId")
+                        .HasColumnType("int")
+                        .HasColumnName("clients_id");
+
                     b.Property<bool>("IsDelivered")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_delivered");
@@ -832,8 +839,8 @@ namespace RDF.Arcana.API.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_freebie_requests_approval_id");
 
-                    b.HasIndex("ClientId")
-                        .HasDatabaseName("ix_freebie_requests_client_id");
+                    b.HasIndex("ClientsId")
+                        .HasDatabaseName("ix_freebie_requests_clients_id");
 
                     b.ToTable("freebie_requests", (string)null);
                 });
@@ -1673,16 +1680,12 @@ namespace RDF.Arcana.API.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_freebie_requests_approvals_approval_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Clients", "Clients")
+                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Clients", null)
                         .WithMany("FreebiesRequests")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_freebie_requests_clients_client_id");
+                        .HasForeignKey("ClientsId")
+                        .HasConstraintName("fk_freebie_requests_clients_clients_id");
 
                     b.Navigation("Approvals");
-
-                    b.Navigation("Clients");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Permit", b =>

@@ -9,7 +9,7 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting;
 public static class ProspectingMappingProfiles
 {
     public static GetAllRequestedProspectAsync.GetAllRequestedProspectResult
-        ToGetGetAllProspectResult(this Approvals requestedClient)
+        ToGetAllRequestedProspectResult(this Approvals requestedClient)
     {
         return new GetAllRequestedProspectAsync.GetAllRequestedProspectResult
         {
@@ -21,6 +21,7 @@ public static class ProspectingMappingProfiles
             CustomerType = requestedClient.Client.CustomerType,
             AddedBy = requestedClient.Client.AddedBy,
             Address = requestedClient.Client.Address,
+            StoreType = requestedClient.Client.StoreType,
             IsActive = requestedClient.IsActive
         };
     }
@@ -38,7 +39,8 @@ public static class ProspectingMappingProfiles
             CustomerType = approvedClient.Client.CustomerType,
             AddedBy = approvedClient.Client.AddedBy,
             Address = approvedClient.Client.Address,
-            IsActive = approvedClient.IsActive
+            StoreType = approvedClient.Client.StoreType,
+            IsActive = approvedClient.IsActive,
         };
     }
     
@@ -56,6 +58,7 @@ public static class ProspectingMappingProfiles
             AddedBy = rejectClient.Client.AddedBy,
             Address = rejectClient.Client.Address,
             IsActive = rejectClient.IsActive,
+            StoreType = rejectClient.Client.StoreType,
             Reason = rejectClient.Reason
         };
     }

@@ -53,7 +53,7 @@ public class RejectProspectRequest : ControllerBase
                 throw new System.Exception("No matching client found");
             }
 
-            if (requestedClient.ApprovalType == "Rejected")
+            if (requestedClient.Client.RegistrationStatus == "Rejected")
             {
                 throw new System.Exception("This client is already rejected");
             }
