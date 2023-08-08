@@ -37,12 +37,16 @@ public class AddNewUserRoles : ControllerBase
 
         public async Task<Unit> Handle(AddNewUserRolesCommand request, CancellationToken cancellationToken)
         {
-            var existingUserRole = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserRoleName == request.RoleName, cancellationToken);
+            var existingUserRole = await _context.UserRoles
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.UserRoleName == request.RoleName,
+                    cancellationToken);
+            
             if (existingUserRole is not null)
             {
                 throw new UserRoleAlreadyExistException();
             }
-
+            
             var userRole = new Domain.UserRoles
             {
                 UserRoleName = request.RoleName,

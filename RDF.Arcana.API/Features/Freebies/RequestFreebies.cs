@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Freebies;
@@ -23,9 +22,9 @@ public class RequestFreebies : ControllerBase
     public class RequestFreebiesCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public List<Freebie> Freebies { get; set; }
+        public List<UpdateFreebie> Freebies { get; set; }
         
-        public class Freebie
+        public class UpdateFreebie
         {
             public int ItemId { get; set; }
             public int Quantity { get; set; }

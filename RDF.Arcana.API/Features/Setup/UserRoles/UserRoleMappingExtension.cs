@@ -14,6 +14,7 @@ public static class UserRoleMappingExtension
             UpdatedAt = userRoles.UpdatedAt,
             AddedBy = userRoles.AddedByUser.Fullname,
             Permissions = userRoles.Permissions,
+            IsTagged = userRoles.User != null,
             User = userRoles.User?.Fullname
         };
     }

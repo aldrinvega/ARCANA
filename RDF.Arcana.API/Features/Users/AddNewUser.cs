@@ -54,6 +54,7 @@ public class AddNewUser : ControllerBase
                 var validateDepartments =
                     await _context.Departments.AnyAsync(x => x.Id == command.DepartmentId,
                         cancellationToken);
+                
 
                 if (!validateCompany && command.CompanyId.HasValue)
                 {
@@ -68,6 +69,16 @@ public class AddNewUser : ControllerBase
                 if (!validateDepartments && command.DepartmentId.HasValue)
                 {
                     throw new NoDepartmentFoundException();
+                }
+                
+                if (command.UserRoleId.HasValue)
+                {
+                    var userRole = await _context.UserRoles.Include(ur => ur.User)
+                        .FirstOrDefaultAsync(ur => ur.Id == command.UserRoleId.Value, cancellationToken); 
+                    if (userRole != null && userRole.User != null)
+                    {
+                        throw new UserRoleAlreadyTaggedException();
+                    }
                 }
 
                 if (validateExistingUser is not null) throw new UserAlreadyExistException(command.Username);

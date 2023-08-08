@@ -22,6 +22,7 @@ public class GetUserRolesAsync : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public bool? IsTagged { get; set; }
     }
 
     public class GetUserRoleAsyncResult
@@ -33,6 +34,7 @@ public class GetUserRolesAsync : ControllerBase
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
+        public bool IsTagged { get; set; }
         public string User { get; set; }
     }
     
@@ -47,11 +49,18 @@ public class GetUserRolesAsync : ControllerBase
 
         public async Task<PagedList<GetUserRoleAsyncResult>> Handle(GetUserRoleAsyncQuery request, CancellationToken cancellationToken)
         {
-            IQueryable <Domain.UserRoles> userRoles = _context.UserRoles.Include(x => x.AddedByUser);
+            IQueryable <Domain.UserRoles> userRoles = _context.UserRoles
+                .Include(x => x.AddedByUser)
+                .Include(x => x.User);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
                 userRoles = userRoles.Where(x => x.UserRoleName.Contains(request.Search));
+            }
+            
+            if(request.IsTagged != null)
+            {
+                userRoles = request.IsTagged.Value ? userRoles.Where(x => x.User != null) : userRoles.Where(x => x.User == null);
             }
 
             if (request.Status is not null)
