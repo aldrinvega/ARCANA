@@ -28,7 +28,8 @@ public class GetAllApprovedFreebies : ControllerBase
 
     public class GetAllApprovedFreebiesQueryResult
     {
-        public int Id { get; set; }
+        public int FreebieRequestId { get; set; }
+        public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
         public string OwnersAddress { get; set; }
@@ -63,6 +64,7 @@ public class GetAllApprovedFreebies : ControllerBase
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .Where(x => x.IsApproved == true)
+                .Where(x => x.FreebieRequest.IsDelivered == false)
                 .Where(x => x.FreebieRequest.Status == "Approved");
 
             if (!string.IsNullOrEmpty(request.Search))

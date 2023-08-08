@@ -48,6 +48,7 @@ public class ReleasedProspectingRequest : ControllerBase
                 throw new NoProspectClientFound();
             }
 
+            validateClientRequest.FreebieRequest.Status = "Released";
             validateClientRequest.FreebieRequest.IsDelivered = true;
             validateClientRequest.Client.RegistrationStatus = "Released";
             

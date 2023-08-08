@@ -32,7 +32,8 @@ public static class FreebiesMappingExtension
     {
         return new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult
         {
-            Id = freebies.Id,
+            FreebieRequestId = freebies.FreebieRequest.Id,
+            ClientId = freebies.ClientId,
             OwnersName = freebies.Client.Fullname,
             PhoneNumber = freebies.Client.PhoneNumber,
             OwnersAddress = freebies.Client.Address,
@@ -44,7 +45,7 @@ public static class FreebiesMappingExtension
                     ItemCode = x.Items.ItemCode,
                     Quantity = x.Quantity,
 
-                }).ToList(),
+                }).ToList(),    
             // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
         };
     }

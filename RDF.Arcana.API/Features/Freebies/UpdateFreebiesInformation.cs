@@ -59,6 +59,15 @@ public class UpdateFreebiesInformation : ControllerBase
                 throw new Exception("No freebies found");
             }
             
+            var requestItemIds = request.Freebies.Select(f => f.ItemId).ToList();
+            var existingItemIds = freebies.FreebieRequest.FreebieItems.Select(i => i.ItemId).ToList();
+            var itemsToRemove = existingItemIds.Except(requestItemIds);
+            foreach (var itemId in itemsToRemove)
+            {
+                var itemToRemove = freebies.FreebieRequest.FreebieItems.First(i => i.ItemId == itemId);
+                freebies.FreebieRequest.FreebieItems.Remove(itemToRemove);
+            }
+            
             foreach (var requestFreebie in request.Freebies)
             {
                 var freebieItem = freebies.FreebieRequest.FreebieItems.FirstOrDefault(x => x.ItemId == requestFreebie.ItemId);

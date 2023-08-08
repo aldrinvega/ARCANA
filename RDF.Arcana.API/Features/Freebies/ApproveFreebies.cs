@@ -4,6 +4,9 @@ using RDF.Arcana.API.Data;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
+[Route("api/Freebies")]
+[ApiController]
+
 public class ApproveFreebies : ControllerBase
 {
     private readonly IMediator _mediator;
