@@ -55,7 +55,8 @@ public class GetAllRequestedProspectAsync : ControllerBase
                     x.Client.RegistrationStatus == "Requested"
                     && x.IsApproved == false
                     )
-                .Include(x => x.Client);
+                .Include(x => x.Client)
+                .ThenInclude(x => x.StoreType);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

@@ -55,7 +55,8 @@ public class GetAllRejectProspectAsync : ControllerBase
             IQueryable<Approvals> rejectProspect = _context.Approvals.Where(
                     x => x.Client.RegistrationStatus == "Rejected"
                     && x.IsApproved == false)
-                .Include(x => x.Client);
+                .Include(x => x.Client)
+                .ThenInclude(x => x.StoreType);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

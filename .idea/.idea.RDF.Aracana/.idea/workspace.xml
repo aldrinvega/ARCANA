@@ -11,12 +11,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types.">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Migrations">
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,8 +52,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Setup/Store Type/AddNewStoreType.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -166,7 +168,7 @@
       <workItem from="1691283757837" duration="25956000" />
       <workItem from="1691364172915" duration="15340000" />
       <workItem from="1691453275256" duration="22630000" />
-      <workItem from="1691539892531" duration="7713000" />
+      <workItem from="1691539892531" duration="9019000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -464,7 +466,23 @@
       <option name="project" value="LOCAL" />
       <updated>1691547803658</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change.">
+      <option name="closed" value="true" />
+      <created>1691548547790</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1691548547790</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Migrations">
+      <option name="closed" value="true" />
+      <created>1691550089772</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1691550089772</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -496,8 +514,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Refactor queries and add Freebie approval feature&#10;&#10;Removed unnecessary using statements in NotificationService.cs and refactored GetAllRequestedProspectAsync.cs to better reflect the active status of requested prospects, improving code readability. New file ApproveFreebies.cs introduced a method to approve freebie requests improving functionality in the Freebies feature." />
-    <MESSAGE value="&quot;Add IsActive status and new models to Client Prospecting Feature&quot;&#10;&#10;In the ProspectingMappingProfiles, GetAllRequestedProspectAsync, GetRequestedProspectById, GetAllRejectProspectAsync, GetAllApprovedProspectAsync, and GetRequestedProspectById sections, IsActive entry was added for better client activity monitoring. The status of the clients whether they are active or not, is now part of our detailed mapping.&#10;&#10;In the DataContext, new entities of approved and rejected freebies were also introduced. These modifications are needed to handle the expanded business logic related to the management of freebies which comes with an approval or rejection process. &#10;&#10;The IsActive field and mentioned models implemented provide more efficient data extraction and improve the efficiency of the response, considering the application's evolving needs and demand." />
     <MESSAGE value="Add RejectedFreebies, ApprovedFreebies, update ApproveFreebies flow&#10;&#10;Created new domain classes 'RejectedFreebies' and 'ApprovedFreebies' to manage freebies that are approved or rejected. Updated the 'ApproveFreebies' flow to use these new classes and include the feature of attaching photo proof for approved freebies. This helps structure the data more efficiently and enhances the approval process by adding an extra layer of verification with photo proof." />
     <MESSAGE value="Update data storage strategy and fix typos in API routes&#10;&#10;Updated storage method for photo evidence from directly saving as binary to storing file path in `ApprovedFreebies.cs` to optimize database storage. Fixed incorrect API routes from `api/Propspecting` to `api/Prospecting` in `UpdateRejectProspectStatus.cs`, `GetRequestedProspectById.cs`, `UpdateApprovedProspectStatus.cs`, and `UpdateRequestProspectStatus.cs` files for accurate mapping. Tweaked search logic in `GetAllRequestedProspectAsync.cs` to improve search result relevance. Also, commented out code in `ApproveFreebies.cs` indicating a work-in-progress state." />
     <MESSAGE value="&quot;Refactor client status update and enable Freebies approval feature&quot;&#10;&#10;This commit includes changes across the client prospecting API, specifically updating the logic that checks the current status of a client and initiates the status change. The 'IsActive' check has been removed to streamline the update process. This allows for more flexibility when changing the status of a client.&#10;&#10;Additionally, in the Freebies feature, un-commented the code which had been previously suppressed, making the 'ApproveFreebies' feature available. It now supports image uploads and handles file-saving, providing a more robust solution for approving freebies. &#10;&#10;Both these changes are aimed at improving usability and simplifying the codebase." />
@@ -521,6 +537,8 @@
     <MESSAGE value="Update Freebie management and Prospecting enhancements&#10;&#10;Updated the Freebies management by allowing the removal of items from a Freebie request. Added a new status &quot;Released&quot; for Prospecting and improved the query result details for approved Freebies. &#10;&#10;These changes allow the application to track the status of Prospecting and the Freebie requests in a more detailed and efficient manner. Now it is possible to remove items from a Freebie request. For Prospecting, a new status &quot;Released&quot; was introduced to clearly distinguish the delivery status of the client. On top of that, the return details for approved Freebies was enhanced to include the FreebieRequestId and ClientId, providing more visibility and control for the management." />
     <MESSAGE value="Remove Prospecting feature code and Add StoreType setup&#10;&#10;Removed the Prospecting feature code as it was not required anymore due to change in business requirements. Also added functionality to Setup Store Types. This includes adding new store types and getting all store types. Ensured that duplicate store types can't be added by adding a unique constraint. Updated the data migration context and the snapshot to reflect these changes." />
     <MESSAGE value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
+    <MESSAGE value="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change." />
+    <MESSAGE value="Migrations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Migrations" />
   </component>
 </project>

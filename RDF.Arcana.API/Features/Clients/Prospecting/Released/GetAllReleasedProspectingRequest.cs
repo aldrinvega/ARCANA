@@ -67,6 +67,8 @@ public class GetAllReleasedProspectingRequest : ControllerBase
                             && a.FreebieRequest.IsDelivered)
                 .Include(a => a.Client)
                 .ThenInclude(x => x.RequestedByUser)
+                .Include(x => x.Client)
+                .ThenInclude(x => x.StoreType)
                 .Include(a => a.FreebieRequest)
                 .ThenInclude(fr => fr.FreebieItems)
                 .ThenInclude(fi => fi.Items);

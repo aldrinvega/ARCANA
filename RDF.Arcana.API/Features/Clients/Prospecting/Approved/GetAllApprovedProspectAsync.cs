@@ -56,7 +56,8 @@ public class GetAllApprovedProspectAsync : ControllerBase
                     x => x.ApprovalType == "Approver Approval" &&
                     x.IsActive == true &&
                     x.IsApproved == true)
-                .Include(x => x.Client);
+                .Include(x => x.Client)
+                .ThenInclude(x => x.StoreType);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
