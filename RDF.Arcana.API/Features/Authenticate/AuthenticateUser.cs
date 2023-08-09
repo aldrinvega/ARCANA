@@ -58,7 +58,13 @@ public class AuthenticateUser
             get; 
             set;
         }
-        public ICollection<string> Permission { get; set; }
+        public IEnumerable<Module> Modules { get; set; }
+
+        public class Module
+        {
+            public int Id { get; set; }
+            public string ModuleName { get; set; }
+        }
 
         
         public string Token
@@ -74,7 +80,11 @@ public class AuthenticateUser
             Username = user.Username;
             Token = token;
             RoleName = user.UserRoles?.UserRoleName;
-            Permission = user.UserRoles?.Permissions;
+            Modules = user.UserRoles?.Modules.Select(x => new Module
+            {
+                Id = x.Id,
+                ModuleName = x.ModuleName
+            });
         }
 
         public class Handler : IRequestHandler<AuthenticateUserQuery, AuthenticateUserResult>

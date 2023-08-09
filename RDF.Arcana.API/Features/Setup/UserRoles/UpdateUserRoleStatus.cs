@@ -43,7 +43,7 @@ public class UpdateUserRoleStatus : ControllerBase
                 throw new UserRoleNotFoundException();
             }
 
-            if (!existingUserRole.IsActive && existingUserRole.Permissions.Count > 0)
+            if (!existingUserRole.IsActive && existingUserRole.ModuleId.Count > 0)
             {
                 throw new UserRoleDeactivationException();
             }

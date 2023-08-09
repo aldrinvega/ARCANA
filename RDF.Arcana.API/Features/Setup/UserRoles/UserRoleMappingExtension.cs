@@ -5,7 +5,7 @@ public static class UserRoleMappingExtension
     public static GetUserRolesAsync.GetUserRoleAsyncResult
         ToGetUserRoleAsyncQueryResult(this Domain.UserRoles userRoles)
     {
-        return new GetUserRolesAsync.GetUserRoleAsyncResult()
+        return new GetUserRolesAsync.GetUserRoleAsyncResult
         {
             Id = userRoles.Id,
             RoleName = userRoles.UserRoleName,
@@ -13,7 +13,11 @@ public static class UserRoleMappingExtension
             IsActive = userRoles.IsActive,
             UpdatedAt = userRoles.UpdatedAt,
             AddedBy = userRoles.AddedByUser.Fullname,
-            Permissions = userRoles.Permissions,
+            Permissions = userRoles.Modules.Select(x => new GetUserRolesAsync.GetUserRoleAsyncResult.Module
+            {
+                ModuleId = x.Id,
+                ModuleName = x.ModuleName
+            }),
             IsTagged = userRoles.User != null,
             User = userRoles.User?.Fullname
         };

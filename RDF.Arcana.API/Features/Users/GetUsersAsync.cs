@@ -38,7 +38,13 @@ public class GetUsersAsync : ControllerBase
         public string DepartmentName { get; set; }
         public string LocationName { get; set; }
         public string RoleName { get; set; }
-        public ICollection<string> Permission { get; set; }
+        public IEnumerable<Module> Modules { get; set; }
+
+        public class Module
+        {
+            public int Id { get; set; }
+            public string ModuleName { get; set; }
+        }
         
     }
     public class Handler : IRequestHandler<GetUserAsyncQuery, PagedList<GetUserAsyncQueryResult>>

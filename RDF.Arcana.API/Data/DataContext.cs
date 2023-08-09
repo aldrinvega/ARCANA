@@ -44,10 +44,10 @@ public class DataContext : DbContext
     {
 
         modelBuilder.Entity<UserRoles>()
-            .Property(e => e.Permissions)
+            .Property(e => e.ModuleId)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<List<int>>(v, (JsonSerializerOptions)null),
                 new ValueComparer<ICollection<string>>(
                     (c1, c2) => c1.SequenceEqual(c2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),

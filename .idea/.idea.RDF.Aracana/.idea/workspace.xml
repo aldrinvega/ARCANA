@@ -11,11 +11,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Migrations">
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage.">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Modules.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserRoles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserRoles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectInformation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/GetUserRolesAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/GetUserRolesAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UntagAndTagUserRolePermission.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UntagAndTagUserRolePermission.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UpdateUserRoleStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UpdateUserRoleStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UserRoleMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UserRoleMappingExtension.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +65,9 @@
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectInformation.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Setup/Store Type/AddNewStoreType.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -168,7 +179,7 @@
       <workItem from="1691283757837" duration="25956000" />
       <workItem from="1691364172915" duration="15340000" />
       <workItem from="1691453275256" duration="22630000" />
-      <workItem from="1691539892531" duration="9019000" />
+      <workItem from="1691539892531" duration="16486000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -482,7 +493,23 @@
       <option name="project" value="LOCAL" />
       <updated>1691550089772</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;">
+      <option name="closed" value="true" />
+      <created>1691550635009</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1691550635009</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage.">
+      <option name="closed" value="true" />
+      <created>1691550909309</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1691550909309</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -514,8 +541,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Add RejectedFreebies, ApprovedFreebies, update ApproveFreebies flow&#10;&#10;Created new domain classes 'RejectedFreebies' and 'ApprovedFreebies' to manage freebies that are approved or rejected. Updated the 'ApproveFreebies' flow to use these new classes and include the feature of attaching photo proof for approved freebies. This helps structure the data more efficiently and enhances the approval process by adding an extra layer of verification with photo proof." />
-    <MESSAGE value="Update data storage strategy and fix typos in API routes&#10;&#10;Updated storage method for photo evidence from directly saving as binary to storing file path in `ApprovedFreebies.cs` to optimize database storage. Fixed incorrect API routes from `api/Propspecting` to `api/Prospecting` in `UpdateRejectProspectStatus.cs`, `GetRequestedProspectById.cs`, `UpdateApprovedProspectStatus.cs`, and `UpdateRequestProspectStatus.cs` files for accurate mapping. Tweaked search logic in `GetAllRequestedProspectAsync.cs` to improve search result relevance. Also, commented out code in `ApproveFreebies.cs` indicating a work-in-progress state." />
     <MESSAGE value="&quot;Refactor client status update and enable Freebies approval feature&quot;&#10;&#10;This commit includes changes across the client prospecting API, specifically updating the logic that checks the current status of a client and initiates the status change. The 'IsActive' check has been removed to streamline the update process. This allows for more flexibility when changing the status of a client.&#10;&#10;Additionally, in the Freebies feature, un-commented the code which had been previously suppressed, making the 'ApproveFreebies' feature available. It now supports image uploads and handles file-saving, providing a more robust solution for approving freebies. &#10;&#10;Both these changes are aimed at improving usability and simplifying the codebase." />
     <MESSAGE value="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called." />
     <MESSAGE value="Refactor Freebies, ApprovedFreebies, RejectedFreebies entities and relations&#10;&#10;Revised the structure of the `Freebies`, `ApprovedFreebies`, and `RejectedFreebies` entities, mainly focusing on renaming properties, refactoring foreign key relations, and eliminating unnecessary properties. This change aimed to simplify the domain model and align the entities more transparently with the business logic, leading to more clean and maintainable codebase. Several attribute names were updated to reduce confusion and improve readability. Query and transaction mechanisms have been adjusted to align with these changes ensuring smooth and efficient data flow." />
@@ -539,6 +564,8 @@
     <MESSAGE value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
     <MESSAGE value="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change." />
     <MESSAGE value="Migrations" />
-    <option name="LAST_COMMIT_MESSAGE" value="Migrations" />
+    <MESSAGE value="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;" />
+    <MESSAGE value="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage." />
   </component>
 </project>
