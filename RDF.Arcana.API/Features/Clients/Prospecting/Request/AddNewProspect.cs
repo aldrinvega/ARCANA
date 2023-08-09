@@ -33,7 +33,7 @@ public class AddNewProspect : ControllerBase
         [Required]
         public string BusinessName { get; set; }
         [Required] 
-        public string StoreType { get; set; }
+        public int StoreTypeId { get; set; }
         public int AddedBy { get; set; }
     }
     public class Handler : IRequestHandler<AddNewProspectCommand, Unit>
@@ -57,7 +57,7 @@ public class AddNewProspect : ControllerBase
                 await _context.Clients.FirstOrDefaultAsync(
                     x => x.BusinessName == request.BusinessName
                     && x.Fullname == request.OwnersName
-                    && x.StoreType == request.StoreType
+                    && x.StoreTypeId == request.StoreTypeId
                  , cancellationToken);
 
             if (existingProspectCustomer != null)
@@ -71,7 +71,7 @@ public class AddNewProspect : ControllerBase
                 Address = request.OwnersAddress,
                 PhoneNumber = request.PhoneNumber,
                 BusinessName = request.BusinessName,
-                StoreType = request.StoreType,
+                StoreTypeId = request.StoreTypeId,
                 RegistrationStatus = "Requested",
                 CustomerType = "Prospect",
                 IsActive = true,

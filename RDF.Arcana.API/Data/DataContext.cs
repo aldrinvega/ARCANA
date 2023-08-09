@@ -182,5 +182,10 @@ public class DataContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.ModifiedBy);
 
+        modelBuilder.Entity<Clients>()
+            .HasOne(x => x.StoreType)
+            .WithMany()
+            .HasForeignKey(x => x.StoreTypeId);
+
     }
 }

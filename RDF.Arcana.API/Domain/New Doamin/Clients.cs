@@ -17,7 +17,8 @@ public class Clients : BaseEntity
     public int? TermDays { get; set; }
     public int? DiscountId { get; set; }
     public string ClientType { get; set; }
-    public string StoreType { get; set; }
+    [ForeignKey("StoreType")]
+    public int? StoreTypeId { get; set; }
     public string RegistrationStatus { get; set; }
     public int? FixedDiscountId { get; set; }
     public int? VariableDiscountId { get; set; }
@@ -34,5 +35,6 @@ public class Clients : BaseEntity
     public virtual List<FreebieRequest> FreebiesRequests { get; set; }
     public virtual FixedDiscounts FixedDiscounts { get; set; }
     public virtual VariableDiscounts VariableDiscounts { get; set; }
+    public virtual StoreType StoreType { get; set; }
     
 }

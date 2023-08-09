@@ -21,7 +21,7 @@ public static class ProspectingMappingProfiles
             CustomerType = requestedClient.Client.CustomerType,
             AddedBy = requestedClient.Client.AddedBy,
             Address = requestedClient.Client.Address,
-            StoreType = requestedClient.Client.StoreType,
+            StoreType = requestedClient.Client.StoreType.StoreTypeName,
             IsActive = requestedClient.IsActive
         };
     }
@@ -39,7 +39,7 @@ public static class ProspectingMappingProfiles
             CustomerType = approvedClient.Client.CustomerType,
             AddedBy = approvedClient.Client.AddedBy,
             Address = approvedClient.Client.Address,
-            StoreType = approvedClient.Client.StoreType,
+            StoreType = approvedClient.Client.StoreType.StoreTypeName,
             IsActive = approvedClient.IsActive,
         };
     }
@@ -58,7 +58,7 @@ public static class ProspectingMappingProfiles
             AddedBy = rejectClient.Client.AddedBy,
             Address = rejectClient.Client.Address,
             IsActive = rejectClient.IsActive,
-            StoreType = rejectClient.Client.StoreType,
+            StoreType = rejectClient.Client.StoreType.StoreTypeName,
             Reason = rejectClient.Reason
         };
     }

@@ -716,9 +716,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("representative_position");
 
-                    b.Property<string>("StoreType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("store_type");
+                    b.Property<int?>("StoreTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("store_type_id");
 
                     b.Property<int?>("TermDays")
                         .HasColumnType("int")
@@ -747,6 +747,9 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("ModifiedBy")
                         .HasDatabaseName("ix_clients_modified_by");
+
+                    b.HasIndex("StoreTypeId")
+                        .HasDatabaseName("ix_clients_store_type_id");
 
                     b.HasIndex("VariableDiscountsId")
                         .HasDatabaseName("ix_clients_variable_discounts_id");
@@ -1580,6 +1583,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasForeignKey("ModifiedBy")
                         .HasConstraintName("fk_clients_users_modified_by_user_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.StoreType", "StoreType")
+                        .WithMany()
+                        .HasForeignKey("StoreTypeId")
+                        .HasConstraintName("fk_clients_store_types_store_type_id");
+
                     b.HasOne("RDF.Arcana.API.Domain.New_Doamin.VariableDiscounts", "VariableDiscounts")
                         .WithMany()
                         .HasForeignKey("VariableDiscountsId")
@@ -1590,6 +1598,8 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("ModifiedByUser");
 
                     b.Navigation("RequestedByUser");
+
+                    b.Navigation("StoreType");
 
                     b.Navigation("VariableDiscounts");
                 });
