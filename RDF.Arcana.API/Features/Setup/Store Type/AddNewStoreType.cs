@@ -48,7 +48,8 @@ public class AddNewStoreType : ControllerBase
             var storeType = new StoreType
             {
                 StoreTypeName = request.StoreTypeName,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                IsActive = true
             };
 
             await _context.StoreTypes.AddAsync(storeType, cancellationToken);
