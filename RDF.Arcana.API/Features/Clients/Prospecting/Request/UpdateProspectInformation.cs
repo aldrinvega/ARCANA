@@ -24,6 +24,7 @@ public class UpdateProspectInformation : ControllerBase
         public string OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string BusinessName { get; set; }
+        public int StoreTypeId { get; set; }
     }
     
     public class Handler : IRequestHandler<UpdateProspectRequestCommand, Unit>
@@ -57,6 +58,7 @@ public class UpdateProspectInformation : ControllerBase
             existingClient.Client.BusinessName = request.BusinessName;
             existingClient.IsApproved = false;
             existingClient.Client.RegistrationStatus = "Requested";
+            existingClient.Client.StoreTypeId = request.StoreTypeId;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
