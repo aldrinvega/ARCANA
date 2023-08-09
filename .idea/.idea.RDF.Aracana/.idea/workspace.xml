@@ -11,16 +11,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="&quot;Add new features, enhance existing ones and refactor related files&#10;&#10;Added UpdateFreebiesInformation feature to allow updating freebies. This not only enhances the functionality of the application but, also grants the flexibility to manipulate freebie data efficiently for users. Created UserRoleAlreadyTaggedException for error handling. Also, included 'User' field in some queries in GetUserRolesAsync. Enhanced IsTagged check and included the refaction in UserRoleMappingExtension. Removed unnecessary 'Domain' namespace from GetAllRequestedProspectAsync. In AddNewUSer.cs, added a new additional check to throw UserRoleAlreadyTaggedException if the user role is already in use. These amendments were a necessity to deliver extended functionality, more readable and reliable data to users, with the commitment to data consistency.&quot;">
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/StoreType.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/AddNewStoreType.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/Exception/StoreTypeAlreadyExistException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/Exception/StoreTypeNotFoundException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/GetStoreTypesAsync.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/UpdateStoreType.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/UpdateStoreTypeStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/59d3094d-2a71-4b76-8078-b470bd19cceb.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/c6b9033e-5800-43b4-b344-e9b79915b4d6.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/f09be194-8cbe-4f49-a0f2-9267778df72c.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectingRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/1913f98c-b7dd-4cb7-b494-78f92f6c73b9.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/56aaacf3-bf39-49df-b164-0adcec1e6527.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetRequestedProspectById.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/NotificationService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/NotificationService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,10 +70,14 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
@@ -71,6 +86,13 @@
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="ESSENTIAL" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
@@ -189,7 +211,8 @@
       <workItem from="1691213728220" duration="12548000" />
       <workItem from="1691283757837" duration="25956000" />
       <workItem from="1691364172915" duration="15340000" />
-      <workItem from="1691453275256" duration="17113000" />
+      <workItem from="1691453275256" duration="22630000" />
+      <workItem from="1691539892531" duration="6322000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -463,7 +486,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691473276058</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Update Freebie management and Prospecting enhancements&#10;&#10;Updated the Freebies management by allowing the removal of items from a Freebie request. Added a new status &quot;Released&quot; for Prospecting and improved the query result details for approved Freebies. &#10;&#10;These changes allow the application to track the status of Prospecting and the Freebie requests in a more detailed and efficient manner. Now it is possible to remove items from a Freebie request. For Prospecting, a new status &quot;Released&quot; was introduced to clearly distinguish the delivery status of the client. On top of that, the return details for approved Freebies was enhanced to include the FreebieRequestId and ClientId, providing more visibility and control for the management.">
+      <option name="closed" value="true" />
+      <created>1691474492201</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1691474492201</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -495,7 +526,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Add functionality to request freebies by approved clients&#10;&#10;A new feature has been added. This new functionality allows approved clients to request freebies. This involves changes in multiple files involving domain, status, data context, RequestFreebies, ApprovedClient, and User files. This change was necessary to extend the shopping facility to reward dedicated customers with freebies based on their engagement in order to improve customer retention and increase repeat purchases. As a result, a new model 'Freebies' has been introduced with relationships to multiple existing entities in the system such firebase status, user, items, and approved clients. Furthermore, extra caution has been implemented to avoid allowing rejected clients from requesting freebies. New exceptions have been readied to handle such failures. Such changes provide a comprehensive and safe update to the system as well as the database schema via migrations." />
     <MESSAGE value="Set default value for CreatedAt, fix id parameter, enhance RequestFreebies&#10;&#10;Set default value for CreatedAt field in Freebies model to prevent missing date records on creation. Changed &quot;FromQuery&quot; to &quot;FromRoute&quot; in UpdateTermDaysStatus method to correctly get id from the URI. Enhanced RequestFreebies method by adding &quot;AddedBy&quot; field to capture who requested the freebies and changed route method to HTTP POST, additionally, error handling was added to ensure better responses." />
     <MESSAGE value="Remove initial migration files&#10;&#10;Deleted the initial migration files 20230731024132_InitialCreate.cs and 20230731083505_AddClientRelatedEntity.cs. The removal was necessary as the initial schema migration was redundant and causing issues with database creation on new environments. The database schema will be managed through successive migrations." />
     <MESSAGE value="Refactor queries and add Freebie approval feature&#10;&#10;Removed unnecessary using statements in NotificationService.cs and refactored GetAllRequestedProspectAsync.cs to better reflect the active status of requested prospects, improving code readability. New file ApproveFreebies.cs introduced a method to approve freebie requests improving functionality in the Freebies feature." />
@@ -520,6 +550,7 @@
     <MESSAGE value="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop." />
     <MESSAGE value="&quot;Add functionality to update approved prospect&#10;&#10;A new functionality was added to update an approved prospect using `UpdateApprovedProspectCommand`. This feature was added to `UpdateApprovedProspect.cs` file in the prospecting features. This new functionality enables updating the details of any approved prospect.&#10;&#10;Also, file renaming took place for `UpdateProspectRequest.cs` to `UpdateProspectInformation.cs` for aligning the function name with its purpose, providing up-to-date and accurate information of the prospect. And a new condition was added to check for 'Approver Approval' when a client is being updated.&#10;&#10;These changes allow managing approved prospects more effectively, ensuring data consistency, readability, and maintainability.&quot;" />
     <MESSAGE value="&quot;Add new features, enhance existing ones and refactor related files&#10;&#10;Added UpdateFreebiesInformation feature to allow updating freebies. This not only enhances the functionality of the application but, also grants the flexibility to manipulate freebie data efficiently for users. Created UserRoleAlreadyTaggedException for error handling. Also, included 'User' field in some queries in GetUserRolesAsync. Enhanced IsTagged check and included the refaction in UserRoleMappingExtension. Removed unnecessary 'Domain' namespace from GetAllRequestedProspectAsync. In AddNewUSer.cs, added a new additional check to throw UserRoleAlreadyTaggedException if the user role is already in use. These amendments were a necessity to deliver extended functionality, more readable and reliable data to users, with the commitment to data consistency.&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Add new features, enhance existing ones and refactor related files&#10;&#10;Added UpdateFreebiesInformation feature to allow updating freebies. This not only enhances the functionality of the application but, also grants the flexibility to manipulate freebie data efficiently for users. Created UserRoleAlreadyTaggedException for error handling. Also, included 'User' field in some queries in GetUserRolesAsync. Enhanced IsTagged check and included the refaction in UserRoleMappingExtension. Removed unnecessary 'Domain' namespace from GetAllRequestedProspectAsync. In AddNewUSer.cs, added a new additional check to throw UserRoleAlreadyTaggedException if the user role is already in use. These amendments were a necessity to deliver extended functionality, more readable and reliable data to users, with the commitment to data consistency.&quot;" />
+    <MESSAGE value="Update Freebie management and Prospecting enhancements&#10;&#10;Updated the Freebies management by allowing the removal of items from a Freebie request. Added a new status &quot;Released&quot; for Prospecting and improved the query result details for approved Freebies. &#10;&#10;These changes allow the application to track the status of Prospecting and the Freebie requests in a more detailed and efficient manner. Now it is possible to remove items from a Freebie request. For Prospecting, a new status &quot;Released&quot; was introduced to clearly distinguish the delivery status of the client. On top of that, the return details for approved Freebies was enhanced to include the FreebieRequestId and ClientId, providing more visibility and control for the management." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update Freebie management and Prospecting enhancements&#10;&#10;Updated the Freebies management by allowing the removal of items from a Freebie request. Added a new status &quot;Released&quot; for Prospecting and improved the query result details for approved Freebies. &#10;&#10;These changes allow the application to track the status of Prospecting and the Freebie requests in a more detailed and efficient manner. Now it is possible to remove items from a Freebie request. For Prospecting, a new status &quot;Released&quot; was introduced to clearly distinguish the delivery status of the client. On top of that, the return details for approved Freebies was enhanced to include the FreebieRequestId and ClientId, providing more visibility and control for the management." />
   </component>
 </project>

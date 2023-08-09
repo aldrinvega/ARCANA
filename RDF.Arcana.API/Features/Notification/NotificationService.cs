@@ -41,14 +41,14 @@ public class NotificationService : ControllerBase
          
          public async Task<NotificationServiceQueryResult> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
          {
-             var getAllRequestedClient = _context.RequestedClients.Count(x => x.Status == 1 && x.IsActive == true);
-             var getAllArchivedRequestedClient = _context.RequestedClients.Count(x => x.Status == 1 && x.IsActive == false);
+             var getAllRequestedClient = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == true && x.IsApproved);
+             var getAllArchivedRequestedClient = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == false);
      
-             var getAllRejectedClients = _context.RejectedClients.Count(x => x.Status == 3 && x.IsActive == true);
-             var getAllArchivedRejectedClients = _context.RejectedClients.Count(x => x.Status == 3 && x.IsActive == false);
+             var getAllRejectedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsApproved == false);
+             var getAllArchivedRejectedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == false && x.Client.RegistrationStatus == "Rejected");
      
-             var getAllApprovedClients = _context.ApprovedClients.Count(x => x.Status == 2 && x.IsActive == true);
-             var getAllArchivedApprovedClients = _context.ApprovedClients.Count(x => x.Status == 2 && x.IsActive == false);
+             var getAllApprovedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == true && x.IsApproved == true);
+             var getAllArchivedApprovedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == true && x.IsApproved == true && x.Client.RegistrationStatus == "Approed");
              // var getAllRequestedFreebies = _context.FreebieRequests.Count(x => x.StatusId == 2 && x.IsActive == true);
      
              var result = new NotificationServiceQueryResult

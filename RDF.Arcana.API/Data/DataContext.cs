@@ -25,9 +25,9 @@ public class DataContext : DbContext
     public virtual DbSet<TermDays> TermDays { get; set; }
     public virtual DbSet<Clients> Clients { get; set; }
     public virtual DbSet<Status> Status { get; set; }
-    public virtual DbSet<RequestedClient> RequestedClients { get; set; }
-    public virtual DbSet<RejectedClients> RejectedClients { get; set; }
-    public virtual DbSet<ApprovedClient> ApprovedClients { get; set; }
+    // public virtual DbSet<RequestedClient> RequestedClients { get; set; }
+    // public virtual DbSet<RejectedClients> RejectedClients { get; set; }
+    // public virtual DbSet<ApprovedClient> ApprovedClients { get; set; }
     // public virtual DbSet<Freebies> Freebies { get; set; }
     // public virtual DbSet<FreebieRequest> FreebieRequests { get; set; }
     public virtual DbSet<ApprovedFreebies> ApprovedFreebies { get; set; }
@@ -37,6 +37,7 @@ public class DataContext : DbContext
     public virtual DbSet<VariableDiscounts> VariableDiscounts { get; set; }
     public virtual DbSet<FreebieItems> FreebieItems { get; set; }
     public virtual DbSet<FreebieRequest> FreebieRequests { get; set; }
+    public virtual DbSet<StoreType> StoreTypes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -140,9 +141,6 @@ public class DataContext : DbContext
             .WithOne(a => a.Client)
             .HasForeignKey(a => a.ClientId);
         
-        
-        
-        
         modelBuilder.Entity<Client>()
             .HasOne(x => x.AddedByUser)
             .WithOne()
@@ -163,53 +161,6 @@ public class DataContext : DbContext
             .WithOne()
             .HasForeignKey<Status>(x => x.AddedBy);
         
-        modelBuilder.Entity<RequestedClient>()
-            .HasOne(x => x.RequestedByUser)
-            .WithOne()
-            .HasForeignKey<RequestedClient>(x => x.RequestedBy);
-        
-        modelBuilder.Entity<ApprovedClient>()
-            .HasOne(x => x.ApprovedByUser)
-            .WithOne()
-            .HasForeignKey<ApprovedClient>(x => x.ApprovedBy);
-        
-        modelBuilder.Entity<RejectedClients>()
-            .HasOne(x => x.RejectedByUser)
-            .WithOne()
-            .HasForeignKey<RejectedClients>(x => x.RejectedBy);
-        
-        //////
-        
-        modelBuilder.Entity<RejectedClients>()
-            .HasOne(x => x.RejectedStatus)
-            .WithOne()
-            .HasForeignKey<RejectedClients>(x => x.Status);
-        
-        modelBuilder.Entity<RequestedClient>()
-            .HasOne(x => x.RequestStatus)
-            .WithOne()
-            .HasForeignKey<RequestedClient>(x => x.Status);
-
-        modelBuilder.Entity<ApprovedClient>()
-            .HasOne(x => x.ApprovedStatus)
-            .WithOne()
-            .HasForeignKey<ApprovedClient>(x => x.Status);
-        
-        modelBuilder.Entity<ApprovedClient>(entity =>
-        {
-            entity.HasOne(ac => ac.Client)
-                .WithMany()
-                .HasForeignKey(ac => ac.ClientId);
-
-            entity.HasOne(ac => ac.ApprovedByUser)
-                .WithMany()
-                .HasForeignKey(ac => ac.ApprovedBy);
-
-            entity.HasOne(ac => ac.ApprovedStatus)
-                .WithMany()
-                .HasForeignKey(ac => ac.Status);
-        });
-        
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(fr => fr.Approvals)
             .WithOne(a => a.FreebieRequest)
@@ -219,86 +170,17 @@ public class DataContext : DbContext
             .HasOne(a => a.FreebieRequest)
             .WithOne(fr => fr.Approvals)
             .OnDelete(DeleteBehavior.Restrict);
-        
 
-        // modelBuilder.Entity<FreebieRequest>(entity =>
-        // {
-        //     entity.HasOne(fr => fr.ApprovedClient)
-        //         .WithMany(ac => ac.Freebies)
-        //         .HasForeignKey(fr => fr.ClientId);
-        //
-        //     entity.HasOne(fr => fr.FreebieStatus)
-        //         .WithMany()
-        //         .HasForeignKey(fr => fr.StatusId);
-        //
-        //     entity.HasOne(fr => fr.AddedByUser)
-        //         .WithMany()
-        //         .HasForeignKey(fr => fr.AddedBy);
-        // });
-        //
-        // modelBuilder.Entity<Freebies>(entity =>
-        // {
-        //     entity.HasKey(e => e.Id);
-        //
-        //     entity.HasOne(f => f.ApprovedClient)
-        //         .WithMany()
-        //         .HasForeignKey(f => f.ClientId);
-        //
-        //     entity.HasOne(f => f.Item)
-        //         .WithMany()
-        //         .HasForeignKey(f => f.ItemId);
-        // });
-        //
-        // modelBuilder.Entity<FreebieRequest>(entity =>
-        // {
-        //     entity.HasKey(e => e.Id);
-        //
-        //     entity.HasOne(d => d.ApprovedClient)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.ClientId);
-        //
-        //     entity.HasOne(d => d.AddedByUser)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.AddedBy);
-        //
-        //     entity.HasOne(d => d.FreebieStatus)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.StatusId);
-        // });
-        //
-        // modelBuilder.Entity<ApprovedFreebies>(entity =>
-        // {
-        //     entity.HasKey(e => e.Id);
-        //
-        //     entity.HasOne(d => d.Freebie)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.FreebiesId);
-        //
-        //     entity.HasOne(d => d.AddedByUser)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.ApprovedBy);
-        //
-        //     entity.HasOne(d => d.FreebieStatus)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.StatusId);
-        // });
-        //
-        // modelBuilder.Entity<RejectedFreebies>(entity =>
-        // {
-        //     entity.HasKey(e => e.Id);
-        //
-        //     entity.HasOne(d => d.Freebie)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.FreebiesId);
-        //
-        //     entity.HasOne(d => d.AddedByUser)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.AddedBy);
-        //
-        //     entity.HasOne(d => d.FreebieStatus)
-        //         .WithMany()
-        //         .HasForeignKey(d => d.StatusId);
-        // });
+
+        modelBuilder.Entity<StoreType>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+        
+        modelBuilder.Entity<StoreType>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
 
     }
 }

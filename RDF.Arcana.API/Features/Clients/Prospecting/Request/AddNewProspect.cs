@@ -54,7 +54,11 @@ public class AddNewProspect : ControllerBase
             }
 
             var existingProspectCustomer =
-                await _context.Clients.FirstOrDefaultAsync(x => x.BusinessName == request.BusinessName, cancellationToken);
+                await _context.Clients.FirstOrDefaultAsync(
+                    x => x.BusinessName == request.BusinessName
+                    && x.Fullname == request.OwnersName
+                    && x.StoreType == request.StoreType
+                 , cancellationToken);
 
             if (existingProspectCustomer != null)
             {
