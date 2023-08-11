@@ -11,29 +11,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/BookingCoverages.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Direct/RegisterClient.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Booking Coverage/AddNewBookingCoverage.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Booking Coverage/Exceptions/BookingCoverageIsAlreadyExist.cs" afterDir="false" />
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="&quot;Removed Modules entity and refactored UserRole permissions&#10;&#10;In this commit, the 'Modules' entity has been removed as it was found to be unnecessary. The permissions system within the 'UserRoles' entity has been refactored from being a collection of 'ModuleId' to a collection of strings. This provides the same functionality with a simpler implementation. Other classes which used the 'Modules' class such as 'GetUsersAsync' and 'AuthenticateUser' have been updated to reflect these changes as well. The file 'Module.cs' was deleted.&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Client.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Client.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Modules.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserRoles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserRoles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/GetUserRolesAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/GetUserRolesAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UntagAndTagUserRolePermission.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UntagAndTagUserRolePermission.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UpdateUserRoleStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UpdateUserRoleStatus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UserRoleMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UserRoleMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,19 +50,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectInformation.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Setup/Store Type/AddNewStoreType.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -194,7 +164,7 @@
       <workItem from="1691364172915" duration="15340000" />
       <workItem from="1691453275256" duration="22630000" />
       <workItem from="1691539892531" duration="32630000" />
-      <workItem from="1691711841741" duration="4379000" />
+      <workItem from="1691711841741" duration="5994000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -532,7 +502,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691565633659</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="&quot;Removed Modules entity and refactored UserRole permissions&#10;&#10;In this commit, the 'Modules' entity has been removed as it was found to be unnecessary. The permissions system within the 'UserRoles' entity has been refactored from being a collection of 'ModuleId' to a collection of strings. This provides the same functionality with a simpler implementation. Other classes which used the 'Modules' class such as 'GetUsersAsync' and 'AuthenticateUser' have been updated to reflect these changes as well. The file 'Module.cs' was deleted.&quot;">
+      <option name="closed" value="true" />
+      <created>1691716667348</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1691716667348</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -564,7 +542,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called." />
     <MESSAGE value="Refactor Freebies, ApprovedFreebies, RejectedFreebies entities and relations&#10;&#10;Revised the structure of the `Freebies`, `ApprovedFreebies`, and `RejectedFreebies` entities, mainly focusing on renaming properties, refactoring foreign key relations, and eliminating unnecessary properties. This change aimed to simplify the domain model and align the entities more transparently with the business logic, leading to more clean and maintainable codebase. Several attribute names were updated to reduce confusion and improve readability. Query and transaction mechanisms have been adjusted to align with these changes ensuring smooth and efficient data flow." />
     <MESSAGE value="&quot;Remove InitialCreate migration file&quot;&#10;&#10;This commit removes the InitialCreate.cs from the RDF.Arcana.API/Migrations folder. This migration file generated code for creating all the tables for the initial app model. It was deleted since the model and its requirements have changed dramatically, so a new initial migration will be created to accurately reflect the new state and relationships of the models in the app. This also ensures the app's database is in sync with the current model." />
     <MESSAGE value="&quot;Add 'Reason' and 'StoreType' fields to client prospecting feature&#10;&#10;The 'Reason' field was added to the 'UpdateRejectProspectStatus', 'UpdateApprovedProspectStatus', 'UpdateRequestProspectStatus', and 'RejectProspectRequest' classes. This is to keep a record of the reason why a prospect status was updated.&#10;&#10;A 'StoreType' field is added to the 'AddNewProspectCommand' class to allow identifying the type of store that is being added as a new prospect. For usability and data tracking purposes, this additional information has become necessary.&quot;" />
@@ -589,6 +566,7 @@
     <MESSAGE value="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;" />
     <MESSAGE value="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage." />
     <MESSAGE value="Add Modules model and update relations with UserRoles&#10;&#10;Added a new entity `Modules` and updated relations in the `UserRoles` model. Replaced `Permissions` with `ModuleId` along with necessary changes in the corresponding feature classes. The intent is to better organize user privileges as modules rather than using an unstructured collection of permissions." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Modules model and update relations with UserRoles&#10;&#10;Added a new entity `Modules` and updated relations in the `UserRoles` model. Replaced `Permissions` with `ModuleId` along with necessary changes in the corresponding feature classes. The intent is to better organize user privileges as modules rather than using an unstructured collection of permissions." />
+    <MESSAGE value="&quot;Removed Modules entity and refactored UserRole permissions&#10;&#10;In this commit, the 'Modules' entity has been removed as it was found to be unnecessary. The permissions system within the 'UserRoles' entity has been refactored from being a collection of 'ModuleId' to a collection of strings. This provides the same functionality with a simpler implementation. Other classes which used the 'Modules' class such as 'GetUsersAsync' and 'AuthenticateUser' have been updated to reflect these changes as well. The file 'Module.cs' was deleted.&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Removed Modules entity and refactored UserRole permissions&#10;&#10;In this commit, the 'Modules' entity has been removed as it was found to be unnecessary. The permissions system within the 'UserRoles' entity has been refactored from being a collection of 'ModuleId' to a collection of strings. This provides the same functionality with a simpler implementation. Other classes which used the 'Modules' class such as 'GetUsersAsync' and 'AuthenticateUser' have been updated to reflect these changes as well. The file 'Module.cs' was deleted.&quot;" />
   </component>
 </project>
