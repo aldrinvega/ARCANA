@@ -6,8 +6,7 @@ namespace RDF.Arcana.API.Domain;
 public class UserRoles : BaseEntity
 {
     public string UserRoleName { get; set; }
-    // public ICollection<string> Permissions { get; set; }
-    public ICollection<int> ModuleId { get; set; }
+    public ICollection<string> Permissions { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; }
     [ForeignKey("AddedByUser")]
@@ -16,5 +15,4 @@ public class UserRoles : BaseEntity
     public bool IsActive { get; set; }
     public virtual User User { get; set; }
     public virtual User AddedByUser { get; set; }
-    public virtual ICollection<Modules> Modules { get; set; }
 }

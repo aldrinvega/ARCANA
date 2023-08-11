@@ -44,7 +44,7 @@ public class RejectProspectRequest : ControllerBase
                     x => x.ClientId == request.ProspectId && 
                          x.ApprovalType == "Approver Approval" && 
                          x.IsApproved == false && 
-                         x.IsActive == true, 
+                         x.IsActive == true,
                     cancellationToken);
 
             // If no matching client is found, throw an exception
@@ -94,7 +94,6 @@ public class RejectProspectRequest : ControllerBase
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
-
             return Conflict(response);
         }
     }

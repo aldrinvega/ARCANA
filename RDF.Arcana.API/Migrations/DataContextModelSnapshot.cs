@@ -127,7 +127,7 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("approved_freebies", (string)null);
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -141,6 +141,38 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<string>("BookingCoverage")
                         .HasColumnType("longtext")
                         .HasColumnName("booking_coverage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_booking_coverages");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_booking_coverages_added_by");
+
+                    b.ToTable("booking_coverages", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<int?>("BookingCoveragesId")
+                        .HasColumnType("int")
+                        .HasColumnName("booking_coverages_id");
 
                     b.Property<string>("BusinessAddress")
                         .HasColumnType("longtext")
@@ -228,6 +260,9 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("AddedBy")
                         .IsUnique()
                         .HasDatabaseName("ix_client_added_by");
+
+                    b.HasIndex("BookingCoveragesId")
+                        .HasDatabaseName("ix_client_booking_coverages_id");
 
                     b.HasIndex("DepartmentId")
                         .HasDatabaseName("ix_client_department_id");
@@ -652,6 +687,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("address");
 
+                    b.Property<int?>("BookingCoverageId")
+                        .HasColumnType("int")
+                        .HasColumnName("booking_coverage_id");
+
                     b.Property<string>("BusinessAddress")
                         .HasColumnType("longtext")
                         .HasColumnName("business_address");
@@ -741,6 +780,9 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("AddedBy")
                         .HasDatabaseName("ix_clients_added_by");
+
+                    b.HasIndex("BookingCoverageId")
+                        .HasDatabaseName("ix_clients_booking_coverage_id");
 
                     b.HasIndex("FixedDiscountsId")
                         .HasDatabaseName("ix_clients_fixed_discounts_id");
@@ -1370,6 +1412,18 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("FreebieStatus");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_booking_coverages_users_added_by");
+
+                    b.Navigation("AddedByUser");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
                 {
                     b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
@@ -1378,6 +1432,11 @@ namespace RDF.Arcana.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_client_users_added_by_user_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.BookingCoverages", "BookingCoverages")
+                        .WithMany()
+                        .HasForeignKey("BookingCoveragesId")
+                        .HasConstraintName("fk_client_booking_coverages_booking_coverages_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Department", "Department")
                         .WithMany()
@@ -1405,6 +1464,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_client_users_user_id");
 
                     b.Navigation("AddedByUser");
+
+                    b.Navigation("BookingCoverages");
 
                     b.Navigation("Department");
 
@@ -1573,6 +1634,11 @@ namespace RDF.Arcana.API.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_clients_users_requested_by_user_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.BookingCoverages", "BookingCoverages")
+                        .WithMany()
+                        .HasForeignKey("BookingCoverageId")
+                        .HasConstraintName("fk_clients_booking_coverages_booking_coverages_id");
+
                     b.HasOne("RDF.Arcana.API.Domain.New_Doamin.FixedDiscounts", "FixedDiscounts")
                         .WithMany()
                         .HasForeignKey("FixedDiscountsId")
@@ -1592,6 +1658,8 @@ namespace RDF.Arcana.API.Migrations
                         .WithMany()
                         .HasForeignKey("VariableDiscountsId")
                         .HasConstraintName("fk_clients_variable_discounts_variable_discounts_id");
+
+                    b.Navigation("BookingCoverages");
 
                     b.Navigation("FixedDiscounts");
 

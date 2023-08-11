@@ -22,6 +22,7 @@ public class Clients : BaseEntity
     public string RegistrationStatus { get; set; }
     public int? FixedDiscountId { get; set; }
     public int? VariableDiscountId { get; set; }
+    public int? BookingCoverageId { get; set; }
     public int AddedBy { get; set; }
     public int? ModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -36,5 +37,6 @@ public class Clients : BaseEntity
     public virtual FixedDiscounts FixedDiscounts { get; set; }
     public virtual VariableDiscounts VariableDiscounts { get; set; }
     public virtual StoreType StoreType { get; set; }
+    public virtual BookingCoverages BookingCoverages { get; set; }
     
 }

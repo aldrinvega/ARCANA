@@ -29,19 +29,13 @@ public class GetUserRolesAsync : ControllerBase
     {
         public int Id { get; set; }
         public string RoleName { get; set; }
-        public IEnumerable<Module> Permissions { get; set; }
+        public ICollection<string> Permissions { get; set; }
         public string AddedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
         public bool IsTagged { get; set; }
         public string User { get; set; }
-
-        public class Module
-        {
-            public int ModuleId { get; set; }
-            public string ModuleName { get; set; }
-        }
     }
     
     public class Handler : IRequestHandler<GetUserRoleAsyncQuery, PagedList<GetUserRoleAsyncResult>>

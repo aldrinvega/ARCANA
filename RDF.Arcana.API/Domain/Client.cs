@@ -20,10 +20,10 @@ public class Client : BaseEntity
     public bool Freezer { get; set; }
     public string CustomerType { get; set; }
     public bool DirectDelivery { get; set; }
-    public string BookingCoverage { get; set; }
     public string PaymentMethod { get; set; }
     public int? TermDaysId { get; set; }
     public int? DiscountId { get; set; }
+    
     
     //Navigational Properties
     public virtual User User { get; set; }
@@ -33,5 +33,6 @@ public class Client : BaseEntity
     public virtual Permit Permit { get; set; }
     public TermDays TermDays { get; set; }
     public Discount Discount { get; set; }
+    public virtual BookingCoverages BookingCoverages { get; set; }
     
 }

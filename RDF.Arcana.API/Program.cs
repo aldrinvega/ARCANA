@@ -1,5 +1,8 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Data;
@@ -16,22 +19,21 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 // );
 
 builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Program).Assembly));
-// builder.Services.AddControllers(
-// //
-// // config =>
-// //     {
-// //         var policy = new AuthorizationPolicyBuilder()
-// //             .RequireAuthenticatedUser()
-// //             .Build();
-// //
-// //         config.Filters.Add(new AuthorizeFilter(policy));
-// // //     }
+builder.Services.AddControllers(
+
+config =>
+    {
+        var policy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .Build();
+
+        config.Filters.Add(new AuthorizeFilter(policy));
+     }
+
+    
+).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 //
-//     
-// )
-//     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-// //
-// // builder.Services.AddControllers().AddFluentValidation()
+// builder.Services.AddControllers().AddFluentValidation()
 
 var connectionString = builder.Configuration.GetConnectionString("DevConnection");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));

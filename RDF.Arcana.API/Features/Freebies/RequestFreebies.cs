@@ -52,6 +52,16 @@ public class RequestFreebies : ControllerBase
              {
                  throw new Exception("Delivered na yan ayy");
              }
+
+             if (request.Freebies.Count > 5)
+             {
+                 throw new Exception("Freebie request is not exceeding to 5 items");
+             }
+
+             if (request.Freebies.Select(x => x.ItemId).Distinct().Count() != request.Freebies.Count)
+             {
+                 throw new Exception("Items cannot be repeated.");
+             }
              
              var newApproval = new Approvals
              {
@@ -75,14 +85,13 @@ public class RequestFreebies : ControllerBase
              _context.FreebieRequests.Add(freebieRequest);
              await _context.SaveChangesAsync(cancellationToken);
          
-             foreach (var freebie in request.Freebies)
+             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
+                      {
+                          RequestId = freebieRequest.Id,
+                          ItemId = freebie.ItemId,
+                          Quantity = freebie.Quantity
+                      }))
              {
-                 var freebieItem = new FreebieItems
-                 {
-                     RequestId = freebieRequest.Id,
-                     ItemId = freebie.ItemId,
-                     Quantity = freebie.Quantity
-                 };
                  await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
              }
              await _context.SaveChangesAsync(cancellationToken);
@@ -122,5 +131,4 @@ public class RequestFreebies : ControllerBase
             return Conflict(response);
         }
     }
-    
 }

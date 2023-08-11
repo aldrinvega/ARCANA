@@ -20,11 +20,7 @@ public static class MapperProfile
             DepartmentName = user.Department?.DepartmentName,
             LocationName = user.Location?.LocationName,
             RoleName = user.UserRoles?.UserRoleName,
-            Modules = user.UserRoles?.Modules.Select(x => new GetUsersAsync.GetUserAsyncQueryResult.Module
-            {
-                Id = x.Id,
-                ModuleName = x.ModuleName
-            })
+            Permission = user.UserRoles?.Permissions
         };
     }
 }

@@ -38,16 +38,17 @@ public class DataContext : DbContext
     public virtual DbSet<FreebieItems> FreebieItems { get; set; }
     public virtual DbSet<FreebieRequest> FreebieRequests { get; set; }
     public virtual DbSet<StoreType> StoreTypes { get; set; }
+    public virtual DbSet<BookingCoverages> BookingCoverages { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
         modelBuilder.Entity<UserRoles>()
-            .Property(e => e.ModuleId)
+            .Property(e => e.Permissions)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                v => JsonSerializer.Deserialize<List<int>>(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null),
                 new ValueComparer<ICollection<string>>(
                     (c1, c2) => c1.SequenceEqual(c2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
@@ -186,6 +187,16 @@ public class DataContext : DbContext
             .HasOne(x => x.StoreType)
             .WithMany()
             .HasForeignKey(x => x.StoreTypeId);
+        
+        modelBuilder.Entity<BookingCoverages>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+        
+        modelBuilder.Entity<Clients>()
+            .HasOne(x => x.BookingCoverages)
+            .WithMany()
+            .HasForeignKey(x => x.BookingCoverageId);
 
     }
 }

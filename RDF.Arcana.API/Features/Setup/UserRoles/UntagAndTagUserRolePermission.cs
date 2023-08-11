@@ -20,7 +20,7 @@ public class UntagAndTagUserRolePermission : ControllerBase
     public class UntagAndTagUserRoleCommand : IRequest<Unit>
     {
         public int UserRoleId { get; set; }
-        public ICollection<int> ModuleId { get; set; }
+        public ICollection<string> Permissions { get; set; }
         public string ModifiedBy { get; set; }
 
         public class Handler : IRequestHandler<UntagAndTagUserRoleCommand, Unit>
@@ -42,7 +42,7 @@ public class UntagAndTagUserRolePermission : ControllerBase
                     throw new UserRoleNotFoundException();
                 }
 
-                existingUseRole.ModuleId = request.ModuleId;
+                existingUseRole.Permissions = request.Permissions;
                 existingUseRole.UpdatedAt = DateTime.Now;
                 
                 _context.UserRoles.Update(existingUseRole);
