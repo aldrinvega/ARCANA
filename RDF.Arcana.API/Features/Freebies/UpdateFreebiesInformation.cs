@@ -9,6 +9,7 @@ namespace RDF.Arcana.API.Features.Freebies;
 [ApiController]
 
 public class UpdateFreebiesInformation : ControllerBase
+
 {
     private readonly IMediator _mediator;
 
@@ -82,6 +83,7 @@ public class UpdateFreebiesInformation : ControllerBase
                     freebies.FreebieRequest.FreebieItems.Add(
                         new FreebieItems
                         {
+                            RequestId = request.FreebieRequestId,
                             ItemId = requestFreebie.ItemId,
                             Quantity = requestFreebie.Quantity
                         });
