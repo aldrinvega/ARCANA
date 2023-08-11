@@ -54,11 +54,8 @@ public class GetAllApprovedProspectAsync : ControllerBase
         {
             IQueryable<Approvals> approvedProspect = _context.Approvals
                 .Include(x => x.FreebieRequest)
-                .Where(x => x.FreebieRequest.Status == null)
-                .Where(
-                    x => x.ApprovalType == "Approver Approval" &&
-                    x.IsActive == true &&
-                    x.IsApproved == true)
+                .Where(x => x.FreebieRequest == null) 
+                .Where(x => x.ApprovalType == "Approver Approval" && x.IsActive == true && x.IsApproved == true)
                 .Include(x => x.Client)
                 .ThenInclude(x => x.StoreType);
 
