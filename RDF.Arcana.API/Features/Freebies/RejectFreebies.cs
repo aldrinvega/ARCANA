@@ -21,6 +21,7 @@ public class RejectFreebies : ControllerBase
     {
         public int FreebieRequestId { get; set; }
         public int ClientId { get; set; }
+        public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<RejectFreebiesCommand, Unit>
@@ -55,18 +56,22 @@ public class RejectFreebies : ControllerBase
             }
 
             existingFreebies.FreebieRequest.Status = "Rejected";
+            existingFreebies.Client.RegistrationStatus = "Freebie Request Rejected";
+            existingFreebies.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }
 
-    [HttpPut("RejectFreebies")]
-    public async Task<IActionResult> RejectFreebie([FromQuery] RejectFreebiesCommand command)
+    [HttpPut("RejectFreebies/{id}")]
+    public async Task<IActionResult> RejectFreebie([FromBody] RejectFreebiesCommand command, [FromRoute]int id, [FromQuery] int freebieId)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
+            command.ClientId = id;
+            command.FreebieRequestId = freebieId;
             await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
             response.Messages.Add("Freebies is rejected successfully");

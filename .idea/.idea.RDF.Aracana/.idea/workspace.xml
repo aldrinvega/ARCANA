@@ -11,8 +11,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Optimized Approved Prospect query&#10;&#10;Extended the 'GetAllApprovedProspect' query to include 'FreebieRequest' items that are null. This improvement is targeting to deliver only the relevant and necessary data to the client, reducing the waste of resources. This change was prompted by observed inefficiencies in the current data retrieval process.">
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process.">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,8 +54,14 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" root0="SKIP_HIGHLIGHTING" />
@@ -169,7 +178,7 @@
       <workItem from="1691364172915" duration="15340000" />
       <workItem from="1691453275256" duration="22630000" />
       <workItem from="1691539892531" duration="32630000" />
-      <workItem from="1691711841741" duration="16198000" />
+      <workItem from="1691711841741" duration="17869000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />
@@ -547,7 +556,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691735111924</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process.">
+      <option name="closed" value="true" />
+      <created>1691735724571</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1691735724571</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -579,7 +596,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="&quot;Updated approval type and refactored prospect reject request&quot;&#10;&#10;This update brings changes to a couple of areas of the application. First, an adjustment has been made to the 'approval type' changing the 'For Delivery' approval type to 'For Freebie Approval'. This was done to ensure better representation of the current business logic.&#10;&#10;The save path has also been optimized to include the client's full name for unique identification in ReleasedProspectingRequest.cs. This change ensures straightforward and easy tracking of each client's requests.&#10;&#10;A variable named 'Permission' has been renamed to 'Permissions' in AddNewUserRoles.cs to enhance readability and code consistency across the application. &#10;&#10;Lastly, In the RejectProspectRequest.cs, the approval type setting line has been commented out and the HTTP PUT method 'Reject' has been refactored to include the RejectProspectRequestCommand as a parameter.&#10;&#10;All of these changes aim to improve the efficiency, readability, maintainability, and to better align with the application's business logic." />
     <MESSAGE value="Add 'Reason' field to prospecting entities&#10;&#10;A 'Reason' field was added to the RecordClient, GetAllRequestedProspectResult, GetAllRejectProspectResult entities. This field stores the reason why a prospect status was updated, thus providing more context for status changes. Furthermore, a filter was added in 'Handle' method of GetAllRequestedProspectQuery and GetAllRejectProspectQuery, to only get records where 'IsActive' is true. This change makes sure that only relevant data is fetched." />
     <MESSAGE value="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered." />
     <MESSAGE value="Refined status checks in prospect feature&#10;&#10;Enhanced the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' in order to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. The query now also checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions. All these changes are designed to ensure only relevant results are considered during the queries process, enhancing the overall efficiency of the prospecting feature." />
@@ -604,6 +620,7 @@
     <MESSAGE value="Refactor permissions system and enhance Freebies query&#10;&#10;This commit introduces two main changes: &#10;1. The 'Modules' entity, which was previously used for managing permissions within the 'UserRoles' entity, has been removed as it was found to be unnecessary. The permissions system within the 'UserRoles' entity has been refactored from being a collection of 'ModuleId' to a collection of strings. This change simplifies the implementation, while preserving functionality. All classes that utilized the 'Modules' entity, such as 'GetUsersAsync' and 'AuthenticateUser', have been updated accordingly.&#10;2. The 'GetRequestedFreebies' query result class in the 'Freebies' feature of the API has been expanded to include the 'ClientId' property. This enhancement provides additional information in the output, allowing clients to be uniquely identified by their IDs, resulting in more efficient data lookup and management." />
     <MESSAGE value="Update Freebies information and refactor permissions&#10;&#10;Modified the UpdateFreebiesInformation class to add RequestId to the FreebieItems. This detail offers more information about the freebies request, helping in data tracking and management. Also, refactored permission system for UserRoles. The previously used 'Modules' entity was found superfluous and replaced with a collection of strings. This change simplifies implementation and maintains functionality." />
     <MESSAGE value="Optimized Approved Prospect query&#10;&#10;Extended the 'GetAllApprovedProspect' query to include 'FreebieRequest' items that are null. This improvement is targeting to deliver only the relevant and necessary data to the client, reducing the waste of resources. This change was prompted by observed inefficiencies in the current data retrieval process." />
-    <option name="LAST_COMMIT_MESSAGE" value="Optimized Approved Prospect query&#10;&#10;Extended the 'GetAllApprovedProspect' query to include 'FreebieRequest' items that are null. This improvement is targeting to deliver only the relevant and necessary data to the client, reducing the waste of resources. This change was prompted by observed inefficiencies in the current data retrieval process." />
+    <MESSAGE value="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process." />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process." />
   </component>
 </project>

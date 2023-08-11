@@ -44,7 +44,9 @@ public class RequestFreebies : ControllerBase
         public async Task<Unit> Handle(RequestFreebiesCommand request, CancellationToken cancellationToken)
          {
              var validateClient =
-                 await _context.FreebieRequests.FirstOrDefaultAsync(x =>
+                 await _context.FreebieRequests
+                     .Include(x => x.Clients)
+                     .FirstOrDefaultAsync(x =>
                      x.ClientId == request.ClientId &&
                         x.IsDelivered == true,
              cancellationToken);
@@ -62,6 +64,8 @@ public class RequestFreebies : ControllerBase
              {
                  throw new Exception("Items cannot be repeated.");
              }
+
+             validateClient.Clients.RegistrationStatus = "Freebie Requested";
              
              var newApproval = new Approvals
              {
