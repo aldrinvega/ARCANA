@@ -9,9 +9,9 @@ namespace RDF.Arcana.API.Features.Freebies;
 
 public class RejectFreebies : ControllerBase
 {
-    private readonly Mediator _mediator;
+    private readonly IMediator _mediator;
 
-    public RejectFreebies(Mediator mediator)
+    public RejectFreebies(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -40,7 +40,8 @@ public class RejectFreebies : ControllerBase
                 .ThenInclude(x => x.Items)
                 .Where(
                     x => x.IsActive &&
-                    x.IsApproved == false)
+                    x.IsApproved == false &&
+                    x.ApprovalType == "For Freebie Approval")
                 .FirstOrDefaultAsync( x => x.FreebieRequest.Id == request.FreebieRequestId, cancellationToken);
 
             if (existingFreebies is null)

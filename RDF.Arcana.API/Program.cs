@@ -21,14 +21,14 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Program).Assembly));
 builder.Services.AddControllers(
 
-config =>
-    {
-        var policy = new AuthorizationPolicyBuilder()
-            .RequireAuthenticatedUser()
-            .Build();
+//config =>
+//    {
+//        var policy = new AuthorizationPolicyBuilder()
+//            .RequireAuthenticatedUser()
+//            .Build();
 
-        config.Filters.Add(new AuthorizeFilter(policy));
-    }
+//        config.Filters.Add(new AuthorizeFilter(policy));
+//    }
 
     
 ).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
