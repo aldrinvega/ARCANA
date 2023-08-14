@@ -61,7 +61,7 @@ public class GetAllRejectedFreebies : ControllerBase
                 .Include(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
-                .Where(x => x.IsApproved == true)
+                .Where(x => x.IsApproved == false)
                 .Where(x => x.FreebieRequest.Status == "Rejected");
 
             if (!string.IsNullOrEmpty(request.Search))
