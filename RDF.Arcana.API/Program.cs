@@ -28,7 +28,7 @@ config =>
             .Build();
 
         config.Filters.Add(new AuthorizeFilter(policy));
-     }
+    }
 
     
 ).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

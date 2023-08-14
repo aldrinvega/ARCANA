@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using MySqlX.XDevAPI;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
@@ -10,9 +9,9 @@ namespace RDF.Arcana.API.Features.Freebies;
 
 public class RejectFreebies : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly Mediator _mediator;
 
-    public RejectFreebies(IMediator mediator)
+    public RejectFreebies(Mediator mediator)
     {
         _mediator = mediator;
     }

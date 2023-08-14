@@ -50,6 +50,9 @@ public class RequestFreebies : ControllerBase
                      x.ClientId == request.ClientId &&
                         x.IsDelivered == true,
              cancellationToken);
+
+            var existingClient = await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
+
              if (validateClient is not null)
              {
                  throw new Exception("Delivered na yan ayy");
@@ -64,8 +67,6 @@ public class RequestFreebies : ControllerBase
              {
                  throw new Exception("Items cannot be repeated.");
              }
-
-             validateClient.Clients.RegistrationStatus = "Freebie Requested";
              
              var newApproval = new Approvals
              {
@@ -74,7 +75,7 @@ public class RequestFreebies : ControllerBase
                  IsApproved = false,
                  IsActive = true
              };
-             _context.Approvals.Add(newApproval);
+             await _context.Approvals.AddAsync(newApproval, cancellationToken);
              await _context.SaveChangesAsync(cancellationToken);
              
              var transactionNumber = GenerateTransactionNumber();
@@ -88,8 +89,10 @@ public class RequestFreebies : ControllerBase
              };
              _context.FreebieRequests.Add(freebieRequest);
              await _context.SaveChangesAsync(cancellationToken);
-         
-             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
+
+            existingClient.RegistrationStatus = "Freebie Requested";
+
+            foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                       {
                           RequestId = freebieRequest.Id,
                           ItemId = freebie.ItemId,

@@ -40,6 +40,7 @@ public class DataContext : DbContext
     public virtual DbSet<StoreType> StoreTypes { get; set; }
     public virtual DbSet<BookingCoverages> BookingCoverages { get; set; }
 
+    public virtual DbSet<ModeOfPayment> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -119,9 +120,6 @@ public class DataContext : DbContext
             .WithOne()
             .HasForeignKey<UserRoles>(u => u.AddedBy);
 
-
-
-
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.RequestedByUser)
             .WithMany()
@@ -171,7 +169,6 @@ public class DataContext : DbContext
             .HasOne(a => a.FreebieRequest)
             .WithOne(fr => fr.Approvals)
             .OnDelete(DeleteBehavior.Restrict);
-
 
         modelBuilder.Entity<StoreType>()
             .HasOne(x => x.AddedByUser)

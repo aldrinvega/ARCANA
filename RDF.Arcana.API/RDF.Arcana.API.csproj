@@ -18,7 +18,7 @@
         <PackageReference Include="MediatR" Version="12.1.1" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjectionFixed" Version="5.1.2" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.7"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
           <PrivateAssets>all</PrivateAssets>
@@ -32,7 +32,7 @@
         <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Design" Version="1.1.2" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -48,6 +48,7 @@
     <ItemGroup>
       <Folder Include="Features\Authenticate\Exception\" />
       <Folder Include="Features\Items\" />
+      <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
     </ItemGroup>
 
 </Project>
