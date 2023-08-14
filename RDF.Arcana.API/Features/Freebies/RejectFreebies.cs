@@ -19,7 +19,6 @@ public class RejectFreebies : ControllerBase
     public class RejectFreebiesCommand : IRequest<Unit>
     {
         public int FreebieRequestId { get; set; }
-        public int ClientId { get; set; }
         public string Reason { get; set; }
     }
     
@@ -42,7 +41,7 @@ public class RejectFreebies : ControllerBase
                 .Where(
                     x => x.IsActive &&
                     x.IsApproved == false)
-                .FirstOrDefaultAsync(x => x.ClientId == request.ClientId && x.FreebieRequest.Id == request.FreebieRequestId, cancellationToken);
+                .FirstOrDefaultAsync( x => x.FreebieRequest.Id == request.FreebieRequestId, cancellationToken);
 
             if (existingFreebies is null)
             {
@@ -64,13 +63,12 @@ public class RejectFreebies : ControllerBase
     }
 
     [HttpPut("RejectFreebies/{id}")]
-    public async Task<IActionResult> RejectFreebie([FromBody] RejectFreebiesCommand command, [FromRoute]int id, [FromQuery] int freebieId)
+    public async Task<IActionResult> RejectFreebie([FromBody] RejectFreebiesCommand command, [FromRoute]int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-            command.ClientId = id;
-            command.FreebieRequestId = freebieId;
+            command.FreebieRequestId = id;
             await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
             response.Messages.Add("Freebies is rejected successfully");
