@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MineralWaterMonitoring.Features.Authenticate;
 using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Features.Authenticate;
