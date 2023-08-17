@@ -195,5 +195,25 @@ public class DataContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.BookingCoverageId);
 
+        modelBuilder.Entity<Clients>()
+            .HasOne(x => x.ModeOfPayments)
+            .WithMany()
+            .HasForeignKey(x => x.ModeOfPayment);
+
+        modelBuilder.Entity<ModeOfPayment>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<Clients>()
+            .HasOne(x => x.Term)
+            .WithMany()
+            .HasForeignKey(x => x.Terms);
+
+        modelBuilder.Entity<Terms>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
     }
 }

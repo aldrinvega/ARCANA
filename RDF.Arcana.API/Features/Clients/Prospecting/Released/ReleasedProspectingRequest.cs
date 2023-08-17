@@ -21,6 +21,7 @@ public class ReleasedProspectingRequest : ControllerBase
     {
         public int ClientId { get; set; }
         public IFormFile PhotoProof { get; set; }
+        public IFormFile ESignature { get; set; }
     }
     
     public class Handler : IRequestHandler<ReleasedProspectingRequestCommand, Unit>
@@ -54,7 +55,7 @@ public class ReleasedProspectingRequest : ControllerBase
             
             if (request.PhotoProof != null)
             {
-                var savePath = Path.Combine($@"F:\images\{validateClientRequest.Client.Fullname}", request.PhotoProof.FileName);
+                var savePath = Path.Combine($@"F:\images\{validateClientRequest.Client.BusinessName}", request.PhotoProof.FileName);
             
                 var directory = Path.GetDirectoryName(savePath);
                 if (directory != null && !Directory.Exists(directory))
@@ -64,6 +65,20 @@ public class ReleasedProspectingRequest : ControllerBase
                 await request.PhotoProof.CopyToAsync(stream, cancellationToken);
 
                 validateClientRequest.FreebieRequest.PhotoProofPath = savePath;
+            }
+
+            if (request.ESignature != null)
+            {
+                var savePath = Path.Combine($@"F:\images\{validateClientRequest.Client.BusinessName}", request.ESignature.FileName);
+
+                var directory = Path.GetDirectoryName(savePath);
+                if (directory != null && !Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                await using var stream = System.IO.File.Create(savePath);
+                await request.ESignature.CopyToAsync(stream, cancellationToken);
+
+                validateClientRequest.FreebieRequest.ESignaturePath = savePath;
             }
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -84,7 +99,7 @@ public class ReleasedProspectingRequest : ControllerBase
 
             await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Freebie Request has been approved");
+            response.Messages.Add("Freebie Request has been released");
             response.Success = true;
             return Ok(response);
         }

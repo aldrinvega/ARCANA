@@ -12,6 +12,7 @@ public class Clients : BaseEntity
     public string RepresentativeName { get; set; }
     public string RepresentativePosition { get; set; }
     public string BusinessAddress { get; set; }
+    public int Cluster { get; set; }
     public bool Freezer { get; set; }
     public string CustomerType { get; set; }
     public int? TermDays { get; set; }
@@ -20,6 +21,9 @@ public class Clients : BaseEntity
     [ForeignKey("StoreType")]
     public int? StoreTypeId { get; set; }
     public string RegistrationStatus { get; set; }
+    public int? Terms { get; set; }
+    public int? ModeOfPayment { get; set; }
+    public bool? DirectDelivery { get; set; }
     public int? FixedDiscountId { get; set; }
     public int? VariableDiscountId { get; set; }
     public int? BookingCoverageId { get; set; }
@@ -28,7 +32,6 @@ public class Clients : BaseEntity
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsActive { get; set; }
-    
     public virtual User ModifiedByUser { get; set; }
     public virtual User RequestedByUser { get; set; }
     public virtual List<ClientDocuments> ClientDocuments { get; set; }
@@ -38,5 +41,9 @@ public class Clients : BaseEntity
     public virtual VariableDiscounts VariableDiscounts { get; set; }
     public virtual StoreType StoreType { get; set; }
     public virtual BookingCoverages BookingCoverages { get; set; }
-    
+    public virtual ModeOfPayment ModeOfPayments { get; set; }
+    public virtual Terms Term { get; set; }
+
+
+
 }

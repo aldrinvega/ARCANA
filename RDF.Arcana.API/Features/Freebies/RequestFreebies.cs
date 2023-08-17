@@ -27,7 +27,6 @@ public class RequestFreebies : ControllerBase
         public class UpdateFreebie
         {
             public int ItemId { get; set; }
-            public int Quantity { get; set; }
         }
         public int AddedBy { get; set; }
     }
@@ -96,7 +95,7 @@ public class RequestFreebies : ControllerBase
                       {
                           RequestId = freebieRequest.Id,
                           ItemId = freebie.ItemId,
-                          Quantity = freebie.Quantity
+                          Quantity = 1
                       }))
              {
                  await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
@@ -113,8 +112,8 @@ public class RequestFreebies : ControllerBase
         }
     }
     
-    [HttpPost("RequestFreebies")]
-    public async Task<IActionResult> Add(RequestFreebiesCommand command)
+    [HttpPost("RequestFreebies/{id}")]
+    public async Task<IActionResult> Add(RequestFreebiesCommand command, [FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
@@ -124,6 +123,8 @@ public class RequestFreebies : ControllerBase
             {
                 command.AddedBy = userId;
             }
+
+            command.ClientId = id;
 
             await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;

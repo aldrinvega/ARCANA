@@ -1,15 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain.New_Doamin;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Clients.Direct;
 
-[Route("api/Prospecting")]
+[Route("api/Registration")]
 [ApiController]
 
 public class RegisterClient : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public RegisterClient(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
 
     public class RegisterClientCommand : IRequest<Unit>
     {
@@ -17,13 +24,7 @@ public class RegisterClient : ControllerBase
         public string BusinessAdress { get; set; }
         public string AuthrizedRepreesentative { get; set; }
         public string AuthrizedRepreesentativePosition { get; set; }
-        public bool Freezer  { get; set; }
-        public string TypeofCustomer { get; set; }
-        public bool DirectDelivery { get; set; }
-        public int? BookingCoverage { get; set; }
-        public int? Terms { get; set; }
-        public int? FirxedDiscount { get; set; }
-        public int? VariableDiscount { get; set; }
+        public int Cluster { get; set; }
 
         public class Handler : IRequestHandler<RegisterClientCommand, Unit>
         {
@@ -45,19 +46,37 @@ public class RegisterClient : ControllerBase
                     throw new ClientIsNotFound();
                 }
 
-                var clientInfo = new Domain.New_Doamin.Clients
-                {
-                    BusinessAddress = request.BusinessAdress,
-                    RepresentativeName = request.AuthrizedRepreesentative,
-                    RepresentativePosition = request.AuthrizedRepreesentativePosition,
-                };
+                existingClient.BusinessAddress = request.BusinessAdress;
+                existingClient.RepresentativeName = request.AuthrizedRepreesentative;
+                existingClient.RepresentativePosition = request.AuthrizedRepreesentativePosition;
+                existingClient.Cluster = request.Cluster;
 
-                await _conntext.Clients.AddAsync(clientInfo, cancellationToken);
                 await _conntext.SaveChangesAsync(cancellationToken);
 
                 return Unit.Value;
 
             }
+        }
+    }
+
+    [HttpPut("RegisterClient/{id}")]
+    public async Task<IActionResult> Register([FromBody]RegisterClientCommand request, [FromRoute] int id, CancellationToken cancellationToken)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            request.ClientId = id;
+            await _mediator.Send(request, cancellationToken);
+            response.Status = StatusCodes.Status200OK;
+            response.Success = true;
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            response.Status = StatusCodes.Status404NotFound;
+            response.Messages.Add(ex.Message);
+
+            return Conflict(response);
         }
     }
 }

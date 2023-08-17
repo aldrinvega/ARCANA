@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RDF.Arcana.API.Data;
 
@@ -10,9 +11,11 @@ using RDF.Arcana.API.Data;
 namespace RDF.Arcana.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230816143656_AdjustClientEntityTermsAndConditions")]
+    partial class AdjustClientEntityTermsAndConditions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -919,10 +922,6 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int")
                         .HasColumnName("client_id");
-
-                    b.Property<string>("ESignaturePath")
-                        .HasColumnType("longtext")
-                        .HasColumnName("e_signature_path");
 
                     b.Property<bool>("IsDelivered")
                         .HasColumnType("tinyint(1)")
