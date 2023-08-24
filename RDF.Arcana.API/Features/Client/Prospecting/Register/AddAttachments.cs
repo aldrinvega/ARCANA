@@ -4,7 +4,7 @@ using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain.New_Doamin;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Register.Exception
+namespace RDF.Arcana.API.Features.Client.Prospecting.Register
 {
     [Route("api/Registration")]
     [ApiController]
@@ -21,15 +21,14 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register.Exception
         {
             public int ClientId { get; set; }
 
-
             public List<IFormFile> AttachMents { get; set; }
 
-          
+
             ////public class Attachments
             ////{ 
             ////    public IFormFile Document { get; set; }
             ////}
-            
+
         }
 
         public class Handler : IRequestHandler<AddAttachedmentsCommand, Unit>
@@ -78,13 +77,15 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register.Exception
                         //exisitingClient.DocumentType = documents.DocumentType;
                     }
                 }
+
+                exisitingClient.RegistrationStatus = "Registered";
                 await _context.SaveChangesAsync(cancellationToken);
                 return Unit.Value;
             }
         }
 
         [HttpPut("AddAttachedments/{id}")]
-        public async Task<IActionResult> AddRequirements([FromForm]AddAttachedmentsCommand command, [FromRoute]int id)
+        public async Task<IActionResult> AddRequirements([FromForm] AddAttachedmentsCommand command, [FromRoute] int id)
         {
             var response = new QueryOrCommandResult<object>();
             try
@@ -96,7 +97,7 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register.Exception
                 response.Status = StatusCodes.Status200OK;
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 response.Messages.Add($"{ex.Message}");
                 response.Status = StatusCodes.Status404NotFound;

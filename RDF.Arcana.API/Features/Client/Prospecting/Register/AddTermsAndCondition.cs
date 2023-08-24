@@ -55,8 +55,8 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
                     existingClient.BookingCoverageId = request.BookingCoverage;
                     existingClient.ModeOfPayment = request.ModeOfPayment;
                     existingClient.Terms = request.Terms;
-                    existingClient.VariableDiscountId = request.VaribaleDiscount;
-                    existingClient.FixedDiscountId = request.FixedDiscount;
+                    existingClient.VariableDiscountId = request.VaribaleDiscount ?? null;
+                    existingClient.FixedDiscountId = request.FixedDiscount ?? null;
 
                     await _context.SaveChangesAsync(cancellationToken);
                     return Unit.Value;

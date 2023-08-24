@@ -45,6 +45,7 @@ public class RequestFreebies : ControllerBase
              var validateClient =
                  await _context.FreebieRequests
                      .Include(x => x.Clients)
+                     .Include(x => x.FreebieItems)
                      .FirstOrDefaultAsync(x =>
                      x.ClientId == request.ClientId &&
                         x.IsDelivered == true,
@@ -66,7 +67,7 @@ public class RequestFreebies : ControllerBase
              {
                  throw new Exception("Items cannot be repeated.");
              }
-             
+
              var newApproval = new Approvals
              {
                  ClientId = request.ClientId,

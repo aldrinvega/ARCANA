@@ -44,6 +44,7 @@ public class Clients : BaseEntity
     public virtual ModeOfPayment ModeOfPayments { get; set; }
     public virtual Terms Term { get; set; }
 
+    
 
 
 }

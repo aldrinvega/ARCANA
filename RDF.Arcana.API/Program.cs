@@ -1,8 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Data;
@@ -97,7 +95,6 @@ builder.Services.AddAuthentication(authOptions =>
         };
         // jwtOptions.EventsType = typeof(MyAuthenticationFailureHandler);
     });
-
 
 // builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationMiddlewareResultHandler>();
 // builder.Services.AddScoped<MyAuthenticationFailureHandler>();

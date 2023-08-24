@@ -13,7 +13,38 @@
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/406cba46-4bc9-4ee7-8a51-dcd5bdd0a23e.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/5f037795-c378-49ae-8e90-1b5b7537132c.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/9518f90a-35cb-41a9-8569-883afebbb379.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/d0eb21f6-019a-47b6-848c-b7b21f70c859.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/New Doamin/Clients.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/ApproveProspectRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspect.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Approved/UpdateApprovedProspectStatus.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Exception/ClientIsNotFound.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Exception/NoProspectClientFound.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Register/AddTermsAndCondition.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Register/Exception/AddAttachments.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Register/Exception/NoClientFoundException.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Register/RegisterClient.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/RejectProspectRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Rejected/UpdateRejectProspectStatus.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectMappingExtension.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Released/ReleasedProspectingRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/AddNewProspect.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateProspectInformation.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Clients/Prospecting/Request/UpdateRequestProspectStatus.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,6 +210,8 @@
       <workItem from="1691539892531" duration="32630000" />
       <workItem from="1691711841741" duration="21451000" />
       <workItem from="1691910922868" duration="1000" />
+      <workItem from="1692320781568" duration="24000" />
+      <workItem from="1692320823551" duration="302000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
       <option name="closed" value="true" />

@@ -50,7 +50,6 @@ public class UpdateFreebiesInformation : ControllerBase
                 .FirstOrDefaultAsync(
                     x => x.ClientId == request.ClientId
                          && x.ApprovalType == "For Freebie Approval"
-                         && x.IsActive
                          && x.FreebieRequest.Id == request.FreebieRequestId
                          && x.FreebieRequest.IsDelivered == false,
                     cancellationToken);

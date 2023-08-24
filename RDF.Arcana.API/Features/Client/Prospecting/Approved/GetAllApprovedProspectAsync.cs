@@ -32,7 +32,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
         public int AddedBy { get; set; }
-        public string CustomerType { get; set; }
+        public string Origin { get; set; }
         public string BusinessName { get; set; }
         public string Address { get; set; }
         public string StoreType { get; set; }
