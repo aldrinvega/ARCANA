@@ -48,7 +48,6 @@ public class AddNewProspectCommand : IRequest<AddNewProspectResult>
     public int StoreTypeId { get; set; }
     public int AddedBy { get; set; }
 }
-
 public class AddNewProspectResult
 {
     public int Id { get; set; }
@@ -59,21 +58,21 @@ public class AddNewProspectResult
     public string StoreTypeName { get; set; }
     public int AddedBy { get; set; }
 }
-    public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
+public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
+{
+    private readonly DataContext _context;
+
+    private const string APPROVED_STATUS = "Approved";
+    private const string PROSPECT_TYPE = "Prospect";
+    private const string APPROVER_APPROVAL = "Approver Approval";
+
+    public Handler(DataContext context)
     {
-        private readonly DataContext _context;
+        _context = context;
+    }
 
-        private const string APPROVED_STATUS = "Approved";
-        private const string PROSPECT_TYPE = "Prospect";
-        private const string APPROVER_APPROVAL = "Approver Approval";
-
-        public Handler(DataContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<AddNewProspectResult> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
-        {
+    public async Task<AddNewProspectResult> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
+    {
 
         var validationErrors = new List<string>();
 
@@ -101,31 +100,31 @@ public class AddNewProspectResult
         }
 
         var prospectingClients = new Domain.New_Doamin.Clients
-            {
-                Fullname = request.OwnersName,
-                Address = request.OwnersAddress,
-                PhoneNumber = request.PhoneNumber,
-                BusinessName = request.BusinessName,
-                StoreTypeId = request.StoreTypeId,
-                RegistrationStatus = APPROVED_STATUS,
-                CustomerType = PROSPECT_TYPE,
-                IsActive = true,
-                AddedBy = request.AddedBy
-            };
-            
-            await _context.Clients.AddAsync(prospectingClients, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-            var approval = new Approvals
-            {
-                ClientId = prospectingClients.Id,
-                ApprovalType = APPROVER_APPROVAL,
-                IsApproved = true,
-                IsActive = true,
-            };
+        {
+            Fullname = request.OwnersName,
+            Address = request.OwnersAddress,
+            PhoneNumber = request.PhoneNumber,
+            BusinessName = request.BusinessName,
+            StoreTypeId = request.StoreTypeId,
+            RegistrationStatus = APPROVED_STATUS,
+            CustomerType = PROSPECT_TYPE,
+            IsActive = true,
+            AddedBy = request.AddedBy
+        };
 
-            // Add the new request to the database
-            await _context.Approvals.AddAsync(approval, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+        await _context.Clients.AddAsync(prospectingClients, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        var approval = new Approvals
+        {
+            ClientId = prospectingClients.Id,
+            ApprovalType = APPROVER_APPROVAL,
+            IsApproved = true,
+            IsActive = true,
+        };
+
+        // Add the new request to the database
+        await _context.Approvals.AddAsync(approval, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return new AddNewProspectResult
         {
@@ -137,18 +136,18 @@ public class AddNewProspectResult
             AddedBy = prospectingClients.AddedBy
         };
     }
-    }
+}
 
 [Route("api/Prospecting")]
 [ApiController]
-    public class AddNewProspect : ControllerBase
-{ 
-        private readonly IMediator _mediator;
+public class AddNewProspect : ControllerBase
+{
+    private readonly IMediator _mediator;
 
-        public AddNewProspect(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+    public AddNewProspect(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
 
     [HttpPost("AddNewProspect")]
     public async Task<IActionResult> Add(AddNewProspectCommand command)

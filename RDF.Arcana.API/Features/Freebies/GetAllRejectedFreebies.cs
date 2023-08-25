@@ -105,7 +105,7 @@ public class GetAllRejectedFreebies : ControllerBase
                 Status = StatusCodes.Status200OK,
                 Data = new
                 {
-                    approvedFreebies = rejectedFreebies,
+                    rejectedFreebies,
                     rejectedFreebies.CurrentPage,
                     rejectedFreebies.PageSize,
                     rejectedFreebies.TotalCount,

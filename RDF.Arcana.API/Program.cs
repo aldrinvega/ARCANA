@@ -33,12 +33,13 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("DevConnection");
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
+var connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+//var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<DataContext>(x =>
 {
-    if (connectionString != null) x.UseMySql(connectionString, serverVersion).UseSnakeCaseNamingConvention();
+    if (connectionString != null) x.UseMySQL(connectionString).UseSnakeCaseNamingConvention();
 });
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

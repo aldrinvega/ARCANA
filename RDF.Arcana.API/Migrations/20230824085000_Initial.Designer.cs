@@ -11,8 +11,8 @@ using RDF.Arcana.API.Data;
 namespace RDF.Arcana.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230809011845_AddStatusOnStoreTypeEntitiy")]
-    partial class AddStatusOnStoreTypeEntitiy
+    [Migration("20230824085000_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("approved_freebies", (string)null);
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -144,6 +144,38 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<string>("BookingCoverage")
                         .HasColumnType("longtext")
                         .HasColumnName("booking_coverage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_booking_coverages");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_booking_coverages_added_by");
+
+                    b.ToTable("booking_coverages", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<int?>("BookingCoveragesId")
+                        .HasColumnType("int")
+                        .HasColumnName("booking_coverages_id");
 
                     b.Property<string>("BusinessAddress")
                         .HasColumnType("longtext")
@@ -231,6 +263,9 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("AddedBy")
                         .IsUnique()
                         .HasDatabaseName("ix_client_added_by");
+
+                    b.HasIndex("BookingCoveragesId")
+                        .HasDatabaseName("ix_client_booking_coverages_id");
 
                     b.HasIndex("DepartmentId")
                         .HasDatabaseName("ix_client_department_id");
@@ -345,11 +380,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("added_by");
 
                     b.Property<decimal>("CommissionRateLower")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("commission_rate_lower");
 
                     b.Property<decimal>("CommissionRateUpper")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("commission_rate_upper");
 
                     b.Property<DateTime>("CreatedAt")
@@ -361,7 +396,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("is_active");
 
                     b.Property<decimal>("LowerBound")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("lower_bound");
 
                     b.Property<string>("ModifiedBy")
@@ -373,7 +408,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("update_at");
 
                     b.Property<decimal>("UpperBound")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("upper_bound");
 
                     b.HasKey("Id")
@@ -576,6 +611,42 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("meat_types", (string)null);
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.ModeOfPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Payment")
+                        .HasColumnType("longtext")
+                        .HasColumnName("payment");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payments");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_payments_added_by");
+
+                    b.ToTable("payments", (string)null);
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Approvals", b =>
                 {
                     b.Property<int>("Id")
@@ -627,10 +698,6 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("document_path");
 
-                    b.Property<string>("DocumentType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("document_type");
-
                     b.HasKey("Id")
                         .HasName("pk_client_documents");
 
@@ -655,6 +722,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("address");
 
+                    b.Property<int?>("BookingCoverageId")
+                        .HasColumnType("int")
+                        .HasColumnName("booking_coverage_id");
+
                     b.Property<string>("BusinessAddress")
                         .HasColumnType("longtext")
                         .HasColumnName("business_address");
@@ -667,6 +738,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("client_type");
 
+                    b.Property<int>("Cluster")
+                        .HasColumnType("int")
+                        .HasColumnName("cluster");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
@@ -674,6 +749,10 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<string>("CustomerType")
                         .HasColumnType("longtext")
                         .HasColumnName("customer_type");
+
+                    b.Property<bool?>("DirectDelivery")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("direct_delivery");
 
                     b.Property<int?>("DiscountId")
                         .HasColumnType("int")
@@ -699,6 +778,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
 
+                    b.Property<int?>("ModeOfPayment")
+                        .HasColumnType("int")
+                        .HasColumnName("mode_of_payment");
+
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int")
                         .HasColumnName("modified_by");
@@ -719,13 +802,17 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("representative_position");
 
-                    b.Property<string>("StoreType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("store_type");
+                    b.Property<int?>("StoreTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("store_type_id");
 
                     b.Property<int?>("TermDays")
                         .HasColumnType("int")
                         .HasColumnName("term_days");
+
+                    b.Property<int?>("Terms")
+                        .HasColumnType("int")
+                        .HasColumnName("terms");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -745,11 +832,23 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("AddedBy")
                         .HasDatabaseName("ix_clients_added_by");
 
+                    b.HasIndex("BookingCoverageId")
+                        .HasDatabaseName("ix_clients_booking_coverage_id");
+
                     b.HasIndex("FixedDiscountsId")
                         .HasDatabaseName("ix_clients_fixed_discounts_id");
 
+                    b.HasIndex("ModeOfPayment")
+                        .HasDatabaseName("ix_clients_mode_of_payment");
+
                     b.HasIndex("ModifiedBy")
                         .HasDatabaseName("ix_clients_modified_by");
+
+                    b.HasIndex("StoreTypeId")
+                        .HasDatabaseName("ix_clients_store_type_id");
+
+                    b.HasIndex("Terms")
+                        .HasDatabaseName("ix_clients_terms");
 
                     b.HasIndex("VariableDiscountsId")
                         .HasDatabaseName("ix_clients_variable_discounts_id");
@@ -765,7 +864,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("id");
 
                     b.Property<decimal>("DiscountPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("discount_percentage");
 
                     b.HasKey("Id")
@@ -820,6 +919,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("client_id");
 
+                    b.Property<string>("ESignaturePath")
+                        .HasColumnType("longtext")
+                        .HasColumnName("e_signature_path");
+
                     b.Property<bool>("IsDelivered")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_delivered");
@@ -861,19 +964,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("is_subject_to_approval");
 
                     b.Property<decimal>("MaximumAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("maximum_amount");
 
                     b.Property<decimal>("MaximumPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("maximum_percentage");
 
                     b.Property<decimal>("MinimumAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("minimum_amount");
 
                     b.Property<decimal>("MinimumPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("minimum_percentage");
 
                     b.HasKey("Id")
@@ -1143,6 +1246,38 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("term_days", (string)null);
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Terms", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Term")
+                        .HasColumnType("longtext")
+                        .HasColumnName("term");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_terms");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_terms_added_by");
+
+                    b.ToTable("terms", (string)null);
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Uom", b =>
                 {
                     b.Property<int>("Id")
@@ -1370,6 +1505,18 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("FreebieStatus");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_booking_coverages_users_added_by");
+
+                    b.Navigation("AddedByUser");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
                 {
                     b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
@@ -1378,6 +1525,11 @@ namespace RDF.Arcana.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_client_users_added_by_user_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.BookingCoverages", "BookingCoverages")
+                        .WithMany()
+                        .HasForeignKey("BookingCoveragesId")
+                        .HasConstraintName("fk_client_booking_coverages_booking_coverages_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Department", "Department")
                         .WithMany()
@@ -1405,6 +1557,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_client_users_user_id");
 
                     b.Navigation("AddedByUser");
+
+                    b.Navigation("BookingCoverages");
 
                     b.Navigation("Department");
 
@@ -1540,6 +1694,18 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.ModeOfPayment", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_payments_users_added_by_user_id");
+
+                    b.Navigation("AddedByUser");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Approvals", b =>
                 {
                     b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Clients", "Client")
@@ -1573,26 +1739,54 @@ namespace RDF.Arcana.API.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_clients_users_requested_by_user_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.BookingCoverages", "BookingCoverages")
+                        .WithMany()
+                        .HasForeignKey("BookingCoverageId")
+                        .HasConstraintName("fk_clients_booking_coverages_booking_coverages_id");
+
                     b.HasOne("RDF.Arcana.API.Domain.New_Doamin.FixedDiscounts", "FixedDiscounts")
                         .WithMany()
                         .HasForeignKey("FixedDiscountsId")
                         .HasConstraintName("fk_clients_fixed_discounts_fixed_discounts_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.ModeOfPayment", "ModeOfPayments")
+                        .WithMany()
+                        .HasForeignKey("ModeOfPayment")
+                        .HasConstraintName("fk_clients_payments_mode_of_payments_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.User", "ModifiedByUser")
                         .WithMany()
                         .HasForeignKey("ModifiedBy")
                         .HasConstraintName("fk_clients_users_modified_by_user_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.StoreType", "StoreType")
+                        .WithMany()
+                        .HasForeignKey("StoreTypeId")
+                        .HasConstraintName("fk_clients_store_types_store_type_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Terms", "Term")
+                        .WithMany()
+                        .HasForeignKey("Terms")
+                        .HasConstraintName("fk_clients_terms_term_id");
+
                     b.HasOne("RDF.Arcana.API.Domain.New_Doamin.VariableDiscounts", "VariableDiscounts")
                         .WithMany()
                         .HasForeignKey("VariableDiscountsId")
                         .HasConstraintName("fk_clients_variable_discounts_variable_discounts_id");
 
+                    b.Navigation("BookingCoverages");
+
                     b.Navigation("FixedDiscounts");
+
+                    b.Navigation("ModeOfPayments");
 
                     b.Navigation("ModifiedByUser");
 
                     b.Navigation("RequestedByUser");
+
+                    b.Navigation("StoreType");
+
+                    b.Navigation("Term");
 
                     b.Navigation("VariableDiscounts");
                 });
@@ -1740,6 +1934,18 @@ namespace RDF.Arcana.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_term_days_users_added_by");
+
+                    b.Navigation("AddedByUser");
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Terms", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_terms_users_added_by_user_id");
 
                     b.Navigation("AddedByUser");
                 });

@@ -377,11 +377,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("added_by");
 
                     b.Property<decimal>("CommissionRateLower")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("commission_rate_lower");
 
                     b.Property<decimal>("CommissionRateUpper")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("commission_rate_upper");
 
                     b.Property<DateTime>("CreatedAt")
@@ -393,7 +393,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("is_active");
 
                     b.Property<decimal>("LowerBound")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("lower_bound");
 
                     b.Property<string>("ModifiedBy")
@@ -405,7 +405,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("update_at");
 
                     b.Property<decimal>("UpperBound")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("upper_bound");
 
                     b.HasKey("Id")
@@ -861,7 +861,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("id");
 
                     b.Property<decimal>("DiscountPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("discount_percentage");
 
                     b.HasKey("Id")
@@ -961,19 +961,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("is_subject_to_approval");
 
                     b.Property<decimal>("MaximumAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("maximum_amount");
 
                     b.Property<decimal>("MaximumPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("maximum_percentage");
 
                     b.Property<decimal>("MinimumAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("minimum_amount");
 
                     b.Property<decimal>("MinimumPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("minimum_percentage");
 
                     b.HasKey("Id")
