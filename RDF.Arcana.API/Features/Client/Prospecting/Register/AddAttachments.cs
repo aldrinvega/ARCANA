@@ -44,12 +44,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
             {
                 var exisitingClient = await _context.Clients
                     .Include(x => x.ClientDocuments)
-                    .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
-
-                if (exisitingClient == null)
-                {
-                    throw new ClientIsNotFound();
-                }
+                    .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken) ?? throw new ClientIsNotFound();
 
                 foreach (var documents in request.AttachMents)
                 {
@@ -70,7 +65,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
                             ClientId = request.ClientId
                         };
 
-                        await _context.ClientDocuments.AddAsync(docuemtns);
+                        await _context.ClientDocuments.AddAsync(docuemtns, cancellationToken);
 
                         //exisitingClient.DocumentPath = savePath;
                         //exisitingClient.ClientId = request.ClientId;

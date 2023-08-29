@@ -28,18 +28,19 @@ public class GetRequestedFreebies : ControllerBase
 
     public class GetRequestedFreebiesQueryResult
     {
-        public int Id { get; set; }
+        public int FreebieRequestId { get; set; }
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
         public string OwnersAddress { get; set; }
         public string TransactionNumber { get; set; }
-        
+
         public List<Freebie> Freebies { get; set; }
 
         public class Freebie
         {
             public int Id { get; set; }
+            public int RequestId { get; set; }
             public string ItemCode { get; set; }
             public int Quantity { get; set; }
         }

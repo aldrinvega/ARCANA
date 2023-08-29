@@ -47,7 +47,6 @@
 
     <ItemGroup>
       <Folder Include="Features\Authenticate\Exception\" />
-      <Folder Include="Features\Client\Direct\" />
       <Folder Include="Features\Items\" />
       <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
     </ItemGroup>

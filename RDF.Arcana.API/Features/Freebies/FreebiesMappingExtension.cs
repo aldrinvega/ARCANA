@@ -10,7 +10,7 @@ public static class FreebiesMappingExtension
     {
         return new GetRequestedFreebies.GetRequestedFreebiesQueryResult
         {
-            Id = freebies.FreebieRequest.Id,
+            FreebieRequestId = freebies.FreebieRequest.Id,
             ClientId = freebies.ClientId,
             OwnersName = freebies.Client.Fullname,
             PhoneNumber = freebies.Client.PhoneNumber,
@@ -19,7 +19,8 @@ public static class FreebiesMappingExtension
             Freebies = freebies.FreebieRequest.FreebieItems.
                 Select(x => new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
             {
-                Id = x.RequestId,
+                Id = x.Id,
+                RequestId = x.RequestId,
                 ItemCode = x.Items.ItemCode,
                 Quantity = x.Quantity,
 

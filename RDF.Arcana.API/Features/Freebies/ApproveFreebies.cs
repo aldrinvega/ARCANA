@@ -34,12 +34,7 @@ public class ApproveFreebies : ControllerBase
             var freebieRequest = await _context.Approvals
                 .Include(x => x.Client)
                 .Include(x => x.FreebieRequest)
-                .FirstOrDefaultAsync(x => x.FreebieRequest.Id == request.FreebieRequestId, cancellationToken);
-
-            if (freebieRequest is null)
-            {
-                throw new Exception("No freebies found");
-            }
+                .FirstOrDefaultAsync(x => x.FreebieRequest.Id == request.FreebieRequestId, cancellationToken) ?? throw new Exception("No freebies found");
 
             freebieRequest.FreebieRequest.Status = "Approved";
             freebieRequest.IsApproved = true;
