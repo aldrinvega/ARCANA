@@ -29,6 +29,10 @@ public class UpdateProspectInformation : ControllerBase
     
     public class Handler : IRequestHandler<UpdateProspectRequestCommand, Unit>
     {
+        private const string APPROVED_STATUS = "Approved";
+        private const string PROSPECT_TYPE = "Prospect";
+        private const string APPROVER_APPROVAL = "Approver Approval";
+
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -44,7 +48,7 @@ public class UpdateProspectInformation : ControllerBase
                     .FirstOrDefaultAsync(
                     x => x.ClientId == request.ClientId 
                          && x.IsActive == true
-                         && x.ApprovalType == "Approver Approval",
+                         && x.ApprovalType == APPROVER_APPROVAL,
                     cancellationToken);
 
             if (existingClient is null)
@@ -56,8 +60,8 @@ public class UpdateProspectInformation : ControllerBase
             existingClient.Client.Address = request.OwnersAddress;
             existingClient.Client.PhoneNumber = request.PhoneNumber;
             existingClient.Client.BusinessName = request.BusinessName;
-            existingClient.IsApproved = false;
-            existingClient.Client.RegistrationStatus = "Requested";
+            existingClient.IsApproved = true;
+            existingClient.Client.RegistrationStatus = APPROVED_STATUS;
             existingClient.Client.StoreTypeId = request.StoreTypeId;
 
             await _context.SaveChangesAsync(cancellationToken);
