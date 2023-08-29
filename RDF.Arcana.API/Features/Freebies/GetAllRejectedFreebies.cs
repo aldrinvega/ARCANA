@@ -27,7 +27,8 @@ public class GetAllRejectedFreebies : ControllerBase
     
     public class GetAllRejectedFreebiesQueryResult
     {
-        public int Id { get; set; }
+        public int FreebieRequestId { get; set; }
+        public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
         public string OwnersAddress { get; set; }

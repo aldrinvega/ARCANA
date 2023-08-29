@@ -57,7 +57,8 @@ public static class FreebiesMappingExtension
     {
         return new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult
         {
-            Id = freebies.Id,
+            FreebieRequestId = freebies.FreebieRequest.Id,
+            ClientId = freebies.ClientId,
             OwnersName = freebies.Client.Fullname,
             PhoneNumber = freebies.Client.PhoneNumber,
             OwnersAddress = freebies.Client.Address,
