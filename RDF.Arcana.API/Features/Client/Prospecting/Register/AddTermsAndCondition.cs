@@ -1,9 +1,6 @@
-﻿using FlexLabs.EntityFrameworkCore.Upsert.Runners;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Domain.New_Doamin;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
@@ -77,8 +74,8 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
                command.ClientId = id;
                await _mediator.Send(command);
                response.Success = true;
-                response.Status = StatusCodes.Status200OK;
-                response.Messages.Add("Terms and Conditions added sucessfully");
+               response.Status = StatusCodes.Status200OK;
+               response.Messages.Add("Terms and Conditions added sucessfully");
                 return Ok(response);
                
             }

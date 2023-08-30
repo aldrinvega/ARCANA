@@ -3,9 +3,11 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -33,7 +35,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+var connectionString = builder.Configuration.GetConnectionString("DevConnection");
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<DataContext>(x =>
 {
@@ -99,6 +101,8 @@ builder.Services.AddAuthentication(authOptions =>
 
 // builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationMiddlewareResultHandler>();
 // builder.Services.AddScoped<MyAuthenticationFailureHandler>();
+
+builder.Services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
 const string clientPermission = "_clientPermission";
 
