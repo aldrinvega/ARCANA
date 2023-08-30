@@ -40,6 +40,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         public string RegistrationStatus { get; set; }
         public string TransactionNumber { get; set; }
         public string PhotoProofPath { get; set; }
+        public string ESignaturePath { get; set; }
         public List<Freebie> Freebies { get; set; }
         public class Freebie
         {

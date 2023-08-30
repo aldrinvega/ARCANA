@@ -21,6 +21,7 @@ public static class ReleasedProspectMappingExtension
             RegistrationStatus = approvals.Client.RegistrationStatus,
             TransactionNumber = approvals.FreebieRequest.TransactionNumber,
             PhotoProofPath = approvals.FreebieRequest.PhotoProofPath,
+            ESignaturePath = approvals.FreebieRequest.ESignaturePath,
             Freebies = approvals.FreebieRequest.FreebieItems.Select(x =>
                 new GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult.Freebie
                 {
