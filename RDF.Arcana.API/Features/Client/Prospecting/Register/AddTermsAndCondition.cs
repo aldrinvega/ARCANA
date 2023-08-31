@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
@@ -25,8 +26,7 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
             public int BookingCoverage { get; set; }
             public int ModeOfPayment { get; set; }
             public int Terms { get; set; }
-            public int? VaribaleDiscount { get; set; }
-            public int? FixedDiscount { get; set; }
+            public DiscountTypes DiscountTypes { get; set; }
         }
 
         public class Handler : IRequestHandler<AddTermsAndConditionsCommand, Unit>
@@ -52,8 +52,7 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
                     existingClient.BookingCoverageId = request.BookingCoverage;
                     existingClient.ModeOfPayment = request.ModeOfPayment;
                     existingClient.Terms = request.Terms;
-                    existingClient.VariableDiscountId = request.VaribaleDiscount ?? null;
-                    existingClient.FixedDiscountId = request.FixedDiscount ?? null;
+                    existingClient.DiscountType = request.DiscountTypes;
 
                     await _context.SaveChangesAsync(cancellationToken);
                     return Unit.Value;

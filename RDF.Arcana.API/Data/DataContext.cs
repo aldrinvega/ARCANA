@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Domain.New_Doamin;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace RDF.Arcana.API.Data;
@@ -24,13 +23,6 @@ public class DataContext : DbContext
     public virtual DbSet<Discount> Discounts { get; set; }
     public virtual DbSet<TermDays> TermDays { get; set; }
     public virtual DbSet<Clients> Clients { get; set; }
-    public virtual DbSet<Status> Status { get; set; }
-    // public virtual DbSet<RequestedClient> RequestedClients { get; set; }
-    // public virtual DbSet<RejectedClients> RejectedClients { get; set; }
-    // public virtual DbSet<ApprovedClient> ApprovedClients { get; set; }
-    // public virtual DbSet<Freebies> Freebies { get; set; }
-    // public virtual DbSet<FreebieRequest> FreebieRequests { get; set; }
-    public virtual DbSet<ApprovedFreebies> ApprovedFreebies { get; set; }
     public virtual DbSet<Approvals> Approvals { get; set; }
     public virtual DbSet<ClientDocuments> ClientDocuments { get; set; }
     public virtual DbSet<FixedDiscounts> FixedDiscounts { get; set; }
@@ -39,9 +31,9 @@ public class DataContext : DbContext
     public virtual DbSet<FreebieRequest> FreebieRequests { get; set; }
     public virtual DbSet<StoreType> StoreTypes { get; set; }
     public virtual DbSet<BookingCoverages> BookingCoverages { get; set; }
+    public virtual DbSet<ModeOfPayment> ModeOfPayments { get; set; }
 
-    public virtual DbSet<ModeOfPayment> Payments { get; set; }
-
+    public virtual DbSet<Terms> Terms { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
@@ -139,26 +131,6 @@ public class DataContext : DbContext
             .HasMany(c => c.Approvals)
             .WithOne(a => a.Client)
             .HasForeignKey(a => a.ClientId);
-        
-        modelBuilder.Entity<Client>()
-            .HasOne(x => x.AddedByUser)
-            .WithOne()
-            .HasForeignKey<Client>(x => x.AddedBy);
-
-        modelBuilder.Entity<Client>()
-            .HasOne(x => x.ModifiedByUser)
-            .WithOne()
-            .HasForeignKey<Client>(x => x.ModifiedBy);
-        
-        modelBuilder.Entity<Status>()
-            .HasOne(x => x.ModifiedByUser)
-            .WithOne()
-            .HasForeignKey<Status>(x => x.ModifiedBy);
-        
-        modelBuilder.Entity<Status>()
-            .HasOne(x => x.AddedByUser)
-            .WithOne()
-            .HasForeignKey<Status>(x => x.AddedBy);
         
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(fr => fr.Approvals)

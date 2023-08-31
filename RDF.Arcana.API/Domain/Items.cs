@@ -21,7 +21,4 @@ public class Items : BaseEntity
     public MeatType MeatType { get; set; }
     public virtual User AddedByUser { get; set; }
     
-    
-    public virtual ICollection<Freebies> Freebies { get; set; }
-    
 }

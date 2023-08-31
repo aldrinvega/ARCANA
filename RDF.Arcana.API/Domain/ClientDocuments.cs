@@ -1,6 +1,6 @@
 using RDF.Arcana.API.Common;
 
-namespace RDF.Arcana.API.Domain.New_Doamin;
+namespace RDF.Arcana.API.Domain;
 
 public class ClientDocuments : BaseEntity
 {

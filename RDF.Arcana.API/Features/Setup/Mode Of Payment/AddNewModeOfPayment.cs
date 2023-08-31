@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
 {
@@ -35,7 +36,7 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
 
             public async Task<Unit> Handle(AddNewModeOfPaymentCommand request, CancellationToken cancellationToken)
             {
-                var existingPayment = await _context.Payments.FirstOrDefaultAsync(x => x.Payment == request.Payment, cancellationToken);
+                var existingPayment = await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Payment == request.Payment, cancellationToken);
 
                 if (existingPayment != null)
                 {
@@ -44,10 +45,12 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
 
                 var paymentMethod = new ModeOfPayment
                 {
-                    Payment = request.Payment
+                    Payment = request.Payment,
+                    AddedBy = request.AddedBy,
+                  
                 };
 
-                await _context.Payments.AddAsync(paymentMethod, cancellationToken);
+                await _context.ModeOfPayments.AddAsync(paymentMethod, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return Unit.Value;
@@ -60,6 +63,11 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
             var response = new QueryOrCommandResult<object>();
             try
             {
+                if (User.Identity is ClaimsIdentity identity
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                {
+                    command.AddedBy = userId;
+                }
                 await _mediator.Send(command);
                 response.Success = true;
                 response.Status = StatusCodes.Status200OK;

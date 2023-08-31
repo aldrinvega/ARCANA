@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using RDF.Arcana.API.Common;
 
-namespace RDF.Arcana.API.Domain.New_Doamin;
+namespace RDF.Arcana.API.Domain;
 
 public class Clients : BaseEntity
 {
@@ -24,8 +24,7 @@ public class Clients : BaseEntity
     public int? Terms { get; set; }
     public int? ModeOfPayment { get; set; }
     public bool? DirectDelivery { get; set; }
-    public int? FixedDiscountId { get; set; }
-    public int? VariableDiscountId { get; set; }
+    public DiscountTypes DiscountType { get; set; }
     public int? BookingCoverageId { get; set; }
     public int AddedBy { get; set; }
     public int? ModifiedBy { get; set; }
@@ -44,7 +43,7 @@ public class Clients : BaseEntity
     public virtual ModeOfPayment ModeOfPayments { get; set; }
     public virtual Terms Term { get; set; }
 
-    
+
 
 
 }

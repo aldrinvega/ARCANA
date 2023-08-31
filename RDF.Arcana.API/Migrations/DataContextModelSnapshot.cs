@@ -19,112 +19,40 @@ namespace RDF.Arcana.API.Migrations
                 .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.ApprovedClient", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Approvals", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int>("ApprovedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("approved_by");
-
-                    b.Property<int?>("ApprovedByUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("approved_by_user_id");
-
-                    b.Property<int?>("ApprovedStatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("approved_status_id");
+                    b.Property<string>("ApprovalType")
+                        .HasColumnType("longtext")
+                        .HasColumnName("approval_type");
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int")
                         .HasColumnName("client_id");
 
-                    b.Property<DateTime>("DateApproved")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_approved");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_approved");
 
                     b.Property<string>("Reason")
                         .HasColumnType("longtext")
                         .HasColumnName("reason");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int")
-                        .HasColumnName("status");
-
                     b.HasKey("Id")
-                        .HasName("pk_approved_client");
-
-                    b.HasIndex("ApprovedByUserId")
-                        .HasDatabaseName("ix_approved_client_approved_by_user_id");
-
-                    b.HasIndex("ApprovedStatusId")
-                        .HasDatabaseName("ix_approved_client_approved_status_id");
+                        .HasName("pk_approvals");
 
                     b.HasIndex("ClientId")
-                        .HasDatabaseName("ix_approved_client_client_id");
+                        .HasDatabaseName("ix_approvals_client_id");
 
-                    b.ToTable("approved_client", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.ApprovedFreebies", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int>("ApprovedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("approved_by");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<int>("FreebiesId")
-                        .HasColumnType("int")
-                        .HasColumnName("freebies_id");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_active");
-
-                    b.Property<string>("PhotoProofPath")
-                        .HasColumnType("longtext")
-                        .HasColumnName("photo_proof_path");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int")
-                        .HasColumnName("status_id");
-
-                    b.Property<string>("TransactionNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("transaction_number");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_approved_freebies");
-
-                    b.HasIndex("ApprovedBy")
-                        .HasDatabaseName("ix_approved_freebies_approved_by");
-
-                    b.HasIndex("FreebiesId")
-                        .HasDatabaseName("ix_approved_freebies_freebies_id");
-
-                    b.HasIndex("StatusId")
-                        .HasDatabaseName("ix_approved_freebies_status_id");
-
-                    b.ToTable("approved_freebies", (string)null);
+                    b.ToTable("approvals", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
@@ -159,7 +87,35 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("booking_coverages", (string)null);
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.ClientDocuments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int")
+                        .HasColumnName("client_id");
+
+                    b.Property<string>("DocumentPath")
+                        .HasColumnType("longtext")
+                        .HasColumnName("document_path");
+
+                    b.Property<string>("DocumentType")
+                        .HasColumnType("longtext")
+                        .HasColumnName("document_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_client_documents");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_client_documents_client_id");
+
+                    b.ToTable("client_documents", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Clients", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,9 +126,13 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
-                    b.Property<int?>("BookingCoveragesId")
+                    b.Property<string>("Address")
+                        .HasColumnType("longtext")
+                        .HasColumnName("address");
+
+                    b.Property<int?>("BookingCoverageId")
                         .HasColumnType("int")
-                        .HasColumnName("booking_coverages_id");
+                        .HasColumnName("booking_coverage_id");
 
                     b.Property<string>("BusinessAddress")
                         .HasColumnType("longtext")
@@ -182,9 +142,13 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("business_name");
 
-                    b.Property<string>("BusinessType")
+                    b.Property<string>("ClientType")
                         .HasColumnType("longtext")
-                        .HasColumnName("business_type");
+                        .HasColumnName("client_type");
+
+                    b.Property<int>("Cluster")
+                        .HasColumnType("int")
+                        .HasColumnName("cluster");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -194,15 +158,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("customer_type");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_of_birth");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int")
-                        .HasColumnName("department_id");
-
-                    b.Property<bool>("DirectDelivery")
+                    b.Property<bool?>("DirectDelivery")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("direct_delivery");
 
@@ -210,41 +166,61 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("discount_id");
 
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("longtext")
-                        .HasColumnName("email_address");
+                    b.Property<short>("DiscountType")
+                        .HasColumnType("smallint")
+                        .HasColumnName("discount_type");
+
+                    b.Property<int?>("FixedDiscountsId")
+                        .HasColumnType("int")
+                        .HasColumnName("fixed_discounts_id");
 
                     b.Property<bool>("Freezer")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("freezer");
 
+                    b.Property<string>("Fullname")
+                        .HasColumnType("longtext")
+                        .HasColumnName("fullname");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
+
+                    b.Property<int?>("ModeOfPayment")
+                        .HasColumnType("int")
+                        .HasColumnName("mode_of_payment");
 
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int")
                         .HasColumnName("modified_by");
 
-                    b.Property<string>("OwnersAddress")
-                        .HasColumnType("longtext")
-                        .HasColumnName("owners_address");
-
-                    b.Property<string>("OwnersName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("owners_name");
-
-                    b.Property<string>("PaymentMethod")
-                        .HasColumnType("longtext")
-                        .HasColumnName("payment_method");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext")
                         .HasColumnName("phone_number");
 
-                    b.Property<int?>("TermDaysId")
+                    b.Property<string>("RegistrationStatus")
+                        .HasColumnType("longtext")
+                        .HasColumnName("registration_status");
+
+                    b.Property<string>("RepresentativeName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("representative_name");
+
+                    b.Property<string>("RepresentativePosition")
+                        .HasColumnType("longtext")
+                        .HasColumnName("representative_position");
+
+                    b.Property<int?>("StoreTypeId")
                         .HasColumnType("int")
-                        .HasColumnName("term_days_id");
+                        .HasColumnName("store_type_id");
+
+                    b.Property<int?>("TermDays")
+                        .HasColumnType("int")
+                        .HasColumnName("term_days");
+
+                    b.Property<int?>("Terms")
+                        .HasColumnType("int")
+                        .HasColumnName("terms");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -254,33 +230,41 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
+                    b.Property<int?>("VariableDiscountsId")
+                        .HasColumnType("int")
+                        .HasColumnName("variable_discounts_id");
+
                     b.HasKey("Id")
-                        .HasName("pk_client");
+                        .HasName("pk_clients");
 
                     b.HasIndex("AddedBy")
-                        .IsUnique()
-                        .HasDatabaseName("ix_client_added_by");
+                        .HasDatabaseName("ix_clients_added_by");
 
-                    b.HasIndex("BookingCoveragesId")
-                        .HasDatabaseName("ix_client_booking_coverages_id");
+                    b.HasIndex("BookingCoverageId")
+                        .HasDatabaseName("ix_clients_booking_coverage_id");
 
-                    b.HasIndex("DepartmentId")
-                        .HasDatabaseName("ix_client_department_id");
+                    b.HasIndex("FixedDiscountsId")
+                        .HasDatabaseName("ix_clients_fixed_discounts_id");
 
-                    b.HasIndex("DiscountId")
-                        .HasDatabaseName("ix_client_discount_id");
+                    b.HasIndex("ModeOfPayment")
+                        .HasDatabaseName("ix_clients_mode_of_payment");
 
                     b.HasIndex("ModifiedBy")
-                        .IsUnique()
-                        .HasDatabaseName("ix_client_modified_by");
+                        .HasDatabaseName("ix_clients_modified_by");
 
-                    b.HasIndex("TermDaysId")
-                        .HasDatabaseName("ix_client_term_days_id");
+                    b.HasIndex("StoreTypeId")
+                        .HasDatabaseName("ix_clients_store_type_id");
+
+                    b.HasIndex("Terms")
+                        .HasDatabaseName("ix_clients_terms");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_client_user_id");
+                        .HasDatabaseName("ix_clients_user_id");
 
-                    b.ToTable("client", (string)null);
+                    b.HasIndex("VariableDiscountsId")
+                        .HasDatabaseName("ix_clients_variable_discounts_id");
+
+                    b.ToTable("clients", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Company", b =>
@@ -418,24 +402,29 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("discounts", (string)null);
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Freebies", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FixedDiscounts", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<int?>("ApprovedClientId")
-                        .HasColumnType("int")
-                        .HasColumnName("approved_client_id");
+                    b.Property<decimal>("DiscountPercentage")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("discount_percentage");
 
-                    b.Property<int?>("ApprovedFreebiesId")
-                        .HasColumnType("int")
-                        .HasColumnName("approved_freebies_id");
+                    b.HasKey("Id")
+                        .HasName("pk_fixed_discounts");
 
-                    b.Property<int>("ClientId")
+                    b.ToTable("fixed_discounts", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FreebieItems", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("client_id");
+                        .HasColumnName("id");
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int")
@@ -445,19 +434,68 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("quantity");
 
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int")
+                        .HasColumnName("request_id");
+
                     b.HasKey("Id")
-                        .HasName("pk_freebies");
-
-                    b.HasIndex("ApprovedClientId")
-                        .HasDatabaseName("ix_freebies_approved_client_id");
-
-                    b.HasIndex("ApprovedFreebiesId")
-                        .HasDatabaseName("ix_freebies_approved_freebies_id");
+                        .HasName("pk_freebie_items");
 
                     b.HasIndex("ItemId")
-                        .HasDatabaseName("ix_freebies_item_id");
+                        .HasDatabaseName("ix_freebie_items_item_id");
 
-                    b.ToTable("freebies", (string)null);
+                    b.HasIndex("RequestId")
+                        .HasDatabaseName("ix_freebie_items_request_id");
+
+                    b.ToTable("freebie_items", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FreebieRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ApprovalId")
+                        .HasColumnType("int")
+                        .HasColumnName("approval_id");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int")
+                        .HasColumnName("client_id");
+
+                    b.Property<string>("ESignaturePath")
+                        .HasColumnType("longtext")
+                        .HasColumnName("e_signature_path");
+
+                    b.Property<bool>("IsDelivered")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_delivered");
+
+                    b.Property<string>("PhotoProofPath")
+                        .HasColumnType("longtext")
+                        .HasColumnName("photo_proof_path");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("longtext")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TransactionNumber")
+                        .HasColumnType("longtext")
+                        .HasColumnName("transaction_number");
+
+                    b.HasKey("Id")
+                        .HasName("pk_freebie_requests");
+
+                    b.HasIndex("ApprovalId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_freebie_requests_approval_id");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_freebie_requests_client_id");
+
+                    b.ToTable("freebie_requests", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>
@@ -636,394 +674,12 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_payments");
+                        .HasName("pk_mode_of_payments");
 
                     b.HasIndex("AddedBy")
-                        .HasDatabaseName("ix_payments_added_by");
+                        .HasDatabaseName("ix_mode_of_payments_added_by");
 
-                    b.ToTable("payments", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Approvals", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ApprovalType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("approval_type");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int")
-                        .HasColumnName("client_id");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_active");
-
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_approved");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("longtext")
-                        .HasColumnName("reason");
-
-                    b.HasKey("Id")
-                        .HasName("pk_approvals");
-
-                    b.HasIndex("ClientId")
-                        .HasDatabaseName("ix_approvals_client_id");
-
-                    b.ToTable("approvals", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.ClientDocuments", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int")
-                        .HasColumnName("client_id");
-
-                    b.Property<string>("DocumentPath")
-                        .HasColumnType("longtext")
-                        .HasColumnName("document_path");
-
-                    b.Property<string>("DocumentType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("document_type");
-
-                    b.HasKey("Id")
-                        .HasName("pk_client_documents");
-
-                    b.HasIndex("ClientId")
-                        .HasDatabaseName("ix_client_documents_client_id");
-
-                    b.ToTable("client_documents", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Clients", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int>("AddedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("added_by");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("longtext")
-                        .HasColumnName("address");
-
-                    b.Property<int?>("BookingCoverageId")
-                        .HasColumnType("int")
-                        .HasColumnName("booking_coverage_id");
-
-                    b.Property<string>("BusinessAddress")
-                        .HasColumnType("longtext")
-                        .HasColumnName("business_address");
-
-                    b.Property<string>("BusinessName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("business_name");
-
-                    b.Property<string>("ClientType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("client_type");
-
-                    b.Property<int>("Cluster")
-                        .HasColumnType("int")
-                        .HasColumnName("cluster");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("CustomerType")
-                        .HasColumnType("longtext")
-                        .HasColumnName("customer_type");
-
-                    b.Property<bool?>("DirectDelivery")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("direct_delivery");
-
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int")
-                        .HasColumnName("discount_id");
-
-                    b.Property<int?>("FixedDiscountId")
-                        .HasColumnType("int")
-                        .HasColumnName("fixed_discount_id");
-
-                    b.Property<int?>("FixedDiscountsId")
-                        .HasColumnType("int")
-                        .HasColumnName("fixed_discounts_id");
-
-                    b.Property<bool>("Freezer")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("freezer");
-
-                    b.Property<string>("Fullname")
-                        .HasColumnType("longtext")
-                        .HasColumnName("fullname");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_active");
-
-                    b.Property<int?>("ModeOfPayment")
-                        .HasColumnType("int")
-                        .HasColumnName("mode_of_payment");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modified_by");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("phone_number");
-
-                    b.Property<string>("RegistrationStatus")
-                        .HasColumnType("longtext")
-                        .HasColumnName("registration_status");
-
-                    b.Property<string>("RepresentativeName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("representative_name");
-
-                    b.Property<string>("RepresentativePosition")
-                        .HasColumnType("longtext")
-                        .HasColumnName("representative_position");
-
-                    b.Property<int?>("StoreTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("store_type_id");
-
-                    b.Property<int?>("TermDays")
-                        .HasColumnType("int")
-                        .HasColumnName("term_days");
-
-                    b.Property<int?>("Terms")
-                        .HasColumnType("int")
-                        .HasColumnName("terms");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<int?>("VariableDiscountId")
-                        .HasColumnType("int")
-                        .HasColumnName("variable_discount_id");
-
-                    b.Property<int?>("VariableDiscountsId")
-                        .HasColumnType("int")
-                        .HasColumnName("variable_discounts_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_clients");
-
-                    b.HasIndex("AddedBy")
-                        .HasDatabaseName("ix_clients_added_by");
-
-                    b.HasIndex("BookingCoverageId")
-                        .HasDatabaseName("ix_clients_booking_coverage_id");
-
-                    b.HasIndex("FixedDiscountsId")
-                        .HasDatabaseName("ix_clients_fixed_discounts_id");
-
-                    b.HasIndex("ModeOfPayment")
-                        .HasDatabaseName("ix_clients_mode_of_payment");
-
-                    b.HasIndex("ModifiedBy")
-                        .HasDatabaseName("ix_clients_modified_by");
-
-                    b.HasIndex("StoreTypeId")
-                        .HasDatabaseName("ix_clients_store_type_id");
-
-                    b.HasIndex("Terms")
-                        .HasDatabaseName("ix_clients_terms");
-
-                    b.HasIndex("VariableDiscountsId")
-                        .HasDatabaseName("ix_clients_variable_discounts_id");
-
-                    b.ToTable("clients", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.FixedDiscounts", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<decimal>("DiscountPercentage")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("discount_percentage");
-
-                    b.HasKey("Id")
-                        .HasName("pk_fixed_discounts");
-
-                    b.ToTable("fixed_discounts", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.FreebieItems", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int")
-                        .HasColumnName("item_id");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
-
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int")
-                        .HasColumnName("request_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_freebie_items");
-
-                    b.HasIndex("ItemId")
-                        .HasDatabaseName("ix_freebie_items_item_id");
-
-                    b.HasIndex("RequestId")
-                        .HasDatabaseName("ix_freebie_items_request_id");
-
-                    b.ToTable("freebie_items", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.FreebieRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int>("ApprovalId")
-                        .HasColumnType("int")
-                        .HasColumnName("approval_id");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int")
-                        .HasColumnName("client_id");
-
-                    b.Property<string>("ESignaturePath")
-                        .HasColumnType("longtext")
-                        .HasColumnName("e_signature_path");
-
-                    b.Property<bool>("IsDelivered")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_delivered");
-
-                    b.Property<string>("PhotoProofPath")
-                        .HasColumnType("longtext")
-                        .HasColumnName("photo_proof_path");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("longtext")
-                        .HasColumnName("status");
-
-                    b.Property<string>("TransactionNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("transaction_number");
-
-                    b.HasKey("Id")
-                        .HasName("pk_freebie_requests");
-
-                    b.HasIndex("ApprovalId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_freebie_requests_approval_id");
-
-                    b.HasIndex("ClientId")
-                        .HasDatabaseName("ix_freebie_requests_client_id");
-
-                    b.ToTable("freebie_requests", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.VariableDiscounts", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("IsSubjectToApproval")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_subject_to_approval");
-
-                    b.Property<decimal>("MaximumAmount")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("maximum_amount");
-
-                    b.Property<decimal>("MaximumPercentage")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("maximum_percentage");
-
-                    b.Property<decimal>("MinimumAmount")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("minimum_amount");
-
-                    b.Property<decimal>("MinimumPercentage")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("minimum_percentage");
-
-                    b.HasKey("Id")
-                        .HasName("pk_variable_discounts");
-
-                    b.ToTable("variable_discounts", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Permit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("BusinessPermit")
-                        .HasColumnType("longtext")
-                        .HasColumnName("business_permit");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int")
-                        .HasColumnName("client_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_permit");
-
-                    b.HasIndex("ClientId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_permit_client_id");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_permit_user_id");
-
-                    b.ToTable("permit", (string)null);
+                    b.ToTable("mode_of_payments", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.ProductCategory", b =>
@@ -1113,54 +769,6 @@ namespace RDF.Arcana.API.Migrations
                         .HasDatabaseName("ix_product_sub_categories_product_category_id");
 
                     b.ToTable("product_sub_categories", (string)null);
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Status", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int?>("AddedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("added_by");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<int?>("FreebiesId")
-                        .HasColumnType("int")
-                        .HasColumnName("freebies_id");
-
-                    b.Property<int?>("ModifiedBy")
-                        .HasColumnType("int")
-                        .HasColumnName("modified_by");
-
-                    b.Property<string>("StatusName")
-                        .HasColumnType("longtext")
-                        .HasColumnName("status_name");
-
-                    b.Property<DateTime>("Updated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated");
-
-                    b.HasKey("Id")
-                        .HasName("pk_status");
-
-                    b.HasIndex("AddedBy")
-                        .IsUnique()
-                        .HasDatabaseName("ix_status_added_by");
-
-                    b.HasIndex("FreebiesId")
-                        .HasDatabaseName("ix_status_freebies_id");
-
-                    b.HasIndex("ModifiedBy")
-                        .IsUnique()
-                        .HasDatabaseName("ix_status_modified_by");
-
-                    b.ToTable("status", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.StoreType", b =>
@@ -1347,10 +955,6 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("department_id");
 
-                    b.Property<int?>("FreebiesId")
-                        .HasColumnType("int")
-                        .HasColumnName("freebies_id");
-
                     b.Property<string>("Fullname")
                         .HasColumnType("longtext")
                         .HasColumnName("fullname");
@@ -1391,9 +995,6 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("DepartmentId")
                         .HasDatabaseName("ix_users_department_id");
-
-                    b.HasIndex("FreebiesId")
-                        .HasDatabaseName("ix_users_freebies_id");
 
                     b.HasIndex("LocationId")
                         .HasDatabaseName("ix_users_location_id");
@@ -1450,60 +1051,49 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.ApprovedClient", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.VariableDiscounts", b =>
                 {
-                    b.HasOne("RDF.Arcana.API.Domain.User", "ApprovedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedByUserId")
-                        .HasConstraintName("fk_approved_client_users_approved_by_user_id");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.Status", "ApprovedStatus")
-                        .WithMany()
-                        .HasForeignKey("ApprovedStatusId")
-                        .HasConstraintName("fk_approved_client_status_approved_status_id");
+                    b.Property<bool>("IsSubjectToApproval")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_subject_to_approval");
 
-                    b.HasOne("RDF.Arcana.API.Domain.Client", "Client")
-                        .WithMany()
+                    b.Property<decimal>("MaximumAmount")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("maximum_amount");
+
+                    b.Property<decimal>("MaximumPercentage")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("maximum_percentage");
+
+                    b.Property<decimal>("MinimumAmount")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("minimum_amount");
+
+                    b.Property<decimal>("MinimumPercentage")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("minimum_percentage");
+
+                    b.HasKey("Id")
+                        .HasName("pk_variable_discounts");
+
+                    b.ToTable("variable_discounts", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Approvals", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.Clients", "Client")
+                        .WithMany("Approvals")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_approved_client_client_client_id");
-
-                    b.Navigation("ApprovedByUser");
-
-                    b.Navigation("ApprovedStatus");
+                        .HasConstraintName("fk_approvals_clients_client_id");
 
                     b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.ApprovedFreebies", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_approved_freebies_users_approved_by");
-
-                    b.HasOne("RDF.Arcana.API.Domain.Freebies", "Freebie")
-                        .WithMany()
-                        .HasForeignKey("FreebiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_approved_freebies_freebies_freebies_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.Status", "FreebieStatus")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_approved_freebies_status_status_id");
-
-                    b.Navigation("AddedByUser");
-
-                    b.Navigation("Freebie");
-
-                    b.Navigation("FreebieStatus");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
@@ -1518,58 +1108,82 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.ClientDocuments", b =>
                 {
-                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
-                        .WithOne()
-                        .HasForeignKey("RDF.Arcana.API.Domain.Client", "AddedBy")
+                    b.HasOne("RDF.Arcana.API.Domain.Clients", "Clients")
+                        .WithMany("ClientDocuments")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_client_users_added_by_user_id");
+                        .HasConstraintName("fk_client_documents_clients_clients_id");
+
+                    b.Navigation("Clients");
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Clients", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "RequestedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_clients_users_requested_by_user_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.BookingCoverages", "BookingCoverages")
                         .WithMany()
-                        .HasForeignKey("BookingCoveragesId")
-                        .HasConstraintName("fk_client_booking_coverages_booking_coverages_id");
+                        .HasForeignKey("BookingCoverageId")
+                        .HasConstraintName("fk_clients_booking_coverages_booking_coverages_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.Department", "Department")
+                    b.HasOne("RDF.Arcana.API.Domain.FixedDiscounts", "FixedDiscounts")
                         .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .HasConstraintName("fk_client_departments_department_id");
+                        .HasForeignKey("FixedDiscountsId")
+                        .HasConstraintName("fk_clients_fixed_discounts_fixed_discounts_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.Discount", "Discount")
+                    b.HasOne("RDF.Arcana.API.Domain.ModeOfPayment", "ModeOfPayments")
                         .WithMany()
-                        .HasForeignKey("DiscountId")
-                        .HasConstraintName("fk_client_discounts_discount_id");
+                        .HasForeignKey("ModeOfPayment")
+                        .HasConstraintName("fk_clients_mode_of_payments_mode_of_payments_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.User", "ModifiedByUser")
-                        .WithOne()
-                        .HasForeignKey("RDF.Arcana.API.Domain.Client", "ModifiedBy")
-                        .HasConstraintName("fk_client_users_modified_by_user_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.TermDays", "TermDays")
                         .WithMany()
-                        .HasForeignKey("TermDaysId")
-                        .HasConstraintName("fk_client_term_days_term_days_id");
+                        .HasForeignKey("ModifiedBy")
+                        .HasConstraintName("fk_clients_users_modified_by_user_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.User", "User")
+                    b.HasOne("RDF.Arcana.API.Domain.StoreType", "StoreType")
+                        .WithMany()
+                        .HasForeignKey("StoreTypeId")
+                        .HasConstraintName("fk_clients_store_types_store_type_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Terms", "Term")
+                        .WithMany()
+                        .HasForeignKey("Terms")
+                        .HasConstraintName("fk_clients_terms_term_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.User", null)
                         .WithMany("Clients")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_client_users_user_id");
+                        .HasConstraintName("fk_clients_users_user_id");
 
-                    b.Navigation("AddedByUser");
+                    b.HasOne("RDF.Arcana.API.Domain.VariableDiscounts", "VariableDiscounts")
+                        .WithMany()
+                        .HasForeignKey("VariableDiscountsId")
+                        .HasConstraintName("fk_clients_variable_discounts_variable_discounts_id");
 
                     b.Navigation("BookingCoverages");
 
-                    b.Navigation("Department");
+                    b.Navigation("FixedDiscounts");
 
-                    b.Navigation("Discount");
+                    b.Navigation("ModeOfPayments");
 
                     b.Navigation("ModifiedByUser");
 
-                    b.Navigation("TermDays");
+                    b.Navigation("RequestedByUser");
 
-                    b.Navigation("User");
+                    b.Navigation("StoreType");
+
+                    b.Navigation("Term");
+
+                    b.Navigation("VariableDiscounts");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Company", b =>
@@ -1608,28 +1222,46 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Freebies", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FreebieItems", b =>
                 {
-                    b.HasOne("RDF.Arcana.API.Domain.ApprovedClient", "ApprovedClient")
+                    b.HasOne("RDF.Arcana.API.Domain.Items", "Items")
                         .WithMany()
-                        .HasForeignKey("ApprovedClientId")
-                        .HasConstraintName("fk_freebies_approved_client_approved_client_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.ApprovedFreebies", null)
-                        .WithMany("Freebies")
-                        .HasForeignKey("ApprovedFreebiesId")
-                        .HasConstraintName("fk_freebies_approved_freebies_approved_freebies_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.Items", "Item")
-                        .WithMany("Freebies")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_freebies_items_item_id");
+                        .HasConstraintName("fk_freebie_items_items_item_id");
 
-                    b.Navigation("ApprovedClient");
+                    b.HasOne("RDF.Arcana.API.Domain.FreebieRequest", "FreebieRequest")
+                        .WithMany("FreebieItems")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebie_items_freebie_requests_request_id");
 
-                    b.Navigation("Item");
+                    b.Navigation("FreebieRequest");
+
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FreebieRequest", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.Approvals", "Approvals")
+                        .WithOne("FreebieRequest")
+                        .HasForeignKey("RDF.Arcana.API.Domain.FreebieRequest", "ApprovalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebie_requests_approvals_approval_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Clients", "Clients")
+                        .WithMany("FreebiesRequests")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebie_requests_clients_client_id");
+
+                    b.Navigation("Approvals");
+
+                    b.Navigation("Clients");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>
@@ -1702,155 +1334,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasForeignKey("AddedBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_payments_users_added_by_user_id");
+                        .HasConstraintName("fk_mode_of_payments_users_added_by_user_id");
 
                     b.Navigation("AddedByUser");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Approvals", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Clients", "Client")
-                        .WithMany("Approvals")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_approvals_clients_client_id");
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.ClientDocuments", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Clients", "Clients")
-                        .WithMany("ClientDocuments")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_client_documents_clients_clients_id");
-
-                    b.Navigation("Clients");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Clients", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.User", "RequestedByUser")
-                        .WithMany()
-                        .HasForeignKey("AddedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_clients_users_requested_by_user_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.BookingCoverages", "BookingCoverages")
-                        .WithMany()
-                        .HasForeignKey("BookingCoverageId")
-                        .HasConstraintName("fk_clients_booking_coverages_booking_coverages_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.FixedDiscounts", "FixedDiscounts")
-                        .WithMany()
-                        .HasForeignKey("FixedDiscountsId")
-                        .HasConstraintName("fk_clients_fixed_discounts_fixed_discounts_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.ModeOfPayment", "ModeOfPayments")
-                        .WithMany()
-                        .HasForeignKey("ModeOfPayment")
-                        .HasConstraintName("fk_clients_payments_mode_of_payments_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.User", "ModifiedByUser")
-                        .WithMany()
-                        .HasForeignKey("ModifiedBy")
-                        .HasConstraintName("fk_clients_users_modified_by_user_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.StoreType", "StoreType")
-                        .WithMany()
-                        .HasForeignKey("StoreTypeId")
-                        .HasConstraintName("fk_clients_store_types_store_type_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.Terms", "Term")
-                        .WithMany()
-                        .HasForeignKey("Terms")
-                        .HasConstraintName("fk_clients_terms_term_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.VariableDiscounts", "VariableDiscounts")
-                        .WithMany()
-                        .HasForeignKey("VariableDiscountsId")
-                        .HasConstraintName("fk_clients_variable_discounts_variable_discounts_id");
-
-                    b.Navigation("BookingCoverages");
-
-                    b.Navigation("FixedDiscounts");
-
-                    b.Navigation("ModeOfPayments");
-
-                    b.Navigation("ModifiedByUser");
-
-                    b.Navigation("RequestedByUser");
-
-                    b.Navigation("StoreType");
-
-                    b.Navigation("Term");
-
-                    b.Navigation("VariableDiscounts");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.FreebieItems", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.Items", "Items")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_freebie_items_items_item_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.FreebieRequest", "FreebieRequest")
-                        .WithMany("FreebieItems")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_freebie_items_freebie_requests_request_id");
-
-                    b.Navigation("FreebieRequest");
-
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.FreebieRequest", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Approvals", "Approvals")
-                        .WithOne("FreebieRequest")
-                        .HasForeignKey("RDF.Arcana.API.Domain.New_Doamin.FreebieRequest", "ApprovalId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_freebie_requests_approvals_approval_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.New_Doamin.Clients", "Clients")
-                        .WithMany("FreebiesRequests")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_freebie_requests_clients_client_id");
-
-                    b.Navigation("Approvals");
-
-                    b.Navigation("Clients");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Permit", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.Client", "Client")
-                        .WithOne("Permit")
-                        .HasForeignKey("RDF.Arcana.API.Domain.Permit", "ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_permit_client_client_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("fk_permit_users_user_id");
-
-                    b.Navigation("Client");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.ProductCategory", b =>
@@ -1884,30 +1370,6 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
 
                     b.Navigation("ProductCategory");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Status", b =>
-                {
-                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
-                        .WithOne()
-                        .HasForeignKey("RDF.Arcana.API.Domain.Status", "AddedBy")
-                        .HasConstraintName("fk_status_users_added_by_user_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.Freebies", "Freebies")
-                        .WithMany()
-                        .HasForeignKey("FreebiesId")
-                        .HasConstraintName("fk_status_freebies_freebies_id");
-
-                    b.HasOne("RDF.Arcana.API.Domain.User", "ModifiedByUser")
-                        .WithOne()
-                        .HasForeignKey("RDF.Arcana.API.Domain.Status", "ModifiedBy")
-                        .HasConstraintName("fk_status_users_modified_by_user_id");
-
-                    b.Navigation("AddedByUser");
-
-                    b.Navigation("Freebies");
-
-                    b.Navigation("ModifiedByUser");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.StoreType", b =>
@@ -1980,11 +1442,6 @@ namespace RDF.Arcana.API.Migrations
                         .HasForeignKey("DepartmentId")
                         .HasConstraintName("fk_users_departments_department_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.Freebies", "Freebies")
-                        .WithMany()
-                        .HasForeignKey("FreebiesId")
-                        .HasConstraintName("fk_users_freebies_freebies_id");
-
                     b.HasOne("RDF.Arcana.API.Domain.Location", "Location")
                         .WithMany("Users")
                         .HasForeignKey("LocationId")
@@ -2000,8 +1457,6 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Department");
-
-                    b.Navigation("Freebies");
 
                     b.Navigation("Location");
 
@@ -2020,14 +1475,18 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.ApprovedFreebies", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Approvals", b =>
                 {
-                    b.Navigation("Freebies");
+                    b.Navigation("FreebieRequest");
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Client", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.Clients", b =>
                 {
-                    b.Navigation("Permit");
+                    b.Navigation("Approvals");
+
+                    b.Navigation("ClientDocuments");
+
+                    b.Navigation("FreebiesRequests");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Company", b =>
@@ -2040,33 +1499,14 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FreebieRequest", b =>
                 {
-                    b.Navigation("Freebies");
+                    b.Navigation("FreebieItems");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Location", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Approvals", b =>
-                {
-                    b.Navigation("FreebieRequest");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.Clients", b =>
-                {
-                    b.Navigation("Approvals");
-
-                    b.Navigation("ClientDocuments");
-
-                    b.Navigation("FreebiesRequests");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.New_Doamin.FreebieRequest", b =>
-                {
-                    b.Navigation("FreebieItems");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.ProductCategory", b =>

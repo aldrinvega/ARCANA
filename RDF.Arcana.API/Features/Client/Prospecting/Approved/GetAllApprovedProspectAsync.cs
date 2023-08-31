@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Domain.New_Doamin;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
 
@@ -31,7 +30,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public int Id { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
-        public int AddedBy { get; set; }
+        public string AddedBy { get; set; }
         public string Origin { get; set; }
         public string BusinessName { get; set; }
         public string Address { get; set; }

@@ -1,4 +1,4 @@
-﻿using RDF.Arcana.API.Domain.New_Doamin;
+﻿using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Approved;
 using RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
 using RDF.Arcana.API.Features.Clients.Prospecting.Request;
@@ -36,7 +36,7 @@ public static class ProspectingMappingProfiles
             BusinessName = approvedClient.Client.BusinessName,
             PhoneNumber = approvedClient.Client.PhoneNumber,
             Origin = approvedClient.Client.CustomerType,
-            AddedBy = approvedClient.Client.AddedBy,
+            AddedBy = approvedClient.Client.Fullname,
             Address = approvedClient.Client.Address,
             StoreType = approvedClient.Client.StoreType.StoreTypeName,
             IsActive = approvedClient.IsActive,

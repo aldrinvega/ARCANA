@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain.New_Doamin;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Direct;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Client.Direct
 {
-    public class DirectRegistrationCommand : IRequest<Unit>
+    public partial class DirectRegistrationCommand : IRequest<Unit>
     {
         [Required]
         public string OwnersName { get; set; }
@@ -27,19 +28,10 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; } 
         public bool DirectDelivery { get; set; }
-        public int BookingCoverage { get; set; }
+        //public int BookingCoverage { get; set; }
         public int ModeOfPayment { get; set; }
-        public int Terms { get; set; }
-        public int? VaribaleDiscount { get; set; }
-        public int? FixedDiscount { get; set; }
-
-        public List<ClientDocuments> Attachments { get; set; }
-
-        public class ClientDocuments 
-        {
-            public string DocumentType { get; set; }
-            public IFormFile Document { get; set; }
-        }
+        //public int Terms { get; set; }
+        public DiscountTypes Discount { get; set; }
     }
 
     public class DirectRegistrationResult
@@ -75,26 +67,43 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 x.BusinessName == request.BusinessName
                 );
 
-            if (existingClient != null)
+            var validateStoreType = await _context.StoreTypes.FirstOrDefaultAsync(x => x.Id == request.StoreTypeId);
+            //var validateBookingOcverage = await _context.BookingCoverages.FirstOrDefaultAsync(x => x.Id == request.BookingCoverage);
+            var validateModeOfPayment = await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Id == request.ModeOfPayment);
+            //var validateTermsAndCondition = await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.Terms);
+            
+
+            if (existingClient == null)
             {
-                var prospectingClients = new Domain.New_Doamin.Clients
+                var directClients = new Domain.Clients
                 {
                     Fullname = request.OwnersName,
                     Address = request.OwnersAddress,
                     PhoneNumber = request.PhoneNumber,
                     BusinessName = request.BusinessName,
                     StoreTypeId = request.StoreTypeId,
+                    BusinessAddress = request.BusinessAdress,
+                    RepresentativeName = request.AuthrizedRepreesentative,
+                    RepresentativePosition = request.AuthrizedRepreesentativePosition,
+                    Cluster = request.Cluster,
+                    Freezer = request.Freezer,
+                    ClientType = request.TypeOfCustomer,
+                    DirectDelivery = request.DirectDelivery,
+                    //BookingCoverageId = request.BookingCoverage,
+                    ModeOfPayment = request.ModeOfPayment,
+                    //Terms = request.Terms,
                     RegistrationStatus = APPROVED_STATUS,
                     CustomerType = PROSPECT_TYPE,
                     IsActive = true,
+                    DiscountType = request.Discount,
                     AddedBy = request.AddedBy
                 };
 
-                await _context.Clients.AddAsync(prospectingClients, cancellationToken);
+                await _context.Clients.AddAsync(directClients, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
                 var approval = new Approvals
                 {
-                    ClientId = prospectingClients.Id,
+                    ClientId = directClients.Id,
                     ApprovalType = APPROVER_APPROVAL,
                     IsApproved = true,
                     IsActive = true,
@@ -102,34 +111,6 @@ namespace RDF.Arcana.API.Features.Client.Direct
 
                 await _context.Approvals.AddAsync(approval, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
-
-                foreach (var documents in request.Attachments)
-                {
-                    if (documents != null)
-                    {
-                        var savePath = Path.Combine($@"F:\images\{request.BusinessName}", documents.Document.FileName);
-
-                        var directory = Path.GetDirectoryName(savePath);
-                        if (directory != null && !Directory.Exists(directory))
-                            Directory.CreateDirectory(directory);
-
-                        await using var stream = System.IO.File.Create(savePath);
-                        await documents.Document.CopyToAsync(stream, cancellationToken);
-
-                        var docuemtns = new ClientDocuments
-                        {
-                            DocumentPath = savePath,
-                            ClientId = prospectingClients.Id,
-                            DocumentType = documents.DocumentType,
-                        };
-
-                        await _context.ClientDocuments.AddAsync(docuemtns, cancellationToken);
-
-                        //exisitingClient.DocumentPath = savePath;
-                        //exisitingClient.ClientId = request.ClientId;
-                        //exisitingClient.DocumentType = documents.DocumentType;
-                    }
-                }
 
             }
             else
@@ -160,6 +141,11 @@ public class DirectRegistration : ControllerBase
         var response = new QueryOrCommandResult<object>();
         try
         {
+            if (User.Identity is ClaimsIdentity identity
+            && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                command.AddedBy = userId;
+            }
             await _mediator.Send(command);
             response.Success = true;
             response.Status = StatusCodes.Status200OK;

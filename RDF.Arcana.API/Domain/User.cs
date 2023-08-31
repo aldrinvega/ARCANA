@@ -24,8 +24,7 @@ public class User : BaseEntity
     public virtual Location Location { get; set; }
     public virtual UserRoles UserRoles { get; set; }
     public virtual User AddedByUser { get; set; }
-    public virtual Freebies Freebies { get; set; }
-    public virtual ICollection<Client> Clients { get; set; }
+    public virtual ICollection<Clients> Clients { get; set; }
 }
 
 public class UserValidator : AbstractValidator<User>

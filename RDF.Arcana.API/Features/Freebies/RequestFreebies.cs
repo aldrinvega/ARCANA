@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain.New_Doamin;
+using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Freebies;
 

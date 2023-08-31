@@ -1,4 +1,5 @@
-﻿using RDF.Arcana.API.Common;
+﻿using MySqlX.XDevAPI;
+using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Domain;
 

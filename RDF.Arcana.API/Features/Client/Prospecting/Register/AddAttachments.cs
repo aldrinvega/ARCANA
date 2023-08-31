@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain.New_Doamin;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Register
@@ -33,43 +37,81 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
 
         public class Handler : IRequestHandler<AddAttachedmentsCommand, Unit>
         {
+            private readonly Cloudinary _cloudinary;
             private readonly DataContext _context;
 
-            public Handler(DataContext context)
+            public Handler(DataContext context, IOptions<CloudinarySettings> config)
             {
                 _context = context;
+                var account = new Account(
+                    config.Value.Cloudname,
+                    config.Value.ApiKey,
+                    config.Value.ApiSecret
+                );
+
+                _cloudinary = new Cloudinary(account);
             }
+
+            //private Dictionary<string, string> LoadDocumentTypeMappings()
+            //{
+            //    // Load mappings from the configuration file or database
+            //    // In this example, loading from a JSON file
+            //    string configFileContent = File.ReadAllText("documentTypeMappings.json");
+            //    var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(configFileContent);
+            //    return config;
+            //}
+
+            //private string GetDocumentTypeForAttachment(IFormFile attachment)
+            //{
+            //    var documentTypeMappings = LoadDocumentTypeMappings();
+
+            //    // Get the file name
+            //    string fileName = Path.GetFileNameWithoutExtension(attachment.FileName);
+
+            //    // Check if any mapping matches the file name
+            //    foreach (var mapping in documentTypeMappings)
+            //    {
+            //        if (fileName.StartsWith(mapping.Key, StringComparison.OrdinalIgnoreCase))
+            //        {
+            //            return mapping.Value;
+            //        }
+            //    }
+
+            //    // Default to "Unknown Document"
+            //    return "Unknown Document";
+            //}
 
             public async Task<Unit> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
             {
+
                 var exisitingClient = await _context.Clients
                     .Include(x => x.ClientDocuments)
-                    .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken) ?? throw new ClientIsNotFound();
+                    .FirstOrDefaultAsync(
+                    x => x.Id == request.ClientId &&
+                    x.RegistrationStatus == "Released", cancellationToken) ?? throw new ClientIsNotFound();
 
                 foreach (var documents in request.AttachMents)
                 {
-                    if (documents != null)
+                    if (documents.Length > 0)
                     {
-                        var savePath = Path.Combine($@"F:\images\{exisitingClient.BusinessName}", documents.FileName);
+                        await using var stream = documents.OpenReadStream();
 
-                        var directory = Path.GetDirectoryName(savePath);
-                        if (directory != null && !Directory.Exists(directory))
-                            Directory.CreateDirectory(directory);
-
-                        await using var stream = System.IO.File.Create(savePath);
-                        await documents.CopyToAsync(stream, cancellationToken);
-
-                        var docuemtns = new ClientDocuments
+                        var attachedmenetsParams = new ImageUploadParams
                         {
-                            DocumentPath = savePath,
-                            ClientId = request.ClientId
+                            File = new FileDescription(documents.FileName, stream),
+                            PublicId = $"{exisitingClient.BusinessName}/{documents.FileName}"
                         };
 
-                        await _context.ClientDocuments.AddAsync(docuemtns, cancellationToken);
+                        var attachmenetsUploadResult = await _cloudinary.UploadAsync(attachedmenetsParams);
 
-                        //exisitingClient.DocumentPath = savePath;
-                        //exisitingClient.ClientId = request.ClientId;
-                        //exisitingClient.DocumentType = documents.DocumentType;
+                        var attachments = new ClientDocuments
+                        {
+                            DocumentPath = attachmenetsUploadResult.SecureUrl.ToString(),
+                            ClientId = exisitingClient.Id,
+                        };
+
+                        await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken);
                     }
                 }
 

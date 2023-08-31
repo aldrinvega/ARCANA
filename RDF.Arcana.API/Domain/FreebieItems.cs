@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using RDF.Arcana.API.Common;
 
-namespace RDF.Arcana.API.Domain.New_Doamin;
+namespace RDF.Arcana.API.Domain;
 
 public class FreebieItems : BaseEntity
 {

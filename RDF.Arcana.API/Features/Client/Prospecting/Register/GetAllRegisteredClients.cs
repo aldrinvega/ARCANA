@@ -43,8 +43,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
             public int Terms { get; set; }
             public int ModeOfPayment { get; set; }
             public bool? DirectDelivery { get; set; }
-            public int FixedDiscountId { get; set; }
-            public int VariableDiscountId { get; set; }
+            public string DiscountType { get; set; }
             public int BookingCoverageId { get; set; }
             public string AddedBy { get; set; }
         }
@@ -61,7 +60,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
             public async Task<PagedList<GetAllRegisteredClientsResult>> Handle(
                 GetAllRegisteredClientsCommand request, CancellationToken cancellationToken)
             {
-                IQueryable<Domain.New_Doamin.Clients> registeredClientsQuery = _context.Clients
+                IQueryable<Domain.Clients> registeredClientsQuery = _context.Clients
                     .Include(x => x.FreebiesRequests)
                     .Include(x => x.FixedDiscounts)
                     .Include(x => x.VariableDiscounts)
@@ -104,8 +103,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
                         Terms = client.Terms ?? 0,
                         ModeOfPayment = client.ModeOfPayment ?? 0,
                         DirectDelivery = client.DirectDelivery,
-                        FixedDiscountId = client.FixedDiscountId ?? 0,
-                        VariableDiscountId = client.VariableDiscountId ?? 0,
+                        DiscountType = client.DiscountType.ToString(),
                         BookingCoverageId = client.BookingCoverageId ?? 0,
                         AddedBy = client.RequestedByUser.Fullname
                     });

@@ -1,4 +1,4 @@
-using RDF.Arcana.API.Domain.New_Doamin;
+using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Released;
 
