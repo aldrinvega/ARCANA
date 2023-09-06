@@ -128,7 +128,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
                     registeredClients.TotalPages,
                     registeredClients.HasPreviousPage,
                     registeredClients.HasNextPage
-                    );
+                );
 
                 var result = new QueryOrCommandResult<object>
                 {
@@ -158,7 +158,6 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
                 return Ok(response);
             }
         }
-    }
 
-   
+    }
 }

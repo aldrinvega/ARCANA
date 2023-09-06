@@ -2,7 +2,6 @@
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
@@ -90,29 +89,26 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
                     x => x.Id == request.ClientId &&
                     x.RegistrationStatus == "Released", cancellationToken) ?? throw new ClientIsNotFound();
 
-                foreach (var documents in request.AttachMents)
+                foreach (var documents in request.AttachMents.Where(documents => documents.Length > 0))
                 {
-                    if (documents.Length > 0)
+                    await using var stream = documents.OpenReadStream();
+
+                    var attachedmenetsParams = new ImageUploadParams
                     {
-                        await using var stream = documents.OpenReadStream();
+                        File = new FileDescription(documents.FileName, stream),
+                        PublicId = $"{exisitingClient.BusinessName}/{documents.FileName}"
+                    };
 
-                        var attachedmenetsParams = new ImageUploadParams
-                        {
-                            File = new FileDescription(documents.FileName, stream),
-                            PublicId = $"{exisitingClient.BusinessName}/{documents.FileName}"
-                        };
+                    var attachmentsUploadResult = await _cloudinary.UploadAsync(attachedmenetsParams);
 
-                        var attachmenetsUploadResult = await _cloudinary.UploadAsync(attachedmenetsParams);
+                    var attachments = new ClientDocuments
+                    {
+                        DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
+                        ClientId = exisitingClient.Id,
+                    };
 
-                        var attachments = new ClientDocuments
-                        {
-                            DocumentPath = attachmenetsUploadResult.SecureUrl.ToString(),
-                            ClientId = exisitingClient.Id,
-                        };
-
-                        await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
-                        await _context.SaveChangesAsync(cancellationToken);
-                    }
+                    await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
                 }
 
                 exisitingClient.RegistrationStatus = "Registered";

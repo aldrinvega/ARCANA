@@ -3,6 +3,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
+using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
 {
@@ -26,7 +27,10 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
             public int BookingCoverage { get; set; }
             public int ModeOfPayment { get; set; }
             public int Terms { get; set; }
+            public int CreditLimit { get; set; }
+            public int TermDaysId { get; set; }
             public DiscountTypes DiscountTypes { get; set; }
+            public int AddedBy { get; set; }
         }
 
         public class Handler : IRequestHandler<AddTermsAndConditionsCommand, Unit>
@@ -51,8 +55,20 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
                     existingClient.DirectDelivery = request.DirectDelivery;
                     existingClient.BookingCoverageId = request.BookingCoverage;
                     existingClient.ModeOfPayment = request.ModeOfPayment;
-                    existingClient.Terms = request.Terms;
+
+
+                    var tersmOptions = new TermOptions
+                    {
+                        ClientId = request.ClientId,
+                        TermId = request.Terms,
+                        CreditLimit = request.CreditLimit,
+                        TermDaysId = request.TermDaysId,
+                        AddedBy = request.AddedBy
+                    };
+
                     existingClient.DiscountType = request.DiscountTypes;
+
+                    await _context.TermOptions.AddAsync( tersmOptions, cancellationToken );
 
                     await _context.SaveChangesAsync(cancellationToken);
                     return Unit.Value;
@@ -70,7 +86,14 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
             var response = new QueryOrCommandResult<object>();
             try
             {
-               command.ClientId = id;
+
+                if (User.Identity is ClaimsIdentity identity
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                {
+                    command.AddedBy = userId;
+                }
+
+                command.ClientId = id;
                await _mediator.Send(command);
                response.Success = true;
                response.Status = StatusCodes.Status200OK;

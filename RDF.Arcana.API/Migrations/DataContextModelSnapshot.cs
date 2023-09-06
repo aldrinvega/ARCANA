@@ -855,6 +855,63 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("term_days", (string)null);
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.TermOptions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int")
+                        .HasColumnName("client_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("CreditLimit")
+                        .HasColumnType("int")
+                        .HasColumnName("credit_limit");
+
+                    b.Property<int>("TermDaysId")
+                        .HasColumnType("int")
+                        .HasColumnName("term_days_id");
+
+                    b.Property<int>("TermId")
+                        .HasColumnType("int")
+                        .HasColumnName("term_id");
+
+                    b.Property<int?>("TermsId")
+                        .HasColumnType("int")
+                        .HasColumnName("terms_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_term_options");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_term_options_added_by");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_term_options_client_id");
+
+                    b.HasIndex("TermDaysId")
+                        .HasDatabaseName("ix_term_options_term_days_id");
+
+                    b.HasIndex("TermsId")
+                        .HasDatabaseName("ix_term_options_terms_id");
+
+                    b.ToTable("term_options", (string)null);
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Terms", b =>
                 {
                     b.Property<int>("Id")
@@ -870,9 +927,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Term")
+                    b.Property<string>("TermType")
                         .HasColumnType("longtext")
-                        .HasColumnName("term");
+                        .HasColumnName("term_type");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -1399,6 +1456,43 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_term_days_users_added_by");
 
                     b.Navigation("AddedByUser");
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.TermOptions", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_term_options_users_added_by_user_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Clients", "Clients")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_term_options_clients_clients_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.TermDays", "TermDays")
+                        .WithMany()
+                        .HasForeignKey("TermDaysId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_term_options_term_days_term_days_id");
+
+                    b.HasOne("RDF.Arcana.API.Domain.Terms", "Terms")
+                        .WithMany()
+                        .HasForeignKey("TermsId")
+                        .HasConstraintName("fk_term_options_terms_terms_id");
+
+                    b.Navigation("AddedByUser");
+
+                    b.Navigation("Clients");
+
+                    b.Navigation("TermDays");
+
+                    b.Navigation("Terms");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Terms", b =>

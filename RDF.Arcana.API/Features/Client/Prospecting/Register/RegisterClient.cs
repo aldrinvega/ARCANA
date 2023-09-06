@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
-namespace RDF.Arcana.API.Features.Clients.Direct;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Register;
 
 [Route("api/Registration")]
 [ApiController]
@@ -45,16 +44,13 @@ public class RegisterClient : ControllerBase
                 {
                     throw new ClientIsNotFound();
                 }
-
                 existingClient.BusinessAddress = request.BusinessAdress;
                 existingClient.RepresentativeName = request.AuthrizedRepreesentative;
                 existingClient.RepresentativePosition = request.AuthrizedRepreesentativePosition;
                 existingClient.Cluster = request.Cluster;
-
+                
                 await _conntext.SaveChangesAsync(cancellationToken);
-
                 return Unit.Value;
-
             }
         }
     }

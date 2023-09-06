@@ -32,7 +32,7 @@ public class DataContext : DbContext
     public virtual DbSet<StoreType> StoreTypes { get; set; }
     public virtual DbSet<BookingCoverages> BookingCoverages { get; set; }
     public virtual DbSet<ModeOfPayment> ModeOfPayments { get; set; }
-
+    public virtual DbSet<TermOptions> TermOptions { get; set; }
     public virtual DbSet<Terms> Terms { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -186,6 +186,16 @@ public class DataContext : DbContext
             .HasOne(x => x.AddedByUser)
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<TermOptions>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<TermOptions>()
+            .HasOne(x => x.Clients)
+            .WithMany()
+            .HasForeignKey(x => x.ClientId);
 
     }
 }

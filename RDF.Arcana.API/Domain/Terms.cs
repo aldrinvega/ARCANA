@@ -4,7 +4,7 @@ namespace RDF.Arcana.API.Domain
 {
     public class Terms : BaseEntity
     {
-        public string Term { get; set; }
+        public string TermType { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
         public int AddedBy { get; set; }
