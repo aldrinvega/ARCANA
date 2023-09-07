@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
-using System.Security.Claims;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Register
+namespace RDF.Arcana.API.Features.Client.Prospecting.Register
 {
-    [Route("api/Registratiomn")]
+    [Route("api/Registration")]
     [ApiController]
     public class AddTermsAndCondition : ControllerBase
     {

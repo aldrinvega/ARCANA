@@ -12,21 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/5692d9de-df94-489b-8dfa-2037ea408ba9.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/6d1a8ed2-c2ce-47f4-8a4e-c0ba689306e6.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/ce5d7db5-5e46-43b7-8a77-1f1588ad4ea6.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/f146c547-810b-4625-bb4f-c450c8ca42e3.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,9 +75,9 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2TNBXYwpMdvSwqV2OxamdrX9M4g" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -199,14 +187,7 @@
       <workItem from="1692320823551" duration="302000" />
       <workItem from="1693356080822" duration="1734000" />
       <workItem from="1693789230201" duration="4881000" />
-    </task>
-    <task id="LOCAL-00001" summary="Remove redundant and outdated files and refactor database.&#10;&#10;Deleted unnecessary .idea and .gitignore files, which were IDE-specific and not needed in the repository. Removed outdated user specific features and files which were causing code redundancy and maintenance problems. Updated migrations to reflect structural changes and refactor database relations and constraints due to modifications. These changes simplify the application structure to be more maintainable and aligned with the business logic.">
-      <option name="closed" value="true" />
-      <created>1690875583373</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1690875583373</updated>
+      <workItem from="1693967629313" duration="8972000" />
     </task>
     <task id="LOCAL-00002" summary="Refactor API methods and remove unused imports&#10;&#10;This commit entails several changes across multiple files for better code readability and performance. The 'Update' method in 'UpdateProductCategory.cs' has been refactored to fetch the product category ID from the route rather than the body. This makes the method usage more RESTful. The 'NotificationServices' method in 'NotificationService.cs' has been updated to instantiate the 'NotificationServiceQuery' object within the method itself, hence reducing the dependencies. Redundant using directive in 'UpdateRejectProspectStatus.cs' has been removed, and a newline was added at the end of 'NoClientFoundException.cs' for POSIX compliance.">
       <option name="closed" value="true" />
@@ -592,7 +573,15 @@
       <option name="project" value="LOCAL" />
       <updated>1691737206976</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Update">
+      <option name="closed" value="true" />
+      <created>1693968098799</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1693968098800</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -624,7 +613,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Update status checks in prospect feature&#10;&#10;Refined the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. It now checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions, ensuring only relevant results are considered." />
     <MESSAGE value="Refined status checks in prospect feature&#10;&#10;Enhanced the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' in order to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. The query now also checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions. All these changes are designed to ensure only relevant results are considered during the queries process, enhancing the overall efficiency of the prospecting feature." />
     <MESSAGE value="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy." />
     <MESSAGE value="Refine query filters for GetAllRequestedProspectAsync&#10;&#10;Simplified the query filters used in GetAllRequestedProspectAsync method for prospecting feature in the API. Removed redundant conditions (ApprovalType == &quot;Approver Approval&quot;, IsApproved == false, IsActive) in the method to get requested prospects, now only checking if Client.RegistrationStatus is &quot;Requested&quot;. This change was necessary to optimize the query execution and improve data accuracy by removing unnecessary conditions." />
@@ -649,6 +637,7 @@
     <MESSAGE value="Optimized Approved Prospect query&#10;&#10;Extended the 'GetAllApprovedProspect' query to include 'FreebieRequest' items that are null. This improvement is targeting to deliver only the relevant and necessary data to the client, reducing the waste of resources. This change was prompted by observed inefficiencies in the current data retrieval process." />
     <MESSAGE value="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process." />
     <MESSAGE value="&quot;Optimized data retrieval for prospective clients&quot;&#10;&#10;Extended the GetAllApprovedProspect query to include not only 'FreebieRequest' items that are null but also check if the client's status is &quot;Approved&quot;. This addition was made to streamline the data retrieval process, returning only the necessary data and thus reducing resource utilization. The change was prompted due to identified inefficiencies in the current data retrieval process. &#10;&#10;In addition, Reject and Request Freebies class methods now contain better context for rejecting and requesting freebies and logic for updating the client's registration status, focusing on improving the readability and maintainability of the code." />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Optimized data retrieval for prospective clients&quot;&#10;&#10;Extended the GetAllApprovedProspect query to include not only 'FreebieRequest' items that are null but also check if the client's status is &quot;Approved&quot;. This addition was made to streamline the data retrieval process, returning only the necessary data and thus reducing resource utilization. The change was prompted due to identified inefficiencies in the current data retrieval process. &#10;&#10;In addition, Reject and Request Freebies class methods now contain better context for rejecting and requesting freebies and logic for updating the client's registration status, focusing on improving the readability and maintainability of the code." />
+    <MESSAGE value="Update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update" />
   </component>
 </project>
