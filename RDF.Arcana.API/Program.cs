@@ -35,7 +35,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("ProductionConnection");
+var connectionString = builder.Configuration.GetConnectionString("DevConnection");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<DataContext>(x =>

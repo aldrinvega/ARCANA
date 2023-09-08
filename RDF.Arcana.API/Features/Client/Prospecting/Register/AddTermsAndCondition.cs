@@ -75,7 +75,7 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Register
                 }
                 else
                 {
-                    throw new ClientIsNotFound();
+                    throw new ClientIsNotFound(request.ClientId);
                 }
             }
         }
