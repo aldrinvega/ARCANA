@@ -53,7 +53,7 @@ public class UpdateProspectInformation : ControllerBase
 
             if (existingClient is null)
             {
-                throw new ClientIsNotFound(request.ClientId);
+                throw new ClientIsNotFound();
             }
  
             existingClient.Client.Fullname = request.OwnersName;

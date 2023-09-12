@@ -2,5 +2,5 @@
 
 public class ClientIsNotFound : System.Exception
 {
-    public ClientIsNotFound(int clientId) : base($"Client {clientId} is not found"){}
+    public ClientIsNotFound() : base("Client is not found"){}
 }

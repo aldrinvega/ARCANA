@@ -42,7 +42,7 @@ public class UpdateApprovedProspectStatus : ControllerBase
 
             if (existingRequestedProspect is null)
             {
-                throw new ClientIsNotFound(request.ClientId);
+                throw new ClientIsNotFound();
             }
 
             existingRequestedProspect.IsActive = !existingRequestedProspect.IsActive;

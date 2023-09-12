@@ -42,7 +42,7 @@ public class RegisterClient : ControllerBase
 
                 if (existingClient == null)
                 {
-                    throw new ClientIsNotFound(request.ClientId);
+                    throw new ClientIsNotFound();
                 }
                 existingClient.BusinessAddress = request.BusinessAdress;
                 existingClient.RepresentativeName = request.AuthrizedRepreesentative;

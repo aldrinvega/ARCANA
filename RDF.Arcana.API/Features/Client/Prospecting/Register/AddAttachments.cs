@@ -85,7 +85,7 @@ public class AddAttachments : ControllerBase
                 .Include(x => x.ClientDocuments)
                 .FirstOrDefaultAsync(
                     x => x.Id == request.ClientId &&
-                         x.RegistrationStatus == "Released", cancellationToken) ?? throw new ClientIsNotFound(request.ClientId);
+                         x.RegistrationStatus == "Released", cancellationToken) ?? throw new ClientIsNotFound();
 
             foreach (var documents in request.AttachMents.Where(documents => documents.Length > 0))
             {
