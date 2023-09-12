@@ -7,11 +7,10 @@ namespace RDF.Arcana.API.Domain
         public int ClientId { get; set; }
         public int TermId { get; set; }
         public int CreditLimit { get; set; }
-        public int TermDaysId { get; set; }
+        public int? TermDaysId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int AddedBy { get; set; }
-
         public Clients Clients { get; set; }
         public User AddedByUser { get; set; }
         public TermDays TermDays { get; set; }

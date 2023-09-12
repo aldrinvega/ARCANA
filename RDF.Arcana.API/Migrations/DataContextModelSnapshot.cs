@@ -166,13 +166,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("discount_id");
 
-                    b.Property<short>("DiscountType")
-                        .HasColumnType("smallint")
-                        .HasColumnName("discount_type");
-
-                    b.Property<int?>("FixedDiscountsId")
+                    b.Property<int?>("FixedDiscountId")
                         .HasColumnType("int")
-                        .HasColumnName("fixed_discounts_id");
+                        .HasColumnName("fixed_discount_id");
 
                     b.Property<bool>("Freezer")
                         .HasColumnType("tinyint(1)")
@@ -230,6 +226,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("user_id");
 
+                    b.Property<bool?>("VariableDiscount")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("variable_discount");
+
                     b.Property<int?>("VariableDiscountsId")
                         .HasColumnType("int")
                         .HasColumnName("variable_discounts_id");
@@ -243,8 +243,8 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("BookingCoverageId")
                         .HasDatabaseName("ix_clients_booking_coverage_id");
 
-                    b.HasIndex("FixedDiscountsId")
-                        .HasDatabaseName("ix_clients_fixed_discounts_id");
+                    b.HasIndex("FixedDiscountId")
+                        .HasDatabaseName("ix_clients_fixed_discount_id");
 
                     b.HasIndex("ModeOfPayment")
                         .HasDatabaseName("ix_clients_mode_of_payment");
@@ -409,12 +409,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int")
+                        .HasColumnName("client_id");
+
                     b.Property<decimal>("DiscountPercentage")
                         .HasColumnType("decimal(65,30)")
                         .HasColumnName("discount_percentage");
 
                     b.HasKey("Id")
                         .HasName("pk_fixed_discounts");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_fixed_discounts_client_id");
 
                     b.ToTable("fixed_discounts", (string)null);
                 });
@@ -878,7 +885,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("credit_limit");
 
-                    b.Property<int>("TermDaysId")
+                    b.Property<int?>("TermDaysId")
                         .HasColumnType("int")
                         .HasColumnName("term_days_id");
 
@@ -1193,7 +1200,7 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasOne("RDF.Arcana.API.Domain.FixedDiscounts", "FixedDiscounts")
                         .WithMany()
-                        .HasForeignKey("FixedDiscountsId")
+                        .HasForeignKey("FixedDiscountId")
                         .HasConstraintName("fk_clients_fixed_discounts_fixed_discounts_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.ModeOfPayment", "ModeOfPayments")
@@ -1277,6 +1284,18 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_discounts_users_added_by");
 
                     b.Navigation("AddedByUser");
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.FixedDiscounts", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.Clients", "Clients")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_fixed_discounts_clients_clients_id");
+
+                    b.Navigation("Clients");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.FreebieItems", b =>
@@ -1477,8 +1496,6 @@ namespace RDF.Arcana.API.Migrations
                     b.HasOne("RDF.Arcana.API.Domain.TermDays", "TermDays")
                         .WithMany()
                         .HasForeignKey("TermDaysId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_term_options_term_days_term_days_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Terms", "Terms")

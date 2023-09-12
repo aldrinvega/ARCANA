@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Carter;
+using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Clients.Prospecting;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Approved;
 
 [Route("api/Prospecting")]
 [ApiController]
@@ -13,12 +16,11 @@ namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
 public class GetAllApprovedProspectAsync : ControllerBase
 {
     private readonly IMediator _mediator;
-
     public GetAllApprovedProspectAsync(IMediator mediator)
     {
         _mediator = mediator;
     }
-
+    
     public class GetAllApprovedProspectQuery : UserParams, IRequest<PagedList<GetAllApprovedProspectResult>>
     {
         public string Search { get; set; }
@@ -37,7 +39,6 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public string StoreType { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
-        
     }
     
     public class Handler : IRequestHandler<GetAllApprovedProspectQuery, PagedList<GetAllApprovedProspectResult>>
@@ -92,7 +93,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 approvedProspect.HasPreviousPage,
                 approvedProspect.HasNextPage
                 );
-
+    
             var result = new QueryOrCommandResult<object>
             {
                 Success = true,
@@ -110,14 +111,13 @@ public class GetAllApprovedProspectAsync : ControllerBase
             };
             
             result.Messages.Add("Successfully Fetch Data");
-
             return Ok(result);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
-
+    
             return Ok(response);
         }
     }
