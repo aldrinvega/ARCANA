@@ -3,6 +3,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Register;
 
@@ -43,9 +44,16 @@ public class GetAllRegisteredClients : ControllerBase
         public int Terms { get; set; }
         public int ModeOfPayment { get; set; }
         public bool? DirectDelivery { get; set; }
-        public string DiscountType { get; set; }
         public int BookingCoverageId { get; set; }
         public string AddedBy { get; set; }
+        public FixedDiscount FixedDiscounts { get; set; }
+
+        public class FixedDiscount
+        {
+            public int FixedDiscountId { get; set; }
+            public decimal DiscountPercentage { get; set; }
+        }
+        
     }
 
     public class Handler : IRequestHandler<GetAllRegisteredClientsCommand, PagedList<GetAllRegisteredClientsResult>>
@@ -103,7 +111,11 @@ public class GetAllRegisteredClients : ControllerBase
                     Terms = client.Terms ?? 0,
                     ModeOfPayment = client.ModeOfPayment ?? 0,
                     DirectDelivery = client.DirectDelivery,
-                    DiscountType = client.DiscountType.ToString(),
+                    FixedDiscounts = new GetAllRegisteredClientsResult.FixedDiscount
+                    {
+                        FixedDiscountId = client.FixedDiscounts.ClientId,
+                        DiscountPercentage = client.FixedDiscounts.DiscountPercentage
+                    },
                     BookingCoverageId = client.BookingCoverageId ?? 0,
                     AddedBy = client.RequestedByUser.Fullname
                 });

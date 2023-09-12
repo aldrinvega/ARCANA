@@ -196,6 +196,15 @@ public class DataContext : DbContext
             .HasOne(x => x.Clients)
             .WithMany()
             .HasForeignKey(x => x.ClientId);
+        
+        modelBuilder.Entity<Clients>()
+            .HasOne(x => x.FixedDiscounts)
+            .WithMany()
+            .HasForeignKey(x => x.FixedDiscountId);
 
+        modelBuilder.Entity<FixedDiscounts>()
+            .HasOne(x => x.Clients)
+            .WithMany()
+            .HasForeignKey(x => x.ClientId);
     }
 }

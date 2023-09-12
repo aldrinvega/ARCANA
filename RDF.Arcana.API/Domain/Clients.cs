@@ -24,13 +24,17 @@ public class Clients : BaseEntity
     public int? Terms { get; set; }
     public int? ModeOfPayment { get; set; }
     public bool? DirectDelivery { get; set; }
-    public DiscountTypes DiscountType { get; set; }
     public int? BookingCoverageId { get; set; }
     public int AddedBy { get; set; }
     public int? ModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsActive { get; set; }
+    
+    //Discounts
+    public int? FixedDiscountId { get; set; }
+    public bool? VariableDiscount { get; set; }
+    
     public virtual User ModifiedByUser { get; set; }
     public virtual User RequestedByUser { get; set; }
     public virtual List<ClientDocuments> ClientDocuments { get; set; }
@@ -42,8 +46,4 @@ public class Clients : BaseEntity
     public virtual BookingCoverages BookingCoverages { get; set; }
     public virtual ModeOfPayment ModeOfPayments { get; set; }
     public virtual Terms Term { get; set; }
-
-
-
-
 }

@@ -5,6 +5,7 @@
     <projectFile profileName="http">RDF.Arcana.API/RDF.Arcana.API.csproj</projectFile>
     <projectFile profileName="https">RDF.Arcana.API/RDF.Arcana.API.csproj</projectFile>
     <projectFile pubXmlPath="RDF.Arcana.API/Properties/PublishProfiles/FolderProfile.pubxml">RDF.Arcana.API/RDF.Arcana.API.csproj</projectFile>
+    <projectFile pubXmlPath="RDF.Arcana.API/Properties/PublishProfiles/FolderProfile1.pubxml">RDF.Arcana.API/RDF.Arcana.API.csproj</projectFile>
     <projectFile pubXmlPath="RDF.Arcana.API/Properties/PublishProfiles/IIS.pubxml">RDF.Arcana.API/RDF.Arcana.API.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
@@ -12,15 +13,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/20e0f6bc-bd04-409c-8b69-c03216726550.vsidx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/52c673ed-4abf-4bbd-91bc-adfba0c5667a.vsidx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/75d5e4cd-a0c7-4ad2-9307-e0ce92d06afc.vsidx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/c6334390-2ec4-4714-9443-94e56ab87714.vsidx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Contracts/CreateBookingCoverageRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911005549_AddFixedDiscountRelatedEntities.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911005549_AddFixedDiscountRelatedEntities.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911013043_AdjustDiscountOnClientEntity.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911013043_AdjustDiscountOnClientEntity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile1.pubxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile1.pubxml.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/014eaacb-2d14-4357-b9a3-500a36208bdb.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/02def188-9263-4ec3-b10a-7b1c0ded1f7d.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/ebeb99dd-acfd-4de1-9c7b-285e17d8c807.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/f0bbd2a4-0997-4259-aab6-60842d68774d.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FixedDiscounts.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FixedDiscounts.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspectStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Exception/ClientIsNotFound.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Exception/ClientIsNotFound.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Rejected/UpdateRejectProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Rejected/UpdateRejectProspectStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateProspectInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateProspectInformation.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateRequestProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateRequestProspectStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,8 +82,28 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d303a4ca2dbf473ea474e42b77f214b91e3888/f3/7d0d5128/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/FixedDiscounts.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Rejected/UpdateRejectProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateProspectInformation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateRequestProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Arcana/RDF.Arcana.API/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -79,27 +123,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "Rebasing master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\avega\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\avega\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RDF.Arcana.API: http">
     <configuration name="RDF.Arcana.API: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="6058290284386075175" uuid_low="-5332320375588500453" />
@@ -181,9 +225,14 @@
       <workItem from="1693356080822" duration="1734000" />
       <workItem from="1693789230201" duration="4881000" />
       <workItem from="1693967629313" duration="8972000" />
-      <workItem from="1694054375546" duration="971000" />
-      <workItem from="1694094955397" duration="826000" />
-      <workItem from="1694160615302" duration="1107000" />
+    </task>
+    <task id="LOCAL-00003" summary="&quot;Refactor prospecting feature files and update methods&#10;&#10;This commit relocates prospecting related files and organizes them into Request, Approved, and Rejected directories for better organization and maintainability. It also changes a method in UpdateMeatTypeStatus.cs from HTTP PUT to HTTP PATCH to align with REST principles. A new file, GetRequestedProspectById.cs, has been added to handle specific requests.">
+      <option name="closed" value="true" />
+      <created>1690938436749</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1690938436749</updated>
     </task>
     <task id="LOCAL-00004" summary="Change ProductCategoryId to ProductSubCategoryId in AddNewItems&#10;&#10;Refactored the 'AddNewItems' class to replace 'ProductCategoryId' with 'ProductSubCategoryId' in response to a change in categorization logic. Instead of assigning items to a product category, they will now belong to a more specific sub-category, enhancing product management and filtering.">
       <option name="closed" value="true" />
@@ -561,23 +610,15 @@
       <option name="project" value="LOCAL" />
       <updated>1693968098800</updated>
     </task>
-    <task id="LOCAL-00051" summary="Direct Registration">
+    <task id="LOCAL-00051" summary="Revert &quot;Adjustment&quot;&#10;&#10;This reverts commit bf95d522">
       <option name="closed" value="true" />
-      <created>1694054410242</created>
+      <created>1694482015314</created>
       <option name="number" value="00051" />
       <option name="presentableId" value="LOCAL-00051" />
       <option name="project" value="LOCAL" />
-      <updated>1694054410242</updated>
+      <updated>1694482015314</updated>
     </task>
-    <task id="LOCAL-00052" summary="Add TermOptions">
-      <option name="closed" value="true" />
-      <created>1694054551355</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1694054551355</updated>
-    </task>
-    <option name="localTasksCounter" value="53" />
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -609,6 +650,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy." />
     <MESSAGE value="Refine query filters for GetAllRequestedProspectAsync&#10;&#10;Simplified the query filters used in GetAllRequestedProspectAsync method for prospecting feature in the API. Removed redundant conditions (ApprovalType == &quot;Approver Approval&quot;, IsApproved == false, IsActive) in the method to get requested prospects, now only checking if Client.RegistrationStatus is &quot;Requested&quot;. This change was necessary to optimize the query execution and improve data accuracy by removing unnecessary conditions." />
     <MESSAGE value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
     <MESSAGE value="Refactor prospect request query to improve data accuracy&#10;&#10;The query filters in prospect requests ('Requested', 'Rejected', and 'Released') were adjusted to better reflect the current approval status. The 'IsApproved' property is now included in the queries to ensure that the resulting data is not cluttered with prospects that have already been approved. Additionally, the 'IsActive' check was removed from the 'Released' prospect request query to prevent unnecessary filtering. These changes significantly improve the data precision and optimize query execution." />
@@ -632,8 +674,7 @@
     <MESSAGE value="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process." />
     <MESSAGE value="&quot;Optimized data retrieval for prospective clients&quot;&#10;&#10;Extended the GetAllApprovedProspect query to include not only 'FreebieRequest' items that are null but also check if the client's status is &quot;Approved&quot;. This addition was made to streamline the data retrieval process, returning only the necessary data and thus reducing resource utilization. The change was prompted due to identified inefficiencies in the current data retrieval process. &#10;&#10;In addition, Reject and Request Freebies class methods now contain better context for rejecting and requesting freebies and logic for updating the client's registration status, focusing on improving the readability and maintainability of the code." />
     <MESSAGE value="Update" />
-    <MESSAGE value="Direct Registration" />
-    <MESSAGE value="Add TermOptions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add TermOptions" />
+    <MESSAGE value="Revert &quot;Adjustment&quot;&#10;&#10;This reverts commit bf95d522" />
+    <option name="LAST_COMMIT_MESSAGE" value="Revert &quot;Adjustment&quot;&#10;&#10;This reverts commit bf95d522" />
   </component>
 </project>

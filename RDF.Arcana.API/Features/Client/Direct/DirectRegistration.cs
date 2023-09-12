@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Client.Direct
 {
-    public partial class DirectRegistrationCommand : IRequest<Unit>
+    public class DirectRegistrationCommand : IRequest<Unit>
     {
         [Required]
         public string OwnersName { get; set; }
@@ -32,17 +32,6 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public int ModeOfPayment { get; set; }
         //public int Terms { get; set; }
         public DiscountTypes Discount { get; set; }
-    }
-
-    public class DirectRegistrationResult
-    {
-        public int Id { get; set; }
-        public string OwnersName { get; set; }
-        public string OwnersAddress { get; set; }
-        public string PhoneNumber { get; set; }
-        public string BusinessName { get; set; }
-        public string StoreTypeName { get; set; }
-        public int AddedBy { get; set; }
     }
 
     public class Handler : IRequestHandler<DirectRegistrationCommand, Unit>
@@ -95,7 +84,6 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     RegistrationStatus = APPROVED_STATUS,
                     CustomerType = PROSPECT_TYPE,
                     IsActive = true,
-                    DiscountType = request.Discount,
                     AddedBy = request.AddedBy
                 };
 
