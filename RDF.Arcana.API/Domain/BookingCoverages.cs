@@ -7,9 +7,9 @@ namespace RDF.Arcana.API.Domain;
 public class BookingCoverages : BaseEntity
 {
     public string BookingCoverage { get; set; }
-    public bool IsActive { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public bool IsActive { get; set; } = true;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
     
     [ForeignKey("AddedByUser")]
     public int AddedBy { get; set; }
