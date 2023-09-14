@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
@@ -24,6 +25,7 @@ public class GetAllApprovedFreebies : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public int ApprovedBy { get; set; }
     }
 
     public class GetAllApprovedFreebiesQueryResult
@@ -43,6 +45,8 @@ public class GetAllApprovedFreebies : ControllerBase
             public string ItemCode { get; set; }
             public int Quantity { get; set; }
         }
+
+        
         // public string DateCreated { get; set; }
     }
 
@@ -65,8 +69,9 @@ public class GetAllApprovedFreebies : ControllerBase
                 .ThenInclude(x => x.Items)
                 .Where(x => x.IsApproved == true)
                 .Where(x => x.FreebieRequest.IsDelivered == false)
-                .Where(x => x.FreebieRequest.Status == "Approved");
-
+                .Where(x => x.FreebieRequest.Status == "Approved")
+                .Where(x => x.ApprovedBy == request.ApprovedBy );
+            
             if (!string.IsNullOrEmpty(request.Search))
             {
                 approvedFreebies = approvedFreebies.Where(x => x.Client.Fullname.Contains(request.Search));
@@ -90,35 +95,40 @@ public class GetAllApprovedFreebies : ControllerBase
         var response = new QueryOrCommandResult<object>();
         try
         {
-           var approvedFreebies =  await _mediator.Send(query);
+            if (User.Identity is ClaimsIdentity identity 
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                query.ApprovedBy = userId;
+            }
+            var approvedFreebies =  await _mediator.Send(query);
            
-           Response.AddPaginationHeader(
-               approvedFreebies.CurrentPage,
-               approvedFreebies.PageSize,
-               approvedFreebies.TotalCount,
-               approvedFreebies.TotalPages,
-               approvedFreebies.HasPreviousPage,
-               approvedFreebies.HasNextPage
-               );
+            Response.AddPaginationHeader(
+                approvedFreebies.CurrentPage,
+                approvedFreebies.PageSize,
+                approvedFreebies.TotalCount,
+                approvedFreebies.TotalPages,
+                approvedFreebies.HasPreviousPage,
+                approvedFreebies.HasNextPage
+            );
 
-           var result = new QueryOrCommandResult<object>
-           {
-               Success = true,
-               Status = StatusCodes.Status200OK,
-               Data = new
-               {
-                   approvedFreebies,
-                   approvedFreebies.CurrentPage,
-                   approvedFreebies.PageSize,
-                   approvedFreebies.TotalCount,
-                   approvedFreebies.TotalPages,
-                   approvedFreebies.HasPreviousPage,
-                   approvedFreebies.HasNextPage
-               }
-           };
+            var result = new QueryOrCommandResult<object>
+            {
+                Success = true,
+                Status = StatusCodes.Status200OK,
+                Data = new
+                {
+                    approvedFreebies,
+                    approvedFreebies.CurrentPage,
+                    approvedFreebies.PageSize,
+                    approvedFreebies.TotalCount,
+                    approvedFreebies.TotalPages,
+                    approvedFreebies.HasPreviousPage,
+                    approvedFreebies.HasNextPage
+                }
+            };
            
-           result.Messages.Add("Successfully fetch data");
-           return Ok(result);
+            result.Messages.Add("Successfully fetch data");
+            return Ok(result);
 
         }
         catch (Exception e)

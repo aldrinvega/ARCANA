@@ -206,5 +206,23 @@ public class DataContext : DbContext
             .HasOne(x => x.Clients)
             .WithMany()
             .HasForeignKey(x => x.ClientId);
+
+        modelBuilder.Entity<FreebieRequest>()
+            .HasOne(x => x.RequestedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.RequestedBy);
+        
+        modelBuilder.Entity<Approvals>()
+            .HasOne(x => x.ApproveByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ApprovedBy);
+
+        modelBuilder.Entity<Approvals>()
+            .HasOne(x => x.RequestedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.RequestedBy);
+
+
+
     }
 }

@@ -1,6 +1,5 @@
-﻿using Carter;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
@@ -25,6 +24,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public int AddedBy { get; set; }
     }
 
     public class GetAllApprovedProspectResult
@@ -58,14 +58,16 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .Where(x => x.FreebieRequest == null)
                 .Where(x => x.ApprovalType == "Approver Approval" && x.IsActive == true && x.IsApproved == true)
                 .Include(x => x.Client)
-                .ThenInclude(x => x.StoreType);
+                .ThenInclude(x => x.StoreType)
+                .Where(x => x.ApprovedBy == request.AddedBy);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
                 approvedProspect = approvedProspect.Where(x => x.Client.Fullname == request.Search && x.Client.CustomerType == "Prospect");
             }
-
+            
             if (request.Status != null)
+
             {
                 approvedProspect = approvedProspect.Where(x => x.IsActive == request.Status && x.Client.CustomerType == "Prospect");
             }
@@ -83,7 +85,13 @@ public class GetAllApprovedProspectAsync : ControllerBase
         var response = new QueryOrCommandResult<object>();
         try
         {
-           var approvedProspect =  await _mediator.Send(query);
+            if (User.Identity is ClaimsIdentity identity 
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                query.AddedBy = userId;
+            } 
+            
+            var approvedProspect =  await _mediator.Send(query);
             
             Response.AddPaginationHeader(
                 approvedProspect.CurrentPage,
@@ -117,7 +125,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
-    
+            
             return Ok(response);
         }
     }

@@ -12,6 +12,10 @@ public class Approvals : BaseEntity
     public string Reason { get; set; }
     public bool IsApproved { get; set; }
     public bool IsActive { get; set; }
+    public int RequestedBy { get; set; }
+    public int ApprovedBy { get; set; }
 
+    public User ApproveByUser { get; set; }
+    public User RequestedByUser { get; set; }
     public virtual FreebieRequest FreebieRequest { get; set; }
 }

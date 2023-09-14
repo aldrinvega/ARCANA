@@ -24,6 +24,7 @@ public class GetRequestedFreebies : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public int RequestedBy { get; set; }
     }
 
     public class GetRequestedFreebiesQueryResult
@@ -64,7 +65,8 @@ public class GetRequestedFreebies : ControllerBase
                 .Include(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
-                .Where(x => x.FreebieRequest.Status == "Requested");
+                .Where(x => x.FreebieRequest.Status == "Requested")
+                .Where(x => x.RequestedBy == request.RequestedBy);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

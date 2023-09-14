@@ -73,7 +73,8 @@ public class RequestFreebies : ControllerBase
                  ClientId = request.ClientId,
                  ApprovalType = "For Freebie Approval",
                  IsApproved = false,
-                 IsActive = true
+                 IsActive = true,
+                 RequestedBy = request.AddedBy
              };
              await _context.Approvals.AddAsync(newApproval, cancellationToken);
              await _context.SaveChangesAsync(cancellationToken);
@@ -85,7 +86,8 @@ public class RequestFreebies : ControllerBase
                  TransactionNumber = transactionNumber,
                  ApprovalId = newApproval.Id,
                  Status = "Requested",
-                 IsDelivered = false
+                 IsDelivered = false,
+                 RequestedBy = request.AddedBy
              };
              _context.FreebieRequests.Add(freebieRequest);
              await _context.SaveChangesAsync(cancellationToken);

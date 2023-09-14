@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
@@ -23,6 +24,7 @@ public class GetAllRejectedFreebies : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public int RequestedBy { get; set; }
     }
     
     public class GetAllRejectedFreebiesQueryResult
@@ -63,7 +65,8 @@ public class GetAllRejectedFreebies : ControllerBase
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .Where(x => x.IsApproved == false)
-                .Where(x => x.FreebieRequest.Status == "Rejected");
+                .Where(x => x.FreebieRequest.Status == "Rejected")
+                .Where(x => x.RequestedBy == request.RequestedBy);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -89,6 +92,11 @@ public class GetAllRejectedFreebies : ControllerBase
         var response = new QueryOrCommandResult<object>();
         try
         {
+            if (User.Identity is ClaimsIdentity identity 
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                query.RequestedBy = userId;
+            }
             var rejectedFreebies = await _mediator.Send(query);
 
             Response.AddPaginationHeader(

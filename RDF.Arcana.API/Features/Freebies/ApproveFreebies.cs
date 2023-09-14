@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
@@ -19,6 +20,7 @@ public class ApproveFreebies : ControllerBase
     public class ApproveFreebiesCommand : IRequest<Unit>
     {
         public int FreebieRequestId { get; set; }
+        public int ApprovedBy { get; set; }
     }
     public class Handler : IRequestHandler<ApproveFreebiesCommand, Unit>
     {
@@ -38,6 +40,7 @@ public class ApproveFreebies : ControllerBase
 
             freebieRequest.FreebieRequest.Status = "Approved";
             freebieRequest.IsApproved = true;
+            freebieRequest.ApprovedBy = request.ApprovedBy != null ? request.ApprovedBy : 1 ;
             
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
@@ -51,11 +54,16 @@ public class ApproveFreebies : ControllerBase
         var response = new QueryOrCommandResult<object>();
         try
         {
-
+           
             var command = new ApproveFreebiesCommand
             {
                 FreebieRequestId = id
             };
+            if (User.Identity is ClaimsIdentity identity 
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                command.ApprovedBy = userId;
+            }
             
             //
             // if (User.Identity is ClaimsIdentity identity

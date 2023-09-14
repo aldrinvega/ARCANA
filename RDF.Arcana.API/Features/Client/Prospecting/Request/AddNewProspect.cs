@@ -53,7 +53,6 @@ public class AddNewProspectResult
     public string OwnersAddress { get; set; }
     public string PhoneNumber { get; set; }
     public string BusinessName { get; set; }
-    public string StoreTypeName { get; set; }
     public int AddedBy { get; set; }
 }
 public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
@@ -118,6 +117,8 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             ApprovalType = APPROVER_APPROVAL,
             IsApproved = true,
             IsActive = true,
+            RequestedBy = request.AddedBy,
+            ApprovedBy = request.AddedBy
         };
 
         // Add the new request to the database

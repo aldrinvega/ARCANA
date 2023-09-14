@@ -30,6 +30,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("approval_type");
 
+                    b.Property<int>("ApprovedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("approved_by");
+
                     b.Property<int>("ClientId")
                         .HasColumnType("int")
                         .HasColumnName("client_id");
@@ -46,11 +50,21 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("reason");
 
+                    b.Property<int>("RequestedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("requested_by");
+
                     b.HasKey("Id")
                         .HasName("pk_approvals");
 
+                    b.HasIndex("ApprovedBy")
+                        .HasDatabaseName("ix_approvals_approved_by");
+
                     b.HasIndex("ClientId")
                         .HasDatabaseName("ix_approvals_client_id");
+
+                    b.HasIndex("RequestedBy")
+                        .HasDatabaseName("ix_approvals_requested_by");
 
                     b.ToTable("approvals", (string)null);
                 });
@@ -488,6 +502,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("photo_proof_path");
 
+                    b.Property<int>("RequestedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("requested_by");
+
                     b.Property<string>("Status")
                         .HasColumnType("longtext")
                         .HasColumnName("status");
@@ -505,6 +523,9 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("ClientId")
                         .HasDatabaseName("ix_freebie_requests_client_id");
+
+                    b.HasIndex("RequestedBy")
+                        .HasDatabaseName("ix_freebie_requests_requested_by");
 
                     b.ToTable("freebie_requests", (string)null);
                 });
@@ -1154,6 +1175,13 @@ namespace RDF.Arcana.API.Migrations
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Approvals", b =>
                 {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "ApproveByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_approvals_users_approve_by_user_id");
+
                     b.HasOne("RDF.Arcana.API.Domain.Clients", "Client")
                         .WithMany("Approvals")
                         .HasForeignKey("ClientId")
@@ -1161,7 +1189,18 @@ namespace RDF.Arcana.API.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_approvals_clients_client_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.User", "RequestedByUser")
+                        .WithMany()
+                        .HasForeignKey("RequestedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_approvals_users_requested_by_user_id");
+
+                    b.Navigation("ApproveByUser");
+
                     b.Navigation("Client");
+
+                    b.Navigation("RequestedByUser");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.BookingCoverages", b =>
@@ -1339,9 +1378,18 @@ namespace RDF.Arcana.API.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_freebie_requests_clients_client_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.User", "RequestedByUser")
+                        .WithMany()
+                        .HasForeignKey("RequestedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_freebie_requests_users_requested_by_user_id");
+
                     b.Navigation("Approvals");
 
                     b.Navigation("Clients");
+
+                    b.Navigation("RequestedByUser");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Items", b =>

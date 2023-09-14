@@ -12,11 +12,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="Major Adjustments">
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/BookingCoverages.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/BookingCoverages.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Booking Coverage/AddNewBookingCoverage.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Booking Coverage/AddNewBookingCoverage.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Approvals.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Approvals.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -206,14 +218,10 @@
       <workItem from="1693356080822" duration="1734000" />
       <workItem from="1693789230201" duration="4881000" />
       <workItem from="1693967629313" duration="8972000" />
-    </task>
-    <task id="LOCAL-00003" summary="&quot;Refactor prospecting feature files and update methods&#10;&#10;This commit relocates prospecting related files and organizes them into Request, Approved, and Rejected directories for better organization and maintainability. It also changes a method in UpdateMeatTypeStatus.cs from HTTP PUT to HTTP PATCH to align with REST principles. A new file, GetRequestedProspectById.cs, has been added to handle specific requests.">
-      <option name="closed" value="true" />
-      <created>1690938436749</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1690938436749</updated>
+      <workItem from="1694577595231" duration="4460000" />
+      <workItem from="1694650225105" duration="21000" />
+      <workItem from="1694650468844" duration="527000" />
+      <workItem from="1694677241480" duration="2795000" />
     </task>
     <task id="LOCAL-00004" summary="Change ProductCategoryId to ProductSubCategoryId in AddNewItems&#10;&#10;Refactored the 'AddNewItems' class to replace 'ProductCategoryId' with 'ProductSubCategoryId' in response to a change in categorization logic. Instead of assigning items to a product category, they will now belong to a more specific sub-category, enhancing product management and filtering.">
       <option name="closed" value="true" />
@@ -599,7 +607,15 @@
       <option name="project" value="LOCAL" />
       <updated>1694484265435</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="Migration Update">
+      <option name="closed" value="true" />
+      <created>1694486508991</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1694486508991</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -646,7 +662,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy." />
     <MESSAGE value="Refine query filters for GetAllRequestedProspectAsync&#10;&#10;Simplified the query filters used in GetAllRequestedProspectAsync method for prospecting feature in the API. Removed redundant conditions (ApprovalType == &quot;Approver Approval&quot;, IsApproved == false, IsActive) in the method to get requested prospects, now only checking if Client.RegistrationStatus is &quot;Requested&quot;. This change was necessary to optimize the query execution and improve data accuracy by removing unnecessary conditions." />
     <MESSAGE value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
     <MESSAGE value="Refactor prospect request query to improve data accuracy&#10;&#10;The query filters in prospect requests ('Requested', 'Rejected', and 'Released') were adjusted to better reflect the current approval status. The 'IsApproved' property is now included in the queries to ensure that the resulting data is not cluttered with prospects that have already been approved. Additionally, the 'IsActive' check was removed from the 'Released' prospect request query to prevent unnecessary filtering. These changes significantly improve the data precision and optimize query execution." />
@@ -671,6 +686,7 @@
     <MESSAGE value="&quot;Optimized data retrieval for prospective clients&quot;&#10;&#10;Extended the GetAllApprovedProspect query to include not only 'FreebieRequest' items that are null but also check if the client's status is &quot;Approved&quot;. This addition was made to streamline the data retrieval process, returning only the necessary data and thus reducing resource utilization. The change was prompted due to identified inefficiencies in the current data retrieval process. &#10;&#10;In addition, Reject and Request Freebies class methods now contain better context for rejecting and requesting freebies and logic for updating the client's registration status, focusing on improving the readability and maintainability of the code." />
     <MESSAGE value="Update" />
     <MESSAGE value="Major Adjustments" />
-    <option name="LAST_COMMIT_MESSAGE" value="Major Adjustments" />
+    <MESSAGE value="Migration Update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Migration Update" />
   </component>
 </project>

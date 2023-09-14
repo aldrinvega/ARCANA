@@ -24,7 +24,7 @@ public static class FreebiesMappingExtension
                 Quantity = x.Quantity,
 
             }).ToList(),
-            // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+            
         };
     }
     

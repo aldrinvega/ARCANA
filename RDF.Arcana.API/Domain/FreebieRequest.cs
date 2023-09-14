@@ -15,6 +15,8 @@ public class FreebieRequest : BaseEntity
     public bool IsDelivered { get; set; }
     public string PhotoProofPath { get; set; }
     public string ESignaturePath { get; set; }
+    public int RequestedBy { get; set; }
 
     public virtual ICollection<FreebieItems> FreebieItems { get; set; }
+    public virtual User RequestedByUser { get; set; }
 }
