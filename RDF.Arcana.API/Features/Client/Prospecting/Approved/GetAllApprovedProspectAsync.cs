@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
@@ -23,6 +24,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
     public class GetAllApprovedProspectQuery : UserParams, IRequest<PagedList<GetAllApprovedProspectResult>>
     {
         public string Search { get; set; }
+        public string RegistrationStatus { get; set; }
         public bool? Status { get; set; }
         public int AddedBy { get; set; }
     }
@@ -54,12 +56,17 @@ public class GetAllApprovedProspectAsync : ControllerBase
         {
             IQueryable<Approvals> approvedProspect = _context.Approvals
                 .Include(x => x.FreebieRequest)
-                .Where(x => x.Client.RegistrationStatus == "Approved")
                 .Where(x => x.FreebieRequest == null)
                 .Where(x => x.ApprovalType == "Approver Approval" && x.IsActive == true && x.IsApproved == true)
                 .Include(x => x.Client)
                 .ThenInclude(x => x.StoreType)
                 .Where(x => x.ApprovedBy == request.AddedBy);
+
+            if (!string.IsNullOrEmpty(request.RegistrationStatus))
+            {
+                approvedProspect =
+                    approvedProspect.Where(x => x.Client.RegistrationStatus == request.RegistrationStatus);
+            }
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -78,7 +85,6 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 request.PageSize);
         }
     }
-
     [HttpGet("GetAllApprovedProspect")]
     public async Task<IActionResult> GetAllRequestedProspect([FromQuery]GetAllApprovedProspectQuery query)
     {

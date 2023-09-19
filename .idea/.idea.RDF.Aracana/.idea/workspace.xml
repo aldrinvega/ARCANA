@@ -14,22 +14,15 @@
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Approvals.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Approvals.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/ApproveFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Rejected/GetAllRejectProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Rejected/GetAllRejectProspectAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/ReleasedProspectMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/ReleasedProspectMappingExtension.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,23 +214,12 @@
       <workItem from="1694577595231" duration="4460000" />
       <workItem from="1694650225105" duration="21000" />
       <workItem from="1694650468844" duration="527000" />
-      <workItem from="1694677241480" duration="2795000" />
-    </task>
-    <task id="LOCAL-00004" summary="Change ProductCategoryId to ProductSubCategoryId in AddNewItems&#10;&#10;Refactored the 'AddNewItems' class to replace 'ProductCategoryId' with 'ProductSubCategoryId' in response to a change in categorization logic. Instead of assigning items to a product category, they will now belong to a more specific sub-category, enhancing product management and filtering.">
-      <option name="closed" value="true" />
-      <created>1690941011680</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1690941011680</updated>
-    </task>
-    <task id="LOCAL-00005" summary="&quot;Fixed incorrect query for ProductSubCategory in AddNewItems&#10;&#10;The query to validate the subcategory of the product was mistakenly using 'ProductCategoryId'. The correct field to use is 'ProductSubCategoryId'. This change ensures that the correct subcategory is validated before adding a new item.&quot;">
-      <option name="closed" value="true" />
-      <created>1690941037035</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1690941037035</updated>
+      <workItem from="1694677241480" duration="4549000" />
+      <workItem from="1694736004769" duration="2382000" />
+      <workItem from="1694740858822" duration="4168000" />
+      <workItem from="1694873850256" duration="1216000" />
+      <workItem from="1694916564582" duration="2653000" />
+      <workItem from="1695033107460" duration="842000" />
     </task>
     <task id="LOCAL-00006" summary="Add Id field to UpdateItemCommand class&#10;&#10;Added an Id property to the UpdateItemCommand class. Replaced the retrieval and validation of items with the Id property instead of ItemCode. The change was made because using an Id is a more reliable way to specifically identify items in the database. The item retrieval and validation have been updated accordingly, plus the Update method now accepts the Id as parameter for more accurate data handling.">
       <option name="closed" value="true" />
@@ -615,7 +597,23 @@
       <option name="project" value="LOCAL" />
       <updated>1694486508991</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="Adjustment on Get Methods (Aba Teka)">
+      <option name="closed" value="true" />
+      <created>1694681244426</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1694681244427</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Migrations">
+      <option name="closed" value="true" />
+      <created>1694681275941</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1694681275941</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -662,7 +660,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Refine query filters for GetAllRequestedProspectAsync&#10;&#10;Simplified the query filters used in GetAllRequestedProspectAsync method for prospecting feature in the API. Removed redundant conditions (ApprovalType == &quot;Approver Approval&quot;, IsApproved == false, IsActive) in the method to get requested prospects, now only checking if Client.RegistrationStatus is &quot;Requested&quot;. This change was necessary to optimize the query execution and improve data accuracy by removing unnecessary conditions." />
     <MESSAGE value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
     <MESSAGE value="Refactor prospect request query to improve data accuracy&#10;&#10;The query filters in prospect requests ('Requested', 'Rejected', and 'Released') were adjusted to better reflect the current approval status. The 'IsApproved' property is now included in the queries to ensure that the resulting data is not cluttered with prospects that have already been approved. Additionally, the 'IsActive' check was removed from the 'Released' prospect request query to prevent unnecessary filtering. These changes significantly improve the data precision and optimize query execution." />
     <MESSAGE value="Remove 'Reason' from Prospect Status Update &#10;&#10;No longer capturing 'Reason' in three different prospecting status updates: Rejected, Approved, and Request. The 'Reason' field has been commented out in 'UpdateRejectProspectStatusCommand', 'UpdateApprovedProspectStatusCommand' and 'UpdateRequestProspectStatusCommand'. Moreover, the 'Reason' assignment has been removed from the respective handlers.&#10;&#10;The requirement to record a reason for changing the prospecting status was dropped, simplifying code and the user interface." />
@@ -673,7 +670,6 @@
     <MESSAGE value="Remove Prospecting feature code and Add StoreType setup&#10;&#10;Removed the Prospecting feature code as it was not required anymore due to change in business requirements. Also added functionality to Setup Store Types. This includes adding new store types and getting all store types. Ensured that duplicate store types can't be added by adding a unique constraint. Updated the data migration context and the snapshot to reflect these changes." />
     <MESSAGE value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
     <MESSAGE value="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change." />
-    <MESSAGE value="Migrations" />
     <MESSAGE value="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;" />
     <MESSAGE value="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage." />
     <MESSAGE value="Add Modules model and update relations with UserRoles&#10;&#10;Added a new entity `Modules` and updated relations in the `UserRoles` model. Replaced `Permissions` with `ModuleId` along with necessary changes in the corresponding feature classes. The intent is to better organize user privileges as modules rather than using an unstructured collection of permissions." />
@@ -687,6 +683,8 @@
     <MESSAGE value="Update" />
     <MESSAGE value="Major Adjustments" />
     <MESSAGE value="Migration Update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Migration Update" />
+    <MESSAGE value="Adjustment on Get Methods (Aba Teka)" />
+    <MESSAGE value="Migrations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Migrations" />
   </component>
 </project>

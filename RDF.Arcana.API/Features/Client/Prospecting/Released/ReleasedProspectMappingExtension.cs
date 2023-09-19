@@ -1,4 +1,5 @@
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Client.Prospecting.Released;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Released;
 

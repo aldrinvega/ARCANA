@@ -4,8 +4,9 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Clients.Prospecting;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Rejected;
 
 [Route("api/Prospecting")]
 [ApiController]
@@ -53,7 +54,7 @@ public class GetAllRejectProspectAsync : ControllerBase
         {
             IQueryable<Approvals> rejectProspect = _context.Approvals.Where(
                     x => x.Client.RegistrationStatus == "Rejected"
-                    && x.IsApproved == false)
+                         && x.IsApproved == false)
                 .Include(x => x.Client)
                 .ThenInclude(x => x.StoreType);
 
@@ -111,7 +112,7 @@ public class GetAllRejectProspectAsync : ControllerBase
 
             return Ok(result);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;

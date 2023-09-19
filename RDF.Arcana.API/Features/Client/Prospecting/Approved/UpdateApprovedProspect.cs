@@ -1,4 +1,4 @@
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Approved;
 
 public class UpdateApprovedProspect
 {

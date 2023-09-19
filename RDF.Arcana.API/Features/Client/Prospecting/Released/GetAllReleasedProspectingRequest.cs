@@ -4,9 +4,9 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Setup.Product_Category;
+using RDF.Arcana.API.Features.Clients.Prospecting.Released;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Released;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Released;
 
 [Route("api/Prospect")]
 [ApiController]

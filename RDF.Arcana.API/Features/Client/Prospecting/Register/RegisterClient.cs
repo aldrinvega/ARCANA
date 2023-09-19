@@ -20,23 +20,23 @@ public class RegisterClient : ControllerBase
     public class RegisterClientCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public string BusinessAdress { get; set; }
-        public string AuthrizedRepreesentative { get; set; }
-        public string AuthrizedRepreesentativePosition { get; set; }
+        public string BusinessAddress { get; set; }
+        public string AuthorizedRepresentative { get; set; }
+        public string AuthorizedRepresentativePosition { get; set; }
         public int Cluster { get; set; }
 
         public class Handler : IRequestHandler<RegisterClientCommand, Unit>
         {
-            private readonly DataContext _conntext;
+            private readonly DataContext _context;
 
-            public Handler(DataContext conntext)
+            public Handler(DataContext context)
             {
-                _conntext = conntext;
+                _context = context;
             }
 
             public async Task<Unit> Handle(RegisterClientCommand request, CancellationToken cancellationToken)
             {
-                var existingClient = await _conntext.Clients
+                var existingClient = await _context.Clients
                     .Where(x => x.RegistrationStatus == "Released")
                     .FirstOrDefaultAsync(client => client.Id == request.ClientId);
 
@@ -44,12 +44,12 @@ public class RegisterClient : ControllerBase
                 {
                     throw new ClientIsNotFound(request.ClientId);
                 }
-                existingClient.BusinessAddress = request.BusinessAdress;
-                existingClient.RepresentativeName = request.AuthrizedRepreesentative;
-                existingClient.RepresentativePosition = request.AuthrizedRepreesentativePosition;
+                existingClient.BusinessAddress = request.BusinessAddress;
+                existingClient.RepresentativeName = request.AuthorizedRepresentative;
+                existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
                 existingClient.Cluster = request.Cluster;
                 
-                await _conntext.SaveChangesAsync(cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
                 return Unit.Value;
             }
         }

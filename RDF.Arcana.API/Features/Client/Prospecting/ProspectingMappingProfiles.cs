@@ -1,5 +1,6 @@
 ﻿using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Prospecting.Approved;
+using RDF.Arcana.API.Features.Client.Prospecting.Rejected;
 using RDF.Arcana.API.Features.Clients.Prospecting.Approved;
 using RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
 using RDF.Arcana.API.Features.Clients.Prospecting.Request;

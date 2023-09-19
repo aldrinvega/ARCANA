@@ -31,7 +31,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
         //public int BookingCoverage { get; set; }
         public int ModeOfPayment { get; set; }
         //public int Terms { get; set; }
-        public DiscountTypes Discount { get; set; }
+        /*public DiscountTypes Discount { get; set; }*/
     }
 
     public class Handler : IRequestHandler<DirectRegistrationCommand, Unit>
