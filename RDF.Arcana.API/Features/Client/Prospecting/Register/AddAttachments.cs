@@ -20,12 +20,33 @@ public class AddAttachments : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpPut("AddAttachments/{id}")]
+    public async Task<IActionResult> AddRequirements([FromForm] AddAttachedmentsCommand command, [FromRoute] int id)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            command.ClientId = id;
+            await _mediator.Send(command);
+            response.Success = true;
+            response.Messages.Add("Attached added successfully");
+            response.Status = StatusCodes.Status200OK;
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            response.Messages.Add($"{ex.Message}");
+            response.Status = StatusCodes.Status404NotFound;
+            return Conflict(response);
+        }
+    }
+
     public class AddAttachedmentsCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
 
         public List<IFormFile> AttachMents { get; set; }
-        
+
         ////public class Attachments
         ////{ 
         ////    public IFormFile Document { get; set; }
@@ -80,12 +101,12 @@ public class AddAttachments : ControllerBase
 
         public async Task<Unit> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
         {
-
             var exisitingClient = await _context.Clients
-                .Include(x => x.ClientDocuments)
-                .FirstOrDefaultAsync(
-                    x => x.Id == request.ClientId &&
-                         x.RegistrationStatus == "Released", cancellationToken) ?? throw new ClientIsNotFound(request.ClientId);
+                                      .Include(x => x.ClientDocuments)
+                                      .FirstOrDefaultAsync(
+                                          x => x.Id == request.ClientId &&
+                                               x.RegistrationStatus == "Released", cancellationToken) ??
+                                  throw new ClientIsNotFound(request.ClientId);
 
             foreach (var documents in request.AttachMents.Where(documents => documents.Length > 0))
             {
@@ -112,27 +133,6 @@ public class AddAttachments : ControllerBase
             exisitingClient.RegistrationStatus = "Registered";
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
-        }
-    }
-
-    [HttpPut("AddAttachedments/{id}")]
-    public async Task<IActionResult> AddRequirements([FromForm] AddAttachedmentsCommand command, [FromRoute] int id)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-            command.ClientId = id;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add("Attached added successfully");
-            response.Status = StatusCodes.Status200OK;
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            response.Messages.Add($"{ex.Message}");
-            response.Status = StatusCodes.Status404NotFound;
-            return Conflict(response);
         }
     }
 }
