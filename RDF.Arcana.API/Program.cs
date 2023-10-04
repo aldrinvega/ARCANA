@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Setup.Booking_Coverage;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -39,7 +38,7 @@ config =>
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("DevConnection");
+var connectionString = builder.Configuration.GetConnectionString("ServerConnection");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<DataContext>(x =>
