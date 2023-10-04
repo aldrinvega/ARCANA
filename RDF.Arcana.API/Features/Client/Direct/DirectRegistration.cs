@@ -14,23 +14,23 @@ namespace RDF.Arcana.API.Features.Client.Direct
 {
     public class DirectRegistrationCommand : IRequest<Unit>
     {
-        [Required]
-        public string OwnersName { get; set; }
-        [Required]
-        public string OwnersAddress { get; set; }
-        [Required]
-        public string PhoneNumber { get; set; }
-        [Required]
-        public string BusinessName { get; set; }
-        [Required]
-        public int StoreTypeId { get; set; }
+        [Required] public string OwnersName { get; set; }
+
+        [Required] public string OwnersAddress { get; set; }
+
+        [Required] public string PhoneNumber { get; set; }
+
+        [Required] public string BusinessName { get; set; }
+
+        [Required] public int StoreTypeId { get; set; }
+
         public int AddedBy { get; set; }
         public string BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int Cluster { get; set; }
         public bool Freezer { get; set; }
-        public string TypeOfCustomer { get; set; } 
+        public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
         public int BookingCoverageId { get; set; }
         public int ModeOfPayment { get; set; }
@@ -40,16 +40,18 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public FixedDiscounts FixedDiscount { get; set; }
         public bool VariableDiscount { get; set; }
 
+        public string Longitude { get; set; }
+        public string Latitude { get; set; }
+        public List<IFormFile> Attachments { get; set; }
+
         public class FixedDiscounts
         {
             public decimal DiscountPercentage { get; set; }
         }
-        public List<IFormFile> Attachments { get; set; }
     }
 
     public class Handler : IRequestHandler<DirectRegistrationCommand, Unit>
     {
-
         private const string APPROVED_STATUS = "Approved";
         private const string PROSPECT_TYPE = "Prospect";
         private const string APPROVER_APPROVAL = "Approver Approval";
@@ -73,27 +75,34 @@ namespace RDF.Arcana.API.Features.Client.Direct
         {
             var existingClient = await _context.Clients.FirstOrDefaultAsync(
                 x => x.Fullname == request.OwnersName &&
-                x.StoreType.Id == request.StoreTypeId &&
-                x.BusinessName == request.BusinessName,
+                     x.StoreType.Id == request.StoreTypeId &&
+                     x.BusinessName == request.BusinessName,
                 cancellationToken
-                );
+            );
 
-            var validateStoreType = await _context.StoreTypes.FirstOrDefaultAsync(x => x.Id == request.StoreTypeId, cancellationToken: cancellationToken);
-            if(validateStoreType == null)
+            var validateStoreType = await _context.StoreTypes.FirstOrDefaultAsync(x => x.Id == request.StoreTypeId,
+                cancellationToken: cancellationToken);
+            if (validateStoreType == null)
                 throw new StoreTypeNotFoundException(request.StoreTypeId);
 
-            var validateBookingCoverages = await _context.BookingCoverages.FirstOrDefaultAsync(x => x.Id == request.BookingCoverageId, cancellationToken: cancellationToken);
-            if(validateBookingCoverages == null)
+            var validateBookingCoverages =
+                await _context.BookingCoverages.FirstOrDefaultAsync(x => x.Id == request.BookingCoverageId,
+                    cancellationToken: cancellationToken);
+            if (validateBookingCoverages == null)
                 throw new BookingCoverageNotFoundException(request.BookingCoverageId);
 
-            var validateModeOfPayment = await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Id == request.ModeOfPayment, cancellationToken: cancellationToken);
-            if(validateModeOfPayment == null)
+            var validateModeOfPayment =
+                await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Id == request.ModeOfPayment,
+                    cancellationToken: cancellationToken);
+            if (validateModeOfPayment == null)
                 throw new ModeOfPaymentNotFoundException(request.ModeOfPayment);
 
-            var validateTermsAndCondition = await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.Terms, cancellationToken: cancellationToken);
-            if(validateTermsAndCondition == null)
+            var validateTermsAndCondition =
+                await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.Terms,
+                    cancellationToken: cancellationToken);
+            if (validateTermsAndCondition == null)
                 throw new TermsNotFoundException(request.Terms);
-            
+
             if (existingClient == null)
             {
                 var directClients = new Domain.Clients
@@ -116,12 +125,14 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     RegistrationStatus = APPROVED_STATUS,
                     CustomerType = PROSPECT_TYPE,
                     IsActive = true,
-                    AddedBy = request.AddedBy
+                    AddedBy = request.AddedBy,
+                    Longitude = request.Longitude,
+                    Latitude = request.Latitude
                 };
-                
+
                 await _context.Clients.AddAsync(directClients, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
-                
+
                 if (request.FixedDiscount != null)
                 {
                     var fixedDiscount = new FixedDiscounts
@@ -129,7 +140,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                         ClientId = directClients.Id,
                         DiscountPercentage = request.FixedDiscount.DiscountPercentage
                     };
-                        
+
                     await _context.FixedDiscounts.AddAsync(fixedDiscount, cancellationToken);
                     await _context.SaveChangesAsync(cancellationToken);
 
@@ -141,7 +152,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     directClients.VariableDiscount = request.VariableDiscount;
                     await _context.SaveChangesAsync(cancellationToken);
                 }
-                
+
                 var termsOptions = new TermOptions
                 {
                     ClientId = directClients.Id,
@@ -153,7 +164,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
 
                 await _context.TermOptions.AddAsync(termsOptions, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
-                
+
                 var approval = new Approvals
                 {
                     ClientId = directClients.Id,
@@ -194,7 +205,6 @@ namespace RDF.Arcana.API.Features.Client.Direct
             }
 
             return Unit.Value;
-
         }
     }
 }
@@ -211,16 +221,17 @@ public class DirectRegistration : ControllerBase
     }
 
     [HttpPost("DirectRegistration")]
-    public async Task<IActionResult> DirectClientRegistration([FromBody]DirectRegistrationCommand command)
+    public async Task<IActionResult> DirectClientRegistration([FromBody] DirectRegistrationCommand command)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
-            && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
             {
                 command.AddedBy = userId;
             }
+
             await _mediator.Send(command);
             response.Success = true;
             response.Status = StatusCodes.Status200OK;

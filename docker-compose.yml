@@ -1,0 +1,44 @@
+﻿services:
+  rdf.arcana.api:
+    image: rdf.arcana.api
+    build:
+      context: .
+      dockerfile: RDF.Arcana.API/Dockerfile
+
+
+
+
+services:
+  customerdb:
+    container_name: customer-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - backend
+    ports:
+      - 18001:1433
+
+  customerwebapi:
+    container_name: customer-api
+    image: ${DOCKER_REGISTRY-}customerwebapi
+    build:
+      context: .
+      dockerfile: CustomerWebApi/Dockerfile
+    networks:
+      - backend
+    environment:
+      - DB_HOST=customerdb
+      - DB_NAME=dms_customer
+      - DB_SA_PASSWORD=password@12345#
+
+  productdb:
+    container_name: product-db
+    image: mysql:8.0.29-oracle
+    environment:
+      - MYSQL_ROOT_PASSWORD=password@12345#
+    ports:
+      - 18003:3306
+    networks:
+      - backend

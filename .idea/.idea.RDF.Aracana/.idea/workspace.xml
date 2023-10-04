@@ -13,11 +13,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/Exceptions/CustomNotFoundException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Mode Of Payment/GetAllModeOfPaymentsAsync.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Mode Of Payment/PaymentsMappingExtension.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Aracana.sln" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Aracana.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Product Category/GetProductCategoryAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Product Category/GetProductCategoryAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +54,22 @@
         </map>
       </branch-storage>
     </favorite-branches>
+    <branch-grouping />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;aldrinvega&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="1c632ae4-7712-4329-abe9-732db18b7b08" />
+        <option name="url" value="https://github.com/aldrinvega/ARCANA.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
@@ -104,27 +122,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.smartKeys_rider",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\avega\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\avega\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RDF.Arcana.API: http">
     <configuration name="RDF.Arcana.API: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="6058290284386075175" uuid_low="-5332320375588500453" />
@@ -232,15 +251,8 @@
       <workItem from="1694916564582" duration="2653000" />
       <workItem from="1695033107460" duration="842000" />
       <workItem from="1696207047147" duration="982000" />
-      <workItem from="1696377143120" duration="2913000" />
-    </task>
-    <task id="LOCAL-00006" summary="Add Id field to UpdateItemCommand class&#10;&#10;Added an Id property to the UpdateItemCommand class. Replaced the retrieval and validation of items with the Id property instead of ItemCode. The change was made because using an Id is a more reliable way to specifically identify items in the database. The item retrieval and validation have been updated accordingly, plus the Update method now accepts the Id as parameter for more accurate data handling.">
-      <option name="closed" value="true" />
-      <created>1690944457186</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1690944457186</updated>
+      <workItem from="1696377143120" duration="7272000" />
+      <workItem from="1696395906233" duration="401000" />
     </task>
     <task id="LOCAL-00007" summary="Update item identification from string to int&#10;&#10;Changed the ItemCode in UpdateItemStatusCommand and its related codes from string to int. This change is implemented to make the item identification more consistent and efficient across the application. Also, integer IDs are easier to manage and manipulate.">
       <option name="closed" value="true" />
@@ -626,7 +638,15 @@
       <option name="project" value="LOCAL" />
       <updated>1694681275941</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Updated DirectRegistration with new fields and validations&#10;&#10;Significantly extended and improved the DirectRegistration functionality. Introduced several new fields for fixed and variable discount, credit limit, attachments, etc. Also, added a set of missing data validation checks and exception handlers for store type, payment modes, booking, and terms to ensure data consistency and avoid database errors. Introduced integration with Cloudinary for handling attached files. Corrected some typos in property names for better clarity.&#10;&#10;Mistyped property names could have led to misunderstandings and errors, validation checks are used to maintain data consistency, new fields were requested for business reasons, and Cloudinary integration brings efficient file handling capabilities.">
+      <option name="closed" value="true" />
+      <created>1696380254222</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1696380254222</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -680,7 +700,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Refine prospect requests query to include approval status&#10;&#10;In this update, prospect requests queries were adjusted across requests ('Requested', 'Rejected', and 'Released'). The queries now incorporate the 'IsApproved' property to ensure that the results reflect the current approval status and avoid returning prospects that have been already approved. In addition, the 'IsActive' check has been removed from the 'Released' prospect request to avoid unnecessary filtering, as being 'Approved' inherently signifies being active." />
     <MESSAGE value="Refactor prospect request query to improve data accuracy&#10;&#10;The query filters in prospect requests ('Requested', 'Rejected', and 'Released') were adjusted to better reflect the current approval status. The 'IsApproved' property is now included in the queries to ensure that the resulting data is not cluttered with prospects that have already been approved. Additionally, the 'IsActive' check was removed from the 'Released' prospect request query to prevent unnecessary filtering. These changes significantly improve the data precision and optimize query execution." />
     <MESSAGE value="Remove 'Reason' from Prospect Status Update &#10;&#10;No longer capturing 'Reason' in three different prospecting status updates: Rejected, Approved, and Request. The 'Reason' field has been commented out in 'UpdateRejectProspectStatusCommand', 'UpdateApprovedProspectStatusCommand' and 'UpdateRequestProspectStatusCommand'. Moreover, the 'Reason' assignment has been removed from the respective handlers.&#10;&#10;The requirement to record a reason for changing the prospecting status was dropped, simplifying code and the user interface." />
     <MESSAGE value="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop." />
@@ -705,6 +724,7 @@
     <MESSAGE value="Migration Update" />
     <MESSAGE value="Adjustment on Get Methods (Aba Teka)" />
     <MESSAGE value="Migrations" />
-    <option name="LAST_COMMIT_MESSAGE" value="Migrations" />
+    <MESSAGE value="Updated DirectRegistration with new fields and validations&#10;&#10;Significantly extended and improved the DirectRegistration functionality. Introduced several new fields for fixed and variable discount, credit limit, attachments, etc. Also, added a set of missing data validation checks and exception handlers for store type, payment modes, booking, and terms to ensure data consistency and avoid database errors. Introduced integration with Cloudinary for handling attached files. Corrected some typos in property names for better clarity.&#10;&#10;Mistyped property names could have led to misunderstandings and errors, validation checks are used to maintain data consistency, new fields were requested for business reasons, and Cloudinary integration brings efficient file handling capabilities." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated DirectRegistration with new fields and validations&#10;&#10;Significantly extended and improved the DirectRegistration functionality. Introduced several new fields for fixed and variable discount, credit limit, attachments, etc. Also, added a set of missing data validation checks and exception handlers for store type, payment modes, booking, and terms to ensure data consistency and avoid database errors. Introduced integration with Cloudinary for handling attached files. Corrected some typos in property names for better clarity.&#10;&#10;Mistyped property names could have led to misunderstandings and errors, validation checks are used to maintain data consistency, new fields were requested for business reasons, and Cloudinary integration brings efficient file handling capabilities." />
   </component>
 </project>

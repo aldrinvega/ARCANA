@@ -18,8 +18,9 @@ public class Clients : BaseEntity
     public int? TermDays { get; set; }
     public int? DiscountId { get; set; }
     public string ClientType { get; set; }
-    [ForeignKey("StoreType")]
-    public int? StoreTypeId { get; set; }
+
+    [ForeignKey("StoreType")] public int? StoreTypeId { get; set; }
+
     public string RegistrationStatus { get; set; }
     public int? Terms { get; set; }
     public int? ModeOfPayment { get; set; }
@@ -30,11 +31,16 @@ public class Clients : BaseEntity
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsActive { get; set; }
-    
+
+    //Pin Location
+
+    public string Longitude { get; set; }
+    public string Latitude { get; set; }
+
     //Discounts
     public int? FixedDiscountId { get; set; }
     public bool? VariableDiscount { get; set; }
-    
+
     public virtual User ModifiedByUser { get; set; }
     public virtual User RequestedByUser { get; set; }
     public virtual List<ClientDocuments> ClientDocuments { get; set; }
