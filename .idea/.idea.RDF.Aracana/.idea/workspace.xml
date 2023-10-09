@@ -14,6 +14,9 @@
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -253,14 +256,13 @@
       <workItem from="1696377143120" duration="7272000" />
       <workItem from="1696395906233" duration="522000" />
       <workItem from="1696397435318" duration="50000" />
-    </task>
-    <task id="LOCAL-00008" summary="Add functionality to request freebies by approved clients&#10;&#10;A new feature has been added. This new functionality allows approved clients to request freebies. This involves changes in multiple files involving domain, status, data context, RequestFreebies, ApprovedClient, and User files. This change was necessary to extend the shopping facility to reward dedicated customers with freebies based on their engagement in order to improve customer retention and increase repeat purchases. As a result, a new model 'Freebies' has been introduced with relationships to multiple existing entities in the system such firebase status, user, items, and approved clients. Furthermore, extra caution has been implemented to avoid allowing rejected clients from requesting freebies. New exceptions have been readied to handle such failures. Such changes provide a comprehensive and safe update to the system as well as the database schema via migrations.">
-      <option name="closed" value="true" />
-      <created>1690958403024</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1690958403024</updated>
+      <workItem from="1696404829460" duration="710000" />
+      <workItem from="1696469555468" duration="1116000" />
+      <workItem from="1696484348909" duration="131000" />
+      <workItem from="1696559558825" duration="100000" />
+      <workItem from="1696811053338" duration="277000" />
+      <workItem from="1696829873099" duration="45000" />
+      <workItem from="1696837082895" duration="853000" />
     </task>
     <task id="LOCAL-00009" summary="Set default value for CreatedAt, fix id parameter, enhance RequestFreebies&#10;&#10;Set default value for CreatedAt field in Freebies model to prevent missing date records on creation. Changed &quot;FromQuery&quot; to &quot;FromRoute&quot; in UpdateTermDaysStatus method to correctly get id from the URI. Enhanced RequestFreebies method by adding &quot;AddedBy&quot; field to capture who requested the freebies and changed route method to HTTP POST, additionally, error handling was added to ensure better responses.">
       <option name="closed" value="true" />
@@ -646,7 +648,15 @@
       <option name="project" value="LOCAL" />
       <updated>1696396364084</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="Fix typo in API endpoint and clean up workspace.xml file&#10;&#10;Fixed a typographical error in the API endpoint defined for adding attachments in the 'AddAttachments.cs' file. This change ensures proper routing to the correct address when the 'AddAttachments' endpoint is accessed. &#10;&#10;The '.idea/workspace.xml' file was also cleaned up. Unnecessary changes lists were removed, and the file was streamlined for better readability. This does not impact the functionality but provides a cleaner, easier-to-read codebase. Overall, this aims to enhance code maintainability by reducing clutter.">
+      <option name="closed" value="true" />
+      <created>1696404919893</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1696404919893</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -700,7 +710,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Remove 'Reason' from Prospect Status Update &#10;&#10;No longer capturing 'Reason' in three different prospecting status updates: Rejected, Approved, and Request. The 'Reason' field has been commented out in 'UpdateRejectProspectStatusCommand', 'UpdateApprovedProspectStatusCommand' and 'UpdateRequestProspectStatusCommand'. Moreover, the 'Reason' assignment has been removed from the respective handlers.&#10;&#10;The requirement to record a reason for changing the prospecting status was dropped, simplifying code and the user interface." />
     <MESSAGE value="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop." />
     <MESSAGE value="&quot;Add functionality to update approved prospect&#10;&#10;A new functionality was added to update an approved prospect using `UpdateApprovedProspectCommand`. This feature was added to `UpdateApprovedProspect.cs` file in the prospecting features. This new functionality enables updating the details of any approved prospect.&#10;&#10;Also, file renaming took place for `UpdateProspectRequest.cs` to `UpdateProspectInformation.cs` for aligning the function name with its purpose, providing up-to-date and accurate information of the prospect. And a new condition was added to check for 'Approver Approval' when a client is being updated.&#10;&#10;These changes allow managing approved prospects more effectively, ensuring data consistency, readability, and maintainability.&quot;" />
     <MESSAGE value="&quot;Add new features, enhance existing ones and refactor related files&#10;&#10;Added UpdateFreebiesInformation feature to allow updating freebies. This not only enhances the functionality of the application but, also grants the flexibility to manipulate freebie data efficiently for users. Created UserRoleAlreadyTaggedException for error handling. Also, included 'User' field in some queries in GetUserRolesAsync. Enhanced IsTagged check and included the refaction in UserRoleMappingExtension. Removed unnecessary 'Domain' namespace from GetAllRequestedProspectAsync. In AddNewUSer.cs, added a new additional check to throw UserRoleAlreadyTaggedException if the user role is already in use. These amendments were a necessity to deliver extended functionality, more readable and reliable data to users, with the commitment to data consistency.&quot;" />
@@ -725,7 +734,8 @@
     <MESSAGE value="Migrations" />
     <MESSAGE value="Updated DirectRegistration with new fields and validations&#10;&#10;Significantly extended and improved the DirectRegistration functionality. Introduced several new fields for fixed and variable discount, credit limit, attachments, etc. Also, added a set of missing data validation checks and exception handlers for store type, payment modes, booking, and terms to ensure data consistency and avoid database errors. Introduced integration with Cloudinary for handling attached files. Corrected some typos in property names for better clarity.&#10;&#10;Mistyped property names could have led to misunderstandings and errors, validation checks are used to maintain data consistency, new fields were requested for business reasons, and Cloudinary integration brings efficient file handling capabilities." />
     <MESSAGE value="Add latitude and longitude fields to clients table&#10;&#10;Added latitude and longitude columns to the clients table in order to store client's geographical locations. This will provide more accurate data for mapping and geolocation services. The migration contains the Up and Down methods for adding and removing the fields respectively. The file 'AddPinLocation.Designer.cs' is also updated to reflect these changes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add latitude and longitude fields to clients table&#10;&#10;Added latitude and longitude columns to the clients table in order to store client's geographical locations. This will provide more accurate data for mapping and geolocation services. The migration contains the Up and Down methods for adding and removing the fields respectively. The file 'AddPinLocation.Designer.cs' is also updated to reflect these changes." />
+    <MESSAGE value="Fix typo in API endpoint and clean up workspace.xml file&#10;&#10;Fixed a typographical error in the API endpoint defined for adding attachments in the 'AddAttachments.cs' file. This change ensures proper routing to the correct address when the 'AddAttachments' endpoint is accessed. &#10;&#10;The '.idea/workspace.xml' file was also cleaned up. Unnecessary changes lists were removed, and the file was streamlined for better readability. This does not impact the functionality but provides a cleaner, easier-to-read codebase. Overall, this aims to enhance code maintainability by reducing clutter." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix typo in API endpoint and clean up workspace.xml file&#10;&#10;Fixed a typographical error in the API endpoint defined for adding attachments in the 'AddAttachments.cs' file. This change ensures proper routing to the correct address when the 'AddAttachments' endpoint is accessed. &#10;&#10;The '.idea/workspace.xml' file was also cleaned up. Unnecessary changes lists were removed, and the file was streamlined for better readability. This does not impact the functionality but provides a cleaner, easier-to-read codebase. Overall, this aims to enhance code maintainability by reducing clutter." />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

@@ -914,7 +914,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
-                    b.Property<int>("CreditLimit")
+                    b.Property<int?>("CreditLimit")
                         .HasColumnType("int")
                         .HasColumnName("credit_limit");
 

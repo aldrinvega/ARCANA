@@ -45,7 +45,7 @@ public class AddAttachments : ControllerBase
     {
         public int ClientId { get; set; }
 
-        public List<IFormFile> AttachMents { get; set; }
+        public List<IFormFile> Attachments { get; set; }
 
         ////public class Attachments
         ////{ 
@@ -108,7 +108,7 @@ public class AddAttachments : ControllerBase
                                                x.RegistrationStatus == "Released", cancellationToken) ??
                                   throw new ClientIsNotFound(request.ClientId);
 
-            foreach (var documents in request.AttachMents.Where(documents => documents.Length > 0))
+            foreach (var documents in request.Attachments.Where(documents => documents.Length > 0))
             {
                 await using var stream = documents.OpenReadStream();
 
