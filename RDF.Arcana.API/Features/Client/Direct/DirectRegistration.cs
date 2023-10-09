@@ -35,8 +35,8 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public int BookingCoverageId { get; set; }
         public int ModeOfPayment { get; set; }
         public int Terms { get; set; }
-        public int CreditLimit { get; set; }
-        public int TermDaysId { get; set; }
+        public int? CreditLimit { get; set; }
+        public int? TermDaysId { get; set; }
         public FixedDiscounts FixedDiscount { get; set; }
         public bool VariableDiscount { get; set; }
 
