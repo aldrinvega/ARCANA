@@ -56,7 +56,7 @@ public class AddTermsAndCondition : ControllerBase
         public int ModeOfPayment { get; set; }
         public int Terms { get; set; }
         public int CreditLimit { get; set; }
-        public int TermDaysId { get; set; }
+        public int? TermDaysId { get; set; }
         public FixedDiscount FixedDiscounts { get; set; }
         public bool VariableDiscount { get; set; }
         public int AddedBy { get; set; }

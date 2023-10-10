@@ -12,9 +12,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -234,14 +232,7 @@
       <workItem from="1696837082895" duration="3088000" />
       <workItem from="1696858305991" duration="7056000" />
       <workItem from="1696899748579" duration="740000" />
-    </task>
-    <task id="LOCAL-00013" summary="Add RejectedFreebies, ApprovedFreebies, update ApproveFreebies flow&#10;&#10;Created new domain classes 'RejectedFreebies' and 'ApprovedFreebies' to manage freebies that are approved or rejected. Updated the 'ApproveFreebies' flow to use these new classes and include the feature of attaching photo proof for approved freebies. This helps structure the data more efficiently and enhances the approval process by adding an extra layer of verification with photo proof.">
-      <option name="closed" value="true" />
-      <created>1691218628999</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1691218628999</updated>
+      <workItem from="1696902717046" duration="258000" />
     </task>
     <task id="LOCAL-00014" summary="Update data storage strategy and fix typos in API routes&#10;&#10;Updated storage method for photo evidence from directly saving as binary to storing file path in `ApprovedFreebies.cs` to optimize database storage. Fixed incorrect API routes from `api/Propspecting` to `api/Prospecting` in `UpdateRejectProspectStatus.cs`, `GetRequestedProspectById.cs`, `UpdateApprovedProspectStatus.cs`, and `UpdateRequestProspectStatus.cs` files for accurate mapping. Tweaked search logic in `GetAllRequestedProspectAsync.cs` to improve search result relevance. Also, commented out code in `ApproveFreebies.cs` indicating a work-in-progress state.">
       <option name="closed" value="true" />
@@ -627,7 +618,15 @@
       <option name="project" value="LOCAL" />
       <updated>1696897639128</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="Update DirectRegistration and clean workspace.xml files&#10;&#10;The workspace.xml related to .idea.RDF.Arcana workspace was cleaned removing unused and redundant tracks of changes committed and component values. All the obsolete changes tracked which are no longer relevant and redundant keys which were interfering with the workspace's readability were removed, making it less cluttered and more maintainable.&#10;&#10;Additionally, the AddTermAndCondition script was updated in the Prospecting module, changing BookingCoverage to BookingCoverageId in term options for precise referencing. This change corrects the variable name and adds more clarity to its purpose. Meanwhile, in the DirectRegistration script the value of 'PROSPECT_TYPE' was changed to 'DIRECT' enhancing the data's consistency and reflecting its actual use. The feature 'GetAllDirectRegistrationClients' was also added to return paginated client data from direct registration, improving the efficiency of fetching data from the system.">
+      <option name="closed" value="true" />
+      <created>1696902953070</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1696902953076</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -682,7 +681,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Remove Prospecting feature code and Add StoreType setup&#10;&#10;Removed the Prospecting feature code as it was not required anymore due to change in business requirements. Also added functionality to Setup Store Types. This includes adding new store types and getting all store types. Ensured that duplicate store types can't be added by adding a unique constraint. Updated the data migration context and the snapshot to reflect these changes." />
     <MESSAGE value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
     <MESSAGE value="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change." />
     <MESSAGE value="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;" />
@@ -707,7 +705,8 @@
     <MESSAGE value="Add Migrations" />
     <MESSAGE value="Change CreditLimit and TermDaysId to nullable in DirectRegistration&#10;&#10;Changed the types of CreditLimit and TermDaysId in DirectRegistration.cs from int to nullable int. This update allows these attributes to accept null values, improving the flexibility of data handling and accommodating cases where these fields may not have a value." />
     <MESSAGE value="Update DirectRegistration and add GetAllDirectRegistrationClients feature&#10;&#10;Updated the DirectRegistration to change 'PROSPECT_TYPE' to 'DIRECT'. Also added a new feature 'GetAllDirectRegistrationClients' that returns paginated data containing all the information of the direct registration clients. The changes made to 'DirectRegistration.cs' make the information more consistent with its actual use case, while 'GetAllDirectRegistrationClients.cs' provides a new feature to fetch all registered clients in a paginated manner, improving the system's efficiency." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update DirectRegistration and add GetAllDirectRegistrationClients feature&#10;&#10;Updated the DirectRegistration to change 'PROSPECT_TYPE' to 'DIRECT'. Also added a new feature 'GetAllDirectRegistrationClients' that returns paginated data containing all the information of the direct registration clients. The changes made to 'DirectRegistration.cs' make the information more consistent with its actual use case, while 'GetAllDirectRegistrationClients.cs' provides a new feature to fetch all registered clients in a paginated manner, improving the system's efficiency." />
+    <MESSAGE value="Update DirectRegistration and clean workspace.xml files&#10;&#10;The workspace.xml related to .idea.RDF.Arcana workspace was cleaned removing unused and redundant tracks of changes committed and component values. All the obsolete changes tracked which are no longer relevant and redundant keys which were interfering with the workspace's readability were removed, making it less cluttered and more maintainable.&#10;&#10;Additionally, the AddTermAndCondition script was updated in the Prospecting module, changing BookingCoverage to BookingCoverageId in term options for precise referencing. This change corrects the variable name and adds more clarity to its purpose. Meanwhile, in the DirectRegistration script the value of 'PROSPECT_TYPE' was changed to 'DIRECT' enhancing the data's consistency and reflecting its actual use. The feature 'GetAllDirectRegistrationClients' was also added to return paginated client data from direct" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update DirectRegistration and clean workspace.xml files&#10;&#10;The workspace.xml related to .idea.RDF.Arcana workspace was cleaned removing unused and redundant tracks of changes committed and component values. All the obsolete changes tracked which are no longer relevant and redundant keys which were interfering with the workspace's readability were removed, making it less cluttered and more maintainable.&#10;&#10;Additionally, the AddTermAndCondition script was updated in the Prospecting module, changing BookingCoverage to BookingCoverageId in term options for precise referencing. This change corrects the variable name and adds more clarity to its purpose. Meanwhile, in the DirectRegistration script the value of 'PROSPECT_TYPE' was changed to 'DIRECT' enhancing the data's consistency and reflecting its actual use. The feature 'GetAllDirectRegistrationClients' was also added to return paginated client data from direct" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
