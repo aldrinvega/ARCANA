@@ -10,6 +10,7 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
     }
+
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Company> Companies { get; set; }
     public virtual DbSet<Department> Departments { get; set; }
@@ -34,9 +35,9 @@ public class DataContext : DbContext
     public virtual DbSet<ModeOfPayment> ModeOfPayments { get; set; }
     public virtual DbSet<TermOptions> TermOptions { get; set; }
     public virtual DbSet<Terms> Terms { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
         modelBuilder.Entity<UserRoles>()
             .Property(e => e.Permissions)
             .HasConversion(
@@ -116,12 +117,12 @@ public class DataContext : DbContext
             .HasOne(x => x.RequestedByUser)
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
-        
+
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.ModifiedByUser)
             .WithMany()
             .HasForeignKey(x => x.ModifiedBy);
-        
+
         modelBuilder.Entity<Clients>()
             .HasMany(c => c.ClientDocuments)
             .WithOne(cd => cd.Clients)
@@ -131,7 +132,7 @@ public class DataContext : DbContext
             .HasMany(c => c.Approvals)
             .WithOne(a => a.Client)
             .HasForeignKey(a => a.ClientId);
-        
+
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(fr => fr.Approvals)
             .WithOne(a => a.FreebieRequest)
@@ -146,7 +147,7 @@ public class DataContext : DbContext
             .HasOne(x => x.AddedByUser)
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
-        
+
         modelBuilder.Entity<StoreType>()
             .HasOne(x => x.ModifiedByUser)
             .WithMany()
@@ -156,12 +157,12 @@ public class DataContext : DbContext
             .HasOne(x => x.StoreType)
             .WithMany()
             .HasForeignKey(x => x.StoreTypeId);
-        
+
         modelBuilder.Entity<BookingCoverages>()
             .HasOne(x => x.AddedByUser)
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
-        
+
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.BookingCoverages)
             .WithMany()
@@ -196,7 +197,7 @@ public class DataContext : DbContext
             .HasOne(x => x.Clients)
             .WithMany()
             .HasForeignKey(x => x.ClientId);
-        
+
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.FixedDiscounts)
             .WithMany()
@@ -211,7 +212,7 @@ public class DataContext : DbContext
             .HasOne(x => x.RequestedByUser)
             .WithMany()
             .HasForeignKey(x => x.RequestedBy);
-        
+
         modelBuilder.Entity<Approvals>()
             .HasOne(x => x.ApproveByUser)
             .WithMany()
@@ -221,8 +222,5 @@ public class DataContext : DbContext
             .HasOne(x => x.RequestedByUser)
             .WithMany()
             .HasForeignKey(x => x.RequestedBy);
-
-
-
     }
 }

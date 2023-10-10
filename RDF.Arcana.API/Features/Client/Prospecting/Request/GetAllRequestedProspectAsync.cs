@@ -4,12 +4,12 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Clients.Prospecting;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
 
 [Route("api/Prospecting")]
 [ApiController]
-
 public class GetAllRequestedProspectAsync : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -17,6 +17,52 @@ public class GetAllRequestedProspectAsync : ControllerBase
     public GetAllRequestedProspectAsync(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet("GetAllRequestedProspect")]
+    public async Task<IActionResult> GetAllRequestedProspect([FromQuery] GetAllRequestedProspectQuery query)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            var requestedProspect = await _mediator.Send(query);
+
+            Response.AddPaginationHeader(
+                requestedProspect.CurrentPage,
+                requestedProspect.PageSize,
+                requestedProspect.TotalCount,
+                requestedProspect.TotalPages,
+                requestedProspect.HasPreviousPage,
+                requestedProspect.HasNextPage
+            );
+
+            var result = new QueryOrCommandResult<object>
+            {
+                Success = true,
+                Status = StatusCodes.Status200OK,
+                Data = new
+                {
+                    requestedProspect,
+                    requestedProspect.CurrentPage,
+                    requestedProspect.PageSize,
+                    requestedProspect.TotalCount,
+                    requestedProspect.TotalPages,
+                    requestedProspect.HasPreviousPage,
+                    requestedProspect.HasNextPage
+                }
+            };
+
+            result.Messages.Add("Successfully Fetch Data");
+
+            return Ok(result);
+        }
+        catch (System.Exception e)
+        {
+            response.Messages.Add(e.Message);
+            response.Status = StatusCodes.Status409Conflict;
+
+            return Ok(response);
+        }
     }
 
     public class GetAllRequestedProspectQuery : UserParams, IRequest<PagedList<GetAllRequestedProspectResult>>
@@ -39,7 +85,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
         public bool IsActive { get; set; }
         public string Reason { get; set; }
     }
-    
+
     public class Handler : IRequestHandler<GetAllRequestedProspectQuery, PagedList<GetAllRequestedProspectResult>>
     {
         private readonly DataContext _context;
@@ -49,75 +95,32 @@ public class GetAllRequestedProspectAsync : ControllerBase
             _context = context;
         }
 
-        public async Task<PagedList<GetAllRequestedProspectResult>> Handle(GetAllRequestedProspectQuery request, CancellationToken cancellationToken)
+        public async Task<PagedList<GetAllRequestedProspectResult>> Handle(GetAllRequestedProspectQuery request,
+            CancellationToken cancellationToken)
         {
-            IQueryable<Approvals> requestedProspect = _context.Approvals.Where(x => 
+            IQueryable<Approvals> requestedProspect = _context.Approvals.Where(x =>
                     x.Client.RegistrationStatus == "Approved"
                     && x.IsApproved == true
-                    )
+                )
                 .Include(x => x.Client)
                 .ThenInclude(x => x.StoreType);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                requestedProspect = requestedProspect.Where(x => x.Client.Fullname.Contains(request.Search) && x.Client.CustomerType == "Prospect");
+                requestedProspect = requestedProspect.Where(x =>
+                    x.Client.Fullname.Contains(request.Search) && x.Client.CustomerType == "Prospect");
             }
 
             if (request.IsActive != null)
             {
-                requestedProspect = requestedProspect.Where(x => x.IsActive == request.IsActive && x.Client.CustomerType == "Prospect");
+                requestedProspect = requestedProspect.Where(x =>
+                    x.IsActive == request.IsActive && x.Client.CustomerType == "Prospect");
             }
 
             var result = requestedProspect.Select(x => x.ToGetAllRequestedProspectResult());
 
             return await PagedList<GetAllRequestedProspectResult>.CreateAsync(result, request.PageNumber,
                 request.PageSize);
-        }
-    }
-
-    [HttpGet("GetAllRequestedProspect")]
-    public async Task<IActionResult> GetAllRequestedProspect([FromQuery]GetAllRequestedProspectQuery query)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-           var requestedProspect =  await _mediator.Send(query);
-            
-            Response.AddPaginationHeader(
-                requestedProspect.CurrentPage,
-                requestedProspect.PageSize,
-                requestedProspect.TotalCount,
-                requestedProspect.TotalPages,
-                requestedProspect.HasPreviousPage,
-                requestedProspect.HasNextPage
-                );
-
-            var result = new QueryOrCommandResult<object>
-            {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    requestedProspect,
-                    requestedProspect.CurrentPage,
-                    requestedProspect.PageSize,
-                    requestedProspect.TotalCount,
-                    requestedProspect.TotalPages,
-                    requestedProspect.HasPreviousPage,
-                    requestedProspect.HasNextPage
-                }
-            };
-            
-            result.Messages.Add("Successfully Fetch Data");
-
-            return Ok(result);
-        }
-        catch (System.Exception e)
-        {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
         }
     }
 }

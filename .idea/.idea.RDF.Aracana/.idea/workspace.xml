@@ -13,10 +13,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationMappingExtensions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/GetAllDirectRegistrationClients.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/UpdateDirectRegistrationStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231009080231_AdjustNullableTermOptionCreditOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231009080231_AdjustNullableTermOptionCreditOptions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,37 +80,7 @@
     </option>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/06307b7918c44350b0c8a26ee08100401fcb88/2e/3129979e/ConcurrencyDetector.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d303a4ca2dbf473ea474e42b77f214b91e3888/f3/7d0d5128/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dd85d1af76a544e1a8083607f687e374b1d8a0/_5a3bc/IIdentity.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Data/DataContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Data/DataContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Data/DataContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Data/DataContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/Clients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Domain/FixedDiscounts.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Rejected/UpdateRejectProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateProspectInformation.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Features/Client/Prospecting/Request/UpdateRequestProspectStatus.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Arcana/RDF.Arcana.API/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/avega/RiderProjects/ARCANA/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -124,28 +100,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.smartKeys_rider&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.smartKeys_rider",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\avega\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\avega\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RDF.Arcana.API: http">
     <configuration name="RDF.Arcana.API: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="6058290284386075175" uuid_low="-5332320375588500453" />
@@ -262,31 +240,8 @@
       <workItem from="1696559558825" duration="100000" />
       <workItem from="1696811053338" duration="277000" />
       <workItem from="1696829873099" duration="45000" />
-      <workItem from="1696837082895" duration="853000" />
-    </task>
-    <task id="LOCAL-00009" summary="Set default value for CreatedAt, fix id parameter, enhance RequestFreebies&#10;&#10;Set default value for CreatedAt field in Freebies model to prevent missing date records on creation. Changed &quot;FromQuery&quot; to &quot;FromRoute&quot; in UpdateTermDaysStatus method to correctly get id from the URI. Enhanced RequestFreebies method by adding &quot;AddedBy&quot; field to capture who requested the freebies and changed route method to HTTP POST, additionally, error handling was added to ensure better responses.">
-      <option name="closed" value="true" />
-      <created>1690960258746</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1690960258746</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Remove initial migration files&#10;&#10;Deleted the initial migration files 20230731024132_InitialCreate.cs and 20230731083505_AddClientRelatedEntity.cs. The removal was necessary as the initial schema migration was redundant and causing issues with database creation on new environments. The database schema will be managed through successive migrations.">
-      <option name="closed" value="true" />
-      <created>1691057330308</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1691057330308</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Refactor queries and add Freebie approval feature&#10;&#10;Removed unnecessary using statements in NotificationService.cs and refactored GetAllRequestedProspectAsync.cs to better reflect the active status of requested prospects, improving code readability. New file ApproveFreebies.cs introduced a method to approve freebie requests improving functionality in the Freebies feature.">
-      <option name="closed" value="true" />
-      <created>1691206743696</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1691206743696</updated>
+      <workItem from="1696837082895" duration="3088000" />
+      <workItem from="1696858305991" duration="6089000" />
     </task>
     <task id="LOCAL-00012" summary="&quot;Add IsActive status and new models to Client Prospecting Feature&quot;&#10;&#10;In the ProspectingMappingProfiles, GetAllRequestedProspectAsync, GetRequestedProspectById, GetAllRejectProspectAsync, GetAllApprovedProspectAsync, and GetRequestedProspectById sections, IsActive entry was added for better client activity monitoring. The status of the clients whether they are active or not, is now part of our detailed mapping.&#10;&#10;In the DataContext, new entities of approved and rejected freebies were also introduced. These modifications are needed to handle the expanded business logic related to the management of freebies which comes with an approval or rejection process. &#10;&#10;The IsActive field and mentioned models implemented provide more efficient data extraction and improve the efficiency of the response, considering the application's evolving needs and demand.">
       <option name="closed" value="true" />
@@ -656,7 +611,31 @@
       <option name="project" value="LOCAL" />
       <updated>1696404919893</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="&quot;Fix typo, make CreditLimit nullable and clean up workspace.xml&#10;&#10;Fixed a typographical error in 'AddAttachments.cs' and made 'CreditLimit' nullable in 'TermOptions.cs'. Typographical correction in 'AddAttachments.cs' ensures the variable name adheres to the correct CamelCase format, leading to better understandability. Altering 'CreditLimit' to nullable tolerates cases where credit limit data might not be available in 'TermOptions.cs', ensuring system robustness. '.idea/workspace.xml' file was also cleaned up, resulting in a cleaner and easier-to-read codebase.&quot;">
+      <option name="closed" value="true" />
+      <created>1696838654720</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1696838654723</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Add Migrations">
+      <option name="closed" value="true" />
+      <created>1696838748805</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1696838748805</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Change CreditLimit and TermDaysId to nullable in DirectRegistration&#10;&#10;Changed the types of CreditLimit and TermDaysId in DirectRegistration.cs from int to nullable int. This update allows these attributes to accept null values, improving the flexibility of data handling and accommodating cases where these fields may not have a value.">
+      <option name="closed" value="true" />
+      <created>1696840025886</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1696840025886</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -709,10 +688,8 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Add update prospect feature and refactor model and mapping &#10;&#10;This commit introduces a new class (UpdateApprovedProspect.cs) for updating an approved prospect and a new file (GetAllRejectedFreebies.cs) to fetch all rejected freebies, enhancing prospect and freebie features. It also refines the 'FreebieRequest.cs', adding a 'Status' field and a foreign key relationship for 'Clients', which will help in managing freebie requests efficiently. &#10;Changes have been made to 'ProspectingMappingProfiles.cs', 'GetAllRequestedProspectAsync.cs', 'GetAllRejectProspectAsync.cs' and 'GetAllApprovedProspectAsync.cs' files adding `StoreType` to the returned result, which provides more detailed information about the prospect's shop." />
-    <MESSAGE value="&quot;Add functionality to update approved prospect&#10;&#10;A new functionality was added to update an approved prospect using `UpdateApprovedProspectCommand`. This feature was added to `UpdateApprovedProspect.cs` file in the prospecting features. This new functionality enables updating the details of any approved prospect.&#10;&#10;Also, file renaming took place for `UpdateProspectRequest.cs` to `UpdateProspectInformation.cs` for aligning the function name with its purpose, providing up-to-date and accurate information of the prospect. And a new condition was added to check for 'Approver Approval' when a client is being updated.&#10;&#10;These changes allow managing approved prospects more effectively, ensuring data consistency, readability, and maintainability.&quot;" />
-    <MESSAGE value="&quot;Add new features, enhance existing ones and refactor related files&#10;&#10;Added UpdateFreebiesInformation feature to allow updating freebies. This not only enhances the functionality of the application but, also grants the flexibility to manipulate freebie data efficiently for users. Created UserRoleAlreadyTaggedException for error handling. Also, included 'User' field in some queries in GetUserRolesAsync. Enhanced IsTagged check and included the refaction in UserRoleMappingExtension. Removed unnecessary 'Domain' namespace from GetAllRequestedProspectAsync. In AddNewUSer.cs, added a new additional check to throw UserRoleAlreadyTaggedException if the user role is already in use. These amendments were a necessity to deliver extended functionality, more readable and reliable data to users, with the commitment to data consistency.&quot;" />
     <MESSAGE value="Update Freebie management and Prospecting enhancements&#10;&#10;Updated the Freebies management by allowing the removal of items from a Freebie request. Added a new status &quot;Released&quot; for Prospecting and improved the query result details for approved Freebies. &#10;&#10;These changes allow the application to track the status of Prospecting and the Freebie requests in a more detailed and efficient manner. Now it is possible to remove items from a Freebie request. For Prospecting, a new status &quot;Released&quot; was introduced to clearly distinguish the delivery status of the client. On top of that, the return details for approved Freebies was enhanced to include the FreebieRequestId and ClientId, providing more visibility and control for the management." />
     <MESSAGE value="Remove Prospecting feature code and Add StoreType setup&#10;&#10;Removed the Prospecting feature code as it was not required anymore due to change in business requirements. Also added functionality to Setup Store Types. This includes adding new store types and getting all store types. Ensured that duplicate store types can't be added by adding a unique constraint. Updated the data migration context and the snapshot to reflect these changes." />
     <MESSAGE value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
@@ -735,7 +712,10 @@
     <MESSAGE value="Updated DirectRegistration with new fields and validations&#10;&#10;Significantly extended and improved the DirectRegistration functionality. Introduced several new fields for fixed and variable discount, credit limit, attachments, etc. Also, added a set of missing data validation checks and exception handlers for store type, payment modes, booking, and terms to ensure data consistency and avoid database errors. Introduced integration with Cloudinary for handling attached files. Corrected some typos in property names for better clarity.&#10;&#10;Mistyped property names could have led to misunderstandings and errors, validation checks are used to maintain data consistency, new fields were requested for business reasons, and Cloudinary integration brings efficient file handling capabilities." />
     <MESSAGE value="Add latitude and longitude fields to clients table&#10;&#10;Added latitude and longitude columns to the clients table in order to store client's geographical locations. This will provide more accurate data for mapping and geolocation services. The migration contains the Up and Down methods for adding and removing the fields respectively. The file 'AddPinLocation.Designer.cs' is also updated to reflect these changes." />
     <MESSAGE value="Fix typo in API endpoint and clean up workspace.xml file&#10;&#10;Fixed a typographical error in the API endpoint defined for adding attachments in the 'AddAttachments.cs' file. This change ensures proper routing to the correct address when the 'AddAttachments' endpoint is accessed. &#10;&#10;The '.idea/workspace.xml' file was also cleaned up. Unnecessary changes lists were removed, and the file was streamlined for better readability. This does not impact the functionality but provides a cleaner, easier-to-read codebase. Overall, this aims to enhance code maintainability by reducing clutter." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix typo in API endpoint and clean up workspace.xml file&#10;&#10;Fixed a typographical error in the API endpoint defined for adding attachments in the 'AddAttachments.cs' file. This change ensures proper routing to the correct address when the 'AddAttachments' endpoint is accessed. &#10;&#10;The '.idea/workspace.xml' file was also cleaned up. Unnecessary changes lists were removed, and the file was streamlined for better readability. This does not impact the functionality but provides a cleaner, easier-to-read codebase. Overall, this aims to enhance code maintainability by reducing clutter." />
+    <MESSAGE value="&quot;Fix typo, make CreditLimit nullable and clean up workspace.xml&#10;&#10;Fixed a typographical error in 'AddAttachments.cs' and made 'CreditLimit' nullable in 'TermOptions.cs'. Typographical correction in 'AddAttachments.cs' ensures the variable name adheres to the correct CamelCase format, leading to better understandability. Altering 'CreditLimit' to nullable tolerates cases where credit limit data might not be available in 'TermOptions.cs', ensuring system robustness. '.idea/workspace.xml' file was also cleaned up, resulting in a cleaner and easier-to-read codebase.&quot;" />
+    <MESSAGE value="Add Migrations" />
+    <MESSAGE value="Change CreditLimit and TermDaysId to nullable in DirectRegistration&#10;&#10;Changed the types of CreditLimit and TermDaysId in DirectRegistration.cs from int to nullable int. This update allows these attributes to accept null values, improving the flexibility of data handling and accommodating cases where these fields may not have a value." />
+    <option name="LAST_COMMIT_MESSAGE" value="Change CreditLimit and TermDaysId to nullable in DirectRegistration&#10;&#10;Changed the types of CreditLimit and TermDaysId in DirectRegistration.cs from int to nullable int. This update allows these attributes to accept null values, improving the flexibility of data handling and accommodating cases where these fields may not have a value." />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

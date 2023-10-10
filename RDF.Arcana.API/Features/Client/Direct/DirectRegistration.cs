@@ -53,7 +53,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
     public class Handler : IRequestHandler<DirectRegistrationCommand, Unit>
     {
         private const string APPROVED_STATUS = "Approved";
-        private const string PROSPECT_TYPE = "Prospect";
+        private const string REGISTRATION_TYPE = "Direct";
         private const string APPROVER_APPROVAL = "Approver Approval";
 
         private readonly Cloudinary _cloudinary;
@@ -123,7 +123,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     ModeOfPayment = request.ModeOfPayment,
                     Terms = request.Terms,
                     RegistrationStatus = APPROVED_STATUS,
-                    CustomerType = PROSPECT_TYPE,
+                    CustomerType = REGISTRATION_TYPE,
                     IsActive = true,
                     AddedBy = request.AddedBy,
                     Longitude = request.Longitude,

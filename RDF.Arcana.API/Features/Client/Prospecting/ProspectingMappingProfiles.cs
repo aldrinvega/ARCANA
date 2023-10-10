@@ -1,6 +1,7 @@
 ﻿using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Prospecting.Approved;
 using RDF.Arcana.API.Features.Client.Prospecting.Rejected;
+using RDF.Arcana.API.Features.Client.Prospecting.Request;
 using RDF.Arcana.API.Features.Clients.Prospecting.Approved;
 using RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
 using RDF.Arcana.API.Features.Clients.Prospecting.Request;
@@ -26,7 +27,7 @@ public static class ProspectingMappingProfiles
             IsActive = requestedClient.IsActive
         };
     }
-    
+
     public static GetAllApprovedProspectAsync.GetAllApprovedProspectResult
         ToGetGetAllApprovedProspectResult(this Approvals approvedClient)
     {
@@ -44,7 +45,7 @@ public static class ProspectingMappingProfiles
             IsActive = approvedClient.IsActive,
         };
     }
-    
+
     public static GetAllRejectProspectAsync.GetAllRejectProspectResult
         ToGetGetAllRejectProspectResult(this Approvals rejectClient)
     {
