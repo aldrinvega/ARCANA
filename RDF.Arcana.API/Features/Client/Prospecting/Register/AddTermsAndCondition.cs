@@ -18,13 +18,41 @@ public class AddTermsAndCondition : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpPut("AddTermsAndCondition/{id}")]
+    public async Task<IActionResult> AddTermsCondition([FromBody] AddTermsAndConditionsCommand command,
+        [FromRoute] int id)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            if (User.Identity is ClaimsIdentity identity
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                command.AddedBy = userId;
+            }
+
+            command.ClientId = id;
+            await _mediator.Send(command);
+            response.Success = true;
+            response.Status = StatusCodes.Status200OK;
+            response.Messages.Add("Terms and Conditions added successfully");
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            response.Messages.Add(ex.Message);
+            response.Status = StatusCodes.Status404NotFound;
+            return Conflict(response);
+        }
+    }
+
     public class AddTermsAndConditionsCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
-        public int BookingCoverage { get; set; }
+        public int BookingCoverageId { get; set; }
         public int ModeOfPayment { get; set; }
         public int Terms { get; set; }
         public int CreditLimit { get; set; }
@@ -32,7 +60,7 @@ public class AddTermsAndCondition : ControllerBase
         public FixedDiscount FixedDiscounts { get; set; }
         public bool VariableDiscount { get; set; }
         public int AddedBy { get; set; }
-        
+
         public class FixedDiscount
         {
             public decimal DiscountPercentage { get; set; }
@@ -59,9 +87,9 @@ public class AddTermsAndCondition : ControllerBase
             existingClient.Freezer = request.Freezer;
             existingClient.Terms = request.Terms;
             existingClient.DirectDelivery = request.DirectDelivery;
-            existingClient.BookingCoverageId = request.BookingCoverage;
+            existingClient.BookingCoverageId = request.BookingCoverageId;
             existingClient.ModeOfPayment = request.ModeOfPayment;
-                    
+
             var termsOptions = new TermOptions
             {
                 ClientId = request.ClientId,
@@ -80,7 +108,7 @@ public class AddTermsAndCondition : ControllerBase
                     ClientId = existingClient.Id,
                     DiscountPercentage = request.FixedDiscounts.DiscountPercentage
                 };
-                        
+
                 await _context.FixedDiscounts.AddAsync(fixedDiscount, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
@@ -91,39 +119,11 @@ public class AddTermsAndCondition : ControllerBase
             {
                 existingClient.VariableDiscount = request.VariableDiscount;
             }
-            
-            await _context.TermOptions.AddAsync( termsOptions, cancellationToken );
+
+            await _context.TermOptions.AddAsync(termsOptions, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
-
-        }
-    }
-
-    [HttpPut("AddTermsAndCondition/{id}")]
-    public async Task<IActionResult> AddTermsCondition([FromBody]AddTermsAndConditionsCommand command, [FromRoute]int id)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-            if (User.Identity is ClaimsIdentity identity
-                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
-            {
-                command.AddedBy = userId;
-            }
-
-            command.ClientId = id;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Terms and Conditions added successfully");
-            return Ok(response);
-        }
-        catch(Exception ex)
-        {
-            response.Messages.Add(ex.Message);
-            response.Status = StatusCodes.Status404NotFound;
-            return Conflict(response);
         }
     }
 }

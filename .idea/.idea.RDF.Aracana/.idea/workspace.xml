@@ -13,16 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationMappingExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/GetAllDirectRegistrationClients.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/UpdateDirectRegistrationStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231009080231_AdjustNullableTermOptionCreditOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231009080231_AdjustNullableTermOptionCreditOptions.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,30 +91,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.smartKeys_rider",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.smartKeys_rider&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
-      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
-      "C:\\Users\\avega\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\avega\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RDF.Arcana.API: http">
     <configuration name="RDF.Arcana.API: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="6058290284386075175" uuid_low="-5332320375588500453" />
@@ -241,15 +232,8 @@
       <workItem from="1696811053338" duration="277000" />
       <workItem from="1696829873099" duration="45000" />
       <workItem from="1696837082895" duration="3088000" />
-      <workItem from="1696858305991" duration="6089000" />
-    </task>
-    <task id="LOCAL-00012" summary="&quot;Add IsActive status and new models to Client Prospecting Feature&quot;&#10;&#10;In the ProspectingMappingProfiles, GetAllRequestedProspectAsync, GetRequestedProspectById, GetAllRejectProspectAsync, GetAllApprovedProspectAsync, and GetRequestedProspectById sections, IsActive entry was added for better client activity monitoring. The status of the clients whether they are active or not, is now part of our detailed mapping.&#10;&#10;In the DataContext, new entities of approved and rejected freebies were also introduced. These modifications are needed to handle the expanded business logic related to the management of freebies which comes with an approval or rejection process. &#10;&#10;The IsActive field and mentioned models implemented provide more efficient data extraction and improve the efficiency of the response, considering the application's evolving needs and demand.">
-      <option name="closed" value="true" />
-      <created>1691218405730</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1691218405730</updated>
+      <workItem from="1696858305991" duration="7056000" />
+      <workItem from="1696899748579" duration="740000" />
     </task>
     <task id="LOCAL-00013" summary="Add RejectedFreebies, ApprovedFreebies, update ApproveFreebies flow&#10;&#10;Created new domain classes 'RejectedFreebies' and 'ApprovedFreebies' to manage freebies that are approved or rejected. Updated the 'ApproveFreebies' flow to use these new classes and include the feature of attaching photo proof for approved freebies. This helps structure the data more efficiently and enhances the approval process by adding an extra layer of verification with photo proof.">
       <option name="closed" value="true" />
@@ -635,7 +619,15 @@
       <option name="project" value="LOCAL" />
       <updated>1696840025886</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Update DirectRegistration and add GetAllDirectRegistrationClients feature&#10;&#10;Updated the DirectRegistration to change 'PROSPECT_TYPE' to 'DIRECT'. Also added a new feature 'GetAllDirectRegistrationClients' that returns paginated data containing all the information of the direct registration clients. The changes made to 'DirectRegistration.cs' make the information more consistent with its actual use case, while 'GetAllDirectRegistrationClients.cs' provides a new feature to fetch all registered clients in a paginated manner, improving the system's efficiency.">
+      <option name="closed" value="true" />
+      <created>1696897639123</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1696897639128</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -690,7 +682,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Update Freebie management and Prospecting enhancements&#10;&#10;Updated the Freebies management by allowing the removal of items from a Freebie request. Added a new status &quot;Released&quot; for Prospecting and improved the query result details for approved Freebies. &#10;&#10;These changes allow the application to track the status of Prospecting and the Freebie requests in a more detailed and efficient manner. Now it is possible to remove items from a Freebie request. For Prospecting, a new status &quot;Released&quot; was introduced to clearly distinguish the delivery status of the client. On top of that, the return details for approved Freebies was enhanced to include the FreebieRequestId and ClientId, providing more visibility and control for the management." />
     <MESSAGE value="Remove Prospecting feature code and Add StoreType setup&#10;&#10;Removed the Prospecting feature code as it was not required anymore due to change in business requirements. Also added functionality to Setup Store Types. This includes adding new store types and getting all store types. Ensured that duplicate store types can't be added by adding a unique constraint. Updated the data migration context and the snapshot to reflect these changes." />
     <MESSAGE value="Add IsActive field to StoreType model&#10;&#10;This commit introduces a new field 'IsActive' to the StoreType model. The field is set to true by default when a new StoreType is created. This allows us to easily track and filter active store types." />
     <MESSAGE value="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change." />
@@ -715,7 +706,8 @@
     <MESSAGE value="&quot;Fix typo, make CreditLimit nullable and clean up workspace.xml&#10;&#10;Fixed a typographical error in 'AddAttachments.cs' and made 'CreditLimit' nullable in 'TermOptions.cs'. Typographical correction in 'AddAttachments.cs' ensures the variable name adheres to the correct CamelCase format, leading to better understandability. Altering 'CreditLimit' to nullable tolerates cases where credit limit data might not be available in 'TermOptions.cs', ensuring system robustness. '.idea/workspace.xml' file was also cleaned up, resulting in a cleaner and easier-to-read codebase.&quot;" />
     <MESSAGE value="Add Migrations" />
     <MESSAGE value="Change CreditLimit and TermDaysId to nullable in DirectRegistration&#10;&#10;Changed the types of CreditLimit and TermDaysId in DirectRegistration.cs from int to nullable int. This update allows these attributes to accept null values, improving the flexibility of data handling and accommodating cases where these fields may not have a value." />
-    <option name="LAST_COMMIT_MESSAGE" value="Change CreditLimit and TermDaysId to nullable in DirectRegistration&#10;&#10;Changed the types of CreditLimit and TermDaysId in DirectRegistration.cs from int to nullable int. This update allows these attributes to accept null values, improving the flexibility of data handling and accommodating cases where these fields may not have a value." />
+    <MESSAGE value="Update DirectRegistration and add GetAllDirectRegistrationClients feature&#10;&#10;Updated the DirectRegistration to change 'PROSPECT_TYPE' to 'DIRECT'. Also added a new feature 'GetAllDirectRegistrationClients' that returns paginated data containing all the information of the direct registration clients. The changes made to 'DirectRegistration.cs' make the information more consistent with its actual use case, while 'GetAllDirectRegistrationClients.cs' provides a new feature to fetch all registered clients in a paginated manner, improving the system's efficiency." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update DirectRegistration and add GetAllDirectRegistrationClients feature&#10;&#10;Updated the DirectRegistration to change 'PROSPECT_TYPE' to 'DIRECT'. Also added a new feature 'GetAllDirectRegistrationClients' that returns paginated data containing all the information of the direct registration clients. The changes made to 'DirectRegistration.cs' make the information more consistent with its actual use case, while 'GetAllDirectRegistrationClients.cs' provides a new feature to fetch all registered clients in a paginated manner, improving the system's efficiency." />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
