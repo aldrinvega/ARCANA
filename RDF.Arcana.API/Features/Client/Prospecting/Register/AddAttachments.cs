@@ -45,12 +45,13 @@ public class AddAttachments : ControllerBase
     {
         public int ClientId { get; set; }
 
-        public List<IFormFile> Attachments { get; set; }
+        public List<Document> Attachments { get; set; }
 
-        ////public class Attachments
-        ////{ 
-        ////    public IFormFile Document { get; set; }
-        ////}
+        public class Document
+        {
+            public IFormFile Attachment { get; set; }
+            public string DocumentType { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<AddAttachedmentsCommand, Unit>
@@ -70,35 +71,6 @@ public class AddAttachments : ControllerBase
             _cloudinary = new Cloudinary(account);
         }
 
-        //private Dictionary<string, string> LoadDocumentTypeMappings()
-        //{
-        //    // Load mappings from the configuration file or database
-        //    // In this example, loading from a JSON file
-        //    string configFileContent = File.ReadAllText("documentTypeMappings.json");
-        //    var config = JsonConvert.DeserializeObject<Dictionary<string, string>>(configFileContent);
-        //    return config;
-        //}
-
-        //private string GetDocumentTypeForAttachment(IFormFile attachment)
-        //{
-        //    var documentTypeMappings = LoadDocumentTypeMappings();
-
-        //    // Get the file name
-        //    string fileName = Path.GetFileNameWithoutExtension(attachment.FileName);
-
-        //    // Check if any mapping matches the file name
-        //    foreach (var mapping in documentTypeMappings)
-        //    {
-        //        if (fileName.StartsWith(mapping.Key, StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            return mapping.Value;
-        //        }
-        //    }
-
-        //    // Default to "Unknown Document"
-        //    return "Unknown Document";
-        //}
-
         public async Task<Unit> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
         {
             var exisitingClient = await _context.Clients
@@ -108,22 +80,23 @@ public class AddAttachments : ControllerBase
                                                x.RegistrationStatus == "Released", cancellationToken) ??
                                   throw new ClientIsNotFound(request.ClientId);
 
-            foreach (var documents in request.Attachments.Where(documents => documents.Length > 0))
+            foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
             {
-                await using var stream = documents.OpenReadStream();
+                await using var stream = documents.Attachment.OpenReadStream();
 
-                var attachedmenetsParams = new ImageUploadParams
+                var attachmentsParams = new ImageUploadParams
                 {
-                    File = new FileDescription(documents.FileName, stream),
-                    PublicId = $"{exisitingClient.BusinessName}/{documents.FileName}"
+                    File = new FileDescription(documents.Attachment.FileName, stream),
+                    PublicId = $"{exisitingClient.BusinessName}/{documents.Attachment.FileName}"
                 };
 
-                var attachmentsUploadResult = await _cloudinary.UploadAsync(attachedmenetsParams);
+                var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
                 var attachments = new ClientDocuments
                 {
                     DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
                     ClientId = exisitingClient.Id,
+                    DocumentType = documents.DocumentType
                 };
 
                 await _context.ClientDocuments.AddAsync(attachments, cancellationToken);

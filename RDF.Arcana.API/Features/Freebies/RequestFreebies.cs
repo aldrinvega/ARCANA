@@ -69,22 +69,17 @@ public class RequestFreebies : ControllerBase
 
         public async Task<Unit> Handle(RequestFreebiesCommand request, CancellationToken cancellationToken)
         {
-            var validateClient =
-                await _context.FreebieRequests
-                    .Include(x => x.Clients)
-                    .Include(x => x.FreebieItems)
-                    .FirstOrDefaultAsync(x =>
-                            x.ClientId == request.ClientId &&
-                            x.IsDelivered == true,
-                        cancellationToken);
+            // Check if client has previously requested for freebies
+            var previousRequestCount =
+                await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId, cancellationToken);
+
+            // This will be true if client is requesting freebies for the first time, and will be false for any subsequent requests
+            var isFirstRequest = previousRequestCount == 0;
+
+            //Check if the client is existing
 
             var existingClient =
                 await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
-
-            if (validateClient is not null)
-            {
-                throw new Exception("Delivered na yan ayy");
-            }
 
             if (request.Freebies.Count > 5)
             {
@@ -96,11 +91,27 @@ public class RequestFreebies : ControllerBase
                 throw new Exception("Items cannot be repeated.");
             }
 
+            //Validate if the Item is already requested | 1 item per client
+            foreach (var item in request.Freebies)
+            {
+                var existingRequest = await _context.FreebieItems
+                    .Include(x => x.Items)
+                    .Include(f => f.FreebieRequest)
+                    .Where(f => f.ItemId == item.ItemId && f.FreebieRequest.ClientId == request.ClientId)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (existingRequest != null)
+                {
+                    throw new Exception(
+                        $"Item with ID {existingRequest.Items.ItemDescription} has already been requested.");
+                }
+            }
+
             var newApproval = new Approvals
             {
                 ClientId = request.ClientId,
                 ApprovalType = "For Freebie Approval",
-                IsApproved = false,
+                IsApproved = isFirstRequest,
                 IsActive = true,
                 RequestedBy = request.AddedBy,
                 ApprovedBy = request.AddedBy

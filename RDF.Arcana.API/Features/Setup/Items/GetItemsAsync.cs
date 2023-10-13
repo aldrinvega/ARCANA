@@ -18,7 +18,7 @@ public class GetItemsAsync : ControllerBase
     }
 
     [HttpGet("GetAllItems")]
-    public async Task<IActionResult> GetAllItems([FromQuery] GetItemsAsync.GetItemsAsyncQuery request)
+    public async Task<IActionResult> GetAllItems([FromQuery] GetItemsAsyncQuery request)
     {
         var response = new QueryOrCommandResult<object>();
 

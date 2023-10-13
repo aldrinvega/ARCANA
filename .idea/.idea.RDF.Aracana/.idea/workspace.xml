@@ -13,9 +13,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/AddNewTerms.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/Exceptions/TermAlreadyExistException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/Exceptions/TermsDoesNotExistException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/GetAllTermsAsync.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/UpdateTermsStatus.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231013060312_AddIsActiveonTermsEntity.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231013060312_AddIsActiveonTermsEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Department/Exception/GetDepartmentsAsync.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/GetItemsAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/GetItemsAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/GetUomAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/GetUomAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/UpdateUom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/UpdateUom.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,30 +109,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.general",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
-      "C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
-      "C:\\Users\\avega\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\avega\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\avega\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.RDF.Arcana.API: http">
     <configuration name="RDF.Arcana.API: FolderProfile" type="DotNetMsBuildPublish" factoryName="Publish to IIS">
       <riderPublish configuration="Release" platform="Any CPU" publish_profile="FolderProfile.pubxml" pubxml_path="$PROJECT_DIR$/RDF.Arcana.API/Properties/PublishProfiles/FolderProfile.pubxml" uuid_high="6058290284386075175" uuid_low="-5332320375588500453" />
@@ -240,15 +256,9 @@
       <workItem from="1696904869396" duration="1487000" />
       <workItem from="1696914254573" duration="1766000" />
       <workItem from="1697079098022" duration="541000" />
-      <workItem from="1697080263145" duration="5035000" />
-    </task>
-    <task id="LOCAL-00015" summary="&quot;Refactor client status update and enable Freebies approval feature&quot;&#10;&#10;This commit includes changes across the client prospecting API, specifically updating the logic that checks the current status of a client and initiates the status change. The 'IsActive' check has been removed to streamline the update process. This allows for more flexibility when changing the status of a client.&#10;&#10;Additionally, in the Freebies feature, un-commented the code which had been previously suppressed, making the 'ApproveFreebies' feature available. It now supports image uploads and handles file-saving, providing a more robust solution for approving freebies. &#10;&#10;Both these changes are aimed at improving usability and simplifying the codebase.">
-      <option name="closed" value="true" />
-      <created>1691220102138</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1691220102138</updated>
+      <workItem from="1697080263145" duration="13182000" />
+      <workItem from="1697164217352" duration="4486000" />
+      <workItem from="1697182069333" duration="2943000" />
     </task>
     <task id="LOCAL-00016" summary="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called.">
       <option name="closed" value="true" />
@@ -634,7 +644,15 @@
       <option name="project" value="LOCAL" />
       <updated>1696904959050</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="&quot;Update Freebies request handling and status update&#10;&#10;Changes in RequestFreebies.cs allow freebie requests to carry information about the approver upon request creation, providing traceability. Changes in UpdateFreebiesInformation.cs allow freebies to be marked 'approved' instead of 'false' by default, streamlining the approval process. Modifications in workspace.xml optimize settings for better IDE performance.&quot;">
+      <option name="closed" value="true" />
+      <created>1697093533396</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1697093533396</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -689,7 +707,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Change the StoreType field to StoreTypeId in the Clients model&#10;&#10;Modified the Clients model to replace the StoreType string field with the StoreTypeId int field. This change was made to represent the relationship between the Clients and the StoreType models, making the database structure more appropriate and more convenient for manipulations. The mapping profiles and data context were also updated accordingly to reflect this change." />
     <MESSAGE value="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;" />
     <MESSAGE value="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage." />
     <MESSAGE value="Add Modules model and update relations with UserRoles&#10;&#10;Added a new entity `Modules` and updated relations in the `UserRoles` model. Replaced `Permissions` with `ModuleId` along with necessary changes in the corresponding feature classes. The intent is to better organize user privileges as modules rather than using an unstructured collection of permissions." />
@@ -714,7 +731,8 @@
     <MESSAGE value="Update DirectRegistration and add GetAllDirectRegistrationClients feature&#10;&#10;Updated the DirectRegistration to change 'PROSPECT_TYPE' to 'DIRECT'. Also added a new feature 'GetAllDirectRegistrationClients' that returns paginated data containing all the information of the direct registration clients. The changes made to 'DirectRegistration.cs' make the information more consistent with its actual use case, while 'GetAllDirectRegistrationClients.cs' provides a new feature to fetch all registered clients in a paginated manner, improving the system's efficiency." />
     <MESSAGE value="Update DirectRegistration and clean workspace.xml files&#10;&#10;The workspace.xml related to .idea.RDF.Arcana workspace was cleaned removing unused and redundant tracks of changes committed and component values. All the obsolete changes tracked which are no longer relevant and redundant keys which were interfering with the workspace's readability were removed, making it less cluttered and more maintainable.&#10;&#10;Additionally, the AddTermAndCondition script was updated in the Prospecting module, changing BookingCoverage to BookingCoverageId in term options for precise referencing. This change corrects the variable name and adds more clarity to its purpose. Meanwhile, in the DirectRegistration script the value of 'PROSPECT_TYPE' was changed to 'DIRECT' enhancing the data's consistency and reflecting its actual use. The feature 'GetAllDirectRegistrationClients' was also added to return paginated client data from direct" />
     <MESSAGE value="Clean up workspace.xml and update scripts in DirectRegistration and Prospecting&#10;&#10;Clean up was conducted in workspace.xml related to .idea.RDF.Arcana, removing obsolete changes being tracked and redundant keys to improve readability and maintainability.&#10;&#10;Scripts were updated to improve data consistency and efficiency. BookingCoverage was replaced with BookingCoverageId in the AddTermAndCondition script of the Prospecting module to precisely reference terms options. Likewise, the value of 'PROSPECT_TYPE' changed to 'DIRECT' in DirectRegistration. Lastly, GetAllDirectRegistrationClients was added to retrieve paginated client data." />
-    <option name="LAST_COMMIT_MESSAGE" value="Clean up workspace.xml and update scripts in DirectRegistration and Prospecting&#10;&#10;Clean up was conducted in workspace.xml related to .idea.RDF.Arcana, removing obsolete changes being tracked and redundant keys to improve readability and maintainability.&#10;&#10;Scripts were updated to improve data consistency and efficiency. BookingCoverage was replaced with BookingCoverageId in the AddTermAndCondition script of the Prospecting module to precisely reference terms options. Likewise, the value of 'PROSPECT_TYPE' changed to 'DIRECT' in DirectRegistration. Lastly, GetAllDirectRegistrationClients was added to retrieve paginated client data." />
+    <MESSAGE value="&quot;Update Freebies request handling and status update&#10;&#10;Changes in RequestFreebies.cs allow freebie requests to carry information about the approver upon request creation, providing traceability. Changes in UpdateFreebiesInformation.cs allow freebies to be marked 'approved' instead of 'false' by default, streamlining the approval process. Modifications in workspace.xml optimize settings for better IDE performance.&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Update Freebies request handling and status update&#10;&#10;Changes in RequestFreebies.cs allow freebie requests to carry information about the approver upon request creation, providing traceability. Changes in UpdateFreebiesInformation.cs allow freebies to be marked 'approved' instead of 'false' by default, streamlining the approval process. Modifications in workspace.xml optimize settings for better IDE performance.&quot;" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

@@ -68,7 +68,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
     public class GetAllRequestedProspectQuery : UserParams, IRequest<PagedList<GetAllRequestedProspectResult>>
     {
         public string Search { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? Status { get; set; }
     }
 
     public class GetAllRequestedProspectResult
@@ -111,10 +111,10 @@ public class GetAllRequestedProspectAsync : ControllerBase
                     x.Client.Fullname.Contains(request.Search) && x.Client.CustomerType == "Prospect");
             }
 
-            if (request.IsActive != null)
+            if (request.Status != null)
             {
                 requestedProspect = requestedProspect.Where(x =>
-                    x.IsActive == request.IsActive && x.Client.CustomerType == "Prospect");
+                    x.IsActive == request.Status && x.Client.CustomerType == "Prospect");
             }
 
             var result = requestedProspect.Select(x => x.ToGetAllRequestedProspectResult());

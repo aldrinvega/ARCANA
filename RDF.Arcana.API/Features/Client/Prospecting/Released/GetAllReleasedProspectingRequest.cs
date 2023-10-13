@@ -10,7 +10,6 @@ namespace RDF.Arcana.API.Features.Client.Prospecting.Released;
 
 [Route("api/Prospect")]
 [ApiController]
-
 public class GetAllReleasedProspectingRequest : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,10 +19,56 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         _mediator = mediator;
     }
 
-    public class GetAllReleasedProspectingRequestQuery : UserParams, IRequest<PagedList<GetAllReleasedProspectingRequestResult>>
+    [HttpGet("GetAllReleasedProspectingRequest")]
+    public async Task<IActionResult> GetAllReleasedProspectingRequestAsync(
+        [FromQuery] GetAllReleasedProspectingRequestQuery query)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            var releasedProspecting = await _mediator.Send(query);
+
+            Response.AddPaginationHeader(
+                releasedProspecting.CurrentPage,
+                releasedProspecting.PageSize,
+                releasedProspecting.TotalCount,
+                releasedProspecting.TotalPages,
+                releasedProspecting.HasPreviousPage,
+                releasedProspecting.HasNextPage
+            );
+
+            var result = new QueryOrCommandResult<object>
+            {
+                Success = true,
+                Status = StatusCodes.Status200OK,
+                Data = new
+                {
+                    releasedProspecting,
+                    releasedProspecting.CurrentPage,
+                    releasedProspecting.PageSize,
+                    releasedProspecting.TotalCount,
+                    releasedProspecting.TotalPages,
+                    releasedProspecting.HasPreviousPage,
+                    releasedProspecting.HasNextPage
+                }
+            };
+
+            result.Messages.Add("Successfully fetch data");
+            return Ok(result);
+        }
+        catch (System.Exception e)
+        {
+            response.Status = StatusCodes.Status200OK;
+            response.Messages.Add(e.Message);
+            return Conflict(response);
+        }
+    }
+
+    public class GetAllReleasedProspectingRequestQuery : UserParams,
+        IRequest<PagedList<GetAllReleasedProspectingRequestResult>>
     {
         public string Search { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? Status { get; set; }
     }
 
     public class GetAllReleasedProspectingRequestResult
@@ -42,6 +87,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         public string PhotoProofPath { get; set; }
         public string ESignaturePath { get; set; }
         public List<Freebie> Freebies { get; set; }
+
         public class Freebie
         {
             public int Id { get; set; }
@@ -50,7 +96,8 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<GetAllReleasedProspectingRequestQuery, PagedList<GetAllReleasedProspectingRequestResult>>
+    public class Handler : IRequestHandler<GetAllReleasedProspectingRequestQuery,
+        PagedList<GetAllReleasedProspectingRequestResult>>
     {
         private readonly DataContext _context;
 
@@ -59,13 +106,14 @@ public class GetAllReleasedProspectingRequest : ControllerBase
             _context = context;
         }
 
-        public async Task<PagedList<GetAllReleasedProspectingRequestResult>> Handle(GetAllReleasedProspectingRequestQuery request, CancellationToken cancellationToken)
+        public async Task<PagedList<GetAllReleasedProspectingRequestResult>> Handle(
+            GetAllReleasedProspectingRequestQuery request, CancellationToken cancellationToken)
         {
             IQueryable<Approvals> validateClient = _context.Approvals
-                .Where(a => 
-                            a.IsApproved
-                            && a.Client.RegistrationStatus == "Released"
-                            && a.FreebieRequest.IsDelivered)
+                .Where(a =>
+                    a.IsApproved
+                    && a.Client.RegistrationStatus == "Released"
+                    && a.FreebieRequest.IsDelivered)
                 .Include(a => a.Client)
                 .ThenInclude(x => x.RequestedByUser)
                 .Include(x => x.Client)
@@ -81,57 +129,13 @@ public class GetAllReleasedProspectingRequest : ControllerBase
 
             if (request.Search != null)
             {
-                validateClient = validateClient.Where(x => x.IsActive == request.IsActive);
+                validateClient = validateClient.Where(x => x.IsActive == request.Status);
             }
 
             var result = validateClient.Select(x => x.GetAllReleasedProspectingRequestResult());
 
             return await PagedList<GetAllReleasedProspectingRequestResult>.CreateAsync(result, request.PageNumber,
                 request.PageSize);
-        }
-    }
-
-    [HttpGet("GetAllReleasedProspectingRequest")]
-    public async Task<IActionResult> GetAllReleasedProspectingRequestAsync([FromQuery] GetAllReleasedProspectingRequestQuery query)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-           var releasedProspecting =  await _mediator.Send(query);
-           
-           Response.AddPaginationHeader(
-               releasedProspecting.CurrentPage,
-               releasedProspecting.PageSize,
-               releasedProspecting.TotalCount,
-               releasedProspecting.TotalPages,
-               releasedProspecting.HasPreviousPage,
-               releasedProspecting.HasNextPage
-               );
-
-           var result = new QueryOrCommandResult<object>
-           {
-               Success = true,
-               Status = StatusCodes.Status200OK,
-               Data = new
-               {
-                   releasedProspecting,
-                   releasedProspecting.CurrentPage,
-                   releasedProspecting.PageSize,
-                   releasedProspecting.TotalCount,
-                   releasedProspecting.TotalPages,
-                   releasedProspecting.HasPreviousPage,
-                   releasedProspecting.HasNextPage
-               }
-           };
-           
-           result.Messages.Add("Successfully fetch data");
-           return Ok(result);
-        }
-        catch (System.Exception e)
-        {
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
         }
     }
 }

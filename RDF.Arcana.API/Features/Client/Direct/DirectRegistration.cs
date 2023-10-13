@@ -34,7 +34,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public bool DirectDelivery { get; set; }
         public int BookingCoverageId { get; set; }
         public int ModeOfPayment { get; set; }
-        public int Terms { get; set; }
+        public int TermsId { get; set; }
         public int? CreditLimit { get; set; }
         public int? TermDaysId { get; set; }
         public FixedDiscounts FixedDiscount { get; set; }
@@ -42,11 +42,17 @@ namespace RDF.Arcana.API.Features.Client.Direct
 
         public string Longitude { get; set; }
         public string Latitude { get; set; }
-        public List<IFormFile> Attachments { get; set; }
+        public List<Attachment> Attachments { get; set; }
 
         public class FixedDiscounts
         {
             public decimal DiscountPercentage { get; set; }
+        }
+
+        public class Attachment
+        {
+            public IFormFile Attachments { get; set; }
+            public string DocumentsType { get; set; }
         }
     }
 
@@ -98,10 +104,10 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 throw new ModeOfPaymentNotFoundException(request.ModeOfPayment);
 
             var validateTermsAndCondition =
-                await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.Terms,
+                await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.TermsId,
                     cancellationToken: cancellationToken);
             if (validateTermsAndCondition == null)
-                throw new TermsNotFoundException(request.Terms);
+                throw new TermsNotFoundException(request.TermsId);
 
             if (existingClient == null)
             {
@@ -121,7 +127,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     DirectDelivery = request.DirectDelivery,
                     BookingCoverageId = request.BookingCoverageId,
                     ModeOfPayment = request.ModeOfPayment,
-                    Terms = request.Terms,
+                    Terms = request.TermsId,
                     RegistrationStatus = APPROVED_STATUS,
                     CustomerType = REGISTRATION_TYPE,
                     IsActive = true,
@@ -156,7 +162,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 var termsOptions = new TermOptions
                 {
                     ClientId = directClients.Id,
-                    TermId = request.Terms,
+                    TermId = request.TermsId,
                     CreditLimit = request.CreditLimit,
                     TermDaysId = request.TermDaysId,
                     AddedBy = request.AddedBy
@@ -177,14 +183,15 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 await _context.SaveChangesAsync(cancellationToken);
 
                 if (!request.Attachments.Any()) return Unit.Value;
-                foreach (var documents in request.Attachments.Where(documents => documents.Length > 0))
+
+                foreach (var document in request.Attachments.Where(document => document.Attachments.Length > 0))
                 {
-                    await using var stream = documents.OpenReadStream();
+                    await using var stream = document.Attachments.OpenReadStream();
 
                     var attachmentsParams = new ImageUploadParams
                     {
-                        File = new FileDescription(documents.FileName, stream),
-                        PublicId = $"{directClients.BusinessName}/{documents.FileName}"
+                        File = new FileDescription(document.Attachments.FileName, stream),
+                        PublicId = $"{directClients.BusinessName}/{document.Attachments.FileName}"
                     };
 
                     var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
@@ -193,6 +200,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     {
                         DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
                         ClientId = directClients.Id,
+                        DocumentType = document.DocumentsType
                     };
 
                     await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
