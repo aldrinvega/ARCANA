@@ -35,6 +35,8 @@ public class DataContext : DbContext
     public virtual DbSet<ModeOfPayment> ModeOfPayments { get; set; }
     public virtual DbSet<TermOptions> TermOptions { get; set; }
     public virtual DbSet<Terms> Terms { get; set; }
+    public virtual DbSet<ListingFee> ListingFees { get; set; }
+    public virtual DbSet<ListingFeeItems> ListingFeeItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -222,5 +224,14 @@ public class DataContext : DbContext
             .HasOne(x => x.RequestedByUser)
             .WithMany()
             .HasForeignKey(x => x.RequestedBy);
+
+        modelBuilder.Entity<ListingFee>()
+            .HasOne(x => x.RequestedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.RequestedBy);
+        modelBuilder.Entity<ListingFee>()
+            .HasOne(x => x.ApprovedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ApprovedBy);
     }
 }

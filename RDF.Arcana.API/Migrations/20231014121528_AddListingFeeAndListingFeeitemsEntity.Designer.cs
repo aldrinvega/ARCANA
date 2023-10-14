@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RDF.Arcana.API.Data;
 
@@ -10,9 +11,11 @@ using RDF.Arcana.API.Data;
 namespace RDF.Arcana.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231014121528_AddListingFeeAndListingFeeitemsEntity")]
+    partial class AddListingFeeAndListingFeeitemsEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -627,21 +630,13 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
 
-                    b.Property<bool>("IsDelivered")
+                    b.Property<bool>("IsApproved")
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_delivered");
+                        .HasColumnName("is_approved");
 
                     b.Property<int>("RequestedBy")
                         .HasColumnType("int")
                         .HasColumnName("requested_by");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("longtext")
-                        .HasColumnName("status");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("total");
 
                     b.HasKey("Id")
                         .HasName("pk_listing_fees");

@@ -13,25 +13,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/AddNewTerms.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/Exceptions/TermAlreadyExistException.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/Exceptions/TermsDoesNotExistException.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/GetAllTermsAsync.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Terms/UpdateTermsStatus.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231013060312_AddIsActiveonTermsEntity.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231013060312_AddIsActiveonTermsEntity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFee.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFeeItems.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231014121528_AddListingFeeAndListingFeeitemsEntity.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231014121528_AddListingFeeAndListingFeeitemsEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/GetAllRequestedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Department/Exception/GetDepartmentsAsync.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/GetItemsAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/GetItemsAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/GetUomAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/GetUomAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/UpdateUom.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UOM/UpdateUom.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Items.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Items.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -258,15 +249,9 @@
       <workItem from="1697079098022" duration="541000" />
       <workItem from="1697080263145" duration="13182000" />
       <workItem from="1697164217352" duration="4486000" />
-      <workItem from="1697182069333" duration="2943000" />
-    </task>
-    <task id="LOCAL-00016" summary="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called.">
-      <option name="closed" value="true" />
-      <created>1691221350474</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1691221350474</updated>
+      <workItem from="1697182069333" duration="3377000" />
+      <workItem from="1697262750740" duration="6864000" />
+      <workItem from="1697286679873" duration="2148000" />
     </task>
     <task id="LOCAL-00017" summary="Add Id property to GetRequestedFreebiesQueryResult&#10;&#10;In this commit, we added an Id property to GetRequestedFreebiesQueryResult and made necessary changes in FreebiesMappingExtension. Also, updated the ApproveFreebieRequest method to take ApproveFreebiesCommand from request body. This change streamlines the code and makes it more efficient by eliminating the need to create a new ApproveFreebiesCommand instance within the method every time it's called.">
       <option name="closed" value="true" />
@@ -652,7 +637,15 @@
       <option name="project" value="LOCAL" />
       <updated>1697093533396</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="Remove unused GetDepartmentsAsync, refactor AddAttachments to support Document type&#10;&#10;- Deleted GetDepartmentsAsync file, it was empty and not being used in the code.&#10;- Refactored AddAttachments under RDF.Arcana.API/Features/Client/Prospecting/Register to now support Document class which contains both attachment and its type.&#10;- Removed unnecessary commented codes related to DocumentType in AddAttachments.&#10;- Updated Document upload and ClientDocuments creation logic in AddAttachments to consider new DocumentType.&#10;- Created a new migration script to add IsActive in Terms entity. &#10;- Overall, these changes improve our code cleanliness and provide support for helpful DocumentType in our attachments.">
+      <option name="closed" value="true" />
+      <created>1697202351495</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1697202351495</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -707,7 +700,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="&quot;Include StoreType in client prospecting responses&#10;&#10;For better understandability and ease of access, the StoreType of the client is now included in the response of the queries fetching the details of clients in different statuses. This is achieved by modifying the clauses related to clients in the GetAllRequestedProspectAsync, GetAllRejectProspectAsync, GetAllReleasedProspectingRequest, and GetAllApprovedProspectAsync models under the prospecting feature. Therefore, detailed client information can now be fetched in a single request, reducing the necessity of sequential API calls and hence improving efficiency.&quot;" />
     <MESSAGE value="Add StoreTypeId to UpdateProspectInformation request&#10;&#10;A new field, StoreTypeId, is now included in the UpdateProspectInformation request. This change was necessary because our system now accommodates different types of stores, requiring the prospect clients to provide this additional information when updating their details. This makes the client data more categorized and easier to manage." />
     <MESSAGE value="Add Modules model and update relations with UserRoles&#10;&#10;Added a new entity `Modules` and updated relations in the `UserRoles` model. Replaced `Permissions` with `ModuleId` along with necessary changes in the corresponding feature classes. The intent is to better organize user privileges as modules rather than using an unstructured collection of permissions." />
     <MESSAGE value="&quot;Removed Modules entity and refactored UserRole permissions&#10;&#10;In this commit, the 'Modules' entity has been removed as it was found to be unnecessary. The permissions system within the 'UserRoles' entity has been refactored from being a collection of 'ModuleId' to a collection of strings. This provides the same functionality with a simpler implementation. Other classes which used the 'Modules' class such as 'GetUsersAsync' and 'AuthenticateUser' have been updated to reflect these changes as well. The file 'Module.cs' was deleted.&quot;" />
@@ -732,7 +724,8 @@
     <MESSAGE value="Update DirectRegistration and clean workspace.xml files&#10;&#10;The workspace.xml related to .idea.RDF.Arcana workspace was cleaned removing unused and redundant tracks of changes committed and component values. All the obsolete changes tracked which are no longer relevant and redundant keys which were interfering with the workspace's readability were removed, making it less cluttered and more maintainable.&#10;&#10;Additionally, the AddTermAndCondition script was updated in the Prospecting module, changing BookingCoverage to BookingCoverageId in term options for precise referencing. This change corrects the variable name and adds more clarity to its purpose. Meanwhile, in the DirectRegistration script the value of 'PROSPECT_TYPE' was changed to 'DIRECT' enhancing the data's consistency and reflecting its actual use. The feature 'GetAllDirectRegistrationClients' was also added to return paginated client data from direct" />
     <MESSAGE value="Clean up workspace.xml and update scripts in DirectRegistration and Prospecting&#10;&#10;Clean up was conducted in workspace.xml related to .idea.RDF.Arcana, removing obsolete changes being tracked and redundant keys to improve readability and maintainability.&#10;&#10;Scripts were updated to improve data consistency and efficiency. BookingCoverage was replaced with BookingCoverageId in the AddTermAndCondition script of the Prospecting module to precisely reference terms options. Likewise, the value of 'PROSPECT_TYPE' changed to 'DIRECT' in DirectRegistration. Lastly, GetAllDirectRegistrationClients was added to retrieve paginated client data." />
     <MESSAGE value="&quot;Update Freebies request handling and status update&#10;&#10;Changes in RequestFreebies.cs allow freebie requests to carry information about the approver upon request creation, providing traceability. Changes in UpdateFreebiesInformation.cs allow freebies to be marked 'approved' instead of 'false' by default, streamlining the approval process. Modifications in workspace.xml optimize settings for better IDE performance.&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Update Freebies request handling and status update&#10;&#10;Changes in RequestFreebies.cs allow freebie requests to carry information about the approver upon request creation, providing traceability. Changes in UpdateFreebiesInformation.cs allow freebies to be marked 'approved' instead of 'false' by default, streamlining the approval process. Modifications in workspace.xml optimize settings for better IDE performance.&quot;" />
+    <MESSAGE value="Remove unused GetDepartmentsAsync, refactor AddAttachments to support Document type&#10;&#10;- Deleted GetDepartmentsAsync file, it was empty and not being used in the code.&#10;- Refactored AddAttachments under RDF.Arcana.API/Features/Client/Prospecting/Register to now support Document class which contains both attachment and its type.&#10;- Removed unnecessary commented codes related to DocumentType in AddAttachments.&#10;- Updated Document upload and ClientDocuments creation logic in AddAttachments to consider new DocumentType.&#10;- Created a new migration script to add IsActive in Terms entity. &#10;- Overall, these changes improve our code cleanliness and provide support for helpful DocumentType in our attachments." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove unused GetDepartmentsAsync, refactor AddAttachments to support Document type&#10;&#10;- Deleted GetDepartmentsAsync file, it was empty and not being used in the code.&#10;- Refactored AddAttachments under RDF.Arcana.API/Features/Client/Prospecting/Register to now support Document class which contains both attachment and its type.&#10;- Removed unnecessary commented codes related to DocumentType in AddAttachments.&#10;- Updated Document upload and ClientDocuments creation logic in AddAttachments to consider new DocumentType.&#10;- Created a new migration script to add IsActive in Terms entity. &#10;- Overall, these changes improve our code cleanliness and provide support for helpful DocumentType in our attachments." />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
