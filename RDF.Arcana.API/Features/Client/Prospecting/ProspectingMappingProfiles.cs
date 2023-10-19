@@ -26,20 +26,35 @@ public static class ProspectingMappingProfiles
     }
 
     public static GetAllApprovedProspectAsync.GetAllApprovedProspectResult
-        ToGetGetAllApprovedProspectResult(this Approvals approvedClient)
+        ToGetGetAllApprovedProspectResult(this Domain.Clients approvedClient)
     {
+        var freebies = approvedClient.Approvals.SelectMany(a => a.FreebieRequest).ToList();
+
         return new GetAllApprovedProspectAsync.GetAllApprovedProspectResult
         {
-            Id = approvedClient.ClientId,
-            OwnersName = approvedClient.Client.Fullname,
-            // CreatedAt = approvedClient.DateApproved,
-            BusinessName = approvedClient.Client.BusinessName,
-            PhoneNumber = approvedClient.Client.PhoneNumber,
-            Origin = approvedClient.Client.CustomerType,
-            AddedBy = approvedClient.Client.Fullname,
-            Address = approvedClient.Client.Address,
-            StoreType = approvedClient.Client.StoreType.StoreTypeName,
+            Id = approvedClient.Id,
+            OwnersName = approvedClient.Fullname,
+            BusinessName = approvedClient.BusinessName,
+            PhoneNumber = approvedClient.PhoneNumber,
+            Origin = approvedClient.CustomerType,
+            AddedBy = approvedClient.Fullname,
+            Address = approvedClient.Address,
+            StoreType = approvedClient.StoreType.StoreTypeName,
             IsActive = approvedClient.IsActive,
+            RegistrationStatus = approvedClient.RegistrationStatus,
+            Freebies = freebies.Any()
+                ? freebies.Select(fr => new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.Freebie
+                {
+                    Status = fr.Status,
+                    FreebieItems = fr.FreebieItems.Select(i =>
+                        new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.FreebieItem
+                        {
+                            Id = i.Id,
+                            ItemCode = i.Items.ItemCode,
+                            Quantity = i.Quantity
+                        }).ToList()
+                }).ToList()
+                : null
         };
     }
 

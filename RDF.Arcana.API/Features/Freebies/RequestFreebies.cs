@@ -129,7 +129,7 @@ public class RequestFreebies : ControllerBase
             {
                 ClientId = request.ClientId,
                 TransactionNumber = transactionNumber,
-                ApprovalId = newApproval.Id,
+                ApprovalsId = newApproval.Id,
                 Status = status,
                 IsDelivered = false,
                 RequestedBy = request.AddedBy

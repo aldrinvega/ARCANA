@@ -7,7 +7,6 @@ namespace RDF.Arcana.API.Features.Freebies;
 
 [Route("api/Freebies")]
 [ApiController]
-
 public class ApproveFreebies : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -17,54 +16,23 @@ public class ApproveFreebies : ControllerBase
         _mediator = mediator;
     }
 
-    public class ApproveFreebiesCommand : IRequest<Unit>
-    {
-        public int FreebieRequestId { get; set; }
-        public int ApprovedBy { get; set; }
-    }
-    public class Handler : IRequestHandler<ApproveFreebiesCommand, Unit>
-    {
-        private readonly DataContext _context;
-
-        public Handler(DataContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<Unit> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
-        {
-            var freebieRequest = await _context.Approvals
-                .Include(x => x.Client)
-                .Include(x => x.FreebieRequest)
-                .FirstOrDefaultAsync(x => x.FreebieRequest.Id == request.FreebieRequestId, cancellationToken) ?? throw new Exception("No freebies found");
-
-            freebieRequest.FreebieRequest.Status = "Approved";
-            freebieRequest.IsApproved = true;
-            freebieRequest.ApprovedBy = request.ApprovedBy != null ? request.ApprovedBy : 1 ;
-            
-            await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
-
-        }
-    }
-
     [HttpPatch("ApproveFreebieRequest/{id:int}")]
-    public async Task<IActionResult> ApproveFreebieRequest([FromRoute] int id)
+    public async Task<IActionResult> ApproveFreebieRequest([FromRoute] int id, [FromQuery] int freebieId)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-           
             var command = new ApproveFreebiesCommand
             {
-                FreebieRequestId = id
+                ClientId = id,
+                FreebieRequestId = freebieId
             };
-            if (User.Identity is ClaimsIdentity identity 
+            if (User.Identity is ClaimsIdentity identity
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
             {
                 command.ApprovedBy = userId;
             }
-            
+
             //
             // if (User.Identity is ClaimsIdentity identity
             //     && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
@@ -83,6 +51,51 @@ public class ApproveFreebies : ControllerBase
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
             return Conflict(response);
+        }
+    }
+
+    public class ApproveFreebiesCommand : IRequest<Unit>
+    {
+        public int ClientId { get; set; }
+        public int FreebieRequestId { get; set; }
+        public int ApprovedBy { get; set; }
+    }
+
+    public class Handler : IRequestHandler<ApproveFreebiesCommand, Unit>
+    {
+        private readonly DataContext _context;
+
+        public Handler(DataContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Unit> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
+        {
+            var approvals = await _context.Approvals
+                .Include(x => x.Client)
+                .Include(x => x.FreebieRequest)
+                .FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);
+
+            if (approvals == null || !approvals.FreebieRequest.Any())
+            {
+                throw new Exception("No freebies found");
+            }
+
+            var freebieRequest = approvals.FreebieRequest.FirstOrDefault(x => x.Id == request.FreebieRequestId);
+
+            if (freebieRequest == null)
+            {
+                throw new Exception("No matching freebie request found");
+            }
+
+            freebieRequest.Status = "Approved";
+            approvals.IsApproved = true;
+            approvals.ApprovedBy = request.ApprovedBy != null ? request.ApprovedBy : 1;
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }

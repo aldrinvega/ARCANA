@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting.Released;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Released;
 
@@ -113,7 +112,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
                 .Where(a =>
                     a.IsApproved
                     && a.Client.RegistrationStatus == "Released"
-                    && a.FreebieRequest.IsDelivered)
+                    && a.FreebieRequest.Any(x => x.IsDelivered))
                 .Include(a => a.Client)
                 .ThenInclude(x => x.RequestedByUser)
                 .Include(x => x.Client)

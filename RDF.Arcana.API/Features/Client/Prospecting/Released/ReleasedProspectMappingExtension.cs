@@ -1,12 +1,11 @@
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Client.Prospecting.Released;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Released;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Released;
 
 public static class ReleasedProspectMappingExtension
 {
     public static GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult
-        GetAllReleasedProspectingRequestResult ( this Approvals approvals)
+        GetAllReleasedProspectingRequestResult(this Approvals approvals)
     {
         return new GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult
         {
@@ -20,16 +19,19 @@ public static class ReleasedProspectMappingExtension
             CreatedAt = approvals.Client.CreatedAt,
             IsActive = approvals.Client.IsActive,
             RegistrationStatus = approvals.Client.RegistrationStatus,
-            TransactionNumber = approvals.FreebieRequest.TransactionNumber,
-            PhotoProofPath = approvals.FreebieRequest.PhotoProofPath,
-            ESignaturePath = approvals.FreebieRequest.ESignaturePath,
-            Freebies = approvals.FreebieRequest.FreebieItems.Select(x =>
-                new GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult.Freebie
+
+            // Assuming TransactionNumber, PhotoProofPath, and ESignaturePath are similar for each FreebieRequest in the collection
+            TransactionNumber = approvals.FreebieRequest.FirstOrDefault()?.TransactionNumber,
+            PhotoProofPath = approvals.FreebieRequest.FirstOrDefault()?.PhotoProofPath,
+            ESignaturePath = approvals.FreebieRequest.FirstOrDefault()?.ESignaturePath,
+
+            Freebies = approvals.FreebieRequest
+                .SelectMany(x => x.FreebieItems)
+                .Select(fi => new GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult.Freebie
                 {
-                    Id = x.RequestId,
-                    ItemCode = x.Items.ItemCode,
-                    Quantity = x.Quantity,
-            
+                    Id = fi.RequestId,
+                    ItemCode = fi.Items.ItemCode,
+                    Quantity = fi.Quantity,
                 }).ToList()
         };
     }

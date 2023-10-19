@@ -3,7 +3,6 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -113,9 +112,11 @@ public class GetAllFreebies : ControllerBase
             {
                 "For freebie request" => freebies.Where(x => x.Approvals.All(a => a.FreebieRequest == null)),
                 "Requested" => freebies.Where(x =>
-                    x.Approvals.Any(a => a.FreebieRequest != null && a.FreebieRequest.Status == request.FreebieStatus)),
+                    x.Approvals.Any(a =>
+                        a.FreebieRequest != null && a.FreebieRequest.Any(fr => fr.Status == request.FreebieStatus))),
                 "Released" => freebies.Where(x =>
-                    x.Approvals.Any(a => a.FreebieRequest != null && a.FreebieRequest.Status == request.FreebieStatus)),
+                    x.Approvals.Any(a =>
+                        a.FreebieRequest != null && a.FreebieRequest.Any(fr => fr.Status == request.FreebieStatus))),
                 _ => freebies
             };
 

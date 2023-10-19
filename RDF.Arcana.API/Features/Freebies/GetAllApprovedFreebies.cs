@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
@@ -64,11 +62,17 @@ public class GetAllApprovedFreebies : ControllerBase
         }
     }
 
-    public class GetAllApprovedFreebiesQuery : UserParams, IRequest<PagedList<GetAllApprovedFreebiesQueryResult>>
+    public class GetAllApprovedFreebiesQuery : UserParams,
+        IRequest<PagedList<GetAllApprovedFreebiesQueryResultCollection>>
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
         public int ApprovedBy { get; set; }
+    }
+
+    public class GetAllApprovedFreebiesQueryResultCollection
+    {
+        public ICollection<GetAllApprovedFreebiesQueryResult> GetAllApprovedFreebiesQueryResults { get; set; }
     }
 
     public class GetAllApprovedFreebiesQueryResult
@@ -93,7 +97,8 @@ public class GetAllApprovedFreebies : ControllerBase
         // public string DateCreated { get; set; }
     }
 
-    public class Handler : IRequestHandler<GetAllApprovedFreebiesQuery, PagedList<GetAllApprovedFreebiesQueryResult>>
+    public class Handler : IRequestHandler<GetAllApprovedFreebiesQuery,
+        PagedList<GetAllApprovedFreebiesQueryResultCollection>>
     {
         private readonly DataContext _context;
 
@@ -102,7 +107,8 @@ public class GetAllApprovedFreebies : ControllerBase
             _context = context;
         }
 
-        public async Task<PagedList<GetAllApprovedFreebiesQueryResult>> Handle(GetAllApprovedFreebiesQuery request,
+        public async Task<PagedList<GetAllApprovedFreebiesQueryResultCollection>> Handle(
+            GetAllApprovedFreebiesQuery request,
             CancellationToken cancellationToken)
         {
             IQueryable<Approvals> approvedFreebies = _context.Approvals
@@ -112,8 +118,8 @@ public class GetAllApprovedFreebies : ControllerBase
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .Where(x => x.IsApproved == true)
-                .Where(x => x.FreebieRequest.IsDelivered == false)
-                .Where(x => x.FreebieRequest.Status == "Approved");
+                .Where(x => x.FreebieRequest.Any(x => x.IsDelivered == false))
+                .Where(x => x.FreebieRequest.Any(x => x.Status == "Approved"));
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -127,7 +133,7 @@ public class GetAllApprovedFreebies : ControllerBase
 
             var result = approvedFreebies.Select(x => x.ToGetApprovedFreebiesQueryResult());
 
-            return await PagedList<GetAllApprovedFreebiesQueryResult>.CreateAsync(result, request.PageNumber,
+            return await PagedList<GetAllApprovedFreebiesQueryResultCollection>.CreateAsync(result, request.PageNumber,
                 request.PageSize);
         }
     }

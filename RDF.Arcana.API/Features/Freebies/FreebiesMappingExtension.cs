@@ -4,71 +4,82 @@ namespace RDF.Arcana.API.Features.Freebies;
 
 public static class FreebiesMappingExtension
 {
-    public static GetRequestedFreebies.GetRequestedFreebiesQueryResult
+    public static GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
         ToGetRequestedFreebiesQueryResult(this Approvals freebies)
     {
         var status = freebies.FreebieRequest == null ? "For freebie request" : "Freebie Releasing";
-        return new GetRequestedFreebies.GetRequestedFreebiesQueryResult
+        return new GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
         {
-            FreebieRequestId = freebies.FreebieRequest.Id,
-            ClientId = freebies.ClientId,
-            OwnersName = freebies.Client.Fullname,
-            PhoneNumber = freebies.Client.PhoneNumber,
-            OwnersAddress = freebies.Client.Address,
-            TransactionNumber = freebies.FreebieRequest.TransactionNumber,
-            Status = status,
-            Freebies = freebies.FreebieRequest.FreebieItems.Select(x =>
-                new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
+            GetRequestedFreebiesQueryResults = freebies.FreebieRequest.Select(freebieRequest =>
+                new GetRequestedFreebies.GetRequestedFreebiesQueryResult
                 {
-                    Id = x.Id,
-                    RequestId = x.RequestId,
-                    ItemCode = x.Items.ItemCode,
-                    Quantity = x.Quantity,
-                }).ToList(),
+                    FreebieRequestId = freebieRequest.Id,
+                    ClientId = freebies.ClientId,
+                    OwnersName = freebies.Client.Fullname,
+                    PhoneNumber = freebies.Client.PhoneNumber,
+                    OwnersAddress = freebies.Client.Address,
+                    TransactionNumber = freebieRequest.TransactionNumber,
+                    Freebies = freebieRequest.FreebieItems.Select(x =>
+                        new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
+                        {
+                            Id = x.RequestId,
+                            ItemCode = x.Items.ItemCode,
+                            Quantity = x.Quantity,
+                        }).ToList(),
+                    // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+                }).ToList()
         };
     }
 
-    public static GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult
+    public static GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResultCollection
         ToGetApprovedFreebiesQueryResult(this Approvals freebies)
     {
-        return new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult
+        return new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResultCollection
         {
-            FreebieRequestId = freebies.FreebieRequest.Id,
-            ClientId = freebies.ClientId,
-            OwnersName = freebies.Client.Fullname,
-            PhoneNumber = freebies.Client.PhoneNumber,
-            OwnersAddress = freebies.Client.Address,
-            TransactionNumber = freebies.FreebieRequest.TransactionNumber,
-            Freebies = freebies.FreebieRequest.FreebieItems.Select(x =>
-                new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult.Freebie
+            GetAllApprovedFreebiesQueryResults = freebies.FreebieRequest.Select(freebieRequest =>
+                new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult
                 {
-                    Id = x.RequestId,
-                    ItemCode = x.Items.ItemCode,
-                    Quantity = x.Quantity,
-                }).ToList(),
-            // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+                    FreebieRequestId = freebieRequest.Id,
+                    ClientId = freebies.ClientId,
+                    OwnersName = freebies.Client.Fullname,
+                    PhoneNumber = freebies.Client.PhoneNumber,
+                    OwnersAddress = freebies.Client.Address,
+                    TransactionNumber = freebieRequest.TransactionNumber,
+                    Freebies = freebieRequest.FreebieItems.Select(x =>
+                        new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult.Freebie
+                        {
+                            Id = x.RequestId,
+                            ItemCode = x.Items.ItemCode,
+                            Quantity = x.Quantity,
+                        }).ToList(),
+                    // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+                }).ToList()
         };
     }
 
-    public static GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult
-        ToGetAllRejectedFreebiesQueryResult(this Approvals freebies)
+    public static GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResultCollection
+        ToGetAllRejectedFreebiesQueryResultCollection(this Approvals freebies)
     {
-        return new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult
+        return new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResultCollection
         {
-            FreebieRequestId = freebies.FreebieRequest.Id,
-            ClientId = freebies.ClientId,
-            OwnersName = freebies.Client.Fullname,
-            PhoneNumber = freebies.Client.PhoneNumber,
-            OwnersAddress = freebies.Client.Address,
-            TransactionNumber = freebies.FreebieRequest.TransactionNumber,
-            Freebies = freebies.FreebieRequest.FreebieItems.Select(x =>
-                new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult.Freebie
+            GetAllRejectedFreebiesQueryResults = freebies.FreebieRequest.Select(freebieRequest =>
+                new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult
                 {
-                    Id = x.RequestId,
-                    ItemCode = x.Items.ItemCode,
-                    Quantity = x.Quantity,
-                }).ToList(),
-            // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+                    FreebieRequestId = freebieRequest.Id,
+                    ClientId = freebies.ClientId,
+                    OwnersName = freebies.Client.Fullname,
+                    PhoneNumber = freebies.Client.PhoneNumber,
+                    OwnersAddress = freebies.Client.Address,
+                    TransactionNumber = freebieRequest.TransactionNumber,
+                    Freebies = freebieRequest.FreebieItems.Select(x =>
+                        new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult.Freebie
+                        {
+                            Id = x.RequestId,
+                            ItemCode = x.Items.ItemCode,
+                            Quantity = x.Quantity,
+                        }).ToList(),
+                    // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
+                }).ToList()
         };
     }
 

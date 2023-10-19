@@ -1,12 +1,8 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Approved;
 
@@ -70,8 +66,9 @@ public class GetAllApprovedProspectAsync : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
-
         public string StoreType { get; set; }
+
+        public bool? WithFreebies { get; set; }
         /*public int AddedBy { get; set; }*/
     }
 
@@ -85,9 +82,22 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public string BusinessName { get; set; }
         public string Address { get; set; }
         public string StoreType { get; set; }
-        public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
-        public string Status { get; set; }
+        public string RegistrationStatus { get; set; }
+        public IEnumerable<Freebie> Freebies { get; set; }
+
+        public class Freebie
+        {
+            public string Status { get; set; }
+            public ICollection<FreebieItem> FreebieItems { get; set; }
+        }
+
+        public class FreebieItem
+        {
+            public int? Id { get; set; }
+            public string ItemCode { get; set; }
+            public int? Quantity { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllApprovedProspectQuery, PagedList<GetAllApprovedProspectResult>>
@@ -102,29 +112,41 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public async Task<PagedList<GetAllApprovedProspectResult>> Handle(GetAllApprovedProspectQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<Approvals> approvedProspect = _context.Approvals
-                .Include(x => x.FreebieRequest)
-                .Where(x => x.ApprovalType == "Approver Approval" && x.IsActive == true && x.IsApproved == true)
-                .Include(x => x.Client)
-                .ThenInclude(x => x.StoreType);
+            IQueryable<Domain.Clients> approvedProspect = _context.Clients
+                .Include(x => x.Approvals)
+                .ThenInclude(x => x.FreebieRequest)
+                .ThenInclude(x => x.FreebieItems)
+                .ThenInclude(x => x.Items)
+                .Include(x => x.StoreType)
+                .Where(x => x.RegistrationStatus == "Approved"
+                            && x.Approvals.Any(a => a.ApprovalType == "For Freebie Approval"
+                                                    && a.IsActive == true
+                                                    && a.IsApproved == true));
+
+            if (request.WithFreebies != null)
+            {
+                approvedProspect = request.WithFreebies.Value
+                    ? approvedProspect.Where(x => x.Approvals.Any(a => a.FreebieRequest.Any()))
+                    : approvedProspect.Where(x => !x.Approvals.Any(a => a.FreebieRequest.Any()));
+            }
 
             if (!string.IsNullOrEmpty(request.StoreType))
             {
                 approvedProspect =
-                    approvedProspect.Where(x => x.Client.StoreType.StoreTypeName.Contains(request.StoreType));
+                    approvedProspect.Where(x => x.StoreType.StoreTypeName.Contains(request.StoreType));
             }
 
             if (!string.IsNullOrEmpty(request.Search))
             {
                 approvedProspect = approvedProspect.Where(x =>
-                    x.Client.Fullname == request.Search && x.Client.CustomerType == "Prospect");
+                    x.Fullname == request.Search && x.CustomerType == "Prospect");
             }
 
             if (request.Status != null)
 
             {
                 approvedProspect = approvedProspect.Where(x =>
-                    x.IsActive == request.Status && x.Client.CustomerType == "Prospect");
+                    x.IsActive == request.Status && x.CustomerType == "Prospect");
             }
 
             var result = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());

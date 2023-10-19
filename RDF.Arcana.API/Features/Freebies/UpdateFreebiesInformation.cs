@@ -64,36 +64,42 @@ public class UpdateFreebiesInformation : ControllerBase
 
         public async Task<Unit> Handle(UpdateFreebiesInformationCommand request, CancellationToken cancellationToken)
         {
-            var freebies = await _context.Approvals
+            var approvals = await _context.Approvals
                 .Include(x => x.Client)
-                .Include(x => x.FreebieRequest)
+                .Include(x => x.FreebieRequest) // adjusted this line
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync(
-                    x => x.ClientId == request.ClientId
-                         && x.ApprovalType == "For Freebie Approval"
-                         && x.FreebieRequest.Id == request.FreebieRequestId
-                         && x.FreebieRequest.IsDelivered == false,
+                    x => x.ClientId == request.ClientId &&
+                         x.ApprovalType == "For Freebie Approval",
                     cancellationToken);
 
-            if (freebies is null)
+            if (approvals is null)
             {
-                throw new Exception("No freebies found");
+                throw new Exception("No approvals found");
+            }
+
+            var freebieRequestToUpdate = approvals.FreebieRequest
+                .FirstOrDefault(fr => fr.Id == request.FreebieRequestId && !fr.IsDelivered);
+
+            if (freebieRequestToUpdate == null)
+            {
+                throw new Exception("Freebie Request not found");
             }
 
             var requestItemIds = request.Freebies.Select(f => f.ItemId).ToList();
-            var existingItemIds = freebies.FreebieRequest.FreebieItems.Select(i => i.ItemId).ToList();
+            var existingItemIds = freebieRequestToUpdate.FreebieItems.Select(i => i.ItemId).ToList();
             var itemsToRemove = existingItemIds.Except(requestItemIds);
             foreach (var itemId in itemsToRemove)
             {
-                var itemToRemove = freebies.FreebieRequest.FreebieItems.First(i => i.ItemId == itemId);
-                freebies.FreebieRequest.FreebieItems.Remove(itemToRemove);
+                var itemToRemove = freebieRequestToUpdate.FreebieItems.First(i => i.ItemId == itemId);
+                freebieRequestToUpdate.FreebieItems.Remove(itemToRemove);
             }
 
             foreach (var requestFreebie in request.Freebies)
             {
                 var freebieItem =
-                    freebies.FreebieRequest.FreebieItems.FirstOrDefault(x => x.ItemId == requestFreebie.ItemId);
+                    freebieRequestToUpdate.FreebieItems.FirstOrDefault(x => x.ItemId == requestFreebie.ItemId);
                 if (freebieItem != null)
                 {
                     // If the freebie item exists in the database, update its quantity
@@ -102,7 +108,7 @@ public class UpdateFreebiesInformation : ControllerBase
                 else
                 {
                     // If the freebie doesn't exist, add it.
-                    freebies.FreebieRequest.FreebieItems.Add(
+                    freebieRequestToUpdate.FreebieItems.Add(
                         new FreebieItems
                         {
                             RequestId = request.FreebieRequestId,
@@ -112,8 +118,8 @@ public class UpdateFreebiesInformation : ControllerBase
                 }
             }
 
-            freebies.IsApproved = true;
-            freebies.FreebieRequest.Status = "Requested";
+            approvals.IsApproved = true;
+            freebieRequestToUpdate.Status = "Requested";
 
             await _context.SaveChangesAsync(cancellationToken);
 

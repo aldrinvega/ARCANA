@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RDF.Arcana.API.Domain;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace RDF.Arcana.API.Data;
 
@@ -137,12 +136,7 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(fr => fr.Approvals)
-            .WithOne(a => a.FreebieRequest)
-            .HasForeignKey<FreebieRequest>(fr => fr.ApprovalId);
-
-        modelBuilder.Entity<Approvals>()
-            .HasOne(a => a.FreebieRequest)
-            .WithOne(fr => fr.Approvals)
+            .WithMany(a => a.FreebieRequest)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<StoreType>()

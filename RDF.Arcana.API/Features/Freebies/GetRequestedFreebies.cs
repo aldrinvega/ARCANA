@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -64,11 +63,16 @@ public class GetRequestedFreebies : ControllerBase
         }
     }
 
-    public class GetRequestedFreebiesQuery : UserParams, IRequest<PagedList<GetRequestedFreebiesQueryResult>>
+    public class GetRequestedFreebiesQuery : UserParams, IRequest<PagedList<GetRequestedFreebiesQueryResultCollection>>
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
         public int RequestedBy { get; set; }
+    }
+
+    public class GetRequestedFreebiesQueryResultCollection
+    {
+        public ICollection<GetRequestedFreebiesQueryResult> GetRequestedFreebiesQueryResults { get; set; }
     }
 
     public class GetRequestedFreebiesQueryResult
@@ -92,7 +96,8 @@ public class GetRequestedFreebies : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<GetRequestedFreebiesQuery, PagedList<GetRequestedFreebiesQueryResult>>
+    public class Handler : IRequestHandler<GetRequestedFreebiesQuery,
+        PagedList<GetRequestedFreebiesQueryResultCollection>>
     {
         private readonly DataContext _context;
 
@@ -101,7 +106,8 @@ public class GetRequestedFreebies : ControllerBase
             _context = context;
         }
 
-        public async Task<PagedList<GetRequestedFreebiesQueryResult>> Handle(GetRequestedFreebiesQuery request,
+        public async Task<PagedList<GetRequestedFreebiesQueryResultCollection>> Handle(
+            GetRequestedFreebiesQuery request,
             CancellationToken cancellationToken)
         {
             IQueryable<Approvals> freebies = _context.Approvals
@@ -110,7 +116,7 @@ public class GetRequestedFreebies : ControllerBase
                 .Include(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
-                .Where(x => x.FreebieRequest.Status == "Requested")
+                .Where(x => x.FreebieRequest.Any(x => x.Status == "Requested"))
                 .Where(x => x.RequestedBy == request.RequestedBy);
 
             if (!string.IsNullOrEmpty(request.Search))
@@ -125,7 +131,7 @@ public class GetRequestedFreebies : ControllerBase
 
             var result = freebies.Select(x => x.ToGetRequestedFreebiesQueryResult());
 
-            return await PagedList<GetRequestedFreebiesQueryResult>.CreateAsync(result, request.PageNumber,
+            return await PagedList<GetRequestedFreebiesQueryResultCollection>.CreateAsync(result, request.PageNumber,
                 request.PageSize);
         }
     }

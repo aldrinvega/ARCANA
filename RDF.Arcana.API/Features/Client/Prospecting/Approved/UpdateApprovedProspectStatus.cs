@@ -60,8 +60,7 @@ public class UpdateApprovedProspectStatus : ControllerBase
             var existingRequestedProspect =
                 await _context.Approvals.FirstOrDefaultAsync(
                     x => x.ClientId == request.ClientId &&
-                         x.IsApproved == true &&
-                         x.Client.RegistrationStatus == "Approved"
+                         x.IsApproved == true
                     , cancellationToken);
 
             if (existingRequestedProspect is null)
