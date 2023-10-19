@@ -137,8 +137,6 @@ public class RequestFreebies : ControllerBase
             _context.FreebieRequests.Add(freebieRequest);
             await _context.SaveChangesAsync(cancellationToken);
 
-            existingClient.RegistrationStatus = "For Releasing";
-
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {
                          RequestId = freebieRequest.Id,

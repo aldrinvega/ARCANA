@@ -120,12 +120,20 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .Include(x => x.StoreType)
                 .Where(x => x.RegistrationStatus == "Approved");
 
-            /*if (request.WithFreebies != null)
+            if (request.WithFreebies != null)
             {
-                approvedProspect = request.WithFreebies.Value
-                    ? approvedProspect.Where(x => x.Approvals.Any(a => a.FreebieRequest.Any()))
-                    : approvedProspect.Where(x => !x.Approvals.Any(a => a.FreebieRequest.Any()));
-            }*/
+                if (request.WithFreebies == true)
+                {
+                    // Include only Approved clients with Freebies
+                    approvedProspect = approvedProspect.Where(x => x.Approvals.Any(a => a.FreebieRequest.Any()));
+                }
+                else
+                {
+                    // Include only Approved clients without Freebies
+                    approvedProspect = approvedProspect.Where(x =>
+                        x.Approvals.All(a => a.FreebieRequest == null || !a.FreebieRequest.Any()));
+                }
+            }
 
             if (!string.IsNullOrEmpty(request.StoreType))
             {
