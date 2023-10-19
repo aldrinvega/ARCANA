@@ -40,7 +40,7 @@ public class AddNewListingFee : ControllerBase
             response.Messages.Add("Listing Fee requested successfully");
             return Ok(response);
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
@@ -52,11 +52,11 @@ public class AddNewListingFee : ControllerBase
     public class AddNewListingFeeCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public string Status { get; set; }
         public int RequestedBy { get; set; }
-        public ICollection<ListingItem> ListingItems { get; set; }
+        public decimal Total { get; set; }
+        public ICollection<ListingFeeItem> ListingItems { get; set; }
 
-        public class ListingItem
+        public class ListingFeeItem
         {
             public int ItemId { get; set; }
             public int Sku { get; set; }
@@ -85,7 +85,8 @@ public class AddNewListingFee : ControllerBase
             {
                 ClientId = request.ClientId,
                 Status = "Requested",
-                RequestedBy = request.RequestedBy
+                RequestedBy = request.RequestedBy,
+                Total = request.Total
             };
 
             await _context.AddAsync(listingFee, cancellationToken);
@@ -94,7 +95,7 @@ public class AddNewListingFee : ControllerBase
             var approval = new Approvals
             {
                 ClientId = request.ClientId,
-                ApprovalType = "Listing Fee",
+                ApprovalType = "For Listing Fee Approval",
                 IsActive = true,
                 RequestedBy = request.RequestedBy,
             };

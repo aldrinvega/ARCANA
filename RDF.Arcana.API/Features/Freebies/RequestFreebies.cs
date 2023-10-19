@@ -69,6 +69,10 @@ public class RequestFreebies : ControllerBase
 
         public async Task<Unit> Handle(RequestFreebiesCommand request, CancellationToken cancellationToken)
         {
+            var existingApproval = await _context.Approvals
+                .FirstOrDefaultAsync(a => a.ClientId == request.ClientId && a.ApprovalType == "For Freebie Request",
+                    cancellationToken);
+
             // Check if client has previously requested for freebies
             var previousRequestCount =
                 await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId, cancellationToken);
@@ -76,8 +80,9 @@ public class RequestFreebies : ControllerBase
             // This will be true if client is requesting freebies for the first time, and will be false for any subsequent requests
             var isFirstRequest = previousRequestCount == 0;
 
-            //Check if the client is existing
+            var status = isFirstRequest ? Status.ForReleasing : Status.ApproverApproval;
 
+            //Check if the client is existing
             var existingClient =
                 await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
 
@@ -125,14 +130,14 @@ public class RequestFreebies : ControllerBase
                 ClientId = request.ClientId,
                 TransactionNumber = transactionNumber,
                 ApprovalId = newApproval.Id,
-                Status = "Requested",
+                Status = status,
                 IsDelivered = false,
                 RequestedBy = request.AddedBy
             };
             _context.FreebieRequests.Add(freebieRequest);
             await _context.SaveChangesAsync(cancellationToken);
 
-            existingClient.RegistrationStatus = "Freebie Requested";
+            existingClient.RegistrationStatus = "For Releasing";
 
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {

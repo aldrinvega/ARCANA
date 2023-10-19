@@ -13,4 +13,5 @@ public class ListingFeeItems : BaseEntity
     public DateTime UpdatedAt { get; set; }
 
     public virtual ListingFee ListingFee { get; set; }
+    public virtual Items Item { get; set; }
 }

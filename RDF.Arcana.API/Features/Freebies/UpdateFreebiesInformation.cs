@@ -5,7 +5,7 @@ using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
-[Route("api/Freebies")]
+[Route("api/ListingFee")]
 [ApiController]
 public class UpdateFreebiesInformation : ControllerBase
 

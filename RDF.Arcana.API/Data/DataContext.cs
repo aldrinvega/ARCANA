@@ -233,5 +233,10 @@ public class DataContext : DbContext
             .HasOne(x => x.ApprovedByUser)
             .WithMany()
             .HasForeignKey(x => x.ApprovedBy);
+
+        modelBuilder.Entity<ListingFee>()
+            .HasOne(fr => fr.Approvals)
+            .WithOne(a => a.ListingFee)
+            .HasForeignKey<ListingFee>(fr => fr.ApprovalId);
     }
 }

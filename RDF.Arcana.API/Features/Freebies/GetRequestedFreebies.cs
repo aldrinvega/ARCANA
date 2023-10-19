@@ -10,14 +10,58 @@ namespace RDF.Arcana.API.Features.Freebies;
 
 [Route("api/Freebies")]
 [ApiController]
-
 public class GetRequestedFreebies : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public GetRequestedFreebies(IMediator mediator)   
+    public GetRequestedFreebies(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpGet("GetAllFreebieRequests")]
+    public async Task<IActionResult> GetAllFreebieRequests([FromQuery] GetRequestedFreebiesQuery queryResult)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            var freebieRequest = await _mediator.Send(queryResult);
+
+            Response.AddPaginationHeader(
+                freebieRequest.CurrentPage,
+                freebieRequest.PageSize,
+                freebieRequest.TotalCount,
+                freebieRequest.TotalPages,
+                freebieRequest.HasPreviousPage,
+                freebieRequest.HasNextPage
+            );
+
+            var result = new QueryOrCommandResult<object>
+            {
+                Status = StatusCodes.Status200OK,
+                Data = new
+                {
+                    freebieRequest,
+                    freebieRequest.PageSize,
+                    freebieRequest.TotalCount,
+                    freebieRequest.TotalPages,
+                    freebieRequest.HasPreviousPage,
+                    freebieRequest.HasNextPage
+                },
+                Success = true
+            };
+
+            result.Messages.Add("Successfully fetch data");
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            response.Messages.Add(e.Message);
+            response.Status = StatusCodes.Status409Conflict;
+
+            return Conflict(response);
+        }
     }
 
     public class GetRequestedFreebiesQuery : UserParams, IRequest<PagedList<GetRequestedFreebiesQueryResult>>
@@ -35,6 +79,7 @@ public class GetRequestedFreebies : ControllerBase
         public string PhoneNumber { get; set; }
         public string OwnersAddress { get; set; }
         public string TransactionNumber { get; set; }
+        public string Status { get; set; }
 
         public List<Freebie> Freebies { get; set; }
 
@@ -45,7 +90,6 @@ public class GetRequestedFreebies : ControllerBase
             public string ItemCode { get; set; }
             public int Quantity { get; set; }
         }
-        public string DateCreated { get; set; }
     }
 
     public class Handler : IRequestHandler<GetRequestedFreebiesQuery, PagedList<GetRequestedFreebiesQueryResult>>
@@ -57,7 +101,8 @@ public class GetRequestedFreebies : ControllerBase
             _context = context;
         }
 
-        public async Task<PagedList<GetRequestedFreebiesQueryResult>> Handle(GetRequestedFreebiesQuery request, CancellationToken cancellationToken)
+        public async Task<PagedList<GetRequestedFreebiesQueryResult>> Handle(GetRequestedFreebiesQuery request,
+            CancellationToken cancellationToken)
         {
             IQueryable<Approvals> freebies = _context.Approvals
                 .Where(x => x.ApprovalType == "For Freebie Approval")
@@ -82,52 +127,6 @@ public class GetRequestedFreebies : ControllerBase
 
             return await PagedList<GetRequestedFreebiesQueryResult>.CreateAsync(result, request.PageNumber,
                 request.PageSize);
-            
-        }
-    }
-
-    [HttpGet("GetAllFreebieRequests")]
-    public async Task<IActionResult> GetAllFreebieRequests([FromQuery]GetRequestedFreebiesQuery queryResult)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-            var freebieRequest = await _mediator.Send(queryResult);
-            
-            Response.AddPaginationHeader(
-                freebieRequest.CurrentPage,
-                freebieRequest.PageSize,
-                freebieRequest.TotalCount,
-                freebieRequest.TotalPages,
-                freebieRequest.HasPreviousPage,
-                freebieRequest.HasNextPage
-                );
-
-            var result = new QueryOrCommandResult<object>
-            {
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    freebieRequest,
-                    freebieRequest.PageSize,
-                    freebieRequest.TotalCount,
-                    freebieRequest.TotalPages,
-                    freebieRequest.HasPreviousPage,
-                    freebieRequest.HasNextPage
-                },
-                Success = true
-            };
-            
-            result.Messages.Add("Successfully fetch data");
-
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Conflict(response);
         }
     }
 }

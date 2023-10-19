@@ -52,7 +52,6 @@
     <ItemGroup>
       <Folder Include="Features\Authenticate\Exception\" />
       <Folder Include="Features\Items\" />
-        <Folder Include="Features\Listing Fee\Exception\"/>
       <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
     </ItemGroup>
 

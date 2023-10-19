@@ -2,11 +2,8 @@
 using RDF.Arcana.API.Features.Client.Prospecting.Approved;
 using RDF.Arcana.API.Features.Client.Prospecting.Rejected;
 using RDF.Arcana.API.Features.Client.Prospecting.Request;
-using RDF.Arcana.API.Features.Clients.Prospecting.Approved;
-using RDF.Arcana.API.Features.Clients.Prospecting.Rejected;
-using RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting;
+namespace RDF.Arcana.API.Features.Client.Prospecting;
 
 public static class ProspectingMappingProfiles
 {

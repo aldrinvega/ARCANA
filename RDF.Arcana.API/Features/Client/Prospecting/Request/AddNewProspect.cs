@@ -6,13 +6,10 @@ using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
 
-
-public class ValidationException : System.Exception
+public class ValidationException : Exception
 {
-    public IEnumerable<string> Errors { get; }
-
     // Constructor for a single error message.
     public ValidationException(string message) : base(message)
     {
@@ -30,22 +27,25 @@ public class ValidationException : System.Exception
     {
         Errors = new List<string> { message };
     }
+
+    public IEnumerable<string> Errors { get; }
 }
 
 public class AddNewProspectCommand : IRequest<AddNewProspectResult>
 {
-    [Required]
-    public string OwnersName { get; set; }
-    [Required]
-    public string OwnersAddress { get; set; }
-    [Required]
-    public string PhoneNumber { get; set; }
-    [Required]
-    public string BusinessName { get; set; }
-    [Required]
-    public int StoreTypeId { get; set; }
+    [Required] public string OwnersName { get; set; }
+
+    [Required] public string OwnersAddress { get; set; }
+
+    [Required] public string PhoneNumber { get; set; }
+
+    [Required] public string BusinessName { get; set; }
+
+    [Required] public int StoreTypeId { get; set; }
+
     public int AddedBy { get; set; }
 }
+
 public class AddNewProspectResult
 {
     public int Id { get; set; }
@@ -55,13 +55,13 @@ public class AddNewProspectResult
     public string BusinessName { get; set; }
     public int AddedBy { get; set; }
 }
+
 public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
 {
-    private readonly DataContext _context;
-
     private const string APPROVED_STATUS = "Approved";
     private const string PROSPECT_TYPE = "Prospect";
     private const string APPROVER_APPROVAL = "Approver Approval";
+    private readonly DataContext _context;
 
     public Handler(DataContext context)
     {
@@ -70,7 +70,6 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
 
     public async Task<AddNewProspectResult> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
     {
-
         var validationErrors = new List<string>();
 
         // Check if business name is null or empty
@@ -80,11 +79,11 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
         }
 
         var existingProspectCustomer =
-                await _context.Clients.FirstOrDefaultAsync(
-                    x => x.BusinessName == request.BusinessName
-                    && x.Fullname == request.OwnersName
-                    && x.StoreTypeId == request.StoreTypeId
-                 , cancellationToken);
+            await _context.Clients.FirstOrDefaultAsync(
+                x => x.BusinessName == request.BusinessName
+                     && x.Fullname == request.OwnersName
+                     && x.StoreTypeId == request.StoreTypeId
+                , cancellationToken);
 
         if (existingProspectCustomer != null)
         {
@@ -105,7 +104,6 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             StoreTypeId = request.StoreTypeId,
             RegistrationStatus = APPROVED_STATUS,
             CustomerType = PROSPECT_TYPE,
-            IsActive = true,
             AddedBy = request.AddedBy
         };
 
@@ -167,7 +165,7 @@ public class AddNewProspect : ControllerBase
             response.Messages.Add("The new prospect is requested successfully");
             return Ok(response);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;

@@ -8,7 +8,6 @@ namespace RDF.Arcana.API.Features.Setup.UserRoles;
 
 [Route("api/UserRole")]
 [ApiController]
-
 public class UpdateUserRoleStatus : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -16,6 +15,31 @@ public class UpdateUserRoleStatus : ControllerBase
     public UpdateUserRoleStatus(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpPatch("UpdateUserRoleStatus/{id:int}")]
+    public async Task<IActionResult> UpdateUserRole([FromRoute] int id)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            var command = new UpdateUserRoleStatusCommand
+            {
+                UserRoleId = id,
+                ModifiedBy = User.Identity?.Name
+            };
+            await _mediator.Send(command);
+            response.Status = StatusCodes.Status200OK;
+            response.Success = true;
+            response.Messages.Add("User Role has been updated successfully");
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            response.Status = StatusCodes.Status409Conflict;
+            response.Messages.Add(e.Message);
+            return Conflict(response);
+        }
     }
 
     public class UpdateUserRoleStatusCommand : IRequest<Unit>
@@ -43,40 +67,15 @@ public class UpdateUserRoleStatus : ControllerBase
                 throw new UserRoleNotFoundException();
             }
 
-            if (!existingUserRole.IsActive && existingUserRole.Permissions.Count > 0)
+            if (!existingUserRole.IsActive && existingUserRole.Permissions.Count == 1)
             {
                 throw new UserRoleDeactivationException();
             }
-            
+
             existingUserRole.IsActive = !existingUserRole.IsActive;
             existingUserRole.ModifiedBy = request.ModifiedBy;
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
-        }
-    }
-    
-    [HttpPatch("UpdateUserRoleStatus/{id:int}")]
-    public async Task<IActionResult> UpdateUserRole([FromRoute] int id)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-            var command = new UpdateUserRoleStatusCommand
-            {
-                UserRoleId = id,
-                ModifiedBy = User.Identity?.Name
-            };
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("User Role has been updated successfully");
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
         }
     }
 }

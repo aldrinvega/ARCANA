@@ -3,11 +3,10 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Approved;
 
 [Route("api/Prospecting")]
 [ApiController]
-
 public class UpdateApprovedProspectStatus : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -17,11 +16,36 @@ public class UpdateApprovedProspectStatus : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpPatch("UpdateApprovedProspectStatus/{id:int}")]
+    public async Task<IActionResult> Update(int id)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            var command = new UpdateApprovedProspectStatusCommand
+            {
+                ClientId = id
+            };
+
+            await _mediator.Send(command);
+            response.Messages.Add("Client status has been updated successfully");
+            response.Status = StatusCodes.Status200OK;
+            response.Success = true;
+            return Ok(response);
+        }
+        catch (System.Exception e)
+        {
+            response.Messages.Add(e.Message);
+            response.Status = StatusCodes.Status409Conflict;
+            return Conflict(response);
+        }
+    }
+
     public class UpdateApprovedProspectStatusCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
     }
-    
+
     public class Handler : IRequestHandler<UpdateApprovedProspectStatusCommand, Unit>
     {
         private readonly DataContext _context;
@@ -49,31 +73,6 @@ public class UpdateApprovedProspectStatus : ControllerBase
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
-        }
-    }
-
-    [HttpPatch("UpdateApprovedProspectStatus/{id:int}")]
-    public async Task<IActionResult> Update(int id)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-            var command = new UpdateApprovedProspectStatusCommand
-            {
-                ClientId = id
-            };
-
-            await _mediator.Send(command);
-            response.Messages.Add("Client status has been updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
-        }
-        catch (System.Exception e)
-        {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
         }
     }
 }

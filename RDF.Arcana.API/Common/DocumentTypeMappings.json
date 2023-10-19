@@ -20,7 +20,6 @@
       "pattern": "mayors_permit_",
       "documentType": "Mayor's Permit"
     }
-    // Add more document type mappings as needed
   ],
   "validIdMappings": [
     {
