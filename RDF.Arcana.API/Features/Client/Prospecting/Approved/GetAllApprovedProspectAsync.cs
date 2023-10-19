@@ -118,17 +118,14 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .Include(x => x.StoreType)
-                .Where(x => x.RegistrationStatus == "Approved"
-                            && x.Approvals.Any(a => a.ApprovalType == "For Freebie Approval"
-                                                    && a.IsActive == true
-                                                    && a.IsApproved == true));
+                .Where(x => x.RegistrationStatus == "Approved");
 
-            if (request.WithFreebies != null)
+            /*if (request.WithFreebies != null)
             {
                 approvedProspect = request.WithFreebies.Value
                     ? approvedProspect.Where(x => x.Approvals.Any(a => a.FreebieRequest.Any()))
                     : approvedProspect.Where(x => !x.Approvals.Any(a => a.FreebieRequest.Any()));
-            }
+            }*/
 
             if (!string.IsNullOrEmpty(request.StoreType))
             {
