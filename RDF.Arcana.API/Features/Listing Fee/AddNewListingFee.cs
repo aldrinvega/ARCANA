@@ -81,17 +81,6 @@ public class AddNewListingFee : ControllerBase
                 throw new ClientIsNotFound(request.ClientId);
             }
 
-            var listingFee = new ListingFee
-            {
-                ClientId = request.ClientId,
-                Status = "Requested",
-                RequestedBy = request.RequestedBy,
-                Total = request.Total
-            };
-
-            await _context.AddAsync(listingFee, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
             var approval = new Approvals
             {
                 ClientId = request.ClientId,
@@ -99,6 +88,18 @@ public class AddNewListingFee : ControllerBase
                 IsActive = true,
                 RequestedBy = request.RequestedBy,
             };
+
+            var listingFee = new ListingFee
+            {
+                ClientId = request.ClientId,
+                ApprovalsId = approval.Id,
+                Status = "Requested",
+                RequestedBy = request.RequestedBy,
+                Total = request.Total
+            };
+
+            await _context.AddAsync(listingFee, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             await _context.AddAsync(approval, cancellationToken);
 

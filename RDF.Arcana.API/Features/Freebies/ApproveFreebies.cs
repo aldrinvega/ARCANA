@@ -91,7 +91,7 @@ public class ApproveFreebies : ControllerBase
 
             freebieRequest.Status = "Approved";
             approvals.IsApproved = true;
-            approvals.ApprovedBy = request.ApprovedBy != null ? request.ApprovedBy : 1;
+            approvals.ApprovedBy = request.ApprovedBy;
 
             await _context.SaveChangesAsync(cancellationToken);
 

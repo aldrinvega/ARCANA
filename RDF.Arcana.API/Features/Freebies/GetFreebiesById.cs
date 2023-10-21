@@ -32,7 +32,7 @@ public class GetFreebiesById : ControllerBase
         }
         catch (Exception e)
         {
-            response.Messages.Add("No data found");
+            response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status404NotFound;
             return NotFound(response);
         }

@@ -68,7 +68,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public bool? Status { get; set; }
         public string StoreType { get; set; }
 
-        public bool? WithFreebies { get; set; }
+        public string FreebieStatus { get; set; }
         /*public int AddedBy { get; set; }*/
     }
 
@@ -80,7 +80,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public string AddedBy { get; set; }
         public string Origin { get; set; }
         public string BusinessName { get; set; }
-        public string Address { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
         public string StoreType { get; set; }
         public bool IsActive { get; set; }
         public string RegistrationStatus { get; set; }
@@ -89,6 +89,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public class Freebie
         {
             public string Status { get; set; }
+            public string TransactionNumber { get; set; }
             public ICollection<FreebieItem> FreebieItems { get; set; }
         }
 
@@ -96,7 +97,18 @@ public class GetAllApprovedProspectAsync : ControllerBase
         {
             public int? Id { get; set; }
             public string ItemCode { get; set; }
+            public string ItemDescription { get; set; }
+            public string UOM { get; set; }
             public int? Quantity { get; set; }
+        }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
         }
     }
 
@@ -113,27 +125,41 @@ public class GetAllApprovedProspectAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Clients> approvedProspect = _context.Clients
+                .Include(x => x.OwnersAddress)
                 .Include(x => x.Approvals)
                 .ThenInclude(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
+                .ThenInclude(x => x.Uom)
                 .Include(x => x.StoreType)
                 .Where(x => x.RegistrationStatus == "Approved");
 
-            if (request.WithFreebies != null)
+            if (request.FreebieStatus != null)
             {
-                if (request.WithFreebies == true)
-                {
-                    // Include only Approved clients with Freebies
-                    approvedProspect = approvedProspect.Where(x => x.Approvals.Any(a => a.FreebieRequest.Any()));
-                }
-                else
-                {
-                    // Include only Approved clients without Freebies
-                    approvedProspect = approvedProspect.Where(x =>
-                        x.Approvals.All(a => a.FreebieRequest == null || !a.FreebieRequest.Any()));
-                }
+                approvedProspect = approvedProspect
+                    .Where(x => x.Approvals.OrderByDescending(a => a.CreatedAt).Any() &&
+                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
+                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).Any() &&
+                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
+                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).First()
+                                    .Status == request.FreebieStatus);
             }
+            else
+            {
+                approvedProspect = approvedProspect.Where(x =>
+                    x.Approvals.All(a => !a.FreebieRequest.Any()));
+            }
+
+            /*if (!string.IsNullOrEmpty(request.FreebieStatus))
+            {
+                approvedProspect = approvedProspect
+                    .Where(x => x.Approvals.OrderByDescending(a => a.CreatedAt).Any() &&
+                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
+                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).Any() &&
+                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
+                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).First()
+                                    .Status == request.FreebieStatus);
+            }*/
 
             if (!string.IsNullOrEmpty(request.StoreType))
             {

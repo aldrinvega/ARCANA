@@ -78,7 +78,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         public string AddedBy { get; set; }
         public string CustomerType { get; set; }
         public string BusinessName { get; set; }
-        public string Address { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
         public string RegistrationStatus { get; set; }
@@ -92,6 +92,15 @@ public class GetAllReleasedProspectingRequest : ControllerBase
             public int Id { get; set; }
             public string ItemCode { get; set; }
             public int Quantity { get; set; }
+        }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
         }
     }
 

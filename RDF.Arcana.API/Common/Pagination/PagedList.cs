@@ -1,20 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RDF.Arcana.API.Common.Pagination
+﻿namespace RDF.Arcana.API.Common.Pagination
 {
     public class PagedList<T> : List<T>
     {
-        public int CurrentPage { get; private set; }
-        public int TotalPages { get; private set; }
-        public int PageSize { get; private set; }
-        public int TotalCount { get; private set; }
-
-        public bool HasPreviousPage => CurrentPage > 1;
-        public bool HasNextPage => CurrentPage < TotalPages;
-
-        private PagedList(List<T> items, int count, int pageNumber, int pageSize)
+        public PagedList(List<T> items, int count, int pageNumber, int pageSize)
         {
             TotalCount = count;
             PageSize = pageSize;
@@ -22,6 +10,14 @@ namespace RDF.Arcana.API.Common.Pagination
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             AddRange(items);
         }
+
+        public int CurrentPage { get; private set; }
+        public int TotalPages { get; private set; }
+        public int PageSize { get; private set; }
+        public int TotalCount { get; private set; }
+
+        public bool HasPreviousPage => CurrentPage > 1;
+        public bool HasNextPage => CurrentPage < TotalPages;
 
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
         {

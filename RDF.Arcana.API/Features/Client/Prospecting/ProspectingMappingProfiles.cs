@@ -19,7 +19,14 @@ public static class ProspectingMappingProfiles
             PhoneNumber = requestedClient.Client.PhoneNumber,
             CustomerType = requestedClient.Client.CustomerType,
             AddedBy = requestedClient.Client.AddedBy,
-            Address = requestedClient.Client.Address,
+            OwnersAddress = new GetAllRequestedProspectAsync.GetAllRequestedProspectResult.OwnersAddressCollection
+            {
+                HouseNumber = requestedClient.Client.OwnersAddress.HouseNumber,
+                StreetName = requestedClient.Client.OwnersAddress.StreetName,
+                BarangayName = requestedClient.Client.OwnersAddress.Barangay,
+                City = requestedClient.Client.OwnersAddress.City,
+                Province = requestedClient.Client.OwnersAddress.Province
+            },
             StoreType = requestedClient.Client.StoreType.StoreTypeName,
             IsActive = requestedClient.IsActive
         };
@@ -38,7 +45,14 @@ public static class ProspectingMappingProfiles
             PhoneNumber = approvedClient.PhoneNumber,
             Origin = approvedClient.CustomerType,
             AddedBy = approvedClient.Fullname,
-            Address = approvedClient.Address,
+            OwnersAddress = new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.OwnersAddressCollection
+            {
+                HouseNumber = approvedClient.OwnersAddress.HouseNumber,
+                StreetName = approvedClient.OwnersAddress.StreetName,
+                BarangayName = approvedClient.OwnersAddress.Barangay,
+                City = approvedClient.OwnersAddress.City,
+                Province = approvedClient.OwnersAddress.Province
+            },
             StoreType = approvedClient.StoreType.StoreTypeName,
             IsActive = approvedClient.IsActive,
             RegistrationStatus = approvedClient.RegistrationStatus,
@@ -46,11 +60,14 @@ public static class ProspectingMappingProfiles
                 ? freebies.Select(fr => new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.Freebie
                 {
                     Status = fr.Status,
+                    TransactionNumber = fr.TransactionNumber,
                     FreebieItems = fr.FreebieItems.Select(i =>
                         new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.FreebieItem
                         {
                             Id = i.Id,
                             ItemCode = i.Items.ItemCode,
+                            ItemDescription = i.Items.ItemDescription,
+                            UOM = i.Items.Uom.UomCode,
                             Quantity = i.Quantity
                         }).ToList()
                 }).ToList()
@@ -70,7 +87,14 @@ public static class ProspectingMappingProfiles
             PhoneNumber = rejectClient.Client.PhoneNumber,
             CustomerType = rejectClient.Client.CustomerType,
             AddedBy = rejectClient.Client.AddedBy,
-            Address = rejectClient.Client.Address,
+            OwnersAddress = new GetAllRejectProspectAsync.GetAllRejectProspectResult.OwnersAddressCollection
+            {
+                HouseNumber = rejectClient.Client.OwnersAddress.HouseNumber,
+                StreetName = rejectClient.Client.OwnersAddress.StreetName,
+                BarangayName = rejectClient.Client.OwnersAddress.Barangay,
+                City = rejectClient.Client.OwnersAddress.City,
+                Province = rejectClient.Client.OwnersAddress.Province
+            },
             IsActive = rejectClient.IsActive,
             StoreType = rejectClient.Client.StoreType.StoreTypeName,
             Reason = rejectClient.Reason

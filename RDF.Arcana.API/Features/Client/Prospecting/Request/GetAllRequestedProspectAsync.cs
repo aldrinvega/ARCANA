@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
 
@@ -79,11 +78,20 @@ public class GetAllRequestedProspectAsync : ControllerBase
         public int AddedBy { get; set; }
         public string CustomerType { get; set; }
         public string BusinessName { get; set; }
-        public string Address { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
         public string StoreType { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
         public string Reason { get; set; }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllRequestedProspectQuery, PagedList<GetAllRequestedProspectResult>>
@@ -102,6 +110,8 @@ public class GetAllRequestedProspectAsync : ControllerBase
                     x.Client.RegistrationStatus == "Approved"
                     && x.IsApproved == true
                 )
+                .Include(x => x.Client)
+                .ThenInclude(x => x.OwnersAddress)
                 .Include(x => x.Client)
                 .ThenInclude(x => x.StoreType);
 

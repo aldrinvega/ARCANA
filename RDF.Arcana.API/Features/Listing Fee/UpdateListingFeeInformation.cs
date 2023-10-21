@@ -66,60 +66,62 @@ public class UpdateListingFeeInformation : ControllerBase
 
         public async Task<Unit> Handle(UpdateListingFeeInformationCommand request, CancellationToken cancellationToken)
         {
-            var listingFees = await _context.Approvals
-                .Include(x => x.Client)
-                .Include(x => x.ListingFee)
-                .ThenInclude(x => x.ListingFeeItems)
-                .ThenInclude(x => x.Item)
-                .FirstOrDefaultAsync(
-                    x => x.ClientId == request.ClientId
-                         && x.ApprovalType == "For Listing Fee Approval"
-                         && x.ListingFee.Id == request.ListingFeeId,
-                    cancellationToken);
+            var listingFeesInApproval = await _context.Approvals
+                .Where(x => x.ClientId == request.ClientId && x.ApprovalType == "For Listing Fee Approval")
+                .Select(x => x.ListingFee)
+                .SingleOrDefaultAsync(cancellationToken);
 
-            if (listingFees == null)
+            if (listingFeesInApproval == null || !listingFeesInApproval.Any())
             {
                 throw new ListingFeeNotFound();
             }
 
-            decimal total = 0;
-
             var requestItemIds = request.ListingItems.Select(f => f.ItemId).ToList();
-            var existingItemIds = listingFees.ListingFee.ListingFeeItems.Select(i => i.ItemId).ToList();
-            var itemsToRemove = existingItemIds.Except(requestItemIds);
-            foreach (var itemId in itemsToRemove)
-            {
-                var itemToRemove = listingFees.ListingFee.ListingFeeItems.First(i => i.ItemId == itemId);
-                listingFees.ListingFee.ListingFeeItems.Remove(itemToRemove);
-            }
 
-            foreach (var requestListingItem in request.ListingItems)
+            foreach (var listingFee in listingFeesInApproval)
             {
-                var listingFeeItem =
-                    listingFees.ListingFee.ListingFeeItems.FirstOrDefault(x => x.ItemId == requestListingItem.ItemId);
-                if (listingFeeItem != null)
+                if (listingFee.Id != request.ListingFeeId)
                 {
-                    // If the listing fee item exists in the database, update its details
-                    listingFeeItem.Sku = requestListingItem.Sku;
-                    listingFeeItem.UnitCost = requestListingItem.UnitCost;
+                    continue;
                 }
-                else
+
+                var existingItemIds = listingFee.ListingFeeItems.Select(i => i.ItemId).ToList();
+                var itemsToRemove = existingItemIds.Except(requestItemIds);
+                foreach (var itemId in itemsToRemove)
                 {
-                    // If the listing fee item doesn't exist, add it.
-                    var newItem = new ListingFeeItems
+                    var itemToRemove = listingFee.ListingFeeItems.First(i => i.ItemId == itemId);
+                    listingFee.ListingFeeItems.Remove(itemToRemove);
+                }
+
+                foreach (var requestListingItem in request.ListingItems)
+                {
+                    var listingFeeItem =
+                        listingFee.ListingFeeItems.FirstOrDefault(x => x.ItemId == requestListingItem.ItemId);
+
+                    if (listingFeeItem != null)
                     {
-                        ListingFeeId = request.ListingFeeId,
-                        ItemId = requestListingItem.ItemId,
-                        Sku = requestListingItem.Sku,
-                        UnitCost = requestListingItem.UnitCost
-                    };
-                    listingFees.ListingFee.ListingFeeItems.Add(newItem);
+                        // If the listing fee item exists in the database, update its details
+                        listingFeeItem.Sku = requestListingItem.Sku;
+                        listingFeeItem.UnitCost = requestListingItem.UnitCost;
+                    }
+                    else
+                    {
+                        // If the listing fee item doesn't exist, add it.
+                        var newItem = new ListingFeeItems
+                        {
+                            ListingFeeId = request.ListingFeeId,
+                            ItemId = requestListingItem.ItemId,
+                            Sku = requestListingItem.Sku,
+                            UnitCost = requestListingItem.UnitCost
+                        };
+                        listingFee.ListingFeeItems.Add(newItem);
+                    }
+
+                    listingFee.Total = request.Total;
                 }
 
-                listingFees.ListingFee.Total = request.Total;
+                listingFee.Status = "Requested";
             }
-
-            listingFees.ListingFee.Status = "Requested";
 
             await _context.SaveChangesAsync(cancellationToken);
 

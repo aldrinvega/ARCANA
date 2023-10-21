@@ -1,5 +1,4 @@
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting.Request;
 
 namespace RDF.Arcana.API.Features.Client.Direct;
 
@@ -13,9 +12,25 @@ public static class DirectRegistrationMappingExtensions
             ClientId = directRegistrationClients.ClientId,
             Fullname = directRegistrationClients.Client.Fullname,
             BusinessName = directRegistrationClients.Client.BusinessName,
-            BusinessAddress = directRegistrationClients.Client.BusinessAddress,
+            BusinessAddress =
+                new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.BusinessAddressCollection
+                {
+                    HouseNumber = directRegistrationClients.Client.BusinessAddress.HouseNumber,
+                    StreetName = directRegistrationClients.Client.BusinessAddress.StreetName,
+                    BarangayName = directRegistrationClients.Client.BusinessAddress.Barangay,
+                    City = directRegistrationClients.Client.BusinessAddress.City,
+                    Province = directRegistrationClients.Client.BusinessAddress.Province
+                },
             PhoneNumber = directRegistrationClients.Client.PhoneNumber,
-            Address = directRegistrationClients.Client.Address,
+            OwnersAddress =
+                new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.OwnersAddressCollection
+                {
+                    HouseNumber = directRegistrationClients.Client.OwnersAddress.HouseNumber,
+                    StreetName = directRegistrationClients.Client.OwnersAddress.StreetName,
+                    BarangayName = directRegistrationClients.Client.OwnersAddress.Barangay,
+                    City = directRegistrationClients.Client.OwnersAddress.City,
+                    Province = directRegistrationClients.Client.OwnersAddress.Province
+                },
             RepresentativeName = directRegistrationClients.Client.RepresentativeName,
             RepresentativePosition = directRegistrationClients.Client.RepresentativePosition,
             Cluster = directRegistrationClients.Client.Cluster,

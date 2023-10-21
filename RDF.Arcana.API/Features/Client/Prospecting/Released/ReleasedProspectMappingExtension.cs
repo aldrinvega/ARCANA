@@ -11,7 +11,15 @@ public static class ReleasedProspectMappingExtension
         {
             Id = approvals.Client.Id,
             OwnersName = approvals.Client.Fullname,
-            Address = approvals.Client.Address,
+            OwnersAddress =
+                new GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult.OwnersAddressCollection
+                {
+                    HouseNumber = approvals.Client.OwnersAddress.HouseNumber,
+                    StreetName = approvals.Client.OwnersAddress.StreetName,
+                    BarangayName = approvals.Client.OwnersAddress.Barangay,
+                    City = approvals.Client.OwnersAddress.City,
+                    Province = approvals.Client.OwnersAddress.Province
+                },
             PhoneNumber = approvals.Client.PhoneNumber,
             AddedBy = approvals.Client.RequestedByUser.Fullname,
             CustomerType = approvals.Client.CustomerType,

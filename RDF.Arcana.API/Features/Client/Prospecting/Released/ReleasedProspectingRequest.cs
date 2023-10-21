@@ -1,3 +1,4 @@
+using System.Net;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
@@ -93,13 +94,15 @@ public class ReleasedProspectingRequest : ControllerBase
                     var photoProofParams = new ImageUploadParams
                     {
                         File = new FileDescription(request.PhotoProof.FileName, stream),
-                        PublicId = $"{validateClientRequest.Client.BusinessName}/{request.PhotoProof.FileName}"
+                        PublicId =
+                            $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.PhotoProof.FileName}"
                     };
 
                     var eSignaturePhotoParams = new ImageUploadParams
                     {
                         File = new FileDescription(request.ESignature.FileName, esignatureStream),
-                        PublicId = $"{validateClientRequest.Client.BusinessName}/{request.ESignature.FileName}"
+                        PublicId =
+                            $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.ESignature.FileName}"
                     };
 
 

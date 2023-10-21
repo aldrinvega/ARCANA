@@ -18,7 +18,7 @@ public class GetAllListingFee
         public int ClientId { get; set; }
         public string ClientName { get; set; }
         public string BusinessName { get; set; }
-        public int RequestedBy { get; set; }
+        public string RequestedBy { get; set; }
         public decimal Total { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
 
@@ -57,7 +57,8 @@ public class GetAllListingFee
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                listingFees = listingFees.Where(x => x.ListingFee.Client.BusinessName.Contains(request.Search));
+                listingFees = listingFees.Where(x =>
+                    x.ListingFee.Any(x => x.Client.BusinessName.Contains(request.Search)));
             }
 
             if (request.Status != null)

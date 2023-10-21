@@ -5,7 +5,7 @@ namespace RDF.Arcana.API.Domain;
 public class ListingFee : BaseEntity
 {
     public int ClientId { get; set; }
-    public int ApprovalId { get; set; }
+    public int ApprovalsId { get; set; }
     public DateOnly CratedAt { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public bool IsActive { get; set; }
     public bool IsDelivered { get; set; }

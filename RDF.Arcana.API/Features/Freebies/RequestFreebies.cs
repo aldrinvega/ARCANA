@@ -77,6 +77,16 @@ public class RequestFreebies : ControllerBase
             var previousRequestCount =
                 await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId, cancellationToken);
 
+            var withRecentRequest = await _context.FreebieRequests.FirstOrDefaultAsync(
+                x => x.ClientId == request.ClientId &&
+                     (x.Status == Status.ForReleasing || x.Status == Status.ApproverApproval),
+                cancellationToken);
+
+            if (withRecentRequest != null)
+            {
+                throw new Exception($"Client has {withRecentRequest.Status.ToLower()} freebies");
+            }
+
             // This will be true if client is requesting freebies for the first time, and will be false for any subsequent requests
             var isFirstRequest = previousRequestCount == 0;
 

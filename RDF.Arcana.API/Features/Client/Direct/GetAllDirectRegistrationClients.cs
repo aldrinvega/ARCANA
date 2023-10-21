@@ -4,8 +4,6 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting.Request;
-
 
 namespace RDF.Arcana.API.Features.Client.Direct;
 
@@ -78,11 +76,11 @@ public class GetAllDirectRegistrationClients : ControllerBase
     {
         public int ClientId { get; set; }
         public string Fullname { get; set; }
-        public string Address { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string BusinessName { get; set; }
         public string StoreType { get; set; }
-        public string BusinessAddress { get; set; }
+        public BusinessAddressCollection BusinessAddress { get; set; }
         public string RepresentativeName { get; set; }
         public string RepresentativePosition { get; set; }
         public int Cluster { get; set; }
@@ -115,6 +113,24 @@ public class GetAllDirectRegistrationClients : ControllerBase
             public string Attachment { get; set; }
         }
 
+        public class BusinessAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
+
         public class Handlder : IRequestHandler<GetAllDirectRegistrationClientsQuery,
             PagedList<GetAllDirectRegistrationClientsResult>>
         {
@@ -144,6 +160,10 @@ public class GetAllDirectRegistrationClients : ControllerBase
                     .ThenInclude(x => x.ClientDocuments)
                     .Include(x => x.Client)
                     .ThenInclude(x => x.StoreType)
+                    .Include(x => x.Client)
+                    .ThenInclude(x => x.OwnersAddress)
+                    .Include(x => x.Client)
+                    .ThenInclude(x => x.BusinessAddress)
                     .Include(x => x.RequestedByUser)
                     .Where(x => x.Client.CustomerType == "Direct");
 

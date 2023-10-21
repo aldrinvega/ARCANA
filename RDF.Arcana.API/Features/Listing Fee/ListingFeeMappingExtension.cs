@@ -1,5 +1,4 @@
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Setup.Location;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -13,9 +12,9 @@ public static class ListingFeeMappingExtension
             ClientId = listingFee.ClientId,
             ClientName = listingFee.Client.Fullname,
             BusinessName = listingFee.Client.BusinessName,
-            RequestedBy = listingFee.ListingFee.RequestedBy,
-            Total = listingFee.ListingFee.Total,
-            ListingItems = listingFee.ListingFee.ListingFeeItems.Select(x =>
+            RequestedBy = listingFee.ListingFee?.FirstOrDefault()?.Client.Fullname ?? "None",
+            Total = listingFee.ListingFee?.FirstOrDefault()?.Total ?? 0,
+            ListingItems = listingFee.ListingFee.SelectMany(lf => lf.ListingFeeItems?.Select(x =>
                 new GetAllListingFee.GetAllListingFeeResult.ListingItem
                 {
                     ItemId = x.ItemId,
@@ -25,7 +24,7 @@ public static class ListingFeeMappingExtension
                     Sku = x.Sku,
                     UnitCost = x.UnitCost,
                     Quantity = x.Quantity
-                })
+                }))
         };
     }
 }

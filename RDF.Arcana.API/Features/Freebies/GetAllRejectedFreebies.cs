@@ -89,7 +89,7 @@ public class GetAllRejectedFreebies : ControllerBase
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
-        public string OwnersAddress { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
         public string TransactionNumber { get; set; }
 
         public List<Freebie> Freebies { get; set; }
@@ -100,7 +100,15 @@ public class GetAllRejectedFreebies : ControllerBase
             public string ItemCode { get; set; }
             public int Quantity { get; set; }
         }
-        // public string DateCreated { get; set; }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllRejectedFreebiesQuery,
@@ -119,6 +127,7 @@ public class GetAllRejectedFreebies : ControllerBase
             IQueryable<Approvals> rejectedFreebies = _context.Approvals
                 .Where(x => x.ApprovalType == "For Freebie Approval")
                 .Include(x => x.Client)
+                .ThenInclude(x => x.OwnersAddress)
                 .Include(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)

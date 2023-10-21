@@ -23,8 +23,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Program).Assembly));
 builder.Services.AddControllers(
-
-config =>
+    config =>
     {
         var policy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
@@ -32,8 +31,6 @@ config =>
 
         config.Filters.Add(new AuthorizeFilter(policy));
     }
-
-    
 ).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 //
 // builder.Services.AddControllers().AddFluentValidation()
@@ -126,9 +123,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapCarter();
 

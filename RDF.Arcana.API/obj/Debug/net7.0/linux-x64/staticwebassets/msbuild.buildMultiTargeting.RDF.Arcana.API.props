@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\RDF.Arcana.API.props" />
+</Project>

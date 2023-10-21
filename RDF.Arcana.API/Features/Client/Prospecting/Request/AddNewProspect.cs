@@ -34,8 +34,13 @@ public class ValidationException : Exception
 public class AddNewProspectCommand : IRequest<AddNewProspectResult>
 {
     [Required] public string OwnersName { get; set; }
+    [Required] public string EmailAddress { get; set; }
 
-    [Required] public string OwnersAddress { get; set; }
+    public string HouseNumber { get; set; }
+    public string StreetName { get; set; }
+    public string BarangayName { get; set; }
+    public string City { get; set; }
+    public string Province { get; set; }
 
     [Required] public string PhoneNumber { get; set; }
 
@@ -50,10 +55,19 @@ public class AddNewProspectResult
 {
     public int Id { get; set; }
     public string OwnersName { get; set; }
-    public string OwnersAddress { get; set; }
+    public OwnersAddressCollection OwnersAddress { get; set; }
     public string PhoneNumber { get; set; }
     public string BusinessName { get; set; }
     public int AddedBy { get; set; }
+
+    public class OwnersAddressCollection
+    {
+        public string HouseNumber { get; set; }
+        public string StreetName { get; set; }
+        public string BarangayName { get; set; }
+        public string City { get; set; }
+        public string Province { get; set; }
+    }
 }
 
 public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
@@ -95,11 +109,24 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             throw new ValidationException(validationErrors);
         }
 
+        var address = new OwnersAddress
+        {
+            HouseNumber = request.HouseNumber,
+            StreetName = request.StreetName,
+            Barangay = request.BarangayName,
+            City = request.City,
+            Province = request.Province
+        };
+
+        await _context.Address.AddAsync(address, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
         var prospectingClients = new Domain.Clients
         {
             Fullname = request.OwnersName,
-            Address = request.OwnersAddress,
+            OwnersAddressId = address.Id,
             PhoneNumber = request.PhoneNumber,
+            EmailAddress = request.EmailAddress,
             BusinessName = request.BusinessName,
             StoreTypeId = request.StoreTypeId,
             RegistrationStatus = APPROVED_STATUS,
@@ -127,7 +154,14 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
         {
             Id = prospectingClients.Id,
             OwnersName = prospectingClients.Fullname,
-            OwnersAddress = prospectingClients.Address,
+            OwnersAddress = new AddNewProspectResult.OwnersAddressCollection
+            {
+                HouseNumber = prospectingClients.OwnersAddress.HouseNumber,
+                StreetName = prospectingClients.OwnersAddress.StreetName,
+                BarangayName = prospectingClients.OwnersAddress.Barangay,
+                City = prospectingClients.OwnersAddress.City,
+                Province = prospectingClients.OwnersAddress.Province
+            },
             PhoneNumber = prospectingClients.PhoneNumber,
             BusinessName = prospectingClients.BusinessName,
             AddedBy = prospectingClients.AddedBy

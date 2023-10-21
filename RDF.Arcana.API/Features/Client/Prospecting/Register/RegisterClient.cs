@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Register;
@@ -41,7 +42,13 @@ public class RegisterClient : ControllerBase
     public class RegisterClientCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public string BusinessAddress { get; set; }
+        public string HouseNumber { get; set; }
+        public string StreetName { get; set; }
+        public string BarangayName { get; set; }
+        public string City { get; set; }
+        public string Province { get; set; }
+
+        public string TinNumber { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int Cluster { get; set; }
@@ -68,9 +75,22 @@ public class RegisterClient : ControllerBase
                     throw new ClientIsNotFound(request.ClientId);
                 }
 
-                existingClient.BusinessAddress = request.BusinessAddress;
+                var businessAddress = new BusinessAddress
+                {
+                    HouseNumber = request.HouseNumber,
+                    StreetName = request.StreetName,
+                    Barangay = request.BarangayName,
+                    City = request.City,
+                    Province = request.Province
+                };
+
+                await _context.BusinessAddress.AddAsync(businessAddress, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                existingClient.BusinessAddressId = businessAddress.Id;
                 existingClient.RepresentativeName = request.AuthorizedRepresentative;
                 existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
+                existingClient.TinNumber = request.TinNumber;
                 existingClient.Cluster = request.Cluster;
                 existingClient.Longitude = request.Longitude;
                 existingClient.Latitude = request.Latitude;

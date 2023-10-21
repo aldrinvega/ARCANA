@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Direct;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Features.Client.Direct.Exceptions;
 
 namespace RDF.Arcana.API.Features.Client.Direct
@@ -16,16 +16,18 @@ namespace RDF.Arcana.API.Features.Client.Direct
     {
         [Required] public string OwnersName { get; set; }
 
-        [Required] public string OwnersAddress { get; set; }
+        [Required] public OwnersAddressCollection OwnersAddress { get; set; }
 
         [Required] public string PhoneNumber { get; set; }
+        [Required] public DateOnly DateOfBirth { get; set; }
+        [Required] public string TinNumber { get; set; }
 
         [Required] public string BusinessName { get; set; }
 
         [Required] public int StoreTypeId { get; set; }
 
         public int AddedBy { get; set; }
-        public string BusinessAddress { get; set; }
+        public BusinessAddressCollection BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int Cluster { get; set; }
@@ -52,7 +54,25 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public class Attachment
         {
             public IFormFile Attachments { get; set; }
-            public string DocumentsType { get; set; }
+            public string DocumentType { get; set; }
+        }
+
+        public class BusinessAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
         }
     }
 
@@ -111,14 +131,40 @@ namespace RDF.Arcana.API.Features.Client.Direct
 
             if (existingClient == null)
             {
+                var ownersAddress = new OwnersAddress
+                {
+                    HouseNumber = request.OwnersAddress.HouseNumber,
+                    StreetName = request.OwnersAddress.StreetName,
+                    Barangay = request.OwnersAddress.BarangayName,
+                    City = request.OwnersAddress.City,
+                    Province = request.OwnersAddress.Province
+                };
+
+                await _context.Address.AddAsync(ownersAddress, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                var businessAddress = new BusinessAddress
+                {
+                    HouseNumber = request.BusinessAddress.HouseNumber,
+                    StreetName = request.BusinessAddress.StreetName,
+                    Barangay = request.BusinessAddress.BarangayName,
+                    City = request.BusinessAddress.City,
+                    Province = request.BusinessAddress.Province
+                };
+
+                await _context.BusinessAddress.AddAsync(businessAddress, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
                 var directClients = new Domain.Clients
                 {
                     Fullname = request.OwnersName,
-                    Address = request.OwnersAddress,
+                    OwnersAddressId = ownersAddress.Id,
                     PhoneNumber = request.PhoneNumber,
+                    TinNumber = request.TinNumber,
                     BusinessName = request.BusinessName,
+                    DateOfBirth = request.DateOfBirth,
                     StoreTypeId = request.StoreTypeId,
-                    BusinessAddress = request.BusinessAddress,
+                    BusinessAddressId = businessAddress.Id,
                     RepresentativeName = request.AuthorizedRepresentative,
                     RepresentativePosition = request.AuthorizedRepresentativePosition,
                     Cluster = request.Cluster,
@@ -200,7 +246,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     {
                         DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
                         ClientId = directClients.Id,
-                        DocumentType = document.DocumentsType
+                        DocumentType = document.DocumentType
                     };
 
                     await _context.ClientDocuments.AddAsync(attachments, cancellationToken);

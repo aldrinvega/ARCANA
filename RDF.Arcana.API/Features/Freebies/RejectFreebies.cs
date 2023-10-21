@@ -80,6 +80,7 @@ public class RejectFreebies : ControllerBase
             // Reject the specific FreebieRequest
             freebieToReject.Status = "Rejected";
             existingFreebies.Reason = request.Reason;
+            existingFreebies.IsApproved = false;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;

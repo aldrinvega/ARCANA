@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.AccessControl;
 using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Domain;
@@ -7,12 +6,15 @@ namespace RDF.Arcana.API.Domain;
 public class Clients : BaseEntity
 {
     public string Fullname { get; set; }
-    public string Address { get; set; }
+    public int OwnersAddressId { get; set; }
     public string PhoneNumber { get; set; }
+    public DateOnly DateOfBirth { get; set; }
+    public string EmailAddress { get; set; }
     public string BusinessName { get; set; }
+    public string TinNumber { get; set; }
     public string RepresentativeName { get; set; }
     public string RepresentativePosition { get; set; }
-    public string BusinessAddress { get; set; }
+    public int? BusinessAddressId { get; set; }
     public int Cluster { get; set; }
     public bool Freezer { get; set; }
     public string CustomerType { get; set; }
@@ -53,4 +55,6 @@ public class Clients : BaseEntity
     public virtual BookingCoverages BookingCoverages { get; set; }
     public virtual ModeOfPayment ModeOfPayments { get; set; }
     public virtual Terms Term { get; set; }
+    public virtual OwnersAddress OwnersAddress { get; set; }
+    public virtual BusinessAddress BusinessAddress { get; set; }
 }

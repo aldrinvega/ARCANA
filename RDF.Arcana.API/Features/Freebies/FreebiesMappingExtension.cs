@@ -17,7 +17,14 @@ public static class FreebiesMappingExtension
                     ClientId = freebies.ClientId,
                     OwnersName = freebies.Client.Fullname,
                     PhoneNumber = freebies.Client.PhoneNumber,
-                    OwnersAddress = freebies.Client.Address,
+                    OwnersAddress = new GetRequestedFreebies.GetRequestedFreebiesQueryResult.OwnersAddressCollection
+                    {
+                        HouseNumber = freebies.Client.OwnersAddress.HouseNumber,
+                        StreetName = freebies.Client.OwnersAddress.StreetName,
+                        BarangayName = freebies.Client.OwnersAddress.Barangay,
+                        City = freebies.Client.OwnersAddress.City,
+                        Province = freebies.Client.OwnersAddress.Province
+                    },
                     TransactionNumber = freebieRequest.TransactionNumber,
                     Freebies = freebieRequest.FreebieItems.Select(x =>
                         new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
@@ -43,7 +50,14 @@ public static class FreebiesMappingExtension
                     ClientId = freebies.ClientId,
                     OwnersName = freebies.Client.Fullname,
                     PhoneNumber = freebies.Client.PhoneNumber,
-                    OwnersAddress = freebies.Client.Address,
+                    OwnersAddress = new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult.OwnersAddressCollection
+                    {
+                        HouseNumber = freebies.Client.OwnersAddress.HouseNumber,
+                        StreetName = freebies.Client.OwnersAddress.StreetName,
+                        BarangayName = freebies.Client.OwnersAddress.Barangay,
+                        City = freebies.Client.OwnersAddress.City,
+                        Province = freebies.Client.OwnersAddress.Province
+                    },
                     TransactionNumber = freebieRequest.TransactionNumber,
                     Freebies = freebieRequest.FreebieItems.Select(x =>
                         new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult.Freebie
@@ -69,7 +83,14 @@ public static class FreebiesMappingExtension
                     ClientId = freebies.ClientId,
                     OwnersName = freebies.Client.Fullname,
                     PhoneNumber = freebies.Client.PhoneNumber,
-                    OwnersAddress = freebies.Client.Address,
+                    OwnersAddress = new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult.OwnersAddressCollection
+                    {
+                        HouseNumber = freebies.Client.OwnersAddress.HouseNumber,
+                        StreetName = freebies.Client.OwnersAddress.StreetName,
+                        BarangayName = freebies.Client.OwnersAddress.Barangay,
+                        City = freebies.Client.OwnersAddress.City,
+                        Province = freebies.Client.OwnersAddress.Province
+                    },
                     TransactionNumber = freebieRequest.TransactionNumber,
                     Freebies = freebieRequest.FreebieItems.Select(x =>
                         new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult.Freebie
@@ -91,7 +112,14 @@ public static class FreebiesMappingExtension
             ClientId = freebies.Id,
             OwnersName = freebies.Fullname,
             PhoneNumber = freebies.PhoneNumber,
-            OwnersAddress = freebies.Address,
+            OwnersAddress = new GetAllFreebies.GetAllFreebiesResult.OwnersAddressCollection
+            {
+                HouseNumber = freebies.OwnersAddress.HouseNumber,
+                StreetName = freebies.OwnersAddress.StreetName,
+                BarangayName = freebies.OwnersAddress.Barangay,
+                City = freebies.OwnersAddress.City,
+                Province = freebies.OwnersAddress.Province
+            },
             TransactionNumber = freebies.FreebiesRequests?.FirstOrDefault()?.TransactionNumber,
             Status = freebies.FreebiesRequests?.FirstOrDefault()?.Status ?? "For freebie request",
             FreebieRequestId = freebies.FreebiesRequests?.FirstOrDefault()?.Id,
