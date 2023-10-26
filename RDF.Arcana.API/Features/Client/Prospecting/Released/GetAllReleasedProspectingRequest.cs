@@ -82,7 +82,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
         public string RegistrationStatus { get; set; }
-        public string TransactionNumber { get; set; }
+        public int? TransactionNumber { get; set; }
         public string PhotoProofPath { get; set; }
         public string ESignaturePath { get; set; }
         public List<Freebie> Freebies { get; set; }

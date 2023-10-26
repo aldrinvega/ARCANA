@@ -77,6 +77,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public int Id { get; set; }
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
+        public string EmailAddress { get; set; }
         public string AddedBy { get; set; }
         public string Origin { get; set; }
         public string BusinessName { get; set; }
@@ -88,8 +89,9 @@ public class GetAllApprovedProspectAsync : ControllerBase
 
         public class Freebie
         {
+            public int FreebieRequestId { get; set; }
             public string Status { get; set; }
-            public string TransactionNumber { get; set; }
+            public int TransactionNumber { get; set; }
             public ICollection<FreebieItem> FreebieItems { get; set; }
         }
 
@@ -132,7 +134,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .ThenInclude(x => x.Items)
                 .ThenInclude(x => x.Uom)
                 .Include(x => x.StoreType)
-                .Where(x => x.RegistrationStatus == "Approved");
+                .Where(x => x.RegistrationStatus != "Registered" && x.RegistrationStatus != "Under review");
 
             if (request.FreebieStatus != null)
             {
@@ -167,17 +169,19 @@ public class GetAllApprovedProspectAsync : ControllerBase
                     approvedProspect.Where(x => x.StoreType.StoreTypeName.Contains(request.StoreType));
             }
 
+            //Change Customer Type to Origin
+
             if (!string.IsNullOrEmpty(request.Search))
             {
                 approvedProspect = approvedProspect.Where(x =>
-                    x.Fullname == request.Search && x.CustomerType == "Prospect");
+                    x.Fullname.Contains(request.Search));
             }
 
             if (request.Status != null)
 
             {
                 approvedProspect = approvedProspect.Where(x =>
-                    x.IsActive == request.Status && x.CustomerType == "Prospect");
+                    x.IsActive == request.Status);
             }
 
             var result = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());

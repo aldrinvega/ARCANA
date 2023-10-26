@@ -72,8 +72,8 @@ public class AddNewProspectResult
 
 public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
 {
-    private const string APPROVED_STATUS = "Approved";
-    private const string PROSPECT_TYPE = "Prospect";
+    private const string APPROVED_STATUS = "Requested";
+    private const string ORIGIN = "Prospecting";
     private const string APPROVER_APPROVAL = "Approver Approval";
     private readonly DataContext _context;
 
@@ -130,7 +130,7 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             BusinessName = request.BusinessName,
             StoreTypeId = request.StoreTypeId,
             RegistrationStatus = APPROVED_STATUS,
-            CustomerType = PROSPECT_TYPE,
+            Origin = ORIGIN,
             AddedBy = request.AddedBy
         };
 

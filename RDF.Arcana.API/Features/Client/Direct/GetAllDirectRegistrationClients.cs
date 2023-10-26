@@ -98,7 +98,7 @@ public class GetAllDirectRegistrationClients : ControllerBase
         public bool? VariableDiscount { get; set; }
         public ICollection<ClientTerms> Terms { get; set; }
         public List<ClientAttachments> Attachments { get; set; }
-        public decimal DiscountPercentage { get; set; }
+        public decimal? DiscountPercentage { get; set; }
 
         public class ClientTerms
         {
@@ -110,7 +110,7 @@ public class GetAllDirectRegistrationClients : ControllerBase
 
         public class ClientAttachments
         {
-            public string Attachment { get; set; }
+            public string DocumentLink { get; set; }
         }
 
         public class BusinessAddressCollection

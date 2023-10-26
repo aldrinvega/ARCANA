@@ -96,7 +96,7 @@ public class GetAllRegisteredClients : ControllerBase
         public class FixedDiscount
         {
             public int FixedDiscountId { get; set; }
-            public decimal DiscountPercentage { get; set; }
+            public decimal? DiscountPercentage { get; set; }
         }
 
         public class BusinessAddressCollection

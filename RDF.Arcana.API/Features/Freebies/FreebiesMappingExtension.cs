@@ -25,7 +25,7 @@ public static class FreebiesMappingExtension
                         City = freebies.Client.OwnersAddress.City,
                         Province = freebies.Client.OwnersAddress.Province
                     },
-                    TransactionNumber = freebieRequest.TransactionNumber,
+                    TransactionNumber = freebieRequest.Id,
                     Freebies = freebieRequest.FreebieItems.Select(x =>
                         new GetRequestedFreebies.GetRequestedFreebiesQueryResult.Freebie
                         {
@@ -58,7 +58,7 @@ public static class FreebiesMappingExtension
                         City = freebies.Client.OwnersAddress.City,
                         Province = freebies.Client.OwnersAddress.Province
                     },
-                    TransactionNumber = freebieRequest.TransactionNumber,
+                    TransactionNumber = freebieRequest.Id,
                     Freebies = freebieRequest.FreebieItems.Select(x =>
                         new GetAllApprovedFreebies.GetAllApprovedFreebiesQueryResult.Freebie
                         {
@@ -91,7 +91,7 @@ public static class FreebiesMappingExtension
                         City = freebies.Client.OwnersAddress.City,
                         Province = freebies.Client.OwnersAddress.Province
                     },
-                    TransactionNumber = freebieRequest.TransactionNumber,
+                    TransactionNumber = freebieRequest.Id,
                     Freebies = freebieRequest.FreebieItems.Select(x =>
                         new GetAllRejectedFreebies.GetAllRejectedFreebiesQueryResult.Freebie
                         {
@@ -120,7 +120,7 @@ public static class FreebiesMappingExtension
                 City = freebies.OwnersAddress.City,
                 Province = freebies.OwnersAddress.Province
             },
-            TransactionNumber = freebies.FreebiesRequests?.FirstOrDefault()?.TransactionNumber,
+            TransactionNumber = freebies.FreebiesRequests?.FirstOrDefault()?.Id,
             Status = freebies.FreebiesRequests?.FirstOrDefault()?.Status ?? "For freebie request",
             FreebieRequestId = freebies.FreebiesRequests?.FirstOrDefault()?.Id,
             Freebies = freebies.FreebiesRequests?.SelectMany(fr => fr.FreebieItems?.Select(fi =>

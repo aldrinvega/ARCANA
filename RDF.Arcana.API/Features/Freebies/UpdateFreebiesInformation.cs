@@ -5,7 +5,7 @@ using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
-[Route("api/ListingFee")]
+[Route("api/Freebie")]
 [ApiController]
 public class UpdateFreebiesInformation : ControllerBase
 
@@ -44,9 +44,9 @@ public class UpdateFreebiesInformation : ControllerBase
     {
         public int ClientId { get; set; }
         public int FreebieRequestId { get; set; }
-        public List<Freebie> Freebies { get; set; }
+        public List<FreebieCollection> Freebies { get; set; }
 
-        public class Freebie
+        public class FreebieCollection
         {
             public int ItemId { get; set; }
             public int Quantity { get; set; }

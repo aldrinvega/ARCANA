@@ -11,9 +11,8 @@ public class ListingFee : BaseEntity
     public bool IsDelivered { get; set; }
     public string Status { get; set; }
     public int RequestedBy { get; set; }
-    public int ApprovedBy { get; set; }
+    public int? ApprovedBy { get; set; }
     public decimal Total { get; set; }
-
     public virtual Clients Client { get; set; }
     public virtual User RequestedByUser { get; set; }
     public virtual User ApprovedByUser { get; set; }

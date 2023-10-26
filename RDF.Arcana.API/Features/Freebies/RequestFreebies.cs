@@ -49,10 +49,10 @@ public class RequestFreebies : ControllerBase
     public class RequestFreebiesCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public List<UpdateFreebie> Freebies { get; set; }
+        public List<Freebie> Freebies { get; set; }
         public int AddedBy { get; set; }
 
-        public class UpdateFreebie
+        public class Freebie
         {
             public int ItemId { get; set; }
         }
@@ -134,11 +134,10 @@ public class RequestFreebies : ControllerBase
             await _context.Approvals.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            var transactionNumber = GenerateTransactionNumber();
+            /*var transactionNumber = GenerateTransactionNumber();*/
             var freebieRequest = new FreebieRequest
             {
                 ClientId = request.ClientId,
-                TransactionNumber = transactionNumber,
                 ApprovalsId = newApproval.Id,
                 Status = status,
                 IsDelivered = false,
@@ -162,10 +161,10 @@ public class RequestFreebies : ControllerBase
             return Unit.Value;
         }
 
-        private static string GenerateTransactionNumber()
+        /*private static string GenerateTransactionNumber()
         {
             var random = new Random();
             return random.Next(1_000_000, 10_000_000).ToString("D7");
-        }
+        }*/
     }
 }

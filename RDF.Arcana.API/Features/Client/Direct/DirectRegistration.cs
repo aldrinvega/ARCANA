@@ -45,6 +45,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public List<Attachment> Attachments { get; set; }
+        public List<UpdateFreebie> Freebies { get; set; }
 
         public class FixedDiscounts
         {
@@ -74,13 +75,19 @@ namespace RDF.Arcana.API.Features.Client.Direct
             public string City { get; set; }
             public string Province { get; set; }
         }
+
+        public class UpdateFreebie
+        {
+            public int ItemId { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<DirectRegistrationCommand, Unit>
     {
         private const string APPROVED_STATUS = "Approved";
+        private const string REQUESTED_STATUS = "Under review";
         private const string REGISTRATION_TYPE = "Direct";
-        private const string APPROVER_APPROVAL = "Approver Approval";
+        private const string DIRECT_REGISTRATION_APPROVAL = "Direct Registration Approval";
 
         private readonly Cloudinary _cloudinary;
         private readonly DataContext _context;
@@ -174,8 +181,8 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     BookingCoverageId = request.BookingCoverageId,
                     ModeOfPayment = request.ModeOfPayment,
                     Terms = request.TermsId,
-                    RegistrationStatus = APPROVED_STATUS,
-                    CustomerType = REGISTRATION_TYPE,
+                    RegistrationStatus = REQUESTED_STATUS,
+                    Origin = REGISTRATION_TYPE,
                     IsActive = true,
                     AddedBy = request.AddedBy,
                     Longitude = request.Longitude,
@@ -208,7 +215,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 var termsOptions = new TermOptions
                 {
                     ClientId = directClients.Id,
-                    TermId = request.TermsId,
+                    TermsId = request.TermsId,
                     CreditLimit = request.CreditLimit,
                     TermDaysId = request.TermDaysId,
                     AddedBy = request.AddedBy
@@ -220,7 +227,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 var approval = new Approvals
                 {
                     ClientId = directClients.Id,
-                    ApprovalType = APPROVER_APPROVAL,
+                    ApprovalType = DIRECT_REGISTRATION_APPROVAL,
                     IsApproved = false,
                     IsActive = true,
                 };
@@ -252,6 +259,75 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
                     await _context.SaveChangesAsync(cancellationToken);
                 }
+
+                ///////////////////////////////////////////////////////////////////
+
+
+                //Check if the client is existing
+                var existingregularClient =
+                    await _context.Clients.FirstOrDefaultAsync(x => x.Id == directClients.Id, cancellationToken);
+
+                if (request.Freebies.Count > 5)
+                {
+                    throw new Exception("Freebie request is not exceeding to 5 items");
+                }
+
+                if (request.Freebies.Select(x => x.ItemId).Distinct().Count() != request.Freebies.Count)
+                {
+                    throw new Exception("Items cannot be repeated.");
+                }
+
+                //Validate if the Item is already requested | 1 item per client
+                foreach (var item in request.Freebies)
+                {
+                    var existingRequest = await _context.FreebieItems
+                        .Include(x => x.Items)
+                        .Include(f => f.FreebieRequest)
+                        .Where(f => f.ItemId == item.ItemId && f.FreebieRequest.ClientId == directClients.Id)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    if (existingRequest != null)
+                    {
+                        throw new Exception(
+                            $"Item with ID {existingRequest.Items.ItemDescription} has already been requested.");
+                    }
+                }
+
+                var newApproval = new Approvals
+                {
+                    ClientId = directClients.Id,
+                    ApprovalType = "For Freebie Approval",
+                    IsApproved = true,
+                    IsActive = true,
+                    RequestedBy = request.AddedBy,
+                    ApprovedBy = request.AddedBy
+                };
+                await _context.Approvals.AddAsync(newApproval, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                /*var transactionNumber = GenerateTransactionNumber();*/
+                var freebieRequest = new FreebieRequest
+                {
+                    ClientId = directClients.Id,
+                    ApprovalsId = newApproval.Id,
+                    Status = Status.ForReleasing,
+                    IsDelivered = false,
+                    RequestedBy = request.AddedBy
+                };
+                _context.FreebieRequests.Add(freebieRequest);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
+                         {
+                             RequestId = freebieRequest.Id,
+                             ItemId = freebie.ItemId,
+                             Quantity = 1
+                         }))
+                {
+                    await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
             }
             else
             {

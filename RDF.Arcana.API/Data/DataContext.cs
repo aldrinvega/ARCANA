@@ -229,5 +229,13 @@ public class DataContext : DbContext
             .HasOne(x => x.ApprovedByUser)
             .WithMany()
             .HasForeignKey(x => x.ApprovedBy);
+
+        modelBuilder.Entity<ListingFee>()
+            .Property(p => p.Total)
+            .HasColumnType("decimal(8,2)");
+
+        modelBuilder.Entity<FixedDiscounts>()
+            .Property(p => p.DiscountPercentage)
+            .HasColumnType("decimal(8,2)");
     }
 }

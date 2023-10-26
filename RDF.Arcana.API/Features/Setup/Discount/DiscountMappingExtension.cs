@@ -8,10 +8,10 @@ public static class DiscountMappingExtension
         return new GetDiscountsAsync.GetDiscountAsyncQueryResult
         {
             Id = discount.Id,
-            LowerBound = discount.LowerBound,
-            UpperBound = discount.UpperBound,
-            CommissionRateLower = discount.CommissionRateLower,
-            CommissionRateUpper = discount.CommissionRateUpper,
+            MinimumAmount = discount.LowerBound,
+            MaximumAmount = discount.UpperBound,
+            MinimumPercentage = discount.CommissionRateLower,
+            MaximumPercentage = discount.CommissionRateUpper,
             AddedBy = discount.AddedByUser.Fullname,
             CreatedAt = discount.CreatedAt,
             IsActive = discount.IsActive,

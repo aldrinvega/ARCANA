@@ -30,7 +30,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("approval_type");
 
-                    b.Property<int>("ApprovedBy")
+                    b.Property<int?>("ApprovedBy")
                         .HasColumnType("int")
                         .HasColumnName("approved_by");
 
@@ -256,6 +256,10 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<int?>("ModifiedBy")
                         .HasColumnType("int")
                         .HasColumnName("modified_by");
+
+                    b.Property<string>("Origin")
+                        .HasColumnType("longtext")
+                        .HasColumnName("origin");
 
                     b.Property<int>("OwnersAddressId")
                         .HasColumnType("int")
@@ -494,8 +498,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("client_id");
 
-                    b.Property<decimal>("DiscountPercentage")
-                        .HasColumnType("decimal(65,30)")
+                    b.Property<decimal?>("DiscountPercentage")
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("discount_percentage");
 
                     b.HasKey("Id")
@@ -576,10 +580,6 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("longtext")
                         .HasColumnName("status");
-
-                    b.Property<string>("TransactionNumber")
-                        .HasColumnType("longtext")
-                        .HasColumnName("transaction_number");
 
                     b.HasKey("Id")
                         .HasName("pk_freebie_requests");
@@ -673,7 +673,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("approvals_id");
 
-                    b.Property<int>("ApprovedBy")
+                    b.Property<int?>("ApprovedBy")
                         .HasColumnType("int")
                         .HasColumnName("approved_by");
 
@@ -702,7 +702,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("status");
 
                     b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("total");
 
                     b.HasKey("Id")
@@ -1121,11 +1121,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("term_days_id");
 
-                    b.Property<int>("TermId")
-                        .HasColumnType("int")
-                        .HasColumnName("term_id");
-
-                    b.Property<int?>("TermsId")
+                    b.Property<int>("TermsId")
                         .HasColumnType("int")
                         .HasColumnName("terms_id");
 
@@ -1389,8 +1385,6 @@ namespace RDF.Arcana.API.Migrations
                     b.HasOne("RDF.Arcana.API.Domain.User", "ApproveByUser")
                         .WithMany()
                         .HasForeignKey("ApprovedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_approvals_users_approve_by_user_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Clients", "Client")
@@ -1670,8 +1664,6 @@ namespace RDF.Arcana.API.Migrations
                     b.HasOne("RDF.Arcana.API.Domain.User", "ApprovedByUser")
                         .WithMany()
                         .HasForeignKey("ApprovedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_listing_fees_users_approved_by_user_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Clients", "Client")
@@ -1840,6 +1832,8 @@ namespace RDF.Arcana.API.Migrations
                     b.HasOne("RDF.Arcana.API.Domain.Terms", "Terms")
                         .WithMany("TermOptions")
                         .HasForeignKey("TermsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_term_options_terms_terms_id");
 
                     b.Navigation("AddedByUser");

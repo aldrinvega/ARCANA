@@ -55,7 +55,7 @@ public class AddTermsAndCondition : ControllerBase
         public int BookingCoverageId { get; set; }
         public int ModeOfPayment { get; set; }
         public int Terms { get; set; }
-        public int CreditLimit { get; set; }
+        public int? CreditLimit { get; set; }
         public int? TermDaysId { get; set; }
         public FixedDiscount FixedDiscounts { get; set; }
         public bool VariableDiscount { get; set; }
@@ -63,7 +63,7 @@ public class AddTermsAndCondition : ControllerBase
 
         public class FixedDiscount
         {
-            public decimal DiscountPercentage { get; set; }
+            public decimal? DiscountPercentage { get; set; }
         }
     }
 
@@ -90,11 +90,18 @@ public class AddTermsAndCondition : ControllerBase
             existingClient.BookingCoverageId = request.BookingCoverageId;
             existingClient.ModeOfPayment = request.ModeOfPayment;
 
+            var limit = request.CreditLimit;
+
+            if (request.CreditLimit.HasValue)
+            {
+                limit = request.CreditLimit.Value;
+            }
+
             var termsOptions = new TermOptions
             {
                 ClientId = request.ClientId,
-                TermId = request.Terms,
-                CreditLimit = request.CreditLimit,
+                TermsId = request.Terms,
+                CreditLimit = limit,
                 TermDaysId = request.TermDaysId,
                 AddedBy = request.AddedBy
             };
@@ -106,7 +113,7 @@ public class AddTermsAndCondition : ControllerBase
                 var fixedDiscount = new FixedDiscounts
                 {
                     ClientId = existingClient.Id,
-                    DiscountPercentage = request.FixedDiscounts.DiscountPercentage
+                    DiscountPercentage = request.FixedDiscounts.DiscountPercentage / 100
                 };
 
                 await _context.FixedDiscounts.AddAsync(fixedDiscount, cancellationToken);

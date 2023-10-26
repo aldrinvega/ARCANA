@@ -1,0 +1,59 @@
+{
+  "documentTypeMappings": [
+    {
+      "pattern": "business_permit_",
+      "documentType": "Business Permit"
+    },
+    {
+      "pattern": "sec_registration_",
+      "documentType": "SEC Registration Certificate"
+    },
+    {
+      "pattern": "bir_cor_",
+      "documentType": "BIR Certificate of Registration"
+    },
+    {
+      "pattern": "dti_registration_",
+      "documentType": "DTI Certificate of Business Name Registration"
+    },
+    {
+      "pattern": "mayors_permit_",
+      "documentType": "Mayor's Permit"
+    }
+  ],
+  "validIdMappings": [
+    {
+      "pattern": "passport_",
+      "idType": "Philippine Passport"
+    },
+    {
+      "pattern": "umid_",
+      "idType": "Unified Multi-Purpose ID (UMID)"
+    },
+    {
+      "pattern": "drivers_license_",
+      "idType": "Driver's License"
+    },
+    {
+      "pattern": "sss_id_",
+      "idType": "SSS ID"
+    },
+    {
+      "pattern": "gsis_id_",
+      "idType": "GSIS ID"
+    },
+    {
+      "pattern": "postal_id_",
+      "idType": "Philippine Postal ID"
+    },
+    {
+      "pattern": "prc_id_",
+      "idType": "PRC ID"
+    },
+    {
+      "pattern": "voters_id_",
+      "idType": "Voter's ID"
+    }
+    // Add more valid ID mappings as needed
+  ]
+}

@@ -45,7 +45,7 @@ public class AddNewListingFee : ControllerBase
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
 
-            return Ok(response);
+            return Conflict(response);
         }
     }
 
@@ -67,6 +67,8 @@ public class AddNewListingFee : ControllerBase
 
     public class Handler : IRequestHandler<AddNewListingFeeCommand, Unit>
     {
+        private const string FOR_APPROVAL = "For listing fee approval";
+        private const string REQUESTED = "Requested";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -84,24 +86,25 @@ public class AddNewListingFee : ControllerBase
             var approval = new Approvals
             {
                 ClientId = request.ClientId,
-                ApprovalType = "For Listing Fee Approval",
+                ApprovalType = FOR_APPROVAL,
                 IsActive = true,
                 RequestedBy = request.RequestedBy,
             };
+
+            await _context.Approvals.AddAsync(approval, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             var listingFee = new ListingFee
             {
                 ClientId = request.ClientId,
                 ApprovalsId = approval.Id,
-                Status = "Requested",
+                Status = REQUESTED,
                 RequestedBy = request.RequestedBy,
                 Total = request.Total
             };
 
-            await _context.AddAsync(listingFee, cancellationToken);
+            await _context.ListingFees.AddAsync(listingFee, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-
-            await _context.AddAsync(approval, cancellationToken);
 
             foreach (var listingFeeItem in request.ListingItems.Select(items => new ListingFeeItems
                      {

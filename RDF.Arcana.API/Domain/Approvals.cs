@@ -11,7 +11,7 @@ public class Approvals : BaseEntity
     public bool IsApproved { get; set; }
     public bool IsActive { get; set; }
     public int RequestedBy { get; set; }
-    public int ApprovedBy { get; set; }
+    public int? ApprovedBy { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public User ApproveByUser { get; set; }
     public User RequestedByUser { get; set; }

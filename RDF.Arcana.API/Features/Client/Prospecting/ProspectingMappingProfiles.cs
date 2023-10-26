@@ -43,6 +43,7 @@ public static class ProspectingMappingProfiles
             OwnersName = approvedClient.Fullname,
             BusinessName = approvedClient.BusinessName,
             PhoneNumber = approvedClient.PhoneNumber,
+            EmailAddress = approvedClient.EmailAddress,
             Origin = approvedClient.CustomerType,
             AddedBy = approvedClient.Fullname,
             OwnersAddress = new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.OwnersAddressCollection
@@ -59,8 +60,9 @@ public static class ProspectingMappingProfiles
             Freebies = freebies.Any()
                 ? freebies.Select(fr => new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.Freebie
                 {
+                    FreebieRequestId = fr.Id,
                     Status = fr.Status,
-                    TransactionNumber = fr.TransactionNumber,
+                    TransactionNumber = fr.Id,
                     FreebieItems = fr.FreebieItems.Select(i =>
                         new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.FreebieItem
                         {

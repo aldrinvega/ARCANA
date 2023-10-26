@@ -5,7 +5,7 @@ namespace RDF.Arcana.API.Domain
     public class TermOptions : BaseEntity
     {
         public int ClientId { get; set; }
-        public int TermId { get; set; }
+        public int TermsId { get; set; }
         public int? CreditLimit { get; set; }
         public int? TermDaysId { get; set; }
         public DateTime CreatedAt { get; set; }

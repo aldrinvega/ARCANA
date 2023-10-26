@@ -29,7 +29,7 @@ public static class ReleasedProspectMappingExtension
             RegistrationStatus = approvals.Client.RegistrationStatus,
 
             // Assuming TransactionNumber, PhotoProofPath, and ESignaturePath are similar for each FreebieRequest in the collection
-            TransactionNumber = approvals.FreebieRequest.FirstOrDefault()?.TransactionNumber,
+            TransactionNumber = approvals.FreebieRequest.FirstOrDefault()?.Id,
             PhotoProofPath = approvals.FreebieRequest.FirstOrDefault()?.PhotoProofPath,
             ESignaturePath = approvals.FreebieRequest.FirstOrDefault()?.ESignaturePath,
 

@@ -27,7 +27,7 @@ public class ReleasedProspectingRequest : ControllerBase
         var response = new QueryOrCommandResult<UploadPhotoResult>();
         try
         {
-            command.ClientId = id;
+            command.FreebieRequestId = id;
 
             var result = await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
@@ -45,7 +45,7 @@ public class ReleasedProspectingRequest : ControllerBase
 
     public class ReleasedProspectingRequestCommand : IRequest<Unit>
     {
-        public int ClientId { get; set; }
+        public int FreebieRequestId { get; set; }
         public IFormFile PhotoProof { get; set; }
         public IFormFile ESignature { get; set; }
     }
@@ -74,8 +74,9 @@ public class ReleasedProspectingRequest : ControllerBase
                 .Include(x => x.FreebieRequest)
                 .Include(x => x.Client)
                 .FirstOrDefaultAsync(x =>
-                    x.ClientId == request.ClientId &&
+                    x.FreebieRequest.Any(x => x.Id == request.FreebieRequestId) &&
                     x.ApprovalType == "For Freebie Approval" &&
+                    x.FreebieRequest.Any(x => x.IsDelivered == false) &&
                     x.IsActive == true &&
                     x.IsApproved == true, cancellationToken);
 
@@ -127,6 +128,7 @@ public class ReleasedProspectingRequest : ControllerBase
                     await _context.SaveChangesAsync(cancellationToken);
                 }
 
+                validateClientRequest.Client.RegistrationStatus = "Pending registration";
                 // If you want to update only a specific FreebieRequest, you should fetch it before updating
                 // Example: 
                 // var specificFreebieRequest = validateClientRequest.FreebieRequests.FirstOrDefault(x => x.SomeId == someConditions);

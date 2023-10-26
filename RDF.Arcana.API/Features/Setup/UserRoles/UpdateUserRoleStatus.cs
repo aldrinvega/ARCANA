@@ -3,7 +3,6 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Setup.UserRoles.Exceptions;
 
-
 namespace RDF.Arcana.API.Features.Setup.UserRoles;
 
 [Route("api/UserRole")]
@@ -60,16 +59,24 @@ public class UpdateUserRoleStatus : ControllerBase
         public async Task<Unit> Handle(UpdateUserRoleStatusCommand request, CancellationToken cancellationToken)
         {
             var existingUserRole =
-                await _context.UserRoles.FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
+                await _context.UserRoles
+                    .Include(x => x.User)
+                    .FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
 
             if (existingUserRole is null)
             {
                 throw new UserRoleNotFoundException();
             }
 
-            if (!existingUserRole.IsActive && existingUserRole.Permissions.Count == 1)
+            if (existingUserRole.IsActive && existingUserRole.Permissions.Count == 1)
             {
                 throw new UserRoleDeactivationException();
+            }
+
+            if (existingUserRole.IsActive && existingUserRole.User != null && existingUserRole.IsActive)
+            {
+                throw new Exception(
+                    $"Operation failed: User Role cannot be archived because it is currently associated with the user '{existingUserRole.User.Fullname}'.");
             }
 
             existingUserRole.IsActive = !existingUserRole.IsActive;

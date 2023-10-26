@@ -73,12 +73,13 @@ public class AddAttachments : ControllerBase
 
         public async Task<Unit> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
         {
-            var exisitingClient = await _context.Clients
-                                      .Include(x => x.ClientDocuments)
-                                      .FirstOrDefaultAsync(
-                                          x => x.Id == request.ClientId &&
-                                               x.RegistrationStatus == "Released", cancellationToken) ??
-                                  throw new ClientIsNotFound(request.ClientId);
+            var existingClient = await _context.Clients
+                                     .Include(x => x.ClientDocuments)
+                                     .FirstOrDefaultAsync(
+                                         x => x.Id == request.ClientId &&
+                                              x.RegistrationStatus == "Pending registration", cancellationToken) ??
+                                 throw new ClientIsNotFound(request.ClientId);
+
 
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
             {
@@ -87,7 +88,7 @@ public class AddAttachments : ControllerBase
                 var attachmentsParams = new ImageUploadParams
                 {
                     File = new FileDescription(documents.Attachment.FileName, stream),
-                    PublicId = $"{exisitingClient.BusinessName}/{documents.Attachment.FileName}"
+                    PublicId = $"{existingClient.BusinessName}/{documents.Attachment.FileName}"
                 };
 
                 var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
@@ -95,15 +96,15 @@ public class AddAttachments : ControllerBase
                 var attachments = new ClientDocuments
                 {
                     DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
-                    ClientId = exisitingClient.Id,
+                    ClientId = existingClient.Id,
                     DocumentType = documents.DocumentType
                 };
 
                 await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
+                existingClient.RegistrationStatus = "Under review";
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
-            exisitingClient.RegistrationStatus = "Registered";
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }

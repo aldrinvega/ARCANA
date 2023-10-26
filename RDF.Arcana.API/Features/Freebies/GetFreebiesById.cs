@@ -45,7 +45,7 @@ public class GetFreebiesById : ControllerBase
 
     public class GetFreebiesByIdResult
     {
-        public string TransactionNumber { get; set; }
+        public int? TransactionNumber { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
         public bool IsApprove { get; set; }
@@ -80,7 +80,7 @@ public class GetFreebiesById : ControllerBase
 
             return new GetFreebiesByIdResult
             {
-                TransactionNumber = existingFreebies.TransactionNumber,
+                TransactionNumber = existingFreebies.Id,
                 Status = existingFreebies.Status,
                 IsActive = existingFreebies.Approvals.IsActive,
                 IsApprove = existingFreebies.Approvals.IsApproved,

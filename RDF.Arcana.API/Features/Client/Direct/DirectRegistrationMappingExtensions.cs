@@ -51,7 +51,7 @@ public static class DirectRegistrationMappingExtensions
             Terms = directRegistrationClients.Client.Term.TermOptions.Select(x =>
                 new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.ClientTerms
                 {
-                    TermId = x.TermId,
+                    TermId = x.TermsId,
                     Term = directRegistrationClients.Client.Term.TermType,
                     CreditLimit = x.CreditLimit,
                     TermDays = x.TermDays.Days
@@ -59,7 +59,7 @@ public static class DirectRegistrationMappingExtensions
             Attachments = directRegistrationClients.Client.ClientDocuments.Select(c =>
                 new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.ClientAttachments
                 {
-                    Attachment = c.DocumentPath
+                    DocumentLink = c.DocumentPath
                 }).ToList()
         };
     }

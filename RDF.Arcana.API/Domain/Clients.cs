@@ -18,6 +18,7 @@ public class Clients : BaseEntity
     public int Cluster { get; set; }
     public bool Freezer { get; set; }
     public string CustomerType { get; set; }
+    public string Origin { get; set; }
     public int? TermDays { get; set; }
     public int? DiscountId { get; set; }
     public string ClientType { get; set; }

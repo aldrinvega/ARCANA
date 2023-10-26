@@ -82,7 +82,7 @@ public class GetRequestedFreebies : ControllerBase
         public string OwnersName { get; set; }
         public string PhoneNumber { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
-        public string TransactionNumber { get; set; }
+        public int? TransactionNumber { get; set; }
         public string Status { get; set; }
 
         public List<Freebie> Freebies { get; set; }
