@@ -13,6 +13,7 @@
         <PackageReference Include="CloudinaryDotNet" Version="1.22.0" />
         <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
         <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="7.0.0" />
+        <PackageReference Include="FluentValidation" Version="11.8.0"/>
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
         <PackageReference Include="JWT" Version="10.0.2" />
@@ -43,7 +44,6 @@
 
 
     <ItemGroup>
-      <Folder Include="Features\Authenticate\Exception\" />
       <Folder Include="Features\Items\" />
       <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
     </ItemGroup>

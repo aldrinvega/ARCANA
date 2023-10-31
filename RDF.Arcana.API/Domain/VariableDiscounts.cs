@@ -9,4 +9,5 @@ public class VariableDiscounts : BaseEntity
     public decimal MinimumPercentage { get; set; }
     public decimal MaximumPercentage { get; set; }
     public bool IsSubjectToApproval { get; set; }
+    public bool IsActive { get; set; } = true;
 }

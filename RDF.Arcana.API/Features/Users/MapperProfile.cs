@@ -4,12 +4,13 @@ namespace RDF.Arcana.API.Features.Users;
 
 public static class MapperProfile
 {
-    public static GetUsersAsync.GetUserAsyncQueryResult 
-        ToGetUserAsyncQueryResult (this User user)
+    public static GetUsersAsync.GetUserAsyncQueryResult
+        ToGetUserAsyncQueryResult(this User user)
     {
         return new GetUsersAsync.GetUserAsyncQueryResult
         {
             Id = user.Id,
+            FullIdNo = user.FullIdNo,
             Fullname = user.Fullname,
             Username = user.Username,
             Password = user.Password,

@@ -124,11 +124,10 @@ public class ReleasedProspectingRequest : ControllerBase
                     freebieRequest.IsDelivered = true;
                     freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
                     freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
-
-                    await _context.SaveChangesAsync(cancellationToken);
                 }
 
                 validateClientRequest.Client.RegistrationStatus = "Pending registration";
+                await _context.SaveChangesAsync(cancellationToken);
                 // If you want to update only a specific FreebieRequest, you should fetch it before updating
                 // Example: 
                 // var specificFreebieRequest = validateClientRequest.FreebieRequests.FirstOrDefault(x => x.SomeId == someConditions);

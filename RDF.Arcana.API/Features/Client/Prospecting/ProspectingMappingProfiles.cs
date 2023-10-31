@@ -67,6 +67,7 @@ public static class ProspectingMappingProfiles
                         new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.FreebieItem
                         {
                             Id = i.Id,
+                            ItemId = i.ItemId,
                             ItemCode = i.Items.ItemCode,
                             ItemDescription = i.Items.ItemDescription,
                             UOM = i.Items.Uom.UomCode,

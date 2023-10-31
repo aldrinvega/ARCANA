@@ -1251,6 +1251,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("department_id");
 
+                    b.Property<string>("FullIdNo")
+                        .HasColumnType("longtext")
+                        .HasColumnName("full_id_no");
+
                     b.Property<string>("Fullname")
                         .HasColumnType("longtext")
                         .HasColumnName("fullname");
@@ -1258,6 +1262,10 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
+
+                    b.Property<bool>("IsPasswordChanged")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_password_changed");
 
                     b.Property<int?>("LocationId")
                         .HasColumnType("int")
@@ -1267,13 +1275,17 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("password");
 
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("longtext")
+                        .HasColumnName("profile_picture");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
 
-                    b.Property<int?>("UserRoleId")
+                    b.Property<int?>("UserRolesId")
                         .HasColumnType("int")
-                        .HasColumnName("user_role_id");
+                        .HasColumnName("user_roles_id");
 
                     b.Property<string>("Username")
                         .HasColumnType("longtext")
@@ -1295,9 +1307,8 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("LocationId")
                         .HasDatabaseName("ix_users_location_id");
 
-                    b.HasIndex("UserRoleId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_user_role_id");
+                    b.HasIndex("UserRolesId")
+                        .HasDatabaseName("ix_users_user_roles_id");
 
                     b.ToTable("users", (string)null);
                 });
@@ -1354,24 +1365,28 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_active");
+
                     b.Property<bool>("IsSubjectToApproval")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_subject_to_approval");
 
                     b.Property<decimal>("MaximumAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("maximum_amount");
 
                     b.Property<decimal>("MaximumPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("maximum_percentage");
 
                     b.Property<decimal>("MinimumAmount")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("minimum_amount");
 
                     b.Property<decimal>("MinimumPercentage")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(8,2)")
                         .HasColumnName("minimum_percentage");
 
                     b.HasKey("Id")
@@ -1892,9 +1907,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_users_locations_location_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.UserRoles", "UserRoles")
-                        .WithOne("User")
-                        .HasForeignKey("RDF.Arcana.API.Domain.User", "UserRoleId")
-                        .HasConstraintName("fk_users_user_roles_user_role_id");
+                        .WithMany("Users")
+                        .HasForeignKey("UserRolesId")
+                        .HasConstraintName("fk_users_user_roles_user_roles_id");
 
                     b.Navigation("AddedByUser");
 
@@ -1982,7 +1997,7 @@ namespace RDF.Arcana.API.Migrations
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.UserRoles", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

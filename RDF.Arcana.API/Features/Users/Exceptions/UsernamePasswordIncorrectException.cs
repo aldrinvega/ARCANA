@@ -1,6 +1,8 @@
-﻿namespace RDF.Arcana.API.Features.Users.Exception;
+﻿namespace RDF.Arcana.API.Features.Users.Exceptions;
 
 public class UsernamePasswordIncorrectException : System.Exception
 {
-    public UsernamePasswordIncorrectException() : base("Username or password is incorrect!"){}
+    public UsernamePasswordIncorrectException() : base("Username or password is incorrect!")
+    {
+    }
 }

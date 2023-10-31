@@ -21,12 +21,13 @@ public class UpdateFreebiesInformation : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateFreebiesInformationCommand command, [FromRoute] int id,
         [FromQuery] int freebieId)
     {
-        var response = new QueryOrCommandResult<object>();
+        var response = new QueryOrCommandResult<UpdateFreebieInformationResult>();
         try
         {
             command.ClientId = id;
             command.FreebieRequestId = freebieId;
-            await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+            response.Data = result;
             response.Status = StatusCodes.Status200OK;
             response.Success = true;
             response.Messages.Add("Freebies are updated successfully");
@@ -40,7 +41,7 @@ public class UpdateFreebiesInformation : ControllerBase
         }
     }
 
-    public class UpdateFreebiesInformationCommand : IRequest<Unit>
+    public class UpdateFreebiesInformationCommand : IRequest<UpdateFreebieInformationResult>
     {
         public int ClientId { get; set; }
         public int FreebieRequestId { get; set; }
@@ -53,7 +54,45 @@ public class UpdateFreebiesInformation : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<UpdateFreebiesInformationCommand, Unit>
+    public class UpdateFreebieInformationResult
+    {
+        public int Id { get; set; }
+        public string OwnersName { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public string BusinessName { get; set; }
+        public int AddedBy { get; set; }
+        public IEnumerable<Freebie> Freebies { get; set; }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
+
+        public class Freebie
+        {
+            public int FreebieRequestId { get; set; }
+            public string Status { get; set; }
+            public int TransactionNumber { get; set; }
+            public ICollection<FreebieItem> FreebieItems { get; set; }
+        }
+
+        public class FreebieItem
+        {
+            public int? Id { get; set; }
+            public int ItemId { get; set; }
+            public string ItemCode { get; set; }
+            public string ItemDescription { get; set; }
+            public string UOM { get; set; }
+            public int? Quantity { get; set; }
+        }
+    }
+
+    public class Handler : IRequestHandler<UpdateFreebiesInformationCommand, UpdateFreebieInformationResult>
     {
         private readonly DataContext _context;
 
@@ -62,8 +101,15 @@ public class UpdateFreebiesInformation : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateFreebiesInformationCommand request, CancellationToken cancellationToken)
+        public async Task<UpdateFreebieInformationResult> Handle(UpdateFreebiesInformationCommand request,
+            CancellationToken cancellationToken)
         {
+            var clientFreebies = new List<UpdateFreebieInformationResult.Freebie>();
+
+            var client = await _context.Clients
+                .Include(x => x.OwnersAddress)
+                .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
+
             var approvals = await _context.Approvals
                 .Include(x => x.Client)
                 .Include(x => x.FreebieRequest) // adjusted this line
@@ -71,7 +117,8 @@ public class UpdateFreebiesInformation : ControllerBase
                 .ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync(
                     x => x.ClientId == request.ClientId &&
-                         x.ApprovalType == "For Freebie Approval",
+                         x.ApprovalType == "For Freebie Approval" &&
+                         x.FreebieRequest.Any(x => x.Id == request.FreebieRequestId),
                     cancellationToken);
 
             if (approvals is null)
@@ -100,10 +147,34 @@ public class UpdateFreebiesInformation : ControllerBase
             {
                 var freebieItem =
                     freebieRequestToUpdate.FreebieItems.FirstOrDefault(x => x.ItemId == requestFreebie.ItemId);
+
+                var itemDetails = await _context.Items
+                    .Include(x => x.Uom)
+                    .Where(i => i.Id == freebieItem.ItemId)
+                    .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
+                    .FirstOrDefaultAsync(cancellationToken);
                 if (freebieItem != null)
                 {
                     // If the freebie item exists in the database, update its quantity
                     freebieItem.Quantity = requestFreebie.Quantity;
+                    clientFreebies.Add(new UpdateFreebieInformationResult.Freebie
+                    {
+                        FreebieRequestId = freebieRequestToUpdate.Id,
+                        Status = freebieRequestToUpdate.Status,
+                        TransactionNumber = freebieRequestToUpdate.Id, // Change this to appropriate value
+                        FreebieItems = new List<UpdateFreebieInformationResult.FreebieItem>
+                        {
+                            new()
+                            {
+                                Id = freebieItem.Id,
+                                ItemId = freebieItem.ItemId,
+                                ItemCode = itemDetails.ItemCode,
+                                ItemDescription = itemDetails.ItemDescription,
+                                UOM = itemDetails.UomCode,
+                                Quantity = freebieItem.Quantity
+                            }
+                        }
+                    });
                 }
                 else
                 {
@@ -115,15 +186,50 @@ public class UpdateFreebiesInformation : ControllerBase
                             ItemId = requestFreebie.ItemId,
                             Quantity = requestFreebie.Quantity
                         });
+
+                    clientFreebies.Add(new UpdateFreebieInformationResult.Freebie
+                    {
+                        FreebieRequestId = freebieRequestToUpdate.Id,
+                        Status = freebieRequestToUpdate.Status,
+                        TransactionNumber = freebieRequestToUpdate.Id, // Change this to appropriate value
+                        FreebieItems = new List<UpdateFreebieInformationResult.FreebieItem>
+                        {
+                            new()
+                            {
+                                Id = freebieRequestToUpdate.Id,
+                                ItemId = requestFreebie.ItemId,
+                                ItemCode = itemDetails.ItemCode,
+                                ItemDescription = itemDetails.ItemDescription,
+                                UOM = itemDetails.UomCode,
+                                Quantity = requestFreebie.Quantity
+                            }
+                        }
+                    });
                 }
             }
 
             approvals.IsApproved = true;
-            freebieRequestToUpdate.Status = "Requested";
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+
+            return new UpdateFreebieInformationResult
+            {
+                Id = client.Id,
+                OwnersName = client.Fullname,
+                OwnersAddress = new UpdateFreebieInformationResult.OwnersAddressCollection
+                {
+                    HouseNumber = client.OwnersAddress.HouseNumber,
+                    StreetName = client.OwnersAddress.StreetName,
+                    BarangayName = client.OwnersAddress.Barangay,
+                    City = client.OwnersAddress.City,
+                    Province = client.OwnersAddress.Province
+                },
+                PhoneNumber = client.PhoneNumber,
+                BusinessName = client.BusinessName,
+                Freebies = clientFreebies,
+                AddedBy = client.AddedBy
+            };
         }
     }
 }

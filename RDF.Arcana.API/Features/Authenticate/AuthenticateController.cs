@@ -6,7 +6,6 @@ namespace RDF.Arcana.API.Features.Authenticate;
 
 [Route("api/[controller]")]
 [ApiController]
-
 public class AuthenticateController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,9 +17,9 @@ public class AuthenticateController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("Authenticate")]
-    public async Task<ActionResult<AuthenticateUser.AuthenticateUserResult>> Authenticate(AuthenticateUser.AuthenticateUserQuery request)
+    public async Task<ActionResult<AuthenticateUser.AuthenticateUserResult>> Authenticate(
+        AuthenticateUser.AuthenticateUserQuery request)
     {
-
         var response = new QueryOrCommandResult<AuthenticateUser.AuthenticateUserResult>();
         try
         {
@@ -30,7 +29,7 @@ public class AuthenticateController : ControllerBase
             response.Messages.Add("Log In successfully");
             return Ok(response);
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             response.Success = false;
             response.Messages.Add(e.Message);

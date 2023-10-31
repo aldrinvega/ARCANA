@@ -7,14 +7,35 @@ namespace RDF.Arcana.API.Features.Setup.Discount;
 
 [Route("api/Discount")]
 [ApiController]
-
-public class UpdateDiscount : ControllerBase
+public class UpdateVariableDiscount : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UpdateDiscount(IMediator mediator)
+    public UpdateVariableDiscount(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpPut("UpdateVariableDiscount/{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id,
+        [FromBody] UpdateDiscountCommand command)
+    {
+        var response = new QueryOrCommandResult<object>();
+        try
+        {
+            command.Id = id;
+            await _mediator.Send(command);
+            response.Status = StatusCodes.Status200OK;
+            response.Messages.Add("Discount has been successfully updated");
+            response.Success = true;
+            return Ok(response);
+        }
+        catch (System.Exception e)
+        {
+            response.Status = StatusCodes.Status409Conflict;
+            response.Messages.Add(e.Message);
+            return Conflict(response);
+        }
     }
 
     public class UpdateDiscountCommand : IRequest<Unit>
@@ -43,17 +64,27 @@ public class UpdateDiscount : ControllerBase
             if (existingDiscount == null)
                 throw new DiscountNotFoundException();
 
-            var overlapExists = await _context.Discounts
-                .Where(x => x.Id != request.Id)
-                .AnyAsync(x => (x.LowerBound <= request.LowerBound && x.UpperBound >= request.LowerBound) ||
-                               (x.LowerBound <= request.UpperBound && x.UpperBound >= request.UpperBound) ||
-                               (x.LowerBound >= request.LowerBound && x.UpperBound <= request.UpperBound),
+            var overlapExists = await _context.VariableDiscounts
+                .AnyAsync(x =>
+                        ((request.LowerBound >= x.MinimumAmount && request.LowerBound <= x.MaximumAmount) ||
+                         (request.UpperBound >= x.MinimumAmount && request.UpperBound <= x.MaximumAmount) ||
+                         (request.LowerBound <= x.MinimumAmount && request.UpperBound >= x.MaximumAmount) ||
+                         (request.LowerBound >= x.MinimumAmount && request.UpperBound <= x.MaximumAmount)) ||
+                        ((request.CommissionRateLower >= x.MinimumPercentage &&
+                          request.CommissionRateLower <= x.MaximumPercentage) ||
+                         (request.CommissionRateUpper >= x.MinimumPercentage &&
+                          request.CommissionRateUpper <= x.MaximumPercentage) ||
+                         (request.CommissionRateLower <= x.MinimumPercentage &&
+                          request.CommissionRateUpper >= x.MaximumPercentage) ||
+                         (request.CommissionRateLower >= x.MinimumPercentage &&
+                          request.CommissionRateUpper <= x.MaximumPercentage)),
                     cancellationToken);
+
 
             if (overlapExists)
                 throw new DiscountOverlapsToTheExistingOneException();
-            
-            if(
+
+            if (
                 existingDiscount.LowerBound == request.LowerBound &&
                 existingDiscount.UpperBound == request.UpperBound &&
                 existingDiscount.CommissionRateLower == request.CommissionRateLower &&
@@ -73,28 +104,6 @@ public class UpdateDiscount : ControllerBase
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
-        }
-    }
-    
-    [HttpPut("UpdateDiscount/{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id,
-        [FromBody] UpdateDiscountCommand command)
-    {
-        var response = new QueryOrCommandResult<object>();
-        try
-        {
-            command.Id = id;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Discount has been successfully updated");
-            response.Success = true;
-            return Ok(response);
-        }
-        catch (System.Exception e)
-        {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
         }
     }
 }

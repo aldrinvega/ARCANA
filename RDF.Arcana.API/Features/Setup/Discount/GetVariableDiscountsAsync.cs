@@ -8,17 +8,17 @@ namespace RDF.Arcana.API.Features.Setup.Discount;
 
 [Route("api/Discount")]
 [ApiController]
-public class GetDiscountsAsync : ControllerBase
+public class GetVariableDiscountsAsync : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public GetDiscountsAsync(IMediator mediator)
+    public GetVariableDiscountsAsync(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("GetDiscount")]
-    public async Task<IActionResult> GetAllDiscount([FromQuery] GetDiscountsAsync.GetDiscountAsyncQuery query)
+    [HttpGet("GetVariableDiscount")]
+    public async Task<IActionResult> GetAllDiscount([FromQuery] GetDiscountAsyncQuery query)
     {
         var response = new QueryOrCommandResult<object>();
         try
@@ -91,12 +91,14 @@ public class GetDiscountsAsync : ControllerBase
         public async Task<PagedList<GetDiscountAsyncQueryResult>> Handle(GetDiscountAsyncQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<Domain.Discount> discounts = _context.Discounts
-                .Include(x => x.AddedByUser);
+            IQueryable<Domain.VariableDiscounts> discounts = _context.VariableDiscounts;
 
             if (!string.IsNullOrEmpty(request.Search))
             {
-                discounts = discounts.Where(x => x.LowerBound.Equals(request.Search));
+                discounts = discounts.Where(x => x.MinimumAmount.Equals(request.Search) ||
+                                                 x.MaximumAmount.Equals(request.Search) ||
+                                                 x.MinimumPercentage.Equals(request.Search) ||
+                                                 x.MaximumPercentage.Equals(request.Search));
             }
 
             if (request.Status != null)

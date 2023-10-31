@@ -2,7 +2,7 @@
 
 public class UserAlreadyExistException : System.Exception
 {
-    public UserAlreadyExistException(string username) : base($"{username} is already exist")
+    public UserAlreadyExistException() : base($"This user is already exist")
     {
     }
 }

@@ -1,18 +1,18 @@
 ﻿using System.Security.Claims;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Setup.Company.Exceptions;
-using RDF.Arcana.API.Features.Setup.Department.Exception;
-using RDF.Arcana.API.Features.Setup.UserRoles.Exceptions;
 using RDF.Arcana.API.Features.Users.Exception;
+using RDF.Arcana.API.Features.Users.Exceptions;
 
 namespace RDF.Arcana.API.Features.Users;
 
 [Route("api/User")]
 [ApiController]
-
 public class AddNewUser : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,100 +22,20 @@ public class AddNewUser : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewUserCommand : IRequest<Unit>
-    {
-        public string Fullname { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public int AddedBy { get; set; }
-        public int? LocationId { get; set; }
-        public int? DepartmentId { get; set; }
-        public int? UserRoleId { get; set; }
-        public int? CompanyId { get; set; }
 
-
-        public class Handler : IRequestHandler<AddNewUserCommand, Unit>
-        {
-            private readonly DataContext _context;
-
-            public Handler(DataContext context)
-            {
-                _context = context;
-            }
-
-            public async Task<Unit> Handle(AddNewUserCommand command, CancellationToken cancellationToken)
-            {
-                var validateExistingUser =
-                    await _context.Users.FirstOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
-                var validateCompany =
-                    await _context.Companies.AnyAsync(x => x.Id == command.CompanyId, cancellationToken);
-                var validateUserRole =
-                    await _context.UserRoles.AnyAsync(x => x.Id == command.UserRoleId, cancellationToken);
-                var validateDepartments =
-                    await _context.Departments.AnyAsync(x => x.Id == command.DepartmentId,
-                        cancellationToken);
-                
-
-                if (!validateCompany && command.CompanyId.HasValue)
-                {
-                    throw new NoCompanyFoundException();
-                }
-
-                if (!validateUserRole && command.UserRoleId.HasValue)
-                {
-                    throw new UserRoleNotFoundException();
-                }
-
-                if (!validateDepartments && command.DepartmentId.HasValue)
-                {
-                    throw new NoDepartmentFoundException();
-                }
-                
-                if (command.UserRoleId.HasValue)
-                {
-                    var userRole = await _context.UserRoles.Include(ur => ur.User)
-                        .FirstOrDefaultAsync(ur => ur.Id == command.UserRoleId.Value, cancellationToken); 
-                    if (userRole != null && userRole.User != null)
-                    {
-                        throw new UserRoleAlreadyTaggedException();
-                    }
-                }
-
-                if (validateExistingUser is not null) throw new UserAlreadyExistException(command.Username);
-
-                var user = new User
-                {
-                    Fullname = command.Fullname,
-                    Username = command.Username,
-                    Password = BCrypt.Net.BCrypt.HashPassword(command.Password),
-                    CompanyId = command.CompanyId,
-                    LocationId = command.LocationId,
-                    DepartmentId = command.DepartmentId,
-                    UserRoleId = command.UserRoleId,
-                    IsActive = true,
-                };
-
-                await _context.Users.AddAsync(user, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
-        }
-    }
-    
-    
     [HttpPost]
     [Route("AddNewUser")]
-    public async Task<ActionResult> Add([FromBody]AddNewUserCommand command)
+    public async Task<ActionResult> Add([FromBody] AddNewUserCommand command)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-            if (User.Identity is ClaimsIdentity identity 
+            if (User.Identity is ClaimsIdentity identity
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
             {
                 command.AddedBy = userId;
             }
+
             var result = await _mediator.Send(command);
             response.Success = true;
             response.Data = result;
@@ -127,6 +47,86 @@ public class AddNewUser : ControllerBase
             response.Success = false;
             response.Messages.Add(e.Message);
             return Conflict(response);
+        }
+    }
+
+    public class AddNewUserCommand : IRequest<Unit>
+    {
+        public string FullIdNo { get; set; }
+        public string Fullname { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public int AddedBy { get; set; }
+        public int? LocationId { get; set; }
+        public int? DepartmentId { get; set; }
+        public int? UserRoleId { get; set; }
+        public int? CompanyId { get; set; }
+        public IFormFile ProfilePicture { get; set; }
+
+
+        public class Handler : IRequestHandler<AddNewUserCommand, Unit>
+        {
+            private readonly Cloudinary _cloudinary;
+            private readonly DataContext _context;
+
+            public Handler(DataContext context, IOptions<CloudinarySettings> config)
+            {
+                _context = context;
+                var account = new Account(
+                    config.Value.Cloudname,
+                    config.Value.ApiKey,
+                    config.Value.ApiSecret
+                );
+
+                _cloudinary = new Cloudinary(account);
+            }
+
+            public async Task<Unit> Handle(AddNewUserCommand command, CancellationToken cancellationToken)
+            {
+                // Check if the username already exists
+                var existingUserWithSameUsername =
+                    await _context.Users.FirstOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
+                if (existingUserWithSameUsername != null)
+                {
+                    throw new UserAlreadyExistWithUsername(command.Username);
+                }
+
+                // Check if the fullname and fullidno already exist together
+                var existingUserWithSameFullnameAndId = await _context.Users
+                    .FirstOrDefaultAsync(x => x.FullIdNo == command.FullIdNo && x.Fullname == command.Fullname,
+                        cancellationToken);
+                if (existingUserWithSameFullnameAndId != null)
+                {
+                    throw new UserAlreadyExistException();
+                }
+
+                await using var stream = command.ProfilePicture.OpenReadStream();
+
+                var attachmentParams = new ImageUploadParams
+                {
+                    File = new FileDescription(command.ProfilePicture.FileName, stream),
+                    PublicId = $"{command.Username}/{command.ProfilePicture.FileName}"
+                };
+
+                var attachmentResult = await _cloudinary.UploadAsync(attachmentParams);
+
+                var user = new User
+                {
+                    FullIdNo = command.FullIdNo,
+                    Fullname = command.Fullname,
+                    Username = command.Username,
+                    Password = BCrypt.Net.BCrypt.HashPassword(command.Password),
+                    CompanyId = command.CompanyId,
+                    LocationId = command.LocationId,
+                    DepartmentId = command.DepartmentId,
+                    UserRolesId = command.UserRoleId,
+                    IsActive = true,
+                    ProfilePicture = attachmentResult.SecureUrl.ToString()
+                };
+                await _context.Users.AddAsync(user, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+                return Unit.Value;
+            }
         }
     }
 }

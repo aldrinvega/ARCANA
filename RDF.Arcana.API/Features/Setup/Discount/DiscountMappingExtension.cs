@@ -2,20 +2,17 @@
 
 public static class DiscountMappingExtension
 {
-    public static GetDiscountsAsync.GetDiscountAsyncQueryResult
-        ToGetDiscountAsyncQueryResult(this Domain.Discount discount)
+    public static GetVariableDiscountsAsync.GetDiscountAsyncQueryResult
+        ToGetDiscountAsyncQueryResult(this Domain.VariableDiscounts discount)
     {
-        return new GetDiscountsAsync.GetDiscountAsyncQueryResult
+        return new GetVariableDiscountsAsync.GetDiscountAsyncQueryResult
         {
             Id = discount.Id,
-            MinimumAmount = discount.LowerBound,
-            MaximumAmount = discount.UpperBound,
-            MinimumPercentage = discount.CommissionRateLower,
-            MaximumPercentage = discount.CommissionRateUpper,
-            AddedBy = discount.AddedByUser.Fullname,
-            CreatedAt = discount.CreatedAt,
-            IsActive = discount.IsActive,
-            UpdateAt = discount.UpdateAt
+            MinimumAmount = discount.MinimumAmount,
+            MaximumAmount = discount.MaximumAmount,
+            MinimumPercentage = discount.MinimumPercentage,
+            MaximumPercentage = discount.MaximumPercentage,
+            IsActive = discount.IsActive
         };
     }
 }

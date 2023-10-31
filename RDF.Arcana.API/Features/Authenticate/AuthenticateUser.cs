@@ -6,11 +6,12 @@ using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Users.Exception;
+using RDF.Arcana.API.Features.Authenticate.Exception;
+using RDF.Arcana.API.Features.Users.Exceptions;
 
 namespace RDF.Arcana.API.Features.Authenticate;
 
-public class AuthenticateUser
+public abstract class AuthenticateUser
 {
     public class AuthenticateUserQuery : IRequest<AuthenticateUserResult>
     {
@@ -19,55 +20,14 @@ public class AuthenticateUser
             Username = username;
         }
 
-        [Required]
-        public string Username
-        {
-            get;
-            set;
-        }
-        [Required]
-        public string Password
-        {
-            get;
-            set;
-        }
+        [Required] public string Username { get; set; }
+
+        [Required] public string Password { get; set; }
     }
 
     public class AuthenticateUserResult
     {
-        public int Id
-        {
-            get;
-            set;
-        }
-
-        public string Fullname
-        {
-            get;
-            set;
-        }
-
-        public string Username
-        {
-            get;
-            set;
-        }
-
-        public string RoleName
-        {
-            get; 
-            set;
-        }
-        public ICollection<string> Permission { get; set; }
-
-        
-        public string Token
-        {
-            get;
-            set;
-        }
-
-        public AuthenticateUserResult(User user, string token)
+        private AuthenticateUserResult(User user, string token)
         {
             Id = user.Id;
             Fullname = user.Fullname;
@@ -75,12 +35,29 @@ public class AuthenticateUser
             Token = token;
             RoleName = user.UserRoles?.UserRoleName;
             Permission = user.UserRoles?.Permissions;
+            IsPasswordChanged = user.IsPasswordChanged;
         }
+
+        public int Id { get; set; }
+
+        public string Fullname { get; set; }
+
+        public string Username { get; set; }
+
+        public string RoleName { get; set; }
+
+        public ICollection<string> Permission { get; set; }
+
+
+        public string Token { get; set; }
+
+        public bool IsPasswordChanged { get; set; }
+        public bool ForResetPassword { get; set; }
 
         public class Handler : IRequestHandler<AuthenticateUserQuery, AuthenticateUserResult>
         {
-            private readonly DataContext _context;
             private readonly IConfiguration _configuration;
+            private readonly DataContext _context;
             private readonly IMapper _mapper;
 
             public Handler(DataContext context, IConfiguration configuration, IMapper mapper)
@@ -91,23 +68,31 @@ public class AuthenticateUser
             }
 
             public async Task<AuthenticateUserResult> Handle(AuthenticateUserQuery command,
-                            CancellationToken cancellationToken)
+                CancellationToken cancellationToken)
             {
                 var user = await _context.Users
-                        .Include(x => x.UserRoles)
+                    .Include(x => x.UserRoles)
                     .SingleOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
-            
+
+                //Verify if the credentials is correct
                 if (user == null || !BCrypt.Net.BCrypt.Verify(command.Password, user.Password))
                 {
                     throw new UsernamePasswordIncorrectException();
                 }
-            
+
+                if (!user.IsActive)
+                {
+                    throw new UserNotActiveException();
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
+
                 var token = GenerateJwtToken(user);
-            
+
                 var result = new AuthenticateUserResult(user, token);
-            
+
                 var results = _mapper.Map<AuthenticateUserResult>(result);
-            
+
                 return results;
             }
 
@@ -129,7 +114,7 @@ public class AuthenticateUser
                     Issuer = issuer,
                     Audience = audience,
                     SigningCredentials = new SigningCredentials(
-                        new SymmetricSecurityKey(keyBytes), 
+                        new SymmetricSecurityKey(keyBytes),
                         SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);

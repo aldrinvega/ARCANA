@@ -10,7 +10,6 @@ namespace RDF.Arcana.API.Features.Setup.Store_Type;
 
 [Route("api/StoreType")]
 [ApiController]
-
 public class AddNewStoreType : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,52 +19,13 @@ public class AddNewStoreType : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewStoreTypeCommand : IRequest<Unit>
-    {
-        public string StoreTypeName { get; set; }
-        public int? AddedBy { get; set; }
-    }
-    
-    public class Handler : IRequestHandler<AddNewStoreTypeCommand, Unit>
-    {
-        private readonly DataContext _context;
-
-        public Handler(DataContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<Unit> Handle(AddNewStoreTypeCommand request, CancellationToken cancellationToken)
-        {
-            var existingStoreType =
-                await _context.StoreTypes.FirstOrDefaultAsync(x => x.StoreTypeName == request.StoreTypeName, cancellationToken);
-
-            if (existingStoreType is not null)
-            {
-                throw new StoreTypeAlreadyExistException(request.StoreTypeName);
-            }
-
-            var storeType = new StoreType
-            {
-                StoreTypeName = request.StoreTypeName,
-                AddedBy = request.AddedBy,
-                IsActive = true
-            };
-
-            await _context.StoreTypes.AddAsync(storeType, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-            
-            return Unit.Value;
-        }
-    }
-
     [HttpPost("AddNewStoreType")]
     public async Task<IActionResult> Add([FromBody] AddNewStoreTypeCommand command)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-            if (User.Identity is ClaimsIdentity identity 
+            if (User.Identity is ClaimsIdentity identity
                 && IdentityHelper.TryGetUserId(identity, out var userId))
             {
                 command.AddedBy = userId;
@@ -81,7 +41,47 @@ public class AddNewStoreType : ControllerBase
         {
             response.Messages.Add(e.Message);
             response.Status = StatusCodes.Status409Conflict;
-            return Ok(response);
+            return Conflict(response);
+        }
+    }
+
+    public class AddNewStoreTypeCommand : IRequest<Unit>
+    {
+        public string StoreTypeName { get; set; }
+        public int? AddedBy { get; set; }
+    }
+
+    public class Handler : IRequestHandler<AddNewStoreTypeCommand, Unit>
+    {
+        private readonly DataContext _context;
+
+        public Handler(DataContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Unit> Handle(AddNewStoreTypeCommand request, CancellationToken cancellationToken)
+        {
+            var existingStoreType =
+                await _context.StoreTypes.FirstOrDefaultAsync(x => x.StoreTypeName == request.StoreTypeName,
+                    cancellationToken);
+
+            if (existingStoreType is not null)
+            {
+                throw new StoreTypeAlreadyExistException(request.StoreTypeName);
+            }
+
+            var storeType = new StoreType
+            {
+                StoreTypeName = request.StoreTypeName,
+                AddedBy = request.AddedBy,
+                IsActive = true
+            };
+
+            await _context.StoreTypes.AddAsync(storeType, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }

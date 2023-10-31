@@ -16,12 +16,14 @@ public class RejectFreebies : ControllerBase
     }
 
     [HttpPut("RejectFreebies/{id}")]
-    public async Task<IActionResult> RejectFreebie([FromBody] RejectFreebiesCommand command, [FromRoute] int id)
+    public async Task<IActionResult> RejectFreebie([FromBody] RejectFreebiesCommand command, [FromRoute] int id,
+        [FromQuery] int freebieId)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
-            command.FreebieRequestId = id;
+            command.ClientId = id;
+            command.FreebieRequestId = freebieId;
             await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
             response.Messages.Add("Freebies is rejected successfully");
@@ -38,12 +40,14 @@ public class RejectFreebies : ControllerBase
 
     public class RejectFreebiesCommand : IRequest<Unit>
     {
+        public int ClientId { get; set; }
         public int FreebieRequestId { get; set; }
         public string Reason { get; set; }
     }
 
     public class Handler : IRequestHandler<RejectFreebiesCommand, Unit>
     {
+        private const string FREEBIE_RELEASED = "Released";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -55,13 +59,15 @@ public class RejectFreebies : ControllerBase
         {
             var existingFreebies = await _context.Approvals
                 .Include(x => x.Client)
-                .Include(x => x.FreebieRequest) // adjusted this line
+                .Include(x => x.FreebieRequest)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync(
-                    x => x.IsActive &&
-                         x.IsApproved == false &&
-                         x.ApprovalType == "For Freebie Approval", cancellationToken);
+                    x =>
+                        x.ClientId == request.ClientId &&
+                        x.IsActive &&
+                        x.IsApproved == true &&
+                        x.ApprovalType == "For Freebie Approval", cancellationToken);
 
             if (existingFreebies is null)
             {
@@ -70,7 +76,7 @@ public class RejectFreebies : ControllerBase
 
             // Locate the specific FreebieRequest to be Rejected
             var freebieToReject = existingFreebies.FreebieRequest
-                .FirstOrDefault(fr => fr.Id == request.FreebieRequestId);
+                .FirstOrDefault(fr => fr.Id == request.FreebieRequestId && fr.Status != FREEBIE_RELEASED);
 
             if (freebieToReject == null)
             {

@@ -13,453 +13,80 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/All/GetAllProspects.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/ApprovedRegularRegistration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/GetAllRegularClients.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/RegularClientsMappingProfile.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023025156_NullableApprovedByInListingFeeEntity.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023025156_NullableApprovedByInListingFeeEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023030540_NullableApprovedByInApprovalsEntity.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023030540_NullableApprovedByInApprovalsEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023065632_AdjustTermsAndConditionEntity.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023065632_AdjustTermsAndConditionEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023083614_AddOriginToClientEntity.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023083614_AddOriginToClientEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231024090149_AdjustDiscountPercentageInFixedDIscountEntity.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231024090149_AdjustDiscountPercentageInFixedDIscountEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/AutoMapper.Extensions.Microsoft.DependencyInjection.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/AutoMapper.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/BCrypt.Net-Next.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/BouncyCastle.Crypto.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Carter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Castle.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/CloudinaryDotNet.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Common/DocumentTypeMappings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/CoverletSourceRootsMapping" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/EFCore.NamingConventions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/FlexLabs.EntityFrameworkCore.Upsert.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/FluentValidation.AspNetCore.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/FluentValidation.DependencyInjectionExtensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/FluentValidation.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Google.Protobuf.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/JWT.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/K4os.Compression.LZ4.Streams.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/K4os.Compression.LZ4.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/K4os.Hash.xxHash.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Mapster.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Mapster.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/MediatR.Contracts.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/MediatR.Extensions.Microsoft.DependencyInjection.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/MediatR.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.AspNetCore.Authentication.JwtBearer.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.AspNetCore.OpenApi.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.EntityFrameworkCore.Abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.EntityFrameworkCore.Relational.Design.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.EntityFrameworkCore.Relational.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.EntityFrameworkCore.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.Extensions.DependencyModel.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.JsonWebTokens.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Logging.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Tokens.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.OpenApi.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.TestPlatform.CommunicationUtilities.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.TestPlatform.CoreUtilities.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.TestPlatform.CrossPlatEngine.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.TestPlatform.PlatformAbstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.TestPlatform.Utilities.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.VisualStudio.CodeCoverage.Shim.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.VisualStudio.TestPlatform.Common.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Microsoft.Win32.SystemEvents.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Moq.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/MySql.Data.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/MySql.EntityFrameworkCore.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/MySqlConnector.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Newtonsoft.Json.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/NuGet.Frameworks.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Pomelo.EntityFrameworkCore.MySql.Design.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Pomelo.EntityFrameworkCore.MySql.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.API" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.deps.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.runtimeconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.deps.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.runtimeconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Swashbuckle.AspNetCore.Swagger.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Swashbuckle.AspNetCore.SwaggerGen.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/Swashbuckle.AspNetCore.SwaggerUI.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/System.Configuration.ConfigurationManager.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/System.Drawing.Common.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/System.IdentityModel.Tokens.Jwt.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/System.Security.Cryptography.ProtectedData.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/System.Security.Permissions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/System.Windows.Extensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/de/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/es/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/it/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/AutoMapper.Extensions.Microsoft.DependencyInjection.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/AutoMapper.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/BCrypt.Net-Next.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/BouncyCastle.Crypto.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Carter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Castle.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CloudinaryDotNet.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/CodeCoverage.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/CodeCoverage.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/VanguardInstrumentationProfiler_x86.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/amd64/CodeCoverage.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/amd64/VanguardInstrumentationProfiler_x64.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/amd64/covrun64.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/amd64/msdia140.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/arm64/VanguardInstrumentationProfiler_arm64.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/arm64/covrunarm64.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/arm64/msdia140.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/codecoveragemessages.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/coreclr/Microsoft.VisualStudio.CodeCoverage.Shim.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/covrun32.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/CodeCoverage/msdia140.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Common/DocumentTypeMappings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/EFCore.NamingConventions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/FlexLabs.EntityFrameworkCore.Upsert.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/FluentValidation.AspNetCore.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/FluentValidation.DependencyInjectionExtensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/FluentValidation.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Google.Protobuf.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/alpine/x64/VanguardInstrumentationProfiler_x64.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/alpine/x64/libCoverageInstrumentationMethod.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/alpine/x64/libInstrumentationEngine.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/arm64/MicrosoftInstrumentationEngine_arm64.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/macos/x64/VanguardInstrumentationProfiler_x64.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/macos/x64/libCoverageInstrumentationMethod.dylib" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/macos/x64/libInstrumentationEngine.dylib" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/ubuntu/x64/VanguardInstrumentationProfiler_x64.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/ubuntu/x64/libCoverageInstrumentationMethod.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/ubuntu/x64/libInstrumentationEngine.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/x64/MicrosoftInstrumentationEngine_x64.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/InstrumentationEngine/x86/MicrosoftInstrumentationEngine_x86.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/JWT.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/K4os.Compression.LZ4.Streams.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/K4os.Compression.LZ4.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/K4os.Hash.xxHash.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Mapster.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Mapster.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/MediatR.Contracts.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/MediatR.Extensions.Microsoft.DependencyInjection.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/MediatR.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.AspNetCore.Authentication.JwtBearer.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.AspNetCore.OpenApi.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.CSharp.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.CodeCoverage.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.CodeCoverage.Instrumentation.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.CodeCoverage.Interprocess.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.CodeCoverage.props" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.CodeCoverage.targets" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.DotNet.PlatformAbstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.EntityFrameworkCore.Abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.EntityFrameworkCore.Relational.Design.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.EntityFrameworkCore.Relational.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.EntityFrameworkCore.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.Extensions.DependencyInjection.Abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.Extensions.DependencyInjection.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.Extensions.DependencyModel.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.Extensions.FileSystemGlobbing.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.JsonWebTokens.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Logging.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Tokens.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.OpenApi.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.TestPlatform.CommunicationUtilities.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.TestPlatform.CoreUtilities.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.TestPlatform.CrossPlatEngine.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.TestPlatform.PlatformAbstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.TestPlatform.Utilities.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.VisualStudio.CodeCoverage.Shim.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.VisualStudio.TestPlatform.Common.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.VisualStudio.TraceDataCollector.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Microsoft.Win32.SystemEvents.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Mono.Cecil.Mdb.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Mono.Cecil.Pdb.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Mono.Cecil.Rocks.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Mono.Cecil.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Moq.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/MySql.Data.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/MySql.EntityFrameworkCore.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/MySqlConnector.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Newtonsoft.Json.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/NuGet.Frameworks.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Pomelo.EntityFrameworkCore.MySql.Design.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Pomelo.EntityFrameworkCore.MySql.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.runtimeconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.Unit.Test.deps.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.Unit.Test.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.Unit.Test.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.Unit.Test.runtimeconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Swashbuckle.AspNetCore.Swagger.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Swashbuckle.AspNetCore.SwaggerGen.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/Swashbuckle.AspNetCore.SwaggerUI.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.AppContext.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Collections.Immutable.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Configuration.ConfigurationManager.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Drawing.Common.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Dynamic.Runtime.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.IO.FileSystem.Primitives.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.IdentityModel.Tokens.Jwt.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Linq.Expressions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Linq.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.ObjectModel.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Reflection.Emit.ILGeneration.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Reflection.Emit.Lightweight.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Reflection.Emit.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Reflection.Metadata.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Reflection.TypeExtensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Runtime.Serialization.Primitives.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Security.Cryptography.ProtectedData.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Security.Permissions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Text.RegularExpressions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Threading.Tasks.Extensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Threading.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Windows.Extensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Xml.ReaderWriter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/System.Xml.XDocument.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ThirdPartyNotices.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/coverlet.collector.deps.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/coverlet.collector.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/coverlet.collector.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/coverlet.collector.targets" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/coverlet.core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/coverlet.core.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/cs/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/de/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/de/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/es/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/es/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/fr/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/it/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/it/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ja/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ko/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pl/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/pt-BR/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/ru/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/testhost.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/testhost.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/tr/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.assert.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.execution.dotnet.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.runner.reporters.netcoreapp10.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.runner.utility.netcoreapp10.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/xunit.runner.visualstudio.dotnetcore.testadapter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hans/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/publish/zh-Hant/Microsoft.VisualStudio.TraceDataCollector.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/testhost.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/testhost.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.assert.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.execution.dotnet.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.runner.reporters.netcoreapp10.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.runner.utility.netcoreapp10.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/xunit.runner.visualstudio.dotnetcore.testadapter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/linux-x64/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/.NETCoreApp,Version=v7.0.AssemblyAttributes.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/PublishOutputs.9c2efe4641.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.AssemblyInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.AssemblyInfoInputs.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.GlobalUsings.g.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.assets.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.csproj.AssemblyReference.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.csproj.CopyComplete" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.deps.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.genruntimeconfig.cache" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/RDF.Arcana.Unit.Test.pdb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/ref/RDF.Arcana.Unit.Test.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/refint/RDF.Arcana.Unit.Test.dll" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/4ea4d0b5-1983-446c-a1e8-6dddfab5470a.vsidx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/d291479b-3bfd-4571-8901-94a56b235119.vsidx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/Validation/ValidationBehavior.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserPasswordHistory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/Exception/UserLockOutException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/Exception/UserNotActiveException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Company/Errors/CompanyErrors.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/Exceptions/UserAlreadyExistWithUsername.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/ResetPassword.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231026073105_AddUserPasswordHistory.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231026073105_AddUserPasswordHistory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027024727_AddIsActiveOnVariableDiscount.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027024727_AddIsActiveOnVariableDiscount.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027031022_AdjustVariableDiscountDecimal.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027031022_AdjustVariableDiscountDecimal.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027055336_AddFullIdNoOnUserEntity.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027055336_AddFullIdNoOnUserEntity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027080800_AdjustUsersUserRoleRelationship.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027080800_AdjustUsersUserRoleRelationship.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/5012d258-3c91-4a43-a696-851200fd12a0_RDF.Arcana.API.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.metadata.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/ProjectEvaluation/rdf.aracana.projects.v7.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/cfbbe3e5-357f-4b9d-b867-3ed6dd7de5a5.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.futdcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Aracana.sln" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Aracana.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Common/QueryOrCommandResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/QueryOrCommandResult.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Approvals.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Approvals.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FixedDiscounts.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FixedDiscounts.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/FreebieRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationMappingExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationMappingExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/GetAllDirectRegistrationClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/GetAllDirectRegistrationClients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/ApproveProspectRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/ApproveProspectRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserRoles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/UserRoles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/VariableDiscounts.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/VariableDiscounts.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/MapperProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/MapperProfiles.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspectStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/UpdateApprovedProspectStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddAttachments.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/GetAllRegisteredClients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/GetAllReleasedProspectingRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/ReleasedProspectMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/ReleasedProspectMappingExtension.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/ReleasedProspectingRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Released/ReleasedProspectingRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebiesMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllRejectedFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetFreebiesById.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetFreebiesById.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetRequestedFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetRequestedFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RejectFreebies.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewDiscount.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewDiscount.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Company/AddNewCompany.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Company/AddNewCompany.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewDiscount.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewVariableDiscount.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/DiscountMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/DiscountMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/GetDiscountsAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/GetDiscountsAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/GetDiscountsAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/GetVariableDiscountsAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/UpdateDiscount.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/UpdateVariableDiscount.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/UpdateDiscountStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/UpdateVariableDiscountStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/GetItemsAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/GetItemsAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/ItemsMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/ItemsMappingExtension.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/AddNewStoreType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Store Type/AddNewStoreType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/AddNewUserRoles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/GetUserRolesAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/GetUserRolesAsync.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UpdateUserRoleStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UpdateUserRoleStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UserRoleMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/UserRoles/UserRoleMappingExtension.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/AddNewUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/AddNewUser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/ChangeUserPassword.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/ChangeUserPassword.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/Exceptions/UserAlreadyExistException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/Exceptions/UserAlreadyExistException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/Exceptions/UsernamePasswordIncorrectException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/Exceptions/UsernamePasswordIncorrectException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/UpdateUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/UpdateUser.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/FluentValidation.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/FluentValidation.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.deps.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.CoreCompileInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.pdb" afterDir="false" />
@@ -471,9 +98,9 @@
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/ref/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/ref/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/refint/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/refint/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.g.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.assets.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.packagespec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.restore.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/bin/Debug/net7.0/RDF.Arcana.API.dll" afterDir="false" />
@@ -483,6 +110,9 @@
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/RDF.Arcana.Unit.Test.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/RDF.Arcana.Unit.Test.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/RDF.Arcana.Unit.Test.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/RDF.Arcana.Unit.Test.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/RDF.Arcana.Unit.Test.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/RDF.Arcana.Unit.Test.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/RDF.Arcana.Unit.Test.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/RDF.Arcana.Unit.Test.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/project.nuget.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/rider.project.restore.info" afterDir="false" />
     </list>
@@ -553,6 +183,7 @@
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019090120_AddCreatedAtOnFreebieRequestEntity.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019094447_AddCreatedATToApprovalsEntity.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/appsettings.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/RDF.Arcana.Unit.Test/GetAllFreebiesTests.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/.NETCoreApp,Version=v7.0.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -746,15 +377,9 @@
       <workItem from="1697859258144" duration="18242000" />
       <workItem from="1698020051532" duration="33095000" />
       <workItem from="1698127876685" duration="26232000" />
-      <workItem from="1698222563762" duration="4131000" />
-    </task>
-    <task id="LOCAL-00023" summary="&quot;Updated approval type and refactored prospect reject request&quot;&#10;&#10;This update brings changes to a couple of areas of the application. First, an adjustment has been made to the 'approval type' changing the 'For Delivery' approval type to 'For Freebie Approval'. This was done to ensure better representation of the current business logic.&#10;&#10;The save path has also been optimized to include the client's full name for unique identification in ReleasedProspectingRequest.cs. This change ensures straightforward and easy tracking of each client's requests.&#10;&#10;A variable named 'Permission' has been renamed to 'Permissions' in AddNewUserRoles.cs to enhance readability and code consistency across the application. &#10;&#10;Lastly, In the RejectProspectRequest.cs, the approval type setting line has been commented out and the HTTP PUT method 'Reject' has been refactored to include the RejectProspectRequestCommand as a parameter.&#10;&#10;All of these changes aim to improve the efficiency, readability, maintainability, and to better align with the application's business logic.">
-      <option name="closed" value="true" />
-      <created>1691375118003</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1691375118003</updated>
+      <workItem from="1698222563762" duration="46739000" />
+      <workItem from="1698486122944" duration="2473000" />
+      <workItem from="1698580660039" duration="15457000" />
     </task>
     <task id="LOCAL-00024" summary="Add 'Reason' field to prospecting entities&#10;&#10;A 'Reason' field was added to the RecordClient, GetAllRequestedProspectResult, GetAllRejectProspectResult entities. This field stores the reason why a prospect status was updated, thus providing more context for status changes. Furthermore, a filter was added in 'Handle' method of GetAllRequestedProspectQuery and GetAllRejectProspectQuery, to only get records where 'IsActive' is true. This change makes sure that only relevant data is fetched.">
       <option name="closed" value="true" />
@@ -1140,7 +765,15 @@
       <option name="project" value="LOCAL" />
       <updated>1697883405953</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="Adjustments">
+      <option name="closed" value="true" />
+      <created>1698284672753</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1698284672753</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1195,7 +828,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Optimized Approved Prospect query&#10;&#10;Extended the 'GetAllApprovedProspect' query to include 'FreebieRequest' items that are null. This improvement is targeting to deliver only the relevant and necessary data to the client, reducing the waste of resources. This change was prompted by observed inefficiencies in the current data retrieval process." />
     <MESSAGE value="&quot;Optimized Approved Prospect query&quot;&#10;&#10;In this update, the 'GetAllApprovedProspect' query has been optimized to include 'FreebieRequest' items which are null. This has been done to streamline the data pulling process, delivering only necessary data to the client, and thus reducing the usage of resources. The change was needed due to the identified inefficiencies in the current data retrieval process." />
     <MESSAGE value="&quot;Optimized data retrieval for prospective clients&quot;&#10;&#10;Extended the GetAllApprovedProspect query to include not only 'FreebieRequest' items that are null but also check if the client's status is &quot;Approved&quot;. This addition was made to streamline the data retrieval process, returning only the necessary data and thus reducing resource utilization. The change was prompted due to identified inefficiencies in the current data retrieval process. &#10;&#10;In addition, Reject and Request Freebies class methods now contain better context for rejecting and requesting freebies and logic for updating the client's registration status, focusing on improving the readability and maintainability of the code." />
     <MESSAGE value="Update" />
@@ -1220,10 +852,56 @@
     <MESSAGE value="Simplify GetAllApprovedProspectAsync query and clean workspace.xml&#10;    &#10;    Simplified GetAllApprovedProspectAsync by removing conditions from query. The query in GetAllApprovedProspectAsync.cs was simplified by removing conditions filtering &quot;For Freebie Approval&quot; and &quot;with Freebies&quot;. This change makes the query more efficient and the code cleaner as these conditions are no longer necessary. The workspace.xml file was also cleaned to remove unnecessary entries." />
     <MESSAGE value="&quot;Update GetAllApprovedProspectAsync and RequestFreebies functionality &#10;&#10;Added conditions to GetAllApprovedProspectAsync to filter approved clients by their agreement to receive freebies, enhancing the method's precision. Refactored the RequestFreebies method removing the line that changed the registration status to ‘For Releasing'. Also, cleaned up workspace.xml for optimized performance.&quot;" />
     <MESSAGE value="&quot;Remove Docker configuration and refactor domain&#10;&#10;This commit gets rid of all Docker-related configurations, specifically Dockerfile, docker-compose.yml and relative compose configurations, which were becoming outdated and difficult to maintain. It also deletes the Address.cs under Domain, a legacy address mapping that became redundant after database normalization. &#10;&#10;Complementarily, this commit introduces minor changes, for HTTP logging and document type mappings, to improve HTTP request tracking for debugging and ensure document type recognition respectively. This would optimise our logging services and support the document parsing feature.&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Remove Docker configuration and refactor domain&#10;&#10;This commit gets rid of all Docker-related configurations, specifically Dockerfile, docker-compose.yml and relative compose configurations, which were becoming outdated and difficult to maintain. It also deletes the Address.cs under Domain, a legacy address mapping that became redundant after database normalization. &#10;&#10;Complementarily, this commit introduces minor changes, for HTTP logging and document type mappings, to improve HTTP request tracking for debugging and ensure document type recognition respectively. This would optimise our logging services and support the document parsing feature.&quot;" />
+    <MESSAGE value="Adjustments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adjustments" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs</url>
+          <line>126</line>
+          <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Freebies\UpdateFreebiesInformation.cs" initialLine="81" containingFunctionPresentation="Method 'Handle'">
+            <startOffsets>
+              <option value="4448" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4594" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs</url>
+          <line>129</line>
+          <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Freebies\UpdateFreebiesInformation.cs" initialLine="84" containingFunctionPresentation="Method 'Handle'">
+            <startOffsets>
+              <option value="4608" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4643" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/UpdateFreebiesInformation.cs</url>
+          <line>131</line>
+          <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Freebies\UpdateFreebiesInformation.cs" initialLine="86" containingFunctionPresentation="Method 'Handle'">
+            <startOffsets>
+              <option value="4674" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4723" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

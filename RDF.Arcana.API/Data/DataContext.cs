@@ -51,11 +51,6 @@ public class DataContext : DbContext
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
 
-        modelBuilder.Entity<UserRoles>()
-            .HasOne(ur => ur.User)
-            .WithOne(u => u.UserRoles)
-            .HasForeignKey<User>(u => u.UserRoleId);
-
         modelBuilder.Entity<Company>()
             .HasOne(u => u.AddedByUser)
             .WithOne()
@@ -236,6 +231,19 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<FixedDiscounts>()
             .Property(p => p.DiscountPercentage)
+            .HasColumnType("decimal(8,2)");
+
+        modelBuilder.Entity<VariableDiscounts>()
+            .Property(p => p.MinimumAmount)
+            .HasColumnType("decimal(8,2)");
+        modelBuilder.Entity<VariableDiscounts>()
+            .Property(p => p.MaximumAmount)
+            .HasColumnType("decimal(8,2)");
+        modelBuilder.Entity<VariableDiscounts>()
+            .Property(p => p.MinimumPercentage)
+            .HasColumnType("decimal(8,2)");
+        modelBuilder.Entity<VariableDiscounts>()
+            .Property(p => p.MaximumPercentage)
             .HasColumnType("decimal(8,2)");
     }
 }

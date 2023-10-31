@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -21,7 +22,7 @@ public class RequestFreebies : ControllerBase
     [HttpPost("RequestFreebies/{id}")]
     public async Task<IActionResult> Add(RequestFreebiesCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
+        var response = new QueryOrCommandResult<RequestFreebiesResult>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -32,8 +33,9 @@ public class RequestFreebies : ControllerBase
 
             command.ClientId = id;
 
-            await _mediator.Send(command);
+            var freebies = await _mediator.Send(command);
             response.Status = StatusCodes.Status200OK;
+            response.Data = freebies;
             response.Messages.Add("Freebie is requested successfully");
             response.Success = true;
             return Ok(response);
@@ -46,7 +48,7 @@ public class RequestFreebies : ControllerBase
         }
     }
 
-    public class RequestFreebiesCommand : IRequest<Unit>
+    public class RequestFreebiesCommand : IRequest<RequestFreebiesResult>
     {
         public int ClientId { get; set; }
         public List<Freebie> Freebies { get; set; }
@@ -58,8 +60,48 @@ public class RequestFreebies : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<RequestFreebiesCommand, Unit>
+    public class RequestFreebiesResult
     {
+        public int Id { get; set; }
+        public string OwnersName { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public string BusinessName { get; set; }
+        public int AddedBy { get; set; }
+        public IEnumerable<Freebie> Freebies { get; set; }
+
+        public class OwnersAddressCollection
+        {
+            public string HouseNumber { get; set; }
+            public string StreetName { get; set; }
+            public string BarangayName { get; set; }
+            public string City { get; set; }
+            public string Province { get; set; }
+        }
+
+        public class Freebie
+        {
+            public int FreebieRequestId { get; set; }
+            public string Status { get; set; }
+            public int TransactionNumber { get; set; }
+            public ICollection<FreebieItem> FreebieItems { get; set; }
+        }
+
+        public class FreebieItem
+        {
+            public int? Id { get; set; }
+            public int ItemId { get; set; }
+            public string ItemCode { get; set; }
+            public string ItemDescription { get; set; }
+            public string UOM { get; set; }
+            public int? Quantity { get; set; }
+        }
+    }
+
+    public class Handler : IRequestHandler<RequestFreebiesCommand, RequestFreebiesResult>
+    {
+        private const string REJECTED = "Rejected";
+        private const string FOR_FREEBIE_APPROVAL = "For Freebie Request";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -67,16 +109,23 @@ public class RequestFreebies : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(RequestFreebiesCommand request, CancellationToken cancellationToken)
+        public async Task<RequestFreebiesResult> Handle(RequestFreebiesCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingApproval = await _context.Approvals
-                .FirstOrDefaultAsync(a => a.ClientId == request.ClientId && a.ApprovalType == "For Freebie Request",
-                    cancellationToken);
+            //Validate if the client is exist
+            var client = await _context.Clients
+                             .Include(x => x.OwnersAddress)
+                             .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken) ??
+                         throw new ClientIsNotFound(request.ClientId);
+
+            var clientFreebies = new List<RequestFreebiesResult.Freebie>();
 
             // Check if client has previously requested for freebies
             var previousRequestCount =
-                await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId, cancellationToken);
+                await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId && f.Status != REJECTED,
+                    cancellationToken);
 
+            // Check if the client has recent request. Succeeding request will subject to approval
             var withRecentRequest = await _context.FreebieRequests.FirstOrDefaultAsync(
                 x => x.ClientId == request.ClientId &&
                      (x.Status == Status.ForReleasing || x.Status == Status.ApproverApproval),
@@ -91,10 +140,6 @@ public class RequestFreebies : ControllerBase
             var isFirstRequest = previousRequestCount == 0;
 
             var status = isFirstRequest ? Status.ForReleasing : Status.ApproverApproval;
-
-            //Check if the client is existing
-            var existingClient =
-                await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
 
             if (request.Freebies.Count > 5)
             {
@@ -112,20 +157,22 @@ public class RequestFreebies : ControllerBase
                 var existingRequest = await _context.FreebieItems
                     .Include(x => x.Items)
                     .Include(f => f.FreebieRequest)
-                    .Where(f => f.ItemId == item.ItemId && f.FreebieRequest.ClientId == request.ClientId)
+                    .Where(f => f.ItemId == item.ItemId && f.FreebieRequest.ClientId == request.ClientId &&
+                                f.FreebieRequest.Status != REJECTED)
                     .FirstOrDefaultAsync(cancellationToken);
 
                 if (existingRequest != null)
                 {
                     throw new Exception(
-                        $"Item with ID {existingRequest.Items.ItemDescription} has already been requested.");
+                        $"{existingRequest.Items.ItemDescription} has already been requested.");
                 }
             }
 
+            // Create new approval for the freebie
             var newApproval = new Approvals
             {
                 ClientId = request.ClientId,
-                ApprovalType = "For Freebie Approval",
+                ApprovalType = FOR_FREEBIE_APPROVAL,
                 IsApproved = isFirstRequest,
                 IsActive = true,
                 RequestedBy = request.AddedBy,
@@ -134,7 +181,7 @@ public class RequestFreebies : ControllerBase
             await _context.Approvals.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            /*var transactionNumber = GenerateTransactionNumber();*/
+            // Create new freebie request
             var freebieRequest = new FreebieRequest
             {
                 ClientId = request.ClientId,
@@ -146,6 +193,7 @@ public class RequestFreebies : ControllerBase
             _context.FreebieRequests.Add(freebieRequest);
             await _context.SaveChangesAsync(cancellationToken);
 
+            // Add the items requested
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {
                          RequestId = freebieRequest.Id,
@@ -154,17 +202,54 @@ public class RequestFreebies : ControllerBase
                      }))
             {
                 await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
+
+                //Get the items details that has been requested
+                var itemDetails = await _context.Items
+                    .Include(x => x.Uom)
+                    .Where(i => i.Id == freebieItem.ItemId)
+                    .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                clientFreebies.Add(new RequestFreebiesResult.Freebie
+                {
+                    FreebieRequestId = freebieRequest.Id,
+                    Status = freebieRequest.Status,
+                    TransactionNumber = freebieRequest.Id,
+                    FreebieItems = new List<RequestFreebiesResult.FreebieItem>
+                    {
+                        new()
+                        {
+                            Id = freebieItem.Id,
+                            ItemId = freebieItem.ItemId,
+                            ItemCode = itemDetails.ItemCode,
+                            ItemDescription = itemDetails.ItemDescription,
+                            UOM = itemDetails.UomCode,
+                            Quantity = freebieItem.Quantity
+                        }
+                    }
+                });
             }
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            //Return the result on the client info including the request.
+            return new RequestFreebiesResult
+            {
+                Id = client.Id,
+                OwnersName = client.Fullname,
+                OwnersAddress = new RequestFreebiesResult.OwnersAddressCollection
+                {
+                    HouseNumber = client.OwnersAddress.HouseNumber,
+                    StreetName = client.OwnersAddress.StreetName,
+                    BarangayName = client.OwnersAddress.Barangay,
+                    City = client.OwnersAddress.City,
+                    Province = client.OwnersAddress.Province
+                },
+                PhoneNumber = client.PhoneNumber,
+                BusinessName = client.BusinessName,
+                Freebies = clientFreebies,
+                AddedBy = client.AddedBy
+            };
         }
-
-        /*private static string GenerateTransactionNumber()
-        {
-            var random = new Random();
-            return random.Next(1_000_000, 10_000_000).ToString("D7");
-        }*/
     }
 }

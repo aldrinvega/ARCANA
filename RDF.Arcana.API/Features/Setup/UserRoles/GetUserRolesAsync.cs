@@ -8,7 +8,6 @@ namespace RDF.Arcana.API.Features.Setup.UserRoles;
 
 [Route("api/UserRole")]
 [ApiController]
-
 public class GetUserRolesAsync : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,70 +17,14 @@ public class GetUserRolesAsync : ControllerBase
         _mediator = mediator;
     }
 
-    public class GetUserRoleAsyncQuery : UserParams, IRequest<PagedList<GetUserRoleAsyncResult>>
-    {
-        public string Search { get; set; }
-        public bool? Status { get; set; }
-        public bool? IsTagged { get; set; }
-    }
-
-    public class GetUserRoleAsyncResult
-    {
-        public int Id { get; set; }
-        public string RoleName { get; set; }
-        public ICollection<string> Permissions { get; set; }
-        public string AddedBy { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsTagged { get; set; }
-        public string User { get; set; }
-    }
-    
-    public class Handler : IRequestHandler<GetUserRoleAsyncQuery, PagedList<GetUserRoleAsyncResult>>
-    {
-        private readonly DataContext _context;
-
-        public Handler(DataContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<PagedList<GetUserRoleAsyncResult>> Handle(GetUserRoleAsyncQuery request, CancellationToken cancellationToken)
-        {
-            IQueryable <Domain.UserRoles> userRoles = _context.UserRoles
-                .Include(x => x.AddedByUser)
-                .Include(x => x.User);
-
-            if (!string.IsNullOrEmpty(request.Search))
-            {
-                userRoles = userRoles.Where(x => x.UserRoleName.Contains(request.Search));
-            }
-            
-            if(request.IsTagged != null)
-            {
-                userRoles = request.IsTagged.Value ? userRoles.Where(x => x.User != null) : userRoles.Where(x => x.User == null);
-            }
-
-            if (request.Status is not null)
-            {
-                userRoles = userRoles.Where(x => x.IsActive == request.Status);
-            }
-
-            var result = userRoles.Select(x => x.ToGetUserRoleAsyncQueryResult());
-
-            return await PagedList<GetUserRoleAsyncResult>.CreateAsync(result, request.PageNumber, request.PageSize);
-        }
-    }
-    
     [HttpGet("GetUserRoles")]
-    public async Task<IActionResult> GetUserRoles([FromQuery]GetUserRolesAsync.GetUserRoleAsyncQuery query)
+    public async Task<IActionResult> GetUserRoles([FromQuery] GetUserRolesAsync.GetUserRoleAsyncQuery query)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
             var userRoles = await _mediator.Send(query);
-            
+
             Response.AddPaginationHeader(
                 userRoles.CurrentPage,
                 userRoles.PageSize,
@@ -106,16 +49,74 @@ public class GetUserRolesAsync : ControllerBase
                     userRoles.HasNextPage
                 }
             };
-            
+
             response.Messages.Add("Successfully fetch data");
             return Ok(result);
-
         }
         catch (Exception e)
         {
             response.Status = StatusCodes.Status409Conflict;
             response.Messages.Add(e.Message);
             return Conflict(response);
+        }
+    }
+
+    public class GetUserRoleAsyncQuery : UserParams, IRequest<PagedList<GetUserRoleAsyncResult>>
+    {
+        public string Search { get; set; }
+        public bool? Status { get; set; }
+        public bool? IsTagged { get; set; }
+    }
+
+    public class GetUserRoleAsyncResult
+    {
+        public int Id { get; set; }
+        public string RoleName { get; set; }
+        public ICollection<string> Permissions { get; set; }
+        public string AddedBy { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsTagged { get; set; }
+        public string User { get; set; }
+    }
+
+    public class Handler : IRequestHandler<GetUserRoleAsyncQuery, PagedList<GetUserRoleAsyncResult>>
+    {
+        private readonly DataContext _context;
+
+        public Handler(DataContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<PagedList<GetUserRoleAsyncResult>> Handle(GetUserRoleAsyncQuery request,
+            CancellationToken cancellationToken)
+        {
+            IQueryable<Domain.UserRoles> userRoles = _context.UserRoles
+                .Include(x => x.AddedByUser)
+                .Include(x => x.Users);
+
+            if (!string.IsNullOrEmpty(request.Search))
+            {
+                userRoles = userRoles.Where(x => x.UserRoleName.Contains(request.Search));
+            }
+
+            if (request.IsTagged != null)
+            {
+                userRoles = request.IsTagged.Value
+                    ? userRoles.Where(x => x.Users != null)
+                    : userRoles.Where(x => x.Users == null);
+            }
+
+            if (request.Status is not null)
+            {
+                userRoles = userRoles.Where(x => x.IsActive == request.Status);
+            }
+
+            var result = userRoles.Select(x => x.ToGetUserRoleAsyncQueryResult());
+
+            return await PagedList<GetUserRoleAsyncResult>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
     }
 }

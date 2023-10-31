@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "t8l9/uiAtcRds/LeV9uOshDIdwgmFk3oYzEko+36Tdd1+aKWWv4qCx5bAnWspfRmp0EdNxWwGe28VI37lhN8rA==",
+  "dgSpecHash": "4uutJ9FwJbojvW7BWHXPmbqW4oc/W0FEnjSDIvGsZkFB98D3v+bM+A55Vkau/6qMyLq/8tGyMDeFZAuD2pBBsg==",
   "success": true,
   "projectFilePath": "C:\\Users\\avega\\RiderProjects\\ARCANA\\RDF.Arcana.API\\RDF.Arcana.API.csproj",
   "expectedPackageFiles": [
@@ -11,7 +11,7 @@
     "C:\\Users\\avega\\.nuget\\packages\\cloudinarydotnet\\1.22.0\\cloudinarydotnet.1.22.0.nupkg.sha512",
     "C:\\Users\\avega\\.nuget\\packages\\efcore.namingconventions\\7.0.2\\efcore.namingconventions.7.0.2.nupkg.sha512",
     "C:\\Users\\avega\\.nuget\\packages\\flexlabs.entityframeworkcore.upsert\\7.0.0\\flexlabs.entityframeworkcore.upsert.7.0.0.nupkg.sha512",
-    "C:\\Users\\avega\\.nuget\\packages\\fluentvalidation\\11.6.0\\fluentvalidation.11.6.0.nupkg.sha512",
+    "C:\\Users\\avega\\.nuget\\packages\\fluentvalidation\\11.8.0\\fluentvalidation.11.8.0.nupkg.sha512",
     "C:\\Users\\avega\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
     "C:\\Users\\avega\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.6.0\\fluentvalidation.dependencyinjectionextensions.11.6.0.nupkg.sha512",
     "C:\\Users\\avega\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",

@@ -98,6 +98,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public class FreebieItem
         {
             public int? Id { get; set; }
+            public int ItemId { get; set; }
             public string ItemCode { get; set; }
             public string ItemDescription { get; set; }
             public string UOM { get; set; }
@@ -149,7 +150,10 @@ public class GetAllApprovedProspectAsync : ControllerBase
             else
             {
                 approvedProspect = approvedProspect.Where(x =>
-                    x.Approvals.All(a => !a.FreebieRequest.Any()));
+                    x.Approvals.All(a =>
+                        !a.FreebieRequest.Any() ||
+                        a.FreebieRequest.OrderByDescending(fr => fr.CreatedAt)
+                            .FirstOrDefault().Status == "Rejected"));
             }
 
             /*if (!string.IsNullOrEmpty(request.FreebieStatus))

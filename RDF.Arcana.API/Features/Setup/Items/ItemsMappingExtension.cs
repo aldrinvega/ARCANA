@@ -8,6 +8,7 @@ public static class ItemsMappingExtension
         return new GetItemsAsync.GetItemsAsyncResult
         {
             Id = items.Id,
+            ItemId = items.Id,
             ItemCode = items.ItemCode,
             ItemDescription = items.ItemDescription,
             Uom = items.Uom?.UomCode,

@@ -60,7 +60,7 @@ public class UpdateUserRoleStatus : ControllerBase
         {
             var existingUserRole =
                 await _context.UserRoles
-                    .Include(x => x.User)
+                    .Include(x => x.Users)
                     .FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
 
             if (existingUserRole is null)
@@ -73,10 +73,10 @@ public class UpdateUserRoleStatus : ControllerBase
                 throw new UserRoleDeactivationException();
             }
 
-            if (existingUserRole.IsActive && existingUserRole.User != null && existingUserRole.IsActive)
+            if (existingUserRole.IsActive && existingUserRole.Users != null && existingUserRole.IsActive)
             {
                 throw new Exception(
-                    $"Operation failed: User Role cannot be archived because it is currently associated with the user '{existingUserRole.User.Fullname}'.");
+                    $"Operation failed: User Role cannot be archived because it is currently associated with the user '{existingUserRole.Users.FirstOrDefault()?.Fullname}'.");
             }
 
             existingUserRole.IsActive = !existingUserRole.IsActive;
