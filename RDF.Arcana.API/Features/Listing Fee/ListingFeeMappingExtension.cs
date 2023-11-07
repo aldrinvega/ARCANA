@@ -12,19 +12,26 @@ public static class ListingFeeMappingExtension
             ClientId = listingFee.ClientId,
             ClientName = listingFee.Client.Fullname,
             BusinessName = listingFee.Client.BusinessName,
-            RequestedBy = listingFee.ListingFee?.FirstOrDefault()?.Client.Fullname ?? "None",
-            Total = listingFee.ListingFee?.FirstOrDefault()?.Total ?? 0,
-            ListingItems = listingFee.ListingFee.SelectMany(lf => lf.ListingFeeItems?.Select(x =>
-                new GetAllListingFee.GetAllListingFeeResult.ListingItem
+            ListingFee = listingFee.ListingFee?.Select(lf =>
+                new GetAllListingFee.GetAllListingFeeResult.ListingFeeCollections
                 {
-                    ItemId = x.ItemId,
-                    ItemCode = x.Item.ItemCode,
-                    ItemDescription = x.Item.ItemDescription,
-                    Uom = x.Item.Uom.UomCode,
-                    Sku = x.Sku,
-                    UnitCost = x.UnitCost,
-                    Quantity = x.Quantity
-                }))
+                    Id = lf.Id,
+                    ApprovalId = lf.ApprovalsId,
+                    Status = lf.Status,
+                    RequestedBy = lf.RequestedByUser.Fullname,
+                    Total = lf.Total,
+                    ListingItems = lf.ListingFeeItems.Select(li =>
+                        new GetAllListingFee.GetAllListingFeeResult.ListingItem
+                        {
+                            ItemId = li.ItemId,
+                            ItemCode = li.Item.ItemCode,
+                            ItemDescription = li.Item.ItemDescription,
+                            Uom = li.Item.Uom.UomCode,
+                            Sku = li.Sku,
+                            UnitCost = li.UnitCost,
+                            Quantity = li.Quantity
+                        })
+                })
         };
     }
 }

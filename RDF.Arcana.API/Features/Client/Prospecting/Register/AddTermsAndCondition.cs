@@ -97,6 +97,13 @@ public class AddTermsAndCondition : ControllerBase
                 limit = request.CreditLimit.Value;
             }
 
+            var validateTerms = await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.Terms, cancellationToken);
+
+            if (validateTerms is null)
+            {
+                throw new Exception("Terms not found");
+            }
+
             var termsOptions = new TermOptions
             {
                 ClientId = request.ClientId,
@@ -108,7 +115,7 @@ public class AddTermsAndCondition : ControllerBase
 
             //For validation
             // Check if the user can have no discount at all
-            if (request.FixedDiscounts != null)
+            if (request.FixedDiscounts.DiscountPercentage != null)
             {
                 var fixedDiscount = new FixedDiscounts
                 {

@@ -10,6 +10,6 @@ namespace RDF.Arcana.API.Domain
         public bool IsActive { get; set; } = true;
         public int AddedBy { get; set; }
         public User AddedByUser { get; set; }
-        public virtual ICollection<TermOptions> TermOptions { get; set; }
+        public virtual TermOptions TermOptions { get; set; }
     }
 }

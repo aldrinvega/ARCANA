@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
@@ -67,9 +68,9 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public string Search { get; set; }
         public bool? Status { get; set; }
         public string StoreType { get; set; }
-
         public string FreebieStatus { get; set; }
-        /*public int AddedBy { get; set; }*/
+        public string? SortColumn { get; set; }
+        public string? SortOrder { get; set; }
     }
 
     public class GetAllApprovedProspectResult
@@ -137,6 +138,73 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .Include(x => x.StoreType)
                 .Where(x => x.RegistrationStatus != "Registered" && x.RegistrationStatus != "Under review");
 
+            approvedProspect = GetFreebiesByStatus(request, approvedProspect);
+
+            approvedProspect = GetClientByStoreType(request, approvedProspect);
+
+            approvedProspect = SearchClientByFullname(request, approvedProspect);
+
+            approvedProspect = FilterByStatus(request, approvedProspect);
+
+            approvedProspect = request.SortOrder?.ToLower() == "desc"
+                ? approvedProspect.OrderByDescending(GetSortProperty(request))
+                : approvedProspect.OrderBy(GetSortProperty(request));
+
+            var result = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());
+
+            return await PagedList<GetAllApprovedProspectResult>.CreateAsync(result, request.PageNumber,
+                request.PageSize);
+        }
+
+        private static Expression<Func<Domain.Clients, object>> GetSortProperty(GetAllApprovedProspectQuery request) =>
+            request.SortColumn?.ToLower() switch
+            {
+                "name" => prospects => prospects.Fullname,
+                "business_name" => prospects => prospects.BusinessName,
+                "owners_address" => prospects => prospects.OwnersAddress.City,
+                "business_address" => prospects => prospects.BusinessAddress.City,
+                _ => prospect => prospect.Id
+            };
+
+        private static IQueryable<Domain.Clients> FilterByStatus(GetAllApprovedProspectQuery request,
+            IQueryable<Domain.Clients> approvedProspect)
+        {
+            if (request.Status != null)
+            {
+                approvedProspect = approvedProspect.Where(x =>
+                    x.IsActive == request.Status);
+            }
+
+            return approvedProspect;
+        }
+
+        private static IQueryable<Domain.Clients> SearchClientByFullname(GetAllApprovedProspectQuery request,
+            IQueryable<Domain.Clients> approvedProspect)
+        {
+            if (string.IsNullOrEmpty(request.Search)) return approvedProspect;
+
+            request.PageNumber = 1;
+            approvedProspect = approvedProspect.Where(x =>
+                x.Fullname.Contains(request.Search));
+
+            return approvedProspect;
+        }
+
+        private static IQueryable<Domain.Clients> GetClientByStoreType(GetAllApprovedProspectQuery request,
+            IQueryable<Domain.Clients> approvedProspect)
+        {
+            if (!string.IsNullOrEmpty(request.StoreType))
+            {
+                approvedProspect =
+                    approvedProspect.Where(x => x.StoreType.StoreTypeName.Contains(request.StoreType));
+            }
+
+            return approvedProspect;
+        }
+
+        private static IQueryable<Domain.Clients> GetFreebiesByStatus(GetAllApprovedProspectQuery request,
+            IQueryable<Domain.Clients> approvedProspect)
+        {
             if (request.FreebieStatus != null)
             {
                 approvedProspect = approvedProspect
@@ -156,42 +224,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
                             .FirstOrDefault().Status == "Rejected"));
             }
 
-            /*if (!string.IsNullOrEmpty(request.FreebieStatus))
-            {
-                approvedProspect = approvedProspect
-                    .Where(x => x.Approvals.OrderByDescending(a => a.CreatedAt).Any() &&
-                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
-                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).Any() &&
-                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
-                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).First()
-                                    .Status == request.FreebieStatus);
-            }*/
-
-            if (!string.IsNullOrEmpty(request.StoreType))
-            {
-                approvedProspect =
-                    approvedProspect.Where(x => x.StoreType.StoreTypeName.Contains(request.StoreType));
-            }
-
-            //Change Customer Type to Origin
-
-            if (!string.IsNullOrEmpty(request.Search))
-            {
-                approvedProspect = approvedProspect.Where(x =>
-                    x.Fullname.Contains(request.Search));
-            }
-
-            if (request.Status != null)
-
-            {
-                approvedProspect = approvedProspect.Where(x =>
-                    x.IsActive == request.Status);
-            }
-
-            var result = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());
-
-            return await PagedList<GetAllApprovedProspectResult>.CreateAsync(result, request.PageNumber,
-                request.PageSize);
+            return approvedProspect;
         }
     }
 }

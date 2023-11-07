@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
@@ -15,17 +14,12 @@ namespace RDF.Arcana.API.Features.Client.Direct
     public class DirectRegistrationCommand : IRequest<Unit>
     {
         [Required] public string OwnersName { get; set; }
-
         [Required] public OwnersAddressCollection OwnersAddress { get; set; }
-
         [Required] public string PhoneNumber { get; set; }
         [Required] public DateOnly DateOfBirth { get; set; }
         [Required] public string TinNumber { get; set; }
-
         [Required] public string BusinessName { get; set; }
-
         [Required] public int StoreTypeId { get; set; }
-
         public int AddedBy { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
@@ -41,10 +35,11 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public int? TermDaysId { get; set; }
         public FixedDiscounts FixedDiscount { get; set; }
         public bool VariableDiscount { get; set; }
-
         public string Longitude { get; set; }
+
         public string Latitude { get; set; }
-        public List<Attachment> Attachments { get; set; }
+
+        /*public List<Attachment> Attachments { get; set; }*/
         public List<UpdateFreebie> Freebies { get; set; }
 
         public class FixedDiscounts
@@ -52,12 +47,11 @@ namespace RDF.Arcana.API.Features.Client.Direct
             public decimal DiscountPercentage { get; set; }
         }
 
-        public class Attachment
+        /*public class Attachment
         {
             public IFormFile Attachments { get; set; }
             public string DocumentType { get; set; }
-        }
-
+        }*/
         public class BusinessAddressCollection
         {
             public string HouseNumber { get; set; }
@@ -235,7 +229,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 await _context.Approvals.AddAsync(approval, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                if (!request.Attachments.Any()) return Unit.Value;
+                /*if (!request.Attachments.Any()) return Unit.Value;
 
                 foreach (var document in request.Attachments.Where(document => document.Attachments.Length > 0))
                 {
@@ -260,7 +254,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     await _context.SaveChangesAsync(cancellationToken);
                 }
 
-                ///////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////*/
 
 
                 //Check if the client is existing

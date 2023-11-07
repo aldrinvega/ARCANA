@@ -91,7 +91,7 @@ public class GetAllProspects : ControllerBase
         public bool? DirectDelivery { get; set; }
         public string BookingCoverage { get; set; }
         public string ModeOfPayment { get; set; }
-        public IEnumerable<ClientTerms> Terms { get; set; }
+        public ClientTerms Terms { get; set; }
         public FixedDiscounts FixedDiscount { get; set; }
         public bool? VariableDiscount { get; set; }
         public string Longitude { get; set; }

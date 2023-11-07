@@ -14,8 +14,6 @@ C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\CloudinaryDo
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\EFCore.NamingConventions.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\FlexLabs.EntityFrameworkCore.Upsert.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\FluentValidation.dll
-C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\FluentValidation.AspNetCore.dll
-C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\FluentValidation.DependencyInjectionExtensions.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\Google.Protobuf.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\Humanizer.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\JWT.dll
@@ -91,3 +89,4 @@ C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\refint\RDF.A
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\RDF.Arcana.API.pdb
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\RDF.Arcana.API.genruntimeconfig.cache
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\ref\RDF.Arcana.API.dll
+C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\FluentValidation.DependencyInjectionExtensions.dll

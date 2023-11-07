@@ -14,8 +14,6 @@ C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\Cl
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\EFCore.NamingConventions.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\FlexLabs.EntityFrameworkCore.Upsert.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\FluentValidation.dll
-C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\FluentValidation.AspNetCore.dll
-C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\FluentValidation.DependencyInjectionExtensions.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\Google.Protobuf.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\Humanizer.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\JWT.dll
@@ -81,3 +79,4 @@ C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\linux-x64\re
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\linux-x64\RDF.Arcana.API.pdb
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\linux-x64\RDF.Arcana.API.genruntimeconfig.cache
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\obj\Debug\net7.0\linux-x64\ref\RDF.Arcana.API.dll
+C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\FluentValidation.DependencyInjectionExtensions.dll

@@ -69,7 +69,8 @@ public class AddNewTerms : ControllerBase
 
             var terms = new Domain.Terms
             {
-                TermType = request.TermType
+                TermType = request.TermType,
+                AddedBy = request.AddedBy
             };
 
             await _context.Terms.AddAsync(terms, cancellationToken);

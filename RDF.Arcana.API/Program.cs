@@ -1,12 +1,15 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Carter;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Common.Behaviors;
+using RDF.Arcana.API.Common.Middleware;
 using RDF.Arcana.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,14 +17,13 @@ var config = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-// builder.Services.AddFluentValidationAutoValidation(
-//     options =>
-//
-//         options.)
-//
-// );
+builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
 
-builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+builder.Services.AddMediatR(x =>
+{
+    x.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    x.AddOpenBehavior(typeof(ValidationBehavior<,>));
+});
 builder.Services.AddControllers(
     config =>
     {
@@ -105,6 +107,7 @@ builder.Services.AddAuthentication(authOptions =>
 
 builder.Services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
+
 const string clientPermission = "_clientPermission";
 
 builder.Services.AddCors(options =>
@@ -134,6 +137,7 @@ app.MapCarter();
 app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseCors(clientPermission);
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 // app.UseAuthorization();
 app.MapControllers();
 app.Run();

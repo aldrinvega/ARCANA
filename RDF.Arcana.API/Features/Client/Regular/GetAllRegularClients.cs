@@ -35,25 +35,20 @@ public class GetAllRegularClients : ControllerBase
                 regularClient.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    regularClient,
-                    regularClient.CurrentPage,
-                    regularClient.PageSize,
-                    regularClient.TotalCount,
-                    regularClient.TotalPages,
-                    regularClient.HasPreviousPage,
-                    regularClient.HasNextPage
-                }
+                regularClient,
+                regularClient.CurrentPage,
+                regularClient.PageSize,
+                regularClient.TotalCount,
+                regularClient.TotalPages,
+                regularClient.HasPreviousPage,
+                regularClient.HasNextPage
             };
 
-            result.Messages.Add("Successfully Fetch Data");
+            var successResult = Result<object>.Success(result, "Data fetch successfully");
 
-            return Ok(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
@@ -90,7 +85,7 @@ public class GetAllRegularClients : ControllerBase
         public bool? DirectDelivery { get; set; }
         public string BookingCoverage { get; set; }
         public string ModeOfPayment { get; set; }
-        public IEnumerable<ClientTerms> Terms { get; set; }
+        public ClientTerms Terms { get; set; }
         public FixedDiscounts FixedDiscount { get; set; }
         public bool? VariableDiscount { get; set; }
         public string Longitude { get; set; }
@@ -138,6 +133,7 @@ public class GetAllRegularClients : ControllerBase
 
     public class Handler : IRequestHandler<GetAllRegularClientQuery, PagedList<GetAllRegularClientResult>>
     {
+        private const string APPROVED = "Approved";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -161,7 +157,7 @@ public class GetAllRegularClients : ControllerBase
                 .ThenInclude(x => x.Items)
                 .Include(terms => terms.Term)
                 .ThenInclude(to => to.TermOptions)
-                .Where(x => x.RegistrationStatus == "Regular");
+                .Where(x => x.RegistrationStatus == APPROVED);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

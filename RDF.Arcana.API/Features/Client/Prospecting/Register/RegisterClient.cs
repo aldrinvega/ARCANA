@@ -50,7 +50,6 @@ public class RegisterClient : ControllerBase
     public class RegisterClientCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
-        public string EmailAddress { get; set; }
         public string HouseNumber { get; set; }
         public string StreetName { get; set; }
         public string BarangayName { get; set; }
@@ -114,7 +113,6 @@ public class RegisterClient : ControllerBase
                 existingClient.RepresentativeName = request.AuthorizedRepresentative;
                 existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
                 existingClient.TinNumber = request.TinNumber;
-                existingClient.EmailAddress = request.EmailAddress;
                 existingClient.Cluster = request.Cluster;
                 existingClient.Longitude = request.Longitude;
                 existingClient.Latitude = request.Latitude;

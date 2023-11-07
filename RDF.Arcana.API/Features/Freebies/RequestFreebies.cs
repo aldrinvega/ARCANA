@@ -101,7 +101,7 @@ public class RequestFreebies : ControllerBase
     public class Handler : IRequestHandler<RequestFreebiesCommand, RequestFreebiesResult>
     {
         private const string REJECTED = "Rejected";
-        private const string FOR_FREEBIE_APPROVAL = "For Freebie Request";
+        private const string FOR_FREEBIE_APPROVAL = "For Freebie Approval";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -193,6 +193,14 @@ public class RequestFreebies : ControllerBase
             _context.FreebieRequests.Add(freebieRequest);
             await _context.SaveChangesAsync(cancellationToken);
 
+            var freebieRequestObject = new RequestFreebiesResult.Freebie
+            {
+                FreebieRequestId = freebieRequest.Id,
+                Status = freebieRequest.Status,
+                TransactionNumber = freebieRequest.Id,
+                FreebieItems = new List<RequestFreebiesResult.FreebieItem>()
+            };
+
             // Add the items requested
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {
@@ -209,6 +217,16 @@ public class RequestFreebies : ControllerBase
                     .Where(i => i.Id == freebieItem.ItemId)
                     .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
                     .FirstOrDefaultAsync(cancellationToken);
+
+                freebieRequestObject.FreebieItems.Add(new RequestFreebiesResult.FreebieItem
+                {
+                    Id = freebieItem.Id,
+                    ItemId = freebieItem.ItemId,
+                    ItemCode = itemDetails.ItemCode,
+                    ItemDescription = itemDetails.ItemDescription,
+                    UOM = itemDetails.UomCode,
+                    Quantity = freebieItem.Quantity
+                });
 
                 clientFreebies.Add(new RequestFreebiesResult.Freebie
                 {
@@ -230,6 +248,8 @@ public class RequestFreebies : ControllerBase
                 });
             }
 
+            clientFreebies.Add(freebieRequestObject);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             //Return the result on the client info including the request.
@@ -248,7 +268,7 @@ public class RequestFreebies : ControllerBase
                 PhoneNumber = client.PhoneNumber,
                 BusinessName = client.BusinessName,
                 Freebies = clientFreebies,
-                AddedBy = client.AddedBy
+                AddedBy = client.AddedBy,
             };
         }
     }

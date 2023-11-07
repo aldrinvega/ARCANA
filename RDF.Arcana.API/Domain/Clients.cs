@@ -49,6 +49,7 @@ public class Clients : BaseEntity
     public virtual User RequestedByUser { get; set; }
     public virtual List<ClientDocuments> ClientDocuments { get; set; }
     public virtual List<Approvals> Approvals { get; set; }
+    public virtual List<ListingFee> ListingFees { get; set; }
     public virtual List<FreebieRequest> FreebiesRequests { get; set; }
     public virtual FixedDiscounts FixedDiscounts { get; set; }
     public virtual VariableDiscounts VariableDiscounts { get; set; }

@@ -10,7 +10,7 @@ public class QueryOrCommandResult<T>
 
 public class Result<T>
 {
-    private Result(bool isSuccess, Error error, T data = default)
+    private Result(bool isSuccess, Error error, string successMessage = "", T data = default)
     {
         if (isSuccess && error != Error.None ||
             !isSuccess && error == Error.None)
@@ -18,16 +18,18 @@ public class Result<T>
             throw new ArgumentException("Invalid Error", nameof(error));
         }
 
-        IsSuccess = true;
+        IsSuccess = isSuccess;
         Error = error;
         Data = data;
+        SuccessMessage = successMessage;
     }
 
-    public T Data { get; }
     public bool IsSuccess { get; set; }
     public bool IsFailure => !IsSuccess;
     public Error Error { get; set; }
-    public static Result<T> Success() => new(true, Common.Error.None);
+    public T Data { get; }
+    public string SuccessMessage { get; }
+    public static Result<T> Success(T data, string successMessage) => new(true, Error.None, successMessage, data);
     public static Result<T> Failure(Error error) => new(false, error);
 }
 

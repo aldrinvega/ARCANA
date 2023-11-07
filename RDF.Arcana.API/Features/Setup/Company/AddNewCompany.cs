@@ -94,8 +94,7 @@ public class AddNewCompany : ControllerBase
             await _context.Companies.AddAsync(company, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-
-            return Result<CompanyResult>.Success();
+            return Result<CompanyResult>.Success(result, "Company added successfully");
         }
     }
 }

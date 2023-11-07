@@ -13,7 +13,6 @@ C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\pu
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\EFCore.NamingConventions.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\FlexLabs.EntityFrameworkCore.Upsert.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\FluentValidation.dll
-C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\FluentValidation.AspNetCore.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\FluentValidation.DependencyInjectionExtensions.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\Google.Protobuf.dll
 C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Debug\net7.0\linux-x64\publish\JWT.dll

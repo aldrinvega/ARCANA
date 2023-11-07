@@ -96,7 +96,7 @@ public class GetAllDirectRegistrationClients : ControllerBase
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public bool? VariableDiscount { get; set; }
-        public ICollection<ClientTerms> Terms { get; set; }
+        public ClientTerms Terms { get; set; }
         public List<ClientAttachments> Attachments { get; set; }
         public decimal? DiscountPercentage { get; set; }
 

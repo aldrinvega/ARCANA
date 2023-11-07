@@ -20,23 +20,19 @@ public class ApprovedRegularRegistration : ControllerBase
         _context = context;
     }
 
-    [HttpPut("ApprovedForRegularRegistration/{id:int}")]
-    public async Task<IActionResult> ApprovedForRegularRegistration([FromRoute] int clientId)
+    [HttpPut("ApproveForRegularRegistration/{id:int}")]
+    public async Task<IActionResult> ApproveForRegularRegistration([FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is not ClaimsIdentity identity || !IdentityHelper.TryGetUserId(identity, out var userId))
                 return Unauthorized();
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return Forbid("You don't have permission to approve registrations.");
-            }
 
             var command = new ApprovedRegularRegistrationCommand
             {
-                ClientId = clientId
+                ClientId = id,
+                ApprovedBy = userId
             };
             await _mediator.Send(command);
             response.Messages.Add("Registration approved.");

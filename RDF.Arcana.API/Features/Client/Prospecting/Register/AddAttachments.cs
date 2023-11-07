@@ -1,4 +1,5 @@
-﻿using CloudinaryDotNet;
+﻿using System.Web;
+using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -74,12 +75,15 @@ public class AddAttachments : ControllerBase
         public async Task<Unit> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
-                                     .Include(x => x.ClientDocuments)
-                                     .FirstOrDefaultAsync(
-                                         x => x.Id == request.ClientId &&
-                                              x.RegistrationStatus == "Pending registration", cancellationToken) ??
-                                 throw new ClientIsNotFound(request.ClientId);
+                .Include(x => x.ClientDocuments)
+                .FirstOrDefaultAsync(
+                    x => x.Id == request.ClientId &&
+                         x.RegistrationStatus == "Pending registration", cancellationToken);
 
+            if (existingClient == null)
+            {
+                throw new ClientIsNotFound(request.ClientId);
+            }
 
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
             {
@@ -88,10 +92,11 @@ public class AddAttachments : ControllerBase
                 var attachmentsParams = new ImageUploadParams
                 {
                     File = new FileDescription(documents.Attachment.FileName, stream),
-                    PublicId = $"{existingClient.BusinessName}/{documents.Attachment.FileName}"
+                    PublicId = $"{HttpUtility.UrlEncode(existingClient.BusinessName)}/{documents.Attachment.FileName}"
                 };
 
                 var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
+
 
                 var attachments = new ClientDocuments
                 {

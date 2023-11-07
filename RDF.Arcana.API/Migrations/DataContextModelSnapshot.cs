@@ -1142,6 +1142,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasDatabaseName("ix_term_options_term_days_id");
 
                     b.HasIndex("TermsId")
+                        .IsUnique()
                         .HasDatabaseName("ix_term_options_terms_id");
 
                     b.ToTable("term_options", (string)null);
@@ -1682,7 +1683,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_listing_fees_users_approved_by_user_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Clients", "Client")
-                        .WithMany()
+                        .WithMany("ListingFees")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -1845,8 +1846,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_term_options_term_days_term_days_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Terms", "Terms")
-                        .WithMany("TermOptions")
-                        .HasForeignKey("TermsId")
+                        .WithOne("TermOptions")
+                        .HasForeignKey("RDF.Arcana.API.Domain.TermOptions", "TermsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_term_options_terms_terms_id");
@@ -1948,6 +1949,8 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("ClientDocuments");
 
                     b.Navigation("FreebiesRequests");
+
+                    b.Navigation("ListingFees");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Company", b =>

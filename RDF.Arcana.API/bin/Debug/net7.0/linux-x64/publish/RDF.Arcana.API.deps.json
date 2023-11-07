@@ -16,8 +16,7 @@
           "CloudinaryDotNet": "1.22.0",
           "EFCore.NamingConventions": "7.0.2",
           "FlexLabs.EntityFrameworkCore.Upsert": "7.0.0",
-          "FluentValidation.AspNetCore": "11.3.0",
-          "FluentValidation.DependencyInjectionExtensions": "11.6.0",
+          "FluentValidation.DependencyInjectionExtensions": "11.8.0",
           "JWT": "10.0.2",
           "Mapster": "7.3.0",
           "MediatR": "12.1.1",
@@ -74,7 +73,7 @@
       },
       "Carter/7.1.0": {
         "dependencies": {
-          "FluentValidation": "11.6.0",
+          "FluentValidation": "11.8.0",
           "Microsoft.Extensions.DependencyModel": "7.0.0"
         },
         "runtime": {
@@ -122,35 +121,23 @@
           }
         }
       },
-      "FluentValidation/11.6.0": {
+      "FluentValidation/11.8.0": {
         "runtime": {
           "lib/net7.0/FluentValidation.dll": {
             "assemblyVersion": "11.0.0.0",
-            "fileVersion": "11.6.0.0"
+            "fileVersion": "11.8.0.0"
           }
         }
       },
-      "FluentValidation.AspNetCore/11.3.0": {
+      "FluentValidation.DependencyInjectionExtensions/11.8.0": {
         "dependencies": {
-          "FluentValidation": "11.6.0",
-          "FluentValidation.DependencyInjectionExtensions": "11.6.0"
-        },
-        "runtime": {
-          "lib/net6.0/FluentValidation.AspNetCore.dll": {
-            "assemblyVersion": "11.0.0.0",
-            "fileVersion": "11.3.0.0"
-          }
-        }
-      },
-      "FluentValidation.DependencyInjectionExtensions/11.6.0": {
-        "dependencies": {
-          "FluentValidation": "11.6.0",
+          "FluentValidation": "11.8.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0"
         },
         "runtime": {
           "lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll": {
             "assemblyVersion": "11.0.0.0",
-            "fileVersion": "11.6.0.0"
+            "fileVersion": "11.8.0.0"
           }
         }
       },
@@ -1588,26 +1575,19 @@
       "path": "flexlabs.entityframeworkcore.upsert/7.0.0",
       "hashPath": "flexlabs.entityframeworkcore.upsert.7.0.0.nupkg.sha512"
     },
-    "FluentValidation/11.6.0": {
+    "FluentValidation/11.8.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-DWKd0jHA33d7BXVWytSoN5Oafj9nYuiLUyyFoaUboOZZiaN5tlXdcJpkRbmrrWBUTWdSxjTwIoyUs38KSU/7OQ==",
-      "path": "fluentvalidation/11.6.0",
-      "hashPath": "fluentvalidation.11.6.0.nupkg.sha512"
+      "sha512": "sha512-TiEaaYqSIAS+wXQv46LRm8Mca092XYNePD0n231Hqlkmm5FuToZoWnjI1ef/vJUxBzqR7/k2vaVQXxijNgVKRQ==",
+      "path": "fluentvalidation/11.8.0",
+      "hashPath": "fluentvalidation.11.8.0.nupkg.sha512"
     },
-    "FluentValidation.AspNetCore/11.3.0": {
+    "FluentValidation.DependencyInjectionExtensions/11.8.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-jtFVgKnDFySyBlPS8bZbTKEEwJZnn11rXXJ2SQnjDhZ56rQqybBg9Joq4crRLz3y0QR8WoOq4iE4piV81w/Djg==",
-      "path": "fluentvalidation.aspnetcore/11.3.0",
-      "hashPath": "fluentvalidation.aspnetcore.11.3.0.nupkg.sha512"
-    },
-    "FluentValidation.DependencyInjectionExtensions/11.6.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-3jyyy5VMzKsdGNzfBKtEYX3fd3YzSSzd7JEq7uJcqjqqkoCexT4khgTlNT8upXOeU6mT1MSW7H7OjvUG9W1bRw==",
-      "path": "fluentvalidation.dependencyinjectionextensions/11.6.0",
-      "hashPath": "fluentvalidation.dependencyinjectionextensions.11.6.0.nupkg.sha512"
+      "sha512": "sha512-fNfH9XEwevXb1JKCWGEkmkIKDYK3+gaAG8ugeOggd0oc8hdwsl3SNC59qAM1tcKVUhcD+AEDCI4hXX5WWshpWg==",
+      "path": "fluentvalidation.dependencyinjectionextensions/11.8.0",
+      "hashPath": "fluentvalidation.dependencyinjectionextensions.11.8.0.nupkg.sha512"
     },
     "Google.Protobuf/3.21.9": {
       "type": "package",

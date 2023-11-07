@@ -85,46 +85,56 @@ public class ReleasedProspectingRequest : ControllerBase
                 throw new NoProspectClientFound();
             }
 
+            var uploadTasks = new List<Task>();
+
             foreach (var freebieRequest in validateClientRequest.FreebieRequest)
             {
                 if (request.PhotoProof.Length > 0 || request.ESignature.Length > 0)
                 {
-                    await using var stream = request.PhotoProof.OpenReadStream();
-                    await using var esignatureStream = request.ESignature.OpenReadStream();
-
-                    var photoProofParams = new ImageUploadParams
+                    uploadTasks.Add(Task.Run(async () =>
                     {
-                        File = new FileDescription(request.PhotoProof.FileName, stream),
-                        PublicId =
-                            $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.PhotoProof.FileName}"
-                    };
+                        await using var stream = request.PhotoProof.OpenReadStream();
+                        await using var esignatureStream = request.ESignature.OpenReadStream();
 
-                    var eSignaturePhotoParams = new ImageUploadParams
-                    {
-                        File = new FileDescription(request.ESignature.FileName, esignatureStream),
-                        PublicId =
-                            $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.ESignature.FileName}"
-                    };
+                        var photoProofParams = new ImageUploadParams
+                        {
+                            File = new FileDescription(request.PhotoProof.FileName, stream),
+                            PublicId =
+                                $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.PhotoProof.FileName}"
+                        };
+
+                        var eSignaturePhotoParams = new ImageUploadParams
+                        {
+                            File = new FileDescription(request.ESignature.FileName, esignatureStream),
+                            PublicId =
+                                $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.ESignature.FileName}"
+                        };
 
 
-                    var photoproofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
-                    var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
+                        var photoproofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
+                        var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
 
-                    if (photoproofUploadResult.Error != null)
-                    {
-                        throw new Exception(photoproofUploadResult.Error.Message);
-                    }
+                        if (photoproofUploadResult.Error != null)
+                        {
+                            throw new Exception(photoproofUploadResult.Error.Message);
+                        }
 
-                    if (eSignatureUploadResult.Error != null)
-                    {
-                        throw new Exception(eSignatureUploadResult.Error.Message);
-                    }
+                        if (eSignatureUploadResult.Error != null)
+                        {
+                            throw new Exception(eSignatureUploadResult.Error.Message);
+                        }
 
-                    freebieRequest.Status = "Released";
-                    freebieRequest.IsDelivered = true;
-                    freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
-                    freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
+
+                        freebieRequest.Status = "Released";
+                        freebieRequest.IsDelivered = true;
+                        freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
+                        freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
+                    }, cancellationToken));
                 }
+
+                ;
+
+                await Task.WhenAll(uploadTasks);
 
                 validateClientRequest.Client.RegistrationStatus = "Pending registration";
                 await _context.SaveChangesAsync(cancellationToken);
