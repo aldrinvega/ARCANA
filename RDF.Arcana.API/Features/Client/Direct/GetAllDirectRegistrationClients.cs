@@ -145,27 +145,7 @@ public class GetAllDirectRegistrationClients : ControllerBase
                 GetAllDirectRegistrationClientsQuery request, CancellationToken cancellationToken)
             {
                 IQueryable<Approvals> clients = _context.Approvals
-                    .Include(x => x.Client)
-                    .Include(x => x.FreebieRequest)
-                    .ThenInclude(x => x.FreebieItems)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.BookingCoverages)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.Term)
-                    .ThenInclude(x => x.TermOptions)
-                    .ThenInclude(x => x.TermDays)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.FixedDiscounts)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.ClientDocuments)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.StoreType)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.OwnersAddress)
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.BusinessAddress)
-                    .Include(x => x.RequestedByUser)
-                    .Where(x => x.Client.CustomerType == "Direct");
+                    .Where(x => x.Client.CustomerType == "Direct").AsNoTracking();
 
 
                 if (!string.IsNullOrEmpty(request.Search))

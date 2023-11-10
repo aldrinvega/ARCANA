@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Client.Regular;
 
 namespace RDF.Arcana.API.Features.Client.All;
 
@@ -27,11 +26,11 @@ public class GetAllClients : ControllerBase
     {
         try
         {
-            var validationResult = await _validator.ValidateAsync(query);
+            /*var validationResult = await _validator.ValidateAsync(query);
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult);
-            }
+            }*/
 
             var regularClient = await _mediator.Send(query);
             Response.AddPaginationHeader(
@@ -157,20 +156,7 @@ public class GetAllClients : ControllerBase
         public async Task<PagedList<GetAllClientResult>> Handle(GetAllClientsQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<Domain.Clients> regularClients = _context.Clients
-                .Include(oa => oa.OwnersAddress)
-                .Include(ba => ba.BusinessAddress)
-                .Include(st => st.StoreType)
-                .Include(fd => fd.FixedDiscounts)
-                .Include(bc => bc.BookingCoverages)
-                .Include(mop => mop.ModeOfPayments)
-                .Include(cd => cd.ClientDocuments)
-                .Include(x => x.RequestedByUser)
-                .Include(fr => fr.FreebiesRequests)
-                .ThenInclude(fi => fi.FreebieItems)
-                .ThenInclude(x => x.Items)
-                .Include(terms => terms.Term)
-                .ThenInclude(to => to.TermOptions);
+            var regularClients = _context.Clients.AsNoTracking();
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -202,7 +188,71 @@ public class GetAllClients : ControllerBase
                 regularClients = regularClients.Where(x => x.IsActive == request.Status);
             }
 
-            var result = regularClients.Select(x => x.ToGetAllClientResult());
+            var result = regularClients.Select(client => new GetAllClientResult
+            {
+                Id = client.Id,
+                OwnersName = client.Fullname,
+                OwnersAddress = client.OwnersAddress != null
+                    ? new GetAllClientResult.OwnersAddressCollection
+                    {
+                        HouseNumber = client.OwnersAddress.HouseNumber,
+                        StreetName = client.OwnersAddress.StreetName,
+                        BarangayName = client.OwnersAddress.Barangay,
+                        City = client.OwnersAddress.City,
+                        Province = client.OwnersAddress.Province
+                    }
+                    : null,
+                PhoneNumber = client.PhoneNumber,
+                EmailAddress = client.EmailAddress,
+                DateOfBirth = client.DateOfBirthDB,
+                TinNumber = client.TinNumber,
+                BusinessName = client.BusinessName,
+                BusinessAddress = client.BusinessAddress != null
+                    ? new GetAllClientResult.BusinessAddressCollection
+                    {
+                        HouseNumber = client.BusinessAddress.HouseNumber,
+                        StreetName = client.BusinessAddress.StreetName,
+                        BarangayName = client.BusinessAddress.Barangay,
+                        City = client.BusinessAddress.City,
+                        Province = client.BusinessAddress.Province
+                    }
+                    : null,
+                StoreType = client.StoreType.StoreTypeName,
+                AuthorizedRepresentative = client.RepresentativeName,
+                AuthorizedRepresentativePosition = client.RepresentativePosition,
+                Cluster = client.Cluster,
+                Freezer = client.Freezer,
+                TypeOfCustomer = client.CustomerType,
+                DirectDelivery = client.DirectDelivery,
+                BookingCoverage = client.BookingCoverages.BookingCoverage,
+                ModeOfPayment = client.ModeOfPayments.Payment,
+                Terms = client.Term != null
+                    ? new GetAllClientResult.ClientTerms
+                    {
+                        TermId = client.Term.TermsId,
+                        Term = client.Term.Terms.TermType,
+                        CreditLimit = client.Term.CreditLimit,
+                        TermDays = client.Term.TermDays.Days
+                    }
+                    : null,
+                FixedDiscount = client.FixedDiscounts != null
+                    ? new GetAllClientResult.FixedDiscounts
+                    {
+                        DiscountPercentage = client.FixedDiscounts.DiscountPercentage
+                    }
+                    : null,
+                VariableDiscount = client.VariableDiscount,
+                Longitude = client.Longitude,
+                Latitude = client.Latitude,
+                RequestedBy = client.RequestedByUser.Fullname,
+                Attachments = client.ClientDocuments.Select(cd =>
+                    new GetAllClientResult.Attachment
+                    {
+                        DocumentId = cd.Id,
+                        DocumentLink = cd.DocumentPath,
+                        DocumentType = cd.DocumentType
+                    })
+            });
 
             return await PagedList<GetAllClientResult>.CreateAsync(result, request.PageNumber, request.PageSize);
         }

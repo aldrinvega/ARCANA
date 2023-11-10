@@ -37,12 +37,12 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("ServerConnection");
+var connectionString = builder.Configuration.GetConnectionString("LiveConnection");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<DataContext>(x =>
 {
-    if (connectionString != null) x.UseMySql(connectionString, serverVersion).UseSnakeCaseNamingConvention();
+    if (connectionString != null) x.UseSqlServer(connectionString).UseSnakeCaseNamingConvention();
 });
 
 builder.Services.AddControllers();

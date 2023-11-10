@@ -39,13 +39,12 @@ public class UpdateListingFeeInformation : ControllerBase
         }
     }
 
-
     public class UpdateListingFeeInformationCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
         public int ListingFeeId { get; set; }
         public decimal Total { get; set; }
-        public List<ListingItem> ListingItems { get; set; }
+        public List<ListingItem> ListingFeeItems { get; set; }
 
         public class ListingItem
         {
@@ -57,6 +56,7 @@ public class UpdateListingFeeInformation : ControllerBase
 
     public class Handler : IRequestHandler<UpdateListingFeeInformationCommand, Unit>
     {
+        private const string UNDER_REVIEW = "Under review";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -64,67 +64,54 @@ public class UpdateListingFeeInformation : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateListingFeeInformationCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateListingFeeInformationCommand command, CancellationToken cancellationToken)
         {
-            var listingFeesInApproval = await _context.Approvals
-                .Where(x => x.ClientId == request.ClientId && x.ApprovalType == "For Listing Fee Approval")
-                .Select(x => x.ListingFee)
-                .SingleOrDefaultAsync(cancellationToken);
+            var listingFee = await _context.ListingFees
+                .Include(x => x.ListingFeeItems)
+                .Where(lf => lf.ClientId == command.ClientId && lf.Id == command.ListingFeeId)
+                .Include(x => x.Approvals)
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (listingFeesInApproval == null || !listingFeesInApproval.Any())
-            {
+            if (listingFee == null)
                 throw new ListingFeeNotFound();
-            }
+            if (command.ListingFeeItems == null)
+                throw new ArgumentException("ListingFeeItems cannot be null");
 
-            var requestItemIds = request.ListingItems.Select(f => f.ItemId).ToList();
+            var listingFeeItems = command.ListingFeeItems.Select(x => x.ItemId).ToList();
+            var existingItemList = listingFee.ListingFeeItems.Select(x => x.ItemId).ToList();
+            var toRemove = existingItemList.Except(listingFeeItems);
 
-            foreach (var listingFee in listingFeesInApproval)
+            foreach (var itemId in toRemove)
             {
-                if (listingFee.Id != request.ListingFeeId)
-                {
-                    continue;
-                }
-
-                var existingItemIds = listingFee.ListingFeeItems.Select(i => i.ItemId).ToList();
-                var itemsToRemove = existingItemIds.Except(requestItemIds);
-                foreach (var itemId in itemsToRemove)
-                {
-                    var itemToRemove = listingFee.ListingFeeItems.First(i => i.ItemId == itemId);
-                    listingFee.ListingFeeItems.Remove(itemToRemove);
-                }
-
-                foreach (var requestListingItem in request.ListingItems)
-                {
-                    var listingFeeItem =
-                        listingFee.ListingFeeItems.FirstOrDefault(x => x.ItemId == requestListingItem.ItemId);
-
-                    if (listingFeeItem != null)
-                    {
-                        // If the listing fee item exists in the database, update its details
-                        listingFeeItem.Sku = requestListingItem.Sku;
-                        listingFeeItem.UnitCost = requestListingItem.UnitCost;
-                    }
-                    else
-                    {
-                        // If the listing fee item doesn't exist, add it.
-                        var newItem = new ListingFeeItems
-                        {
-                            ListingFeeId = request.ListingFeeId,
-                            ItemId = requestListingItem.ItemId,
-                            Sku = requestListingItem.Sku,
-                            UnitCost = requestListingItem.UnitCost
-                        };
-                        listingFee.ListingFeeItems.Add(newItem);
-                    }
-
-                    listingFee.Total = request.Total;
-                }
-
-                listingFee.Status = "Requested";
+                var forRemove = listingFee.ListingFeeItems.First(i => i.ItemId == itemId);
+                listingFee.ListingFeeItems.Remove(forRemove);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            foreach (var item in command.ListingFeeItems)
+            {
+                var listingFeeItemToAdd = listingFee.ListingFeeItems.FirstOrDefault(x => x.ItemId == item.ItemId);
 
+                if (listingFeeItemToAdd != null)
+                {
+                    listingFeeItemToAdd.Sku = item.Sku;
+                    listingFeeItemToAdd.UnitCost = item.UnitCost;
+                    listingFeeItemToAdd.UpdatedAt = DateTime.UtcNow;
+                }
+                else
+                {
+                    listingFee.ListingFeeItems.Add(new ListingFeeItems
+                    {
+                        ListingFeeId = command.ListingFeeId,
+                        ItemId = item.ItemId,
+                        UnitCost = item.UnitCost,
+                        Sku = item.Sku
+                    });
+                }
+            }
+
+            listingFee.Approvals.ApprovalType = Status.UNDER_REVIEW;
+            listingFee.Approvals.IsApproved = false;
+            await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }

@@ -85,7 +85,6 @@ public class AddTermsAndCondition : ControllerBase
             if (existingClient == null) throw new ClientIsNotFound(request.ClientId);
             existingClient.CustomerType = request.TypeOfCustomer;
             existingClient.Freezer = request.Freezer;
-            existingClient.Terms = request.Terms;
             existingClient.DirectDelivery = request.DirectDelivery;
             existingClient.BookingCoverageId = request.BookingCoverageId;
             existingClient.ModeOfPayment = request.ModeOfPayment;
@@ -106,13 +105,15 @@ public class AddTermsAndCondition : ControllerBase
 
             var termsOptions = new TermOptions
             {
-                ClientId = request.ClientId,
                 TermsId = request.Terms,
                 CreditLimit = limit,
                 TermDaysId = request.TermDaysId,
                 AddedBy = request.AddedBy
             };
 
+            await _context.TermOptions.AddAsync(termsOptions, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            existingClient.Terms = termsOptions.Id;
             //For validation
             // Check if the user can have no discount at all
             if (request.FixedDiscounts.DiscountPercentage != null)
@@ -132,11 +133,12 @@ public class AddTermsAndCondition : ControllerBase
             else
             {
                 existingClient.VariableDiscount = request.VariableDiscount;
+
+
+                await _context.SaveChangesAsync(cancellationToken);
+                return Unit.Value;
             }
 
-            await _context.TermOptions.AddAsync(termsOptions, cancellationToken);
-
-            await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }

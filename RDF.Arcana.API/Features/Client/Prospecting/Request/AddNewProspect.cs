@@ -117,7 +117,6 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             City = request.City,
             Province = request.Province
         };
-
         await _context.Address.AddAsync(address, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

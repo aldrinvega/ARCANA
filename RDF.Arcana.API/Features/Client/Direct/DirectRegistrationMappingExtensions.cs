@@ -48,13 +48,13 @@ public static class DirectRegistrationMappingExtensions
             Latitude = directRegistrationClients.Client.Latitude,
             VariableDiscount = directRegistrationClients.Client.VariableDiscount,
             DiscountPercentage = directRegistrationClients.Client.FixedDiscounts.DiscountPercentage,
-            Terms = directRegistrationClients.Client.Term?.TermOptions != null
+            Terms = directRegistrationClients.Client.Term != null
                 ? new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.ClientTerms
                 {
-                    TermId = directRegistrationClients.Client.Term.TermOptions.TermsId,
-                    Term = directRegistrationClients.Client.Term.TermType,
-                    CreditLimit = directRegistrationClients.Client.Term.TermOptions.CreditLimit,
-                    TermDays = directRegistrationClients.Client.Term.TermOptions.TermDays.Days
+                    TermId = directRegistrationClients.Client.Term.TermsId,
+                    Term = directRegistrationClients.Client.Term.Terms.TermType,
+                    CreditLimit = directRegistrationClients.Client.Term.CreditLimit,
+                    TermDays = directRegistrationClients.Client.Term.TermDays.Days
                 }
                 : null,
             Attachments = directRegistrationClients.Client.ClientDocuments.Select(c =>

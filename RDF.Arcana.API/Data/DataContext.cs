@@ -186,11 +186,6 @@ public class DataContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
 
-        modelBuilder.Entity<TermOptions>()
-            .HasOne(x => x.Clients)
-            .WithMany()
-            .HasForeignKey(x => x.ClientId);
-
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.FixedDiscounts)
             .WithMany()
@@ -245,5 +240,24 @@ public class DataContext : DbContext
         modelBuilder.Entity<VariableDiscounts>()
             .Property(p => p.MaximumPercentage)
             .HasColumnType("decimal(8,2)");
+
+        modelBuilder.Entity<Clients>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<FreebieRequest>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<TermOptions>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<Approvals>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<OwnersAddress>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<BusinessAddress>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
     }
 }

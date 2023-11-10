@@ -46,10 +46,10 @@ public class AddNewVariableDiscount : ControllerBase
 
     public class AddNewVariableDiscountCommand : IRequest<Unit>
     {
-        public decimal LowerBound { get; set; }
-        public decimal UpperBound { get; set; }
-        public decimal CommissionRateLower { get; set; }
-        public decimal CommissionRateUpper { get; set; }
+        public decimal MinimumAmount { get; set; }
+        public decimal MaximumAmount { get; set; }
+        public decimal MinimumPercentage { get; set; }
+        public decimal MaximumPercentage { get; set; }
         public int AddedBy { get; set; }
     }
 
@@ -64,14 +64,14 @@ public class AddNewVariableDiscount : ControllerBase
 
         public async Task<Unit> Handle(AddNewVariableDiscountCommand request, CancellationToken cancellationToken)
         {
-            var commissionRateLower = request.CommissionRateLower / 100;
-            var commissionRateUpper = request.CommissionRateUpper / 100;
+            var commissionRateLower = request.MinimumPercentage / 100;
+            var commissionRateUpper = request.MaximumPercentage / 100;
             var overlapExists = await _context.VariableDiscounts
                 .AnyAsync(x =>
-                        ((request.LowerBound >= x.MinimumAmount && request.LowerBound <= x.MaximumAmount) ||
-                         (request.UpperBound >= x.MinimumAmount && request.UpperBound <= x.MaximumAmount) ||
-                         (request.LowerBound <= x.MinimumAmount && request.UpperBound >= x.MaximumAmount) ||
-                         (request.LowerBound >= x.MinimumAmount && request.UpperBound <= x.MaximumAmount)) ||
+                        ((request.MinimumAmount >= x.MinimumAmount && request.MinimumAmount <= x.MaximumAmount) ||
+                         (request.MaximumAmount >= x.MinimumAmount && request.MaximumAmount <= x.MaximumAmount) ||
+                         (request.MinimumAmount <= x.MinimumAmount && request.MaximumAmount >= x.MaximumAmount) ||
+                         (request.MinimumAmount >= x.MinimumAmount && request.MaximumAmount <= x.MaximumAmount)) ||
                         ((commissionRateLower >= x.MinimumPercentage && commissionRateLower <= x.MaximumPercentage) ||
                          (commissionRateUpper >= x.MinimumPercentage && commissionRateUpper <= x.MaximumPercentage) ||
                          (commissionRateLower <= x.MinimumPercentage && commissionRateUpper >= x.MaximumPercentage) ||
@@ -85,8 +85,8 @@ public class AddNewVariableDiscount : ControllerBase
 
             var discount = new Domain.VariableDiscounts
             {
-                MinimumAmount = request.LowerBound,
-                MaximumAmount = request.UpperBound,
+                MinimumAmount = request.MinimumAmount,
+                MaximumAmount = request.MaximumAmount,
                 MinimumPercentage = commissionRateLower,
                 MaximumPercentage = commissionRateUpper,
                 IsSubjectToApproval = false

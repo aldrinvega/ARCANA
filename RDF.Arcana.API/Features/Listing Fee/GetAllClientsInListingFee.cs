@@ -60,7 +60,7 @@ public class GetAllClientsInListingFee : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
-        public string RegistrationStatus { get; set; }
+        public bool? IncludeRejected { get; set; }
         public string StoreType { get; set; }
         public string Origin { get; set; }
     }
@@ -86,9 +86,7 @@ public class GetAllClientsInListingFee : ControllerBase
         public async Task<PagedList<GetAllClientsInListingFeeResult>> Handle(GetAllClientsInListingFeeQuery request,
             CancellationToken cancellationToken)
         {
-            var clientsListingFee = _context.Clients
-                .Where(rs => rs.RegistrationStatus == APPROVED ||
-                             rs.RegistrationStatus == UNDER_REVIEW);
+            var clientsListingFee = _context.Clients.AsNoTracking();
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -112,6 +110,12 @@ public class GetAllClientsInListingFee : ControllerBase
             if (request.Status != null)
             {
                 clientsListingFee = clientsListingFee.Where(x => x.IsActive == request.Status);
+            }
+
+            if (request.IncludeRejected == false)
+            {
+                clientsListingFee = clientsListingFee.Where(x =>
+                    x.RegistrationStatus == APPROVED || x.RegistrationStatus == UNDER_REVIEW);
             }
 
             var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());

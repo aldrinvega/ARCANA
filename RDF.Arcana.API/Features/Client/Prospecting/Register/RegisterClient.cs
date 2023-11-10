@@ -116,7 +116,7 @@ public class RegisterClient : ControllerBase
                 existingClient.Cluster = request.Cluster;
                 existingClient.Longitude = request.Longitude;
                 existingClient.Latitude = request.Latitude;
-                existingClient.DateOfBirth = dateOfBirth;
+                existingClient.DateOfBirthDB = dateOfBirth;
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Unit.Value;

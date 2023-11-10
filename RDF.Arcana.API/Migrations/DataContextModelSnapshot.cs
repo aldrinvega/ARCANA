@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RDF.Arcana.API.Data;
 
@@ -17,7 +18,12 @@ namespace RDF.Arcana.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.HasSequence("arcana_hilo_sequence")
+                .IncrementsBy(10);
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.Approvals", b =>
                 {
@@ -26,8 +32,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "arcana_hilo_sequence");
+
                     b.Property<string>("ApprovalType")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("approval_type");
 
                     b.Property<int?>("ApprovedBy")
@@ -39,19 +47,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("client_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<bool>("IsApproved")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_approved");
 
                     b.Property<string>("Reason")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("reason");
 
                     b.Property<int>("RequestedBy")
@@ -80,24 +88,26 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<string>("BookingCoverage")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("booking_coverage");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -116,24 +126,26 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "arcana_hilo_sequence");
+
                     b.Property<string>("Barangay")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("barangay");
 
                     b.Property<string>("City")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("city");
 
                     b.Property<string>("HouseNumber")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("house_number");
 
                     b.Property<string>("Province")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("province");
 
                     b.Property<string>("StreetName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("street_name");
 
                     b.HasKey("Id")
@@ -149,16 +161,18 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("ClientId")
                         .HasColumnType("int")
                         .HasColumnName("client_id");
 
                     b.Property<string>("DocumentPath")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("document_path");
 
                     b.Property<string>("DocumentType")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("document_type");
 
                     b.HasKey("Id")
@@ -177,6 +191,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "arcana_hilo_sequence");
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
@@ -190,11 +206,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("business_address_id");
 
                     b.Property<string>("BusinessName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("business_name");
 
                     b.Property<string>("ClientType")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("client_type");
 
                     b.Property<int>("Cluster")
@@ -202,19 +218,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("cluster");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<string>("CustomerType")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_type");
 
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2")
                         .HasColumnName("date_of_birth");
 
                     b.Property<bool?>("DirectDelivery")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("direct_delivery");
 
                     b.Property<int?>("DiscountId")
@@ -222,7 +238,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("discount_id");
 
                     b.Property<string>("EmailAddress")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("email_address");
 
                     b.Property<int?>("FixedDiscountId")
@@ -230,23 +246,23 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("fixed_discount_id");
 
                     b.Property<bool>("Freezer")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("freezer");
 
                     b.Property<string>("Fullname")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("fullname");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("Latitude")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("latitude");
 
                     b.Property<string>("Longitude")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("longitude");
 
                     b.Property<int?>("ModeOfPayment")
@@ -258,7 +274,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("modified_by");
 
                     b.Property<string>("Origin")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("origin");
 
                     b.Property<int>("OwnersAddressId")
@@ -266,19 +282,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("owners_address_id");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("phone_number");
 
                     b.Property<string>("RegistrationStatus")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("registration_status");
 
                     b.Property<string>("RepresentativeName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("representative_name");
 
                     b.Property<string>("RepresentativePosition")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("representative_position");
 
                     b.Property<int?>("StoreTypeId")
@@ -294,11 +310,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("terms");
 
                     b.Property<string>("TinNumber")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("tin_number");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.Property<int?>("UserId")
@@ -306,7 +322,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("user_id");
 
                     b.Property<bool?>("VariableDiscount")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("variable_discount");
 
                     b.Property<int?>("VariableDiscountsId")
@@ -359,28 +375,30 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<string>("CompanyName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("company_name");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -400,28 +418,30 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<string>("DepartmentName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("department_name");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -441,40 +461,42 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<decimal>("CommissionRateLower")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("commission_rate_lower");
 
                     b.Property<decimal>("CommissionRateUpper")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("commission_rate_upper");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<decimal>("LowerBound")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("lower_bound");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("update_at");
 
                     b.Property<decimal>("UpperBound")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("upper_bound");
 
                     b.HasKey("Id")
@@ -493,6 +515,8 @@ namespace RDF.Arcana.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int")
@@ -517,6 +541,8 @@ namespace RDF.Arcana.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int")
@@ -549,6 +575,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "arcana_hilo_sequence");
+
                     b.Property<int>("ApprovalsId")
                         .HasColumnType("int")
                         .HasColumnName("approvals_id");
@@ -558,19 +586,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("client_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<string>("ESignaturePath")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("e_signature_path");
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_delivered");
 
                     b.Property<string>("PhotoProofPath")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("photo_proof_path");
 
                     b.Property<int>("RequestedBy")
@@ -578,7 +606,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("requested_by");
 
                     b.Property<string>("Status")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("status");
 
                     b.HasKey("Id")
@@ -603,24 +631,26 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ItemCode")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("item_code");
 
                     b.Property<string>("ItemDescription")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("item_description");
 
                     b.Property<int>("MeatTypeId")
@@ -628,7 +658,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("meat_type_id");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<int>("ProductSubCategoryId")
@@ -640,7 +670,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("uom_id");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -669,6 +699,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("ApprovalsId")
                         .HasColumnType("int")
                         .HasColumnName("approvals_id");
@@ -681,16 +713,16 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("client_id");
 
-                    b.Property<DateOnly>("CratedAt")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("CratedAt")
+                        .HasColumnType("datetime2")
                         .HasColumnName("crated_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<bool>("IsDelivered")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_delivered");
 
                     b.Property<int>("RequestedBy")
@@ -698,7 +730,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("requested_by");
 
                     b.Property<string>("Status")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("status");
 
                     b.Property<decimal>("Total")
@@ -730,8 +762,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<int>("ItemId")
@@ -742,20 +776,16 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("listing_fee_id");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int")
-                        .HasColumnName("quantity");
-
                     b.Property<int>("Sku")
                         .HasColumnType("int")
                         .HasColumnName("sku");
 
                     b.Property<decimal>("UnitCost")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("unit_cost");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -777,28 +807,30 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("LocationName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("location_name");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -818,28 +850,30 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("MeatTypeName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("meat_type_name");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -859,24 +893,26 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("Payment")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("payment");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -895,24 +931,26 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "arcana_hilo_sequence");
+
                     b.Property<string>("Barangay")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("barangay");
 
                     b.Property<string>("City")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("city");
 
                     b.Property<string>("HouseNumber")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("house_number");
 
                     b.Property<string>("Province")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("province");
 
                     b.Property<string>("StreetName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("street_name");
 
                     b.HasKey("Id")
@@ -928,28 +966,30 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<string>("ProductCategoryName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("product_category_name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -969,20 +1009,22 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<int>("ProductCategoryId")
@@ -990,11 +1032,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("product_category_id");
 
                     b.Property<string>("ProductSubCategoryName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("product_sub_category_name");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -1017,16 +1059,18 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int?>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("create_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<int?>("ModifiedBy")
@@ -1034,11 +1078,11 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("modified_by");
 
                     b.Property<string>("StoreTypeName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("store_type_name");
 
                     b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("update_at");
 
                     b.HasKey("Id")
@@ -1060,12 +1104,14 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("create_at");
 
                     b.Property<int>("Days")
@@ -1073,15 +1119,15 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("days");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -1101,16 +1147,18 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "arcana_hilo_sequence");
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientsId")
                         .HasColumnType("int")
-                        .HasColumnName("client_id");
+                        .HasColumnName("clients_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<int?>("CreditLimit")
@@ -1126,7 +1174,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("terms_id");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -1135,14 +1183,13 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("AddedBy")
                         .HasDatabaseName("ix_term_options_added_by");
 
-                    b.HasIndex("ClientId")
-                        .HasDatabaseName("ix_term_options_client_id");
+                    b.HasIndex("ClientsId")
+                        .HasDatabaseName("ix_term_options_clients_id");
 
                     b.HasIndex("TermDaysId")
                         .HasDatabaseName("ix_term_options_term_days_id");
 
                     b.HasIndex("TermsId")
-                        .IsUnique()
                         .HasDatabaseName("ix_term_options_terms_id");
 
                     b.ToTable("term_options", (string)null);
@@ -1155,24 +1202,26 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("TermType")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("term_type");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -1191,32 +1240,34 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<string>("UomCode")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("uom_code");
 
                     b.Property<string>("UomDescription")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("uom_description");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
@@ -1236,6 +1287,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int?>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
@@ -1245,7 +1298,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("company_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<int?>("DepartmentId")
@@ -1253,19 +1306,19 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("department_id");
 
                     b.Property<string>("FullIdNo")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("full_id_no");
 
                     b.Property<string>("Fullname")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("fullname");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<bool>("IsPasswordChanged")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_password_changed");
 
                     b.Property<int?>("LocationId")
@@ -1273,15 +1326,15 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("location_id");
 
                     b.Property<string>("Password")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("password");
 
                     b.Property<string>("ProfilePicture")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("profile_picture");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.Property<int?>("UserRolesId")
@@ -1289,7 +1342,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnName("user_roles_id");
 
                     b.Property<string>("Username")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("username");
 
                     b.HasKey("Id")
@@ -1297,7 +1350,8 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("AddedBy")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_added_by");
+                        .HasDatabaseName("ix_users_added_by")
+                        .HasFilter("[added_by] IS NOT NULL");
 
                     b.HasIndex("CompanyId")
                         .HasDatabaseName("ix_users_company_id");
@@ -1321,32 +1375,34 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("modified_by");
 
                     b.Property<string>("Permissions")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("permissions");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
+                        .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("UserRoleName")
-                        .HasColumnType("longtext")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("user_role_name");
 
                     b.HasKey("Id")
@@ -1366,12 +1422,14 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_active");
 
                     b.Property<bool>("IsSubjectToApproval")
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("bit")
                         .HasColumnName("is_subject_to_approval");
 
                     b.Property<decimal>("MaximumAmount")
@@ -1494,10 +1552,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasForeignKey("StoreTypeId")
                         .HasConstraintName("fk_clients_store_types_store_type_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.Terms", "Term")
+                    b.HasOne("RDF.Arcana.API.Domain.TermOptions", "Term")
                         .WithMany()
                         .HasForeignKey("Terms")
-                        .HasConstraintName("fk_clients_terms_term_id");
+                        .HasConstraintName("fk_clients_term_options_term_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.User", null)
                         .WithMany("Clients")
@@ -1835,9 +1893,7 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasOne("RDF.Arcana.API.Domain.Clients", "Clients")
                         .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
+                        .HasForeignKey("ClientsId")
                         .HasConstraintName("fk_term_options_clients_clients_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.TermDays", "TermDays")
@@ -1846,8 +1902,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_term_options_term_days_term_days_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.Terms", "Terms")
-                        .WithOne("TermOptions")
-                        .HasForeignKey("RDF.Arcana.API.Domain.TermOptions", "TermsId")
+                        .WithMany("TermOptions")
+                        .HasForeignKey("TermsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_term_options_terms_terms_id");

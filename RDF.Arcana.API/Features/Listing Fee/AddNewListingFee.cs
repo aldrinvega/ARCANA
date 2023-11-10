@@ -24,10 +24,6 @@ public class AddNewListingFee : ControllerBase
     [HttpPost("AddNewListingFee")]
     public async Task<IActionResult> AddNewListingFeeRequest([FromBody] AddNewListingFeeCommand command)
     {
-        //Clarify other validation
-        //1 item per request?
-        //Only once can item be requested? etc
-
         var response = new QueryOrCommandResult<object>();
         try
         {
@@ -71,7 +67,6 @@ public class AddNewListingFee : ControllerBase
             public int ItemId { get; set; }
             public int Sku { get; set; }
             public decimal UnitCost { get; set; }
-            public int Quantity { get; set; }
         }
     }
 
@@ -121,8 +116,7 @@ public class AddNewListingFee : ControllerBase
                          ListingFeeId = listingFee.Id,
                          ItemId = items.ItemId,
                          Sku = items.Sku,
-                         UnitCost = items.UnitCost,
-                         Quantity = items.Quantity
+                         UnitCost = items.UnitCost
                      }))
             {
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);

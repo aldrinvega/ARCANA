@@ -5,10 +5,24 @@ namespace RDF.Arcana.API.Domain;
 
 public class Clients : BaseEntity
 {
+    private DateTime dateOfBirth;
     public string Fullname { get; set; }
     public int OwnersAddressId { get; set; }
     public string PhoneNumber { get; set; }
-    public DateOnly DateOfBirth { get; set; }
+
+    [NotMapped]
+    public DateOnly DateOfBirthDB
+    {
+        get => DateOnly.FromDateTime(dateOfBirth);
+        set => dateOfBirth = new DateTime(value.Year, value.Month, value.Day);
+    }
+
+    public DateTime DateOfBirth
+    {
+        get => dateOfBirth;
+        private set => dateOfBirth = value;
+    }
+
     public string EmailAddress { get; set; }
     public string BusinessName { get; set; }
     public string TinNumber { get; set; }
@@ -56,7 +70,7 @@ public class Clients : BaseEntity
     public virtual StoreType StoreType { get; set; }
     public virtual BookingCoverages BookingCoverages { get; set; }
     public virtual ModeOfPayment ModeOfPayments { get; set; }
-    public virtual Terms Term { get; set; }
+    public virtual TermOptions Term { get; set; }
     public virtual OwnersAddress OwnersAddress { get; set; }
     public virtual BusinessAddress BusinessAddress { get; set; }
 }

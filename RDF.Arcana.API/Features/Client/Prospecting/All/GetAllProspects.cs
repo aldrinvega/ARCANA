@@ -161,7 +161,7 @@ public class GetAllProspects : ControllerBase
                 .ThenInclude(fi => fi.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .Include(terms => terms.Term)
-                .ThenInclude(to => to.TermOptions)
+                .ThenInclude(to => to.Terms)
                 .Where(x => x.Origin == "Prospecting");
 
             if (!string.IsNullOrEmpty(request.RegistrationStatus))

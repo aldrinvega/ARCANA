@@ -6,8 +6,8 @@ public class ListingFee : BaseEntity
 {
     public int ClientId { get; set; }
     public int ApprovalsId { get; set; }
-    public DateOnly CratedAt { get; set; } = DateOnly.FromDateTime(DateTime.Today);
-    public bool IsActive { get; set; }
+    public DateTime CratedAt { get; set; } = DateTime.UtcNow;
+    public bool IsActive { get; set; } = true;
     public bool IsDelivered { get; set; }
     public string Status { get; set; }
     public int RequestedBy { get; set; }

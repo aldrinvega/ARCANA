@@ -22,7 +22,6 @@ public class AddNewUser : ControllerBase
         _mediator = mediator;
     }
 
-
     [HttpPost]
     [Route("AddNewUser")]
     public async Task<ActionResult> Add([FromBody] AddNewUserCommand command)
@@ -100,16 +99,6 @@ public class AddNewUser : ControllerBase
                     throw new UserAlreadyExistException();
                 }
 
-                await using var stream = command.ProfilePicture.OpenReadStream();
-
-                var attachmentParams = new ImageUploadParams
-                {
-                    File = new FileDescription(command.ProfilePicture.FileName, stream),
-                    PublicId = $"{command.Username}/{command.ProfilePicture.FileName}"
-                };
-
-                var attachmentResult = await _cloudinary.UploadAsync(attachmentParams);
-
                 var user = new User
                 {
                     FullIdNo = command.FullIdNo,
@@ -120,10 +109,26 @@ public class AddNewUser : ControllerBase
                     LocationId = command.LocationId,
                     DepartmentId = command.DepartmentId,
                     UserRolesId = command.UserRoleId,
-                    IsActive = true,
-                    ProfilePicture = attachmentResult.SecureUrl.ToString()
+                    IsActive = true
                 };
-                await _context.Users.AddAsync(user, cancellationToken);
+
+
+                if (command.ProfilePicture != null)
+                {
+                    await using var stream = command.ProfilePicture.OpenReadStream();
+
+                    var attachmentParams = new ImageUploadParams
+                    {
+                        File = new FileDescription(command.ProfilePicture.FileName, stream),
+                        PublicId = $"{command.Username}/{command.ProfilePicture.FileName}"
+                    };
+
+                    var attachmentResult = await _cloudinary.UploadAsync(attachmentParams);
+                    user.ProfilePicture = attachmentResult.SecureUrl.ToString();
+                }
+
+                _context.Users.Add(user);
+                var id = user.Id;
                 await _context.SaveChangesAsync(cancellationToken);
                 return Unit.Value;
             }

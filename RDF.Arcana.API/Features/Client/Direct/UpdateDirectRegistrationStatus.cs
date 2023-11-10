@@ -15,12 +15,16 @@ public class UpdateDirectRegistrationStatus : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPatch("UpdateDirectRegisteredClientStatus")]
-    public async Task<IActionResult> UpdateDirectRegisteredClientStatus(UpdateDirectRegistrationCommand command)
+    [HttpPatch("UpdateDirectRegisteredClientStatus/{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id)
     {
         var response = new QueryOrCommandResult<object>();
         try
         {
+            var command = new UpdateDirectRegisteredClientStatusCommand
+            {
+                ClientId = id
+            };
             await _mediator.Send(command);
             return Ok();
         }
@@ -30,12 +34,12 @@ public class UpdateDirectRegistrationStatus : ControllerBase
         }
     }
 
-    public class UpdateDirectRegistrationCommand : IRequest<Unit>
+    public class UpdateDirectRegisteredClientStatusCommand : IRequest<Unit>
     {
         public int ClientId { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateDirectRegistrationCommand, Unit>
+    public class Handler : IRequestHandler<UpdateDirectRegisteredClientStatusCommand, Unit>
     {
         private readonly DataContext _context;
 
@@ -44,7 +48,8 @@ public class UpdateDirectRegistrationStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateDirectRegistrationCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateDirectRegisteredClientStatusCommand request,
+            CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId,
                 cancellationToken: cancellationToken);

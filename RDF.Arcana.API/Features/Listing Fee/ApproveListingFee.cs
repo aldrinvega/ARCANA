@@ -33,6 +33,11 @@ public class ApproveListingFee : ControllerBase
             }
 
             var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
         catch (System.Exception e)

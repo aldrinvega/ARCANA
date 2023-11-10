@@ -10,4 +10,10 @@ public static class Status
     //For Prospecting
 
     public const string ApproverApproval = "Approver Approval";
+
+    public const string UNDER_REVIEW = "Under review";
+    public const string APPROVED = "Approved";
+    public const string REJECTED = "Rejected";
+
+    public const string FOR_LISTING_FEE_APPROVAL = "For listing fee approval";
 }

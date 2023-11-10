@@ -21,7 +21,7 @@ public static class RegularClientsMappingProfile
                 Province = regularClients.OwnersAddress.Province
             },
             PhoneNumber = regularClients.PhoneNumber,
-            DateOfBirth = regularClients.DateOfBirth,
+            DateOfBirth = regularClients.DateOfBirthDB,
             TinNumber = regularClients.TinNumber,
             BusinessName = regularClients.BusinessName,
             BusinessAddress = new GetAllRegularClients.GetAllRegularClientResult.BusinessAddressCollection
@@ -41,13 +41,13 @@ public static class RegularClientsMappingProfile
             DirectDelivery = regularClients.DirectDelivery,
             BookingCoverage = regularClients.BookingCoverages.BookingCoverage,
             ModeOfPayment = regularClients.ModeOfPayments.Payment,
-            Terms = regularClients.Term?.TermOptions != null
+            Terms = regularClients.Terms != null
                 ? new GetAllRegularClients.GetAllRegularClientResult.ClientTerms
                 {
-                    TermId = regularClients.Term.TermOptions.TermsId,
-                    Term = regularClients.Term.TermType,
-                    CreditLimit = regularClients.Term.TermOptions.CreditLimit,
-                    TermDays = regularClients.Term.TermOptions.TermDays.Days
+                    TermId = regularClients.Term.TermsId,
+                    Term = regularClients.Term.Terms.TermType,
+                    CreditLimit = regularClients.Term.CreditLimit,
+                    TermDays = regularClients.Term.TermDays.Days
                 }
                 : null,
             FixedDiscount = new GetAllRegularClients.GetAllRegularClientResult.FixedDiscounts
@@ -84,7 +84,7 @@ public static class RegularClientsMappingProfile
                 }
                 : null,
             PhoneNumber = client.PhoneNumber,
-            DateOfBirth = client.DateOfBirth,
+            DateOfBirth = client.DateOfBirthDB,
             TinNumber = client.TinNumber,
             BusinessName = client.BusinessName,
             BusinessAddress = client.BusinessAddress != null
@@ -106,13 +106,13 @@ public static class RegularClientsMappingProfile
             DirectDelivery = client.DirectDelivery, // Ensure a default value if DirectDelivery can be null
             BookingCoverage = client.BookingCoverages?.BookingCoverage,
             ModeOfPayment = client.ModeOfPayments?.Payment,
-            Terms = client.Term?.TermOptions != null
+            Terms = client.Term != null
                 ? new GetAllProspects.GetAllProspectQueryResult.ClientTerms
                 {
-                    TermId = client.Term.TermOptions.TermsId,
-                    Term = client.Term.TermType,
-                    CreditLimit = client.Term.TermOptions.CreditLimit,
-                    TermDays = client.Term.TermOptions.TermDays.Days
+                    TermId = client.Term.TermsId,
+                    Term = client.Term.Terms.TermType,
+                    CreditLimit = client.Term.CreditLimit,
+                    TermDays = client.Term.TermDays.Days
                 }
                 : null,
             FixedDiscount = client.FixedDiscounts != null
@@ -153,7 +153,7 @@ public static class RegularClientsMappingProfile
                 : null,
             PhoneNumber = client.PhoneNumber,
             EmailAddress = client.EmailAddress,
-            DateOfBirth = client.DateOfBirth,
+            DateOfBirth = client.DateOfBirthDB,
             TinNumber = client.TinNumber,
             BusinessName = client.BusinessName,
             BusinessAddress = client.BusinessAddress != null
@@ -175,13 +175,13 @@ public static class RegularClientsMappingProfile
             DirectDelivery = client.DirectDelivery, // Ensure a default value if DirectDelivery can be null
             BookingCoverage = client.BookingCoverages?.BookingCoverage,
             ModeOfPayment = client.ModeOfPayments?.Payment,
-            Terms = client.Term?.TermOptions != null
+            Terms = client.Term != null
                 ? new GetAllClients.GetAllClientResult.ClientTerms
                 {
-                    TermId = client.Term.TermOptions.TermsId,
-                    Term = client.Term.TermType,
-                    CreditLimit = client.Term.TermOptions?.CreditLimit,
-                    TermDays = client.Term.TermOptions?.TermDays?.Days
+                    TermId = client.Term.TermsId,
+                    Term = client.Term.Terms.TermType,
+                    CreditLimit = client.Term.CreditLimit,
+                    TermDays = client.Term.TermDays?.Days
                 }
                 : null,
             FixedDiscount = client.FixedDiscounts != null

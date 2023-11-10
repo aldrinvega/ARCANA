@@ -28,10 +28,6 @@ public class AddNewListingFeeValidator : AbstractValidator<AddNewListingFee.AddN
                 items.RuleFor(i => i.UnitCost)
                     .NotEmpty().WithMessage("UnitCost must not be empty")
                     .Must(x => true).WithMessage("UnitCost must be a decimal number");
-
-                items.RuleFor(i => i.Quantity)
-                    .NotEmpty().WithMessage("Quantity must not be empty")
-                    .Must(x => true).WithMessage("Quantity must be a number");
             });
     }
 }

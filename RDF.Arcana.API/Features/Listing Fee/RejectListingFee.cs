@@ -1,17 +1,57 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
-public class RejectListingFee
+[Route("api/ListingFee"), ApiController]
+public class RejectListingFee : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public RejectListingFee(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPut("RejectListingFee/{id:int}")]
+    public async Task<IActionResult> RejectListingFees([FromRoute] int id, [FromQuery] int listingFeeId)
+    {
+        try
+        {
+            var command = new RejectListingFeeCommand
+            {
+                ClientId = id,
+                ListingFeeId = listingFeeId
+            };
+
+            if (User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                command.RejectedBy = userId;
+            }
+
+            await _mediator.Send(command);
+            return Ok();
+        }
+        catch (System.Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
     public class RejectListingFeeCommand : IRequest<Unit>
     {
+        public int ClientId { get; set; }
         public int ListingFeeId { get; set; }
+        public int RejectedBy { get; set; }
         public string Reason { get; set; }
     }
 
     public class Handler : IRequestHandler<RejectListingFeeCommand, Unit>
     {
+        private const string FOR_LISTING_FEE_APPROVAL = "For listing fee approval";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -27,8 +67,9 @@ public class RejectListingFee
                 .ThenInclude(x => x.Item)
                 .FirstOrDefaultAsync(
                     x => x.IsActive &&
+                         x.ClientId == request.ClientId &&
                          x.IsApproved == false &&
-                         x.ApprovalType == "For Freebie Approval", cancellationToken);
+                         x.ApprovalType == FOR_LISTING_FEE_APPROVAL, cancellationToken);
 
             if (existingListingFee is null)
             {
@@ -36,16 +77,16 @@ public class RejectListingFee
             }
 
             // Locate the specific FreebieRequest to be Rejected
-            var freebieToReject = existingListingFee.ListingFee
+            var listingFeeToReject = existingListingFee.ListingFee
                 .FirstOrDefault(lf => lf.Id == request.ListingFeeId);
 
-            if (freebieToReject == null)
+            if (listingFeeToReject == null)
             {
                 throw new System.Exception("Freebie Request not found");
             }
 
             // Reject the specific FreebieRequest
-            freebieToReject.Status = "Rejected";
+            listingFeeToReject.Status = "Rejected";
             existingListingFee.Reason = request.Reason;
             existingListingFee.IsApproved = false;
 
