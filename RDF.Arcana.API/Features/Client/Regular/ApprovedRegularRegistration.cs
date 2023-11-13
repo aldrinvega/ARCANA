@@ -71,7 +71,10 @@ public class ApprovedRegularRegistration : ControllerBase
         {
             var forRegularClients = await _context.Approvals
                 .Include(x => x.Client)
-                .Where(x => x.ApprovalType == FOR_REGULAR)
+                .Where(x =>
+                    x.ApprovalType == FOR_REGULAR &&
+                    x.IsActive &&
+                    x.IsApproved == false)
                 .Where(x => x.Client.RegistrationStatus == UNDER_REVIEW)
                 .FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);
 

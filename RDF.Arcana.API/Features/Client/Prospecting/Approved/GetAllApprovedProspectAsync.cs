@@ -129,6 +129,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Clients> approvedProspect = _context.Clients
+                .Include(x => x.RequestedByUser)
                 .Include(x => x.OwnersAddress)
                 .Include(x => x.Approvals)
                 .ThenInclude(x => x.FreebieRequest)

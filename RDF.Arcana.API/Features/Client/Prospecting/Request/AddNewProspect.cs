@@ -59,6 +59,8 @@ public class AddNewProspectResult
     public string PhoneNumber { get; set; }
     public string BusinessName { get; set; }
     public int AddedBy { get; set; }
+    public string EmailAddress { get; set; }
+    public int? StoreTypeId { get; set; }
 
     public class OwnersAddressCollection
     {
@@ -163,6 +165,8 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             },
             PhoneNumber = prospectingClients.PhoneNumber,
             BusinessName = prospectingClients.BusinessName,
+            EmailAddress = prospectingClients.EmailAddress,
+            StoreTypeId = prospectingClients.StoreTypeId,
             AddedBy = prospectingClients.AddedBy
         };
     }

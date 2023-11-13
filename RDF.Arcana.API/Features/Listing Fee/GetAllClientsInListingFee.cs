@@ -115,7 +115,8 @@ public class GetAllClientsInListingFee : ControllerBase
             if (request.IncludeRejected == false)
             {
                 clientsListingFee = clientsListingFee.Where(x =>
-                    x.RegistrationStatus == APPROVED || x.RegistrationStatus == UNDER_REVIEW);
+                    x.RegistrationStatus == APPROVED ||
+                    x.RegistrationStatus == UNDER_REVIEW);
             }
 
             var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());

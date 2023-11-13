@@ -60,6 +60,7 @@ public class UpdateDirectRegistrationStatus : ControllerBase
             }
 
             existingClient.IsActive = !existingClient.IsActive;
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

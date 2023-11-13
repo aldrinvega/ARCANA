@@ -13,274 +13,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14d24d4b-614d-4a1c-b710-001ebffff5a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/02e91ef4-431c-4960-b526-fd753a817324.vsidx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/231b41df-c5a2-4d11-85c6-c5efdaefcf65.vsidx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/a6867df9-a5fb-45d8-94da-43d2fca0b5a1.vsidx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/bf95d113-6093-4048-9cb3-f46a9cfba636.vsidx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationErrors.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/FreebieErrors.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/ItemErrors.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations-1.rar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Azure.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Azure.Identity.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Bcl.AsyncInterfaces.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Data.SqlClient.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Data.Sqlite.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.EntityFrameworkCore.SqlServer.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Extensions.Configuration.Binder.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Identity.Client.Extensions.Msal.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Identity.Client.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.SqlServer.Server.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/NHiLo.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Oracle.ManagedDataAccess.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/SQLitePCLRaw.core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Diagnostics.PerformanceCounter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.DirectoryServices.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.DirectoryServices.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Memory.Data.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Runtime.Caching.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Azure.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Azure.Identity.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Bcl.AsyncInterfaces.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Data.SqlClient.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Data.Sqlite.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.EntityFrameworkCore.SqlServer.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Extensions.Configuration.Binder.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Identity.Client.Extensions.Msal.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Identity.Client.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.SqlServer.Server.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/NHiLo.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Oracle.ManagedDataAccess.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/SQLitePCLRaw.core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Diagnostics.PerformanceCounter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.DirectoryServices.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.DirectoryServices.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Memory.Data.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Runtime.Caching.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Azure.Core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Azure.Identity.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Bcl.AsyncInterfaces.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Data.SqlClient.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Data.Sqlite.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.EntityFrameworkCore.SqlServer.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Extensions.Configuration.Binder.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Identity.Client.Extensions.Msal.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Identity.Client.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Abstractions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.SqlServer.Server.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/NHiLo.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Oracle.ManagedDataAccess.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/SQLitePCLRaw.core.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Diagnostics.PerformanceCounter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.DirectoryServices.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.DirectoryServices.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Memory.Data.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Runtime.Caching.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/linux/lib/net6.0/System.DirectoryServices.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/osx/lib/net6.0/System.DirectoryServices.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/unix/lib/netcoreapp3.1/Microsoft.Data.SqlClient.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net6.0/System.Diagnostics.PerformanceCounter.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net6.0/System.DirectoryServices.Protocols.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net6.0/System.DirectoryServices.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net7.0/Microsoft.Win32.SystemEvents.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Drawing.Common.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Security.Cryptography.ProtectedData.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/net7.0/System.Windows.Extensions.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/netcoreapp3.1/Microsoft.Data.SqlClient.dll" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/netstandard2.0/System.Runtime.Caching.dll" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUserErrors.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/AuthenticateMappingExtension.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/RejectClient.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/VoidClient.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/6891749f-83d5-42d5-bad6-9a60d992b86c.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/ac2b42f1-1bf2-4dfb-b352-0c2bf33b1752.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/FileContentIndex/f1c7ceae-bfed-4c82-8279-35d6f27b3757.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/RDF.Aracana/v17/.suo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/DataContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Clients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFeeItems.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/ListingFeeItems.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TermOptions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Terms.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Common/QueryOrCommandResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/QueryOrCommandResult.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Authenticate/AuthenticateUser.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/GetAllClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/GetAllClients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/AddAttachmentsForRegularClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/AddAttachmentsForDirectClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationMappingExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistrationMappingExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/GetAllDirectRegistrationClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/GetAllDirectRegistrationClients.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/UpdateDirectRegistrationStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/UpdateDirectRegistrationStatus.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Errors/ClientErrors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Errors/ClientErrors.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/All/GetAllProspects.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/All/GetAllProspects.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Approved/GetAllApprovedProspectAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/AddTermsAndCondition.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/ProspectingMappingProfiles.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Request/AddNewProspect.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/GetAllRegularClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/GetAllRegularClients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/RegularClientsMappingProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/RegularClientsMappingProfile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFeeValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFeeValidator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/GetAllClientsInListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/GetAllClientsInListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/GetAllListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/GetAllListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ListingFeeMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ListingFeeMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/RejectListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/RejectListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/UpdateListingFeeInformation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/UpdateListingFeeInformation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewVariableDiscount.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewVariableDiscount.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/AddNewUser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/AddNewUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230831005439_InitialCreate.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230831005439_InitialCreate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231110074541_InitialCreate.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230901014035_AddTermOptionsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230901014035_AddTermOptionsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230901015305_AddClientIdonTermsOptionsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230901015305_AddClientIdonTermsOptionsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911005549_AddFixedDiscountRelatedEntities.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911005549_AddFixedDiscountRelatedEntities.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911013043_AdjustDiscountOnClientEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230911013043_AdjustDiscountOnClientEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230912023626_AddMisingFieldsOnBookingCoverage.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230912023626_AddMisingFieldsOnBookingCoverage.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230914081100_AdjustFreebieEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20230914081100_AdjustFreebieEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231004050852_AddPinLocation.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231004050852_AddPinLocation.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231009080231_AdjustNullableTermOptionCreditOptions.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231009080231_AdjustNullableTermOptionCreditOptions.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231013060312_AddIsActiveonTermsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231013060312_AddIsActiveonTermsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231014121528_AddListingFeeAndListingFeeitemsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231014121528_AddListingFeeAndListingFeeitemsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231014130404_AddStatusAndIsDeliveredAndTotalToListingFeeEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231014130404_AddStatusAndIsDeliveredAndTotalToListingFeeEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231017021653_AddItemRelationshiptoListingFeeItems.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231017021653_AddItemRelationshiptoListingFeeItems.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019032933_AdjustApprovalsRelationshipToFreebieRequest.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019032933_AdjustApprovalsRelationshipToFreebieRequest.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019090120_AddCreatedAtOnFreebieRequestEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019090120_AddCreatedAtOnFreebieRequestEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019094447_AddCreatedATToApprovalsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019094447_AddCreatedATToApprovalsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021043752_AddNewFieldsToClientsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021043752_AddNewFieldsToClientsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021070158_AddOwnersAndBusinessAddressEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021070158_AddOwnersAndBusinessAddressEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021080935_AdjustApprovalsListingFeeRelationship.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021080935_AdjustApprovalsListingFeeRelationship.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021081755_NullableBusinessAddressInClientEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231021081755_NullableBusinessAddressInClientEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023025156_NullableApprovedByInListingFeeEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023025156_NullableApprovedByInListingFeeEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023030540_NullableApprovedByInApprovalsEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023030540_NullableApprovedByInApprovalsEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023065632_AdjustTermsAndConditionEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023065632_AdjustTermsAndConditionEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023083614_AddOriginToClientEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231023083614_AddOriginToClientEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231024090149_AdjustDiscountPercentageInFixedDIscountEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231024090149_AdjustDiscountPercentageInFixedDIscountEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231026073105_AddUserPasswordHistory.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231026073105_AddUserPasswordHistory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027024727_AddIsActiveOnVariableDiscount.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027024727_AddIsActiveOnVariableDiscount.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027031022_AdjustVariableDiscountDecimal.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027031022_AdjustVariableDiscountDecimal.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027055336_AddFullIdNoOnUserEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027055336_AddFullIdNoOnUserEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027080800_AdjustUsersUserRoleRelationship.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027080800_AdjustUsersUserRoleRelationship.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027101004_AddLockOutMechanismToAuthentication.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231027101004_AddLockOutMechanismToAuthentication.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231030192910_RemovePasswordRelatedEntities.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231110074541_InitialCreate.Designer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231030192910_RemovePasswordRelatedEntities.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231107082306_AdjustTermOptionsRelationshiptoTerms.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231107082306_AdjustTermOptionsRelationshiptoTerms.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/DataContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.JsonWebTokens.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.JsonWebTokens.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Logging.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Logging.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Protocols.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Protocols.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Tokens.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.IdentityModel.Tokens.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Win32.SystemEvents.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/Microsoft.Win32.SystemEvents.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/MySqlConnector.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/MySqlConnector.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Department/AddNewDepartment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Department/AddNewDepartment.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/RDF.Arcana.API.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Configuration.ConfigurationManager.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Configuration.ConfigurationManager.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Drawing.Common.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Drawing.Common.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.IdentityModel.Tokens.Jwt.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.IdentityModel.Tokens.Jwt.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Security.Cryptography.ProtectedData.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Security.Cryptography.ProtectedData.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Security.Permissions.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Security.Permissions.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Windows.Extensions.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/System.Windows.Extensions.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.JsonWebTokens.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.JsonWebTokens.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Logging.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Logging.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Protocols.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Protocols.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Tokens.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.IdentityModel.Tokens.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Win32.SystemEvents.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/Microsoft.Win32.SystemEvents.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/MySqlConnector.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/MySqlConnector.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.deps.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Configuration.ConfigurationManager.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Configuration.ConfigurationManager.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Drawing.Common.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Drawing.Common.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.IdentityModel.Tokens.Jwt.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.IdentityModel.Tokens.Jwt.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Security.Cryptography.ProtectedData.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Security.Cryptography.ProtectedData.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Security.Permissions.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Security.Permissions.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Windows.Extensions.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/System.Windows.Extensions.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.JsonWebTokens.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.JsonWebTokens.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Logging.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Logging.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Protocols.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Protocols.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Tokens.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.IdentityModel.Tokens.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Win32.SystemEvents.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/Microsoft.Win32.SystemEvents.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/MySqlConnector.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/MySqlConnector.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.deps.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/RDF.Arcana.API.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Configuration.ConfigurationManager.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Configuration.ConfigurationManager.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Drawing.Common.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Drawing.Common.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.IdentityModel.Tokens.Jwt.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.IdentityModel.Tokens.Jwt.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Security.Cryptography.ProtectedData.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Security.Cryptography.ProtectedData.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Security.Permissions.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Security.Permissions.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Windows.Extensions.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/System.Windows.Extensions.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/linux-x64/publish/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/netcoreapp3.0/System.Windows.Extensions.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/bin/Debug/net7.0/runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.csproj.FileListAbsolute.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/RDF.Arcana.API.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/PublishOutputs.e9d283d569.txt" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/PublishOutputs.e9d283d569.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.csproj.AssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.deps.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/RDF.Arcana.API.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/ref/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/ref/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/refint/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/linux-x64/refint/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/ref/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/ref/RDF.Arcana.API.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/refint/RDF.Arcana.API.dll" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/Debug/net7.0/refint/RDF.Arcana.API.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/RDF.Arcana.API.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/project.packagespec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/obj/rider.project.restore.info" afterDir="false" />
     </list>
@@ -356,8 +120,7 @@
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllApprovedFreebies.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/GetAllFreebies.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019090120_AddCreatedAtOnFreebieRequestEntity.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Migrations/20231019094447_AddCreatedATToApprovalsEntity.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/avega/RiderProjects/ARCANA/RDF.Arcana.API/Features/Setup/Discount/AddNewVariableDiscount.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/appsettings.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.Unit.Test/GetAllFreebiesTests.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/RDF.Arcana.Unit.Test/obj/Debug/net7.0/linux-x64/.NETCoreApp,Version=v7.0.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
@@ -561,15 +324,8 @@
       <workItem from="1699082920217" duration="3969000" />
       <workItem from="1699194914219" duration="4599000" />
       <workItem from="1699200081041" duration="62865000" />
-      <workItem from="1699413856420" duration="62549000" />
-    </task>
-    <task id="LOCAL-00026" summary="Refined status checks in prospect feature&#10;&#10;Enhanced the status checks in the prospecting feature for more accurate queries. Changed the attribute in the 'UpdateRejectProspectStatus.cs' file from 'ApprovalType' to 'Client.RegistrationStatus' in order to specifically check if the client's registration is rejected. The 'GetAllRequestedProspectAsync.cs' file has been updated to include an additional condition to the `requestedProspect` query. The query now also checks if the `Client.RegistrationStatus` is 'Requested' along with other conditions. All these changes are designed to ensure only relevant results are considered during the queries process, enhancing the overall efficiency of the prospecting feature.">
-      <option name="closed" value="true" />
-      <created>1691376633374</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1691376633374</updated>
+      <workItem from="1699413856420" duration="63405000" />
+      <workItem from="1699832721618" duration="19449000" />
     </task>
     <task id="LOCAL-00027" summary="Refined query filters for prospect retrieval&#10;&#10;The query filters used in GetAllRejectProspectAsync and GetAllApprovedProspectAsync methods in the Client prospecting feature have been modified. Removed the IsActive and IsApproved conditions from the Rejected prospects retrieval, as they were deemed unnecessary. Added IsActive and IsApproved conditions to Approved prospects retrieval to ensure only active and approved prospects are returned. These changes optimize prospect data retrieval and ensure data accuracy.">
       <option name="closed" value="true" />
@@ -955,7 +711,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699359695731</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="Refactor code and update variable names for clarity across features&#10;&#10;In this commit, a major cleanup operation was performed to improve code readability, maintainability, and congruity. Variable names were refactored to increase understanding of their function. This will make it easier for other developers to understand and cooperate with the codebase. For instance, 'LowerBound' and 'UpperBound' were modified to 'MinimumAmount' and 'MaximumAmount'. Validation rules were also updated after some conditions were changed. Moreover, in cases where profile pictures were not necessary, the ProfilePicture attachment code was shifted inside a conditional block to execute only when required. Additionally, refactoring also included optimization of imports and removal of unnecessary comments. Code restructuring was also done in areas where it improved readability. Renaming was also performed for class files to mirror their actual functionality more accurately.">
+      <option name="closed" value="true" />
+      <created>1699614142708</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1699614142712</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1010,7 +774,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Update" />
     <MESSAGE value="Major Adjustments" />
     <MESSAGE value="Migration Update" />
     <MESSAGE value="Adjustment on Get Methods (Aba Teka)" />
@@ -1035,7 +798,8 @@
     <MESSAGE value="Adjustments" />
     <MESSAGE value="Add LockOut mechanism to Authentication system&#10;&#10;New columns, 'access_failed_count' and 'lockout_end', were added to the 'users' table in order to support the implementation of a lockout mechanism in the API authentication system. This addition helps enhance system security by blocking user accounts after multiple failed login attempts. &#10;&#10;'Migrations/20231027101004_AddLockOutMechanismToAuthentication.cs' and 'Migrations/20231027101004_AddLockOutMechanismToAuthentication.Designer.cs' files were added to handle the database migration required for this change." />
     <MESSAGE value="Update FluentValidation version and remove unnecessary codes&#10;&#10;Removed FluentValidation.AspNetCore package as it was not necessary. Updated FluentValidation package version to 11.8.0 for better performance and new features. Removed commented-out code from ValidationBehavior.cs and others to declutter the codebase. Also, updated some code for better user feedback and clarity, and added migration for adjusting term options relationship to terms." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update FluentValidation version and remove unnecessary codes&#10;&#10;Removed FluentValidation.AspNetCore package as it was not necessary. Updated FluentValidation package version to 11.8.0 for better performance and new features. Removed commented-out code from ValidationBehavior.cs and others to declutter the codebase. Also, updated some code for better user feedback and clarity, and added migration for adjusting term options relationship to terms." />
+    <MESSAGE value="Refactor code and update variable names for clarity across features&#10;&#10;In this commit, a major cleanup operation was performed to improve code readability, maintainability, and congruity. Variable names were refactored to increase understanding of their function. This will make it easier for other developers to understand and cooperate with the codebase. For instance, 'LowerBound' and 'UpperBound' were modified to 'MinimumAmount' and 'MaximumAmount'. Validation rules were also updated after some conditions were changed. Moreover, in cases where profile pictures were not necessary, the ProfilePicture attachment code was shifted inside a conditional block to execute only when required. Additionally, refactoring also included optimization of imports and removal of unnecessary comments. Code restructuring was also done in areas where it improved readability. Renaming was also performed for class files to mirror their actual functionality more accurately." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor code and update variable names for clarity across features&#10;&#10;In this commit, a major cleanup operation was performed to improve code readability, maintainability, and congruity. Variable names were refactored to increase understanding of their function. This will make it easier for other developers to understand and cooperate with the codebase. For instance, 'LowerBound' and 'UpperBound' were modified to 'MinimumAmount' and 'MaximumAmount'. Validation rules were also updated after some conditions were changed. Moreover, in cases where profile pictures were not necessary, the ProfilePicture attachment code was shifted inside a conditional block to execute only when required. Additionally, refactoring also included optimization of imports and removal of unnecessary comments. Code restructuring was also done in areas where it improved readability. Renaming was also performed for class files to mirror their actual functionality more accurately." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -1084,120 +848,107 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs</url>
-          <line>82</line>
+          <line>83</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\ApproveListingFee.cs" initialLine="69" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2434" />
+              <option value="2435" />
             </startOffsets>
             <endOffsets>
-              <option value="2886" />
+              <option value="2887" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs</url>
-          <line>90</line>
+          <line>91</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\ApproveListingFee.cs" initialLine="76" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2900" />
+              <option value="2901" />
             </startOffsets>
             <endOffsets>
-              <option value="2943" />
+              <option value="2944" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs</url>
-          <line>92</line>
+          <line>93</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\ApproveListingFee.cs" initialLine="78" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2974" />
+              <option value="2975" />
             </startOffsets>
             <endOffsets>
-              <option value="3023" />
+              <option value="3024" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs</url>
-          <line>95</line>
+          <line>96</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\ApproveListingFee.cs" initialLine="88" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="3121" />
+              <option value="3122" />
             </startOffsets>
             <endOffsets>
-              <option value="3190" />
+              <option value="3191" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs</url>
-          <line>97</line>
+          <line>98</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\ApproveListingFee.cs" initialLine="90" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="3229" />
+              <option value="3230" />
             </startOffsets>
             <endOffsets>
-              <option value="3272" />
+              <option value="3273" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs</url>
-          <line>98</line>
+          <line>99</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\ApproveListingFee.cs" initialLine="91" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="3293" />
+              <option value="3294" />
             </startOffsets>
             <endOffsets>
-              <option value="3322" />
+              <option value="3323" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/UpdateListingFeeInformation.cs</url>
-          <line>69</line>
+          <line>68</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\UpdateListingFeeInformation.cs" initialLine="68" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2241" />
+              <option value="2222" />
             </startOffsets>
             <endOffsets>
-              <option value="2528" />
+              <option value="2509" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/UpdateListingFeeInformation.cs</url>
-          <line>81</line>
+          <line>80</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Listing Fee\UpdateListingFeeInformation.cs" initialLine="78" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2845" />
+              <option value="2826" />
             </startOffsets>
             <endOffsets>
-              <option value="2926" />
+              <option value="2907" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs</url>
-          <line>201</line>
-          <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Client\Direct\DirectRegistration.cs" initialLine="220" containingFunctionPresentation="Method 'Handle'">
-            <startOffsets>
-              <option value="8800" />
-            </startOffsets>
-            <endOffsets>
-              <option value="8800" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="30" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Discount/AddNewVariableDiscount.cs</url>
@@ -1217,36 +968,36 @@
           <line>88</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Client\Direct\AddAttachmentsForDirectClient.cs" initialLine="90" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2836" />
+              <option value="2815" />
             </startOffsets>
             <endOffsets>
-              <option value="2868" />
+              <option value="2847" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="40" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/AddAttachmentsForDirectClient.cs</url>
-          <line>89</line>
+          <line>90</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Client\Direct\AddAttachmentsForDirectClient.cs" initialLine="91" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="2958" />
+              <option value="2953" />
             </startOffsets>
             <endOffsets>
-              <option value="3056" />
+              <option value="3051" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/AddAttachmentsForDirectClient.cs</url>
-          <line>93</line>
+          <line>94</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Client\Direct\AddAttachmentsForDirectClient.cs" initialLine="95" containingFunctionPresentation="Method 'Handle'">
             <startOffsets>
-              <option value="3168" />
+              <option value="3163" />
             </startOffsets>
             <endOffsets>
-              <option value="3456" />
+              <option value="3451" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="42" />
@@ -1256,10 +1007,10 @@
           <line>32</line>
           <properties documentPath="C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\Features\Client\Direct\AddAttachmentsForDirectClient.cs" initialLine="34" containingFunctionPresentation="Method 'AddRequirementForRegularClients'">
             <startOffsets>
-              <option value="981" />
+              <option value="960" />
             </startOffsets>
             <endOffsets>
-              <option value="1011" />
+              <option value="990" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="43" />

@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 
@@ -26,11 +28,18 @@ public class GetAllClients : ControllerBase
     {
         try
         {
-            /*var validationResult = await _validator.ValidateAsync(query);
-            if (!validationResult.IsValid)
+            if (User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
             {
-                return BadRequest(validationResult);
-            }*/
+                query.AccessBy = userId;
+
+                var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (roleClaim != null)
+                {
+                    query.RoleName = roleClaim.Value;
+                }
+            }
 
             var regularClient = await _mediator.Send(query);
             Response.AddPaginationHeader(
@@ -70,6 +79,8 @@ public class GetAllClients : ControllerBase
         public string RegistrationStatus { get; set; }
         public string StoreType { get; set; }
         public string Origin { get; set; }
+        public int AccessBy { get; set; }
+        public string RoleName { get; set; }
     }
 
     public class GetAllClientResult
@@ -137,6 +148,7 @@ public class GetAllClients : ControllerBase
             public string Term { get; set; }
             public int? CreditLimit { get; set; }
             public int? TermDays { get; set; }
+            public int? TermDaysId { get; set; }
         }
     }
 
@@ -146,6 +158,7 @@ public class GetAllClients : ControllerBase
         private const string APPROVED = "Approved";
         private const string UNDER_REVIEW = "Under review";
         private const string REJECTED = "Rejected";
+        private const string APPROVER = "Approver";
         private readonly DataContext _context;
 
         public Handler(DataContext context)
@@ -165,6 +178,11 @@ public class GetAllClients : ControllerBase
                     x.StoreType.StoreTypeName.Contains(request.Search) ||
                     x.Fullname.Contains(request.Search)
                 );
+            }
+
+            if (request.RoleName != APPROVER)
+            {
+                regularClients = regularClients.Where(x => x.AddedBy == request.AccessBy);
             }
 
             if (!string.IsNullOrWhiteSpace(request.RegistrationStatus))
@@ -232,6 +250,7 @@ public class GetAllClients : ControllerBase
                         TermId = client.Term.TermsId,
                         Term = client.Term.Terms.TermType,
                         CreditLimit = client.Term.CreditLimit,
+                        TermDaysId = client.Term.TermDaysId,
                         TermDays = client.Term.TermDays.Days
                     }
                     : null,

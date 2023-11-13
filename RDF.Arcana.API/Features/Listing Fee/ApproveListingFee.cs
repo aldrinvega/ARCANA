@@ -82,45 +82,43 @@ public class ApproveListingFee : ControllerBase
             CancellationToken cancellationToken)
         {
             var existingApprovalsForListingFee = await _context.Approvals
-                .Include(approver => approver.ApproveByUser)
                 .Include(listingFee => listingFee.ListingFee)
                 .ThenInclude(listingFeeItems => listingFeeItems.ListingFeeItems)
                 .ThenInclude(X => X.Item)
                 .ThenInclude(X => X.Uom)
                 .FirstOrDefaultAsync(approval => approval.Id == request.ApprovalId, cancellationToken);
 
-            if (existingApprovalsForListingFee != null)
+            if (existingApprovalsForListingFee == null)
             {
-                existingApprovalsForListingFee.IsApproved = true;
-                existingApprovalsForListingFee.ApprovedBy = request.ApprovedBy;
-
-                foreach (var listingFee in existingApprovalsForListingFee.ListingFee)
-                {
-                    listingFee.ApprovedBy = request.ApprovedBy;
-                    listingFee.Status = APPROVED;
-                }
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                var result = new ApprovedListingFeeResult
-                {
-                    Id = existingApprovalsForListingFee.Id,
-                    Status = APPROVED,
-                    ApprovedBy = existingApprovalsForListingFee.ApproveByUser.Fullname,
-                    ListingFeeItems = existingApprovalsForListingFee.ListingFee.SelectMany(lf =>
-                        lf.ListingFeeItems.Select(lfi => new ApprovedListingFeeResult.ListingFeeItem
-                        {
-                            ItemCode = lfi.Item.ItemCode,
-                            ItemDescription = lfi.Item.ItemDescription,
-                            Uom = lfi.Item.Uom.UomCode,
-                            Total = lf.Total
-                        })).ToList()
-                };
-
-                return Result<ApprovedListingFeeResult>.Success(result, "Listing Fee approved successfully");
+                return Result<ApprovedListingFeeResult>.Failure(ListingFeeErrors.NotFound());
             }
 
-            return Result<ApprovedListingFeeResult>.Failure(ListingFeeErrors.NotFound());
+            existingApprovalsForListingFee.IsApproved = true;
+            existingApprovalsForListingFee.ApprovedBy = request.ApprovedBy;
+
+            foreach (var listingFee in existingApprovalsForListingFee.ListingFee)
+            {
+                listingFee.ApprovedBy = request.ApprovedBy;
+                listingFee.Status = APPROVED;
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+            var result = new ApprovedListingFeeResult
+            {
+                Id = existingApprovalsForListingFee.Id,
+                Status = APPROVED,
+                ListingFeeItems = existingApprovalsForListingFee.ListingFee.SelectMany(lf =>
+                    lf.ListingFeeItems.Select(lfi => new ApprovedListingFeeResult.ListingFeeItem
+                    {
+                        ItemCode = lfi.Item.ItemCode,
+                        ItemDescription = lfi.Item.ItemDescription,
+                        Uom = lfi.Item.Uom.UomCode,
+                        Total = lf.Total
+                    })).ToList()
+            };
+
+
+            return Result<ApprovedListingFeeResult>.Success(result, "Listing Fee approved successfully");
         }
     }
 }

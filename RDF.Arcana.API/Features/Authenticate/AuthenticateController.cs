@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Features.Authenticate;
 
@@ -20,20 +19,19 @@ public class AuthenticateController : ControllerBase
     public async Task<ActionResult<AuthenticateUser.AuthenticateUserResult>> Authenticate(
         AuthenticateUser.AuthenticateUserQuery request)
     {
-        var response = new QueryOrCommandResult<AuthenticateUser.AuthenticateUserResult>();
         try
         {
             var result = await _mediator.Send(request);
-            response.Data = result;
-            response.Success = true;
-            response.Messages.Add("Log In successfully");
-            return Ok(response);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Success = false;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

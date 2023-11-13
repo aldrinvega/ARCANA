@@ -11,5 +11,8 @@ public class ClientErrors
         new Error("Client.AlreadyRejected", $"{businessName} is already rejected");
 
     public static Error AlreadyExist(string fullname, string businessName) =>
-        new Error("Client.AlreadyRejected", $"{fullname} has already registered a business with {businessName}.");
+        new Error("Client.AlreadyExist", $"{fullname} has already registered a business with {businessName}.");
+
+    public static Error Unauthorized() =>
+        new Error("Client.Unauthorized", "You are not authorized to reject this client");
 }
