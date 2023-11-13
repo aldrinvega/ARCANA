@@ -1,8 +1,0 @@
-POST http://localhost:5278/api/ListingFee/AddNewListingFee
-Content-Length: 0
-Connection: Keep-Alive
-User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8)
-Accept-Encoding: br,deflate,gzip,x-gzip
-
-###
-
