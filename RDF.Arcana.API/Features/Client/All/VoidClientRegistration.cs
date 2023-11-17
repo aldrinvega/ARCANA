@@ -6,17 +6,17 @@ using RDF.Arcana.API.Features.Client.Errors;
 namespace RDF.Arcana.API.Features.Client.All;
 
 [Route("api/Clients"), ApiController]
-public class VoidClient : ControllerBase
+public class VoidClientRegistration : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public VoidClient(IMediator mediator)
+    public VoidClientRegistration(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpPut("VoidClientRegistration/{clientId:int}")]
-    public async Task<IActionResult> VoidClientRegistration(int clientId)
+    public async Task<IActionResult> VoidClient(int clientId)
     {
         try
         {
@@ -53,12 +53,8 @@ public class VoidClient : ControllerBase
 
     public class Handler : IRequestHandler<VoidClientCommand, Result<VoidClientResult>>
     {
-        private const string VOIDED = "Voided";
-        private const string DIRECT_REGISTRATION_APPROVAL = "Direct Registration Approval";
-        private const string FOR_REGULAR_APPROVAL = "For regular approval";
-        private readonly DataContext _context;
-
-        public Handler(DataContext context)
+        private readonly ArcanaDbContext _context;
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -69,7 +65,8 @@ public class VoidClient : ControllerBase
             var existingClient = await _context.Clients
                 .Include(ap => ap.Approvals)
                 .Where(at => at.Approvals.Any(x =>
-                    x.ApprovalType == DIRECT_REGISTRATION_APPROVAL || x.ApprovalType == FOR_REGULAR_APPROVAL &&
+                    (x.ApprovalType == Status.DirectRegistrationApproval || 
+                    x.ApprovalType == Status.ForRegularApproval) &&
                     x.IsApproved == false &&
                     x.IsActive))
                 .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
@@ -79,14 +76,14 @@ public class VoidClient : ControllerBase
                 return Result<VoidClientResult>.Failure(ClientErrors.NotFound());
             }
 
-            if (existingClient.RegistrationStatus == VOIDED)
+            if (existingClient.RegistrationStatus == Status.Voided)
             {
                 return Result<VoidClientResult>.Failure(ClientErrors.AlreadyRejected(existingClient.BusinessName));
             }
 
-            existingClient.RegistrationStatus = VOIDED;
+            existingClient.RegistrationStatus = Status.Voided;
             foreach (var approval in existingClient.Approvals.Where(approval =>
-                         approval.ApprovalType == DIRECT_REGISTRATION_APPROVAL))
+                         approval.ApprovalType == Status.DirectRegistrationApproval))
             {
                 approval.IsActive = false;
                 approval.IsActive = false;

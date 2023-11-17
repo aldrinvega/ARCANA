@@ -11,7 +11,7 @@ using RDF.Arcana.API.Data;
 
 namespace RDF.Arcana.API.Migrations
 {
-    [DbContext(typeof(DataContext))]
+    [DbContext(typeof(ArcanaDbContext))]
     [Migration("20231110074541_InitialCreate")]
     partial class InitialCreate
     {

@@ -4,4 +4,7 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dd8d3a89_002Dbe96_002D416b_002Da705_002Dd729060ad6d0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from GetAllFreebiesTests.cs #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;ProjectFile&gt;10C023B3-5707-4195-BD09-B3C6A786594C/f:GetAllFreebiesTests.cs&lt;/ProjectFile&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Approver/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Approvers/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Requestor/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

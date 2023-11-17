@@ -74,12 +74,13 @@ public class AddNewProspectResult
 
 public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
 {
+    private const string Prospect = "Prospect";
     private const string APPROVED_STATUS = "Requested";
     private const string ORIGIN = "Prospecting";
     private const string APPROVER_APPROVAL = "Approver Approval";
-    private readonly DataContext _context;
+    private readonly ArcanaDbContext _context;
 
-    public Handler(DataContext context)
+    public Handler(ArcanaDbContext context)
     {
         _context = context;
     }
@@ -137,6 +138,7 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
 
         await _context.Clients.AddAsync(prospectingClients, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+        
         var approval = new Approvals
         {
             ClientId = prospectingClients.Id,
@@ -149,7 +151,9 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
 
         // Add the new request to the database
         await _context.Approvals.AddAsync(approval, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        
+
+        
 
         return new AddNewProspectResult
         {

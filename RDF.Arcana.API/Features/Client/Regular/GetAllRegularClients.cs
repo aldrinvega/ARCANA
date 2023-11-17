@@ -133,10 +133,9 @@ public class GetAllRegularClients : ControllerBase
 
     public class Handler : IRequestHandler<GetAllRegularClientQuery, PagedList<GetAllRegularClientResult>>
     {
-        private const string APPROVED = "Approved";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -157,7 +156,7 @@ public class GetAllRegularClients : ControllerBase
                 .ThenInclude(x => x.Items)
                 .Include(terms => terms.Term)
                 .ThenInclude(to => to.Terms)
-                .Where(x => x.RegistrationStatus == APPROVED);
+                .Where(x => x.RegistrationStatus == Status.Approved);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

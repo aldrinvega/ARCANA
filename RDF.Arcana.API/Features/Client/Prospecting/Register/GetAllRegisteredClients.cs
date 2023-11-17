@@ -120,9 +120,9 @@ public class GetAllRegisteredClients : ControllerBase
 
     public class Handler : IRequestHandler<GetAllRegisteredClientsCommand, PagedList<GetAllRegisteredClientsResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -133,7 +133,6 @@ public class GetAllRegisteredClients : ControllerBase
             IQueryable<Domain.Clients> registeredClientsQuery = _context.Clients
                 .Include(x => x.FreebiesRequests)
                 .Include(x => x.FixedDiscounts)
-                .Include(x => x.VariableDiscounts)
                 .Include(x => x.Approvals)
                 .Include(x => x.ModeOfPayments)
                 .Include(x => x.Term)
@@ -171,17 +170,17 @@ public class GetAllRegisteredClients : ControllerBase
                     RepresentativePosition = client.RepresentativePosition,
                     BusinessAddress = new GetAllRegisteredClientsResult.BusinessAddressCollection
                     {
-                        HouseNumber = client.OwnersAddress.HouseNumber,
-                        StreetName = client.OwnersAddress.StreetName,
-                        City = client.OwnersAddress.City,
-                        Province = client.OwnersAddress.Province
+                        HouseNumber = client.BusinessAddress.HouseNumber,
+                        StreetName = client.BusinessAddress.StreetName,
+                        BarangayName = client.BusinessAddress.Barangay,
+                        City = client.BusinessAddress.City,
+                        Province = client.BusinessAddress.Province
                     },
                     Cluster = client.Cluster,
                     Freezer = client.Freezer,
                     CustomerType = client.CustomerType,
                     TermDays = client.TermDays ?? 0,
                     DiscountId = client.DiscountId ?? 0,
-                    ClientType = client.ClientType,
                     StoreTypeId = client.StoreTypeId ?? 0,
                     RegistrationStatus = client.RegistrationStatus,
                     Terms = client.Terms ?? 0,
@@ -193,7 +192,7 @@ public class GetAllRegisteredClients : ControllerBase
                         DiscountPercentage = client.FixedDiscounts.DiscountPercentage
                     },
                     BookingCoverageId = client.BookingCoverageId ?? 0,
-                    AddedBy = client.RequestedByUser.Fullname
+                    AddedBy = client.AddedByUser.Fullname
                 });
 
             return await PagedList<GetAllRegisteredClientsResult>.CreateAsync(result, request.PageNumber,

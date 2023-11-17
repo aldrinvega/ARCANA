@@ -27,9 +27,9 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
 
         public class Handler : IRequestHandler<AddNewModeOfPaymentCommand, Unit>
         {
-            private readonly DataContext _context;
+            private readonly ArcanaDbContext _context;
 
-            public Handler(DataContext context)
+            public Handler(ArcanaDbContext context)
             {
                 _context = context;
             }

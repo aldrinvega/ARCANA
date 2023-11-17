@@ -56,10 +56,10 @@ public class AddNewCompany : ControllerBase
 
     public class Handler : IRequestHandler<AddNewCompanyCommand, Result<CompanyResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
         private readonly IMapper _mapper;
 
-        public Handler(DataContext context, IMapper mapper)
+        public Handler(ArcanaDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

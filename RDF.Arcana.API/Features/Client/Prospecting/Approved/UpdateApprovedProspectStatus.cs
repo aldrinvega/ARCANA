@@ -48,9 +48,9 @@ public class UpdateApprovedProspectStatus : ControllerBase
 
     public class Handler : IRequestHandler<UpdateApprovedProspectStatusCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

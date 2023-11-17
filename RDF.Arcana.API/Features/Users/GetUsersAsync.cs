@@ -87,9 +87,9 @@ public class GetUsersAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetUserAsyncQuery, PagedList<GetUserAsyncQueryResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

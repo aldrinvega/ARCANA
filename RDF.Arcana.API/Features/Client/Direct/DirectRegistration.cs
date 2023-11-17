@@ -1,6 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Security.Claims;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
@@ -8,6 +12,7 @@ using RDF.Arcana.API.Features.Client.Direct;
 using RDF.Arcana.API.Features.Client.Direct.Exceptions;
 using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Freebies;
+using RDF.Arcana.API.Features.Requests_Approval;
 using RDF.Arcana.API.Features.Setup.Items;
 
 namespace RDF.Arcana.API.Features.Client.Direct
@@ -40,6 +45,9 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public string Longitude { get; set; }
 
         public string Latitude { get; set; }
+        
+        public IFormFile PhotoProof { get; set; }
+        public IFormFile ESignature { get; set; }
 
         /*public List<Attachment> Attachments { get; set; }*/
         public List<UpdateFreebie> Freebies { get; set; }
@@ -85,6 +93,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string BusinessName { get; set; }
+        public Freebie Freebies { get; set; }
 
         public class OwnersAddressCollection
         {
@@ -94,25 +103,51 @@ namespace RDF.Arcana.API.Features.Client.Direct
             public string City { get; set; }
             public string Province { get; set; }
         }
+
+        public class Freebie
+        {
+            public int FreebieRequestId { get; set; }
+            public string Status { get; set; }
+            public int TransactionNumber { get; set; }
+            public ICollection<FreebieItem> FreebieItems { get; set; }
+        }
+
+        public class FreebieItem
+        {
+            public int? Id { get; set; }
+            public int ItemId { get; set; }
+            public string ItemCode { get; set; }
+            public string ItemDescription { get; set; }
+            public string UOM { get; set; }
+            public int? Quantity { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<DirectRegistrationCommand, Result<DirectRegisterResult>>
     {
-        private const string APPROVED_STATUS = "Approved";
+        /*private const string APPROVED_STATUS = "Approved";
         private const string REQUESTED_STATUS = "Under review";
         private const string REGISTRATION_TYPE = "Direct";
-        private const string DIRECT_REGISTRATION_APPROVAL = "Direct Registration Approval";
+        private const string DIRECT_REGISTRATION_APPROVAL = "Direct Registration Approval";*/
 
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
+        private readonly Cloudinary _cloudinary;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context, IOptions<CloudinaryOptions> options)
         {
+            var account = new Account(
+                options.Value.Cloudname,
+                options.Value.ApiKey,
+                options.Value.ApiSecret
+            );
             _context = context;
+            _cloudinary = new Cloudinary(account);
         }
 
         public async Task<Result<DirectRegisterResult>> Handle(DirectRegistrationCommand request,
             CancellationToken cancellationToken)
         {
+            
             var existingClient = await _context.Clients.FirstOrDefaultAsync(
                 x => x.Fullname == request.OwnersName &&
                      x.StoreType.Id == request.StoreTypeId &&
@@ -120,31 +155,38 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 cancellationToken
             );
 
-            var validateStoreType = await _context.StoreTypes.FirstOrDefaultAsync(x => x.Id == request.StoreTypeId,
-                cancellationToken: cancellationToken);
+            var validateStoreType = await _context.StoreTypes.FirstOrDefaultAsync(x => x.Id == request.StoreTypeId, cancellationToken: cancellationToken);
+            
             if (validateStoreType == null)
                 throw new StoreTypeNotFoundException(request.StoreTypeId);
 
             var validateBookingCoverages =
-                await _context.BookingCoverages.FirstOrDefaultAsync(x => x.Id == request.BookingCoverageId,
-                    cancellationToken: cancellationToken);
+                await _context.BookingCoverages.FirstOrDefaultAsync(x => x.Id == request.BookingCoverageId, cancellationToken: cancellationToken);
+            
             if (validateBookingCoverages == null)
                 throw new BookingCoverageNotFoundException(request.BookingCoverageId);
 
             var validateModeOfPayment =
-                await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Id == request.ModeOfPayment,
-                    cancellationToken: cancellationToken);
+                await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Id == request.ModeOfPayment, cancellationToken: cancellationToken);
+            
             if (validateModeOfPayment == null)
                 throw new ModeOfPaymentNotFoundException(request.ModeOfPayment);
 
             var validateTermsAndCondition =
-                await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.TermsId,
-                    cancellationToken: cancellationToken);
+                await _context.Terms.FirstOrDefaultAsync(x => x.Id == request.TermsId, cancellationToken: cancellationToken);
+            
             if (validateTermsAndCondition == null)
                 throw new TermsNotFoundException(request.TermsId);
 
-            if (existingClient == null)
+            if (existingClient != null)
+                return Result<DirectRegisterResult>
+                    .Failure(ClientErrors.AlreadyExist(
+                        existingClient.Fullname,
+                        existingClient.BusinessName
+                        ));
             {
+                var clientFreebies = new List<DirectRegisterResult.FreebieItem>();
+                var freebiesResult = new DirectRegisterResult.Freebie(); 
                 var ownersAddress = new OwnersAddress
                 {
                     HouseNumber = request.OwnersAddress.HouseNumber,
@@ -180,12 +222,12 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     RepresentativePosition = request.AuthorizedRepresentativePosition,
                     Cluster = request.Cluster,
                     Freezer = request.Freezer,
-                    ClientType = request.TypeOfCustomer,
+                    CustomerType = request.TypeOfCustomer,
                     DirectDelivery = request.DirectDelivery,
                     BookingCoverageId = request.BookingCoverageId,
                     ModeOfPayment = request.ModeOfPayment,
-                    RegistrationStatus = REQUESTED_STATUS,
-                    Origin = REGISTRATION_TYPE,
+                    RegistrationStatus = Status.UnderReview,
+                    Origin = Origin.Direct,
                     IsActive = true,
                     AddedBy = request.AddedBy,
                     Longitude = request.Longitude,
@@ -223,7 +265,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 var approval = new Approvals
                 {
                     ClientId = directClients.Id,
-                    ApprovalType = DIRECT_REGISTRATION_APPROVAL,
+                    ApprovalType = Status.DirectRegistrationApproval,
                     RequestedBy = request.AddedBy,
                     IsApproved = false,
                     IsActive = true,
@@ -270,7 +312,8 @@ namespace RDF.Arcana.API.Features.Client.Direct
                                 FreebieErrors.AlreadyRequested(existingRequest.Items.ItemDescription));
                         }
                     }
-
+                    
+                    //Create approval for Freebies
                     var newApproval = new Approvals
                     {
                         ClientId = directClients.Id,
@@ -281,7 +324,8 @@ namespace RDF.Arcana.API.Features.Client.Direct
                         ApprovedBy = request.AddedBy
                     };
                     _context.Approvals.Add(newApproval);
-
+                    
+                    //Add new FreebieRequest
                     var freebieRequest = new FreebieRequest
                     {
                         ClientId = directClients.Id,
@@ -292,6 +336,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     };
                     _context.FreebieRequests.Add(freebieRequest);
 
+                    //Add the freebie items
                     foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                              {
                                  RequestId = freebieRequest.Id,
@@ -300,8 +345,99 @@ namespace RDF.Arcana.API.Features.Client.Direct
                              }))
                     {
                         await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
+                        
+                        //Get the item details inserted by Item Id
+                        var itemDetails = await _context.Items
+                            .Include(x => x.Uom)
+                            .Where(i => i.Id == freebieItem.ItemId)
+                            .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
+                            .FirstOrDefaultAsync(cancellationToken);
+                        
+                        //Add the item details to be return
+                        clientFreebies.Add(new DirectRegisterResult.FreebieItem
+                        {
+                          Id = freebieItem.Id,
+                          ItemId = freebieItem.ItemId,
+                          ItemCode = itemDetails.ItemCode,
+                          ItemDescription = itemDetails.ItemDescription,
+                          UOM = itemDetails.UomCode,
+                          Quantity = freebieItem.Quantity
+                        });
                     }
+
+                    //Result for the added freebies
+                    freebiesResult.FreebieRequestId = freebieRequest.Id;
+                    freebiesResult.Status = freebieRequest.Status;
+                    freebiesResult.TransactionNumber = freebieRequest.Id;
+                    freebiesResult.FreebieItems = clientFreebies;
+                    
+                    //Released the freebies
+                    var uploadTasks = new List<Task>();
+
+                    if (request.PhotoProof is not null && request.ESignature is not null)
+                    {
+                        if (request.PhotoProof.Length > 0 || request.ESignature.Length > 0)
+                        {
+                            uploadTasks.Add(Task.Run(async () =>
+                            {
+                                await using var stream = request.PhotoProof.OpenReadStream();
+                                await using var esignatureStream = request.ESignature.OpenReadStream();
+
+                                var photoProofParams = new ImageUploadParams
+                                {
+                                    File = new FileDescription(request.PhotoProof.FileName, stream),
+                                    PublicId = $"{WebUtility.UrlEncode(directClients.BusinessName)}/{request.PhotoProof.FileName}"
+                                };
+
+                                var eSignaturePhotoParams = new ImageUploadParams
+                                {
+                                    File = new FileDescription(request.ESignature.FileName, esignatureStream),
+                                    PublicId = $"{WebUtility.UrlEncode(directClients.BusinessName)}/{request.ESignature.FileName}"
+                                };
+
+
+                                var photoProofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
+                                var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
+
+                                if (photoProofUploadResult.Error != null)
+                                {
+                                    throw new Exception(photoProofUploadResult.Error.Message);
+                                }
+
+                                if (eSignatureUploadResult.Error != null)
+                                {
+                                    throw new Exception(eSignatureUploadResult.Error.Message);
+                                }
+                                
+                                freebieRequest.Status = Status.Released;
+                                freebieRequest.IsDelivered = true;
+                                freebieRequest.PhotoProofPath = photoProofUploadResult.SecureUrl.ToString();
+                                freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
+                            }, cancellationToken));
+                        }
+                    }
+                    await Task.WhenAll(uploadTasks);
                 }
+                
+                var approver = await _context.Approvers
+                    .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (approver is null)
+                {
+                    return Result<DirectRegisterResult>.Failure(ApprovalErrors.NoApproversFound(Modules.RegistrationApproval));
+                }
+
+                var newRequest = new Request(
+                    Modules.RegistrationApproval,
+                    request.AddedBy,
+                    approver.UserId,
+                    Status.UnderReview
+                );
+                await _context.Requests.AddAsync(newRequest, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                directClients.RequestId = newRequest.Id;
 
                 var result = new DirectRegisterResult
                 {
@@ -316,18 +452,15 @@ namespace RDF.Arcana.API.Features.Client.Direct
                         Province = directClients.OwnersAddress.Province
                     },
                     PhoneNumber = directClients.PhoneNumber,
-                    BusinessName = directClients.BusinessName
+                    BusinessName = directClients.BusinessName,
+                    Freebies = freebiesResult
                 };
 
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return Result<DirectRegisterResult>.Success(result, null);
             }
-            else
-            {
-                return Result<DirectRegisterResult>.Failure(ClientErrors.AlreadyExist(existingClient.Fullname,
-                    existingClient.BusinessName));
-            }
+
         }
     }
 }

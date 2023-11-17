@@ -1,5 +1,4 @@
 using RDF.Arcana.API.Domain;
-
 namespace RDF.Arcana.API.Features.Client.Direct;
 
 public static class DirectRegistrationMappingExtensions
@@ -12,8 +11,9 @@ public static class DirectRegistrationMappingExtensions
             ClientId = directRegistrationClients.ClientId,
             Fullname = directRegistrationClients.Client.Fullname,
             BusinessName = directRegistrationClients.Client.BusinessName,
-            BusinessAddress =
-                new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.BusinessAddressCollection
+            BusinessAddress = new GetAllDirectRegistrationClients.
+                GetAllDirectRegistrationClientsResult.
+                BusinessAddressCollection
                 {
                     HouseNumber = directRegistrationClients.Client.BusinessAddress.HouseNumber,
                     StreetName = directRegistrationClients.Client.BusinessAddress.StreetName,
@@ -22,8 +22,9 @@ public static class DirectRegistrationMappingExtensions
                     Province = directRegistrationClients.Client.BusinessAddress.Province
                 },
             PhoneNumber = directRegistrationClients.Client.PhoneNumber,
-            OwnersAddress =
-                new GetAllDirectRegistrationClients.GetAllDirectRegistrationClientsResult.OwnersAddressCollection
+            OwnersAddress = new GetAllDirectRegistrationClients.
+                    GetAllDirectRegistrationClientsResult.
+                    OwnersAddressCollection
                 {
                     HouseNumber = directRegistrationClients.Client.OwnersAddress.HouseNumber,
                     StreetName = directRegistrationClients.Client.OwnersAddress.StreetName,
@@ -36,7 +37,6 @@ public static class DirectRegistrationMappingExtensions
             Cluster = directRegistrationClients.Client.Cluster,
             StoreType = directRegistrationClients.Client.StoreType.StoreTypeName,
             Freezer = directRegistrationClients.Client.Freezer,
-            ClientType = directRegistrationClients.Client.ClientType,
             CustomerType = directRegistrationClients.Client.CustomerType,
             DirectDelivery = directRegistrationClients.Client.DirectDelivery,
             BookingCoverage = directRegistrationClients.Client.BookingCoverages.BookingCoverage,

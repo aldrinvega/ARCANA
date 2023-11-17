@@ -79,9 +79,9 @@ public class GetProductCategoryAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetProductCategoryAsyncQuery, PagedList<GetProductCategoryAsyncResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

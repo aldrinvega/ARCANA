@@ -85,7 +85,6 @@ public class GetAllDirectRegistrationClients : ControllerBase
         public string RepresentativePosition { get; set; }
         public int Cluster { get; set; }
         public bool Freezer { get; set; }
-        public string ClientType { get; set; }
         public bool? DirectDelivery { get; set; }
         public string BookingCoverage { get; set; }
         public string ModeOfPayment { get; set; }
@@ -134,9 +133,9 @@ public class GetAllDirectRegistrationClients : ControllerBase
         public class Handlder : IRequestHandler<GetAllDirectRegistrationClientsQuery,
             PagedList<GetAllDirectRegistrationClientsResult>>
         {
-            private readonly DataContext _context;
+            private readonly ArcanaDbContext _context;
 
-            public Handlder(DataContext context)
+            public Handlder(ArcanaDbContext context)
             {
                 _context = context;
             }

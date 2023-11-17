@@ -96,9 +96,9 @@ public class GetAllRejectProspectAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetAllRejectProspectQuery, PagedList<GetAllRejectProspectResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

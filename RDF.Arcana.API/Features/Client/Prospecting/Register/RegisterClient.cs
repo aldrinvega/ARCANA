@@ -67,9 +67,9 @@ public class RegisterClient : ControllerBase
         public class Handler : IRequestHandler<RegisterClientCommand, Unit>
         {
             private const string FOR_REGULAR = "For regular approval";
-            private readonly DataContext _context;
+            private readonly ArcanaDbContext _context;
 
-            public Handler(DataContext context)
+            public Handler(ArcanaDbContext context)
             {
                 _context = context;
             }
@@ -102,6 +102,20 @@ public class RegisterClient : ControllerBase
                     IsApproved = false,
                     IsActive = true,
                 };
+                
+                var approvers = await _context.Approvers
+                    .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1).FirstOrDefaultAsync(cancellationToken);
+
+                var newRequest = new Domain.Request
+                (
+                    Modules.RegistrationApproval, 
+                    request.RequestedBy, 
+                    approvers.UserId, 
+                    Status.UnderReview
+                );
+
+                await _context.Requests.AddAsync(newRequest, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
 
                 await _context.BusinessAddress.AddAsync(businessAddress, cancellationToken);
                 await _context.Approvals.AddAsync(approval, cancellationToken);
@@ -117,6 +131,7 @@ public class RegisterClient : ControllerBase
                 existingClient.Longitude = request.Longitude;
                 existingClient.Latitude = request.Latitude;
                 existingClient.DateOfBirthDB = dateOfBirth;
+                existingClient.RequestId = newRequest.Id;
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Unit.Value;

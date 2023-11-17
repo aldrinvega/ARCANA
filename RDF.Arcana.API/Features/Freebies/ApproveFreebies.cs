@@ -2,6 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -19,12 +21,11 @@ public class ApproveFreebies : ControllerBase
     [HttpPatch("ApproveFreebieRequest/{id:int}")]
     public async Task<IActionResult> ApproveFreebieRequest([FromRoute] int id, [FromQuery] int freebieId)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new ApproveFreebiesCommand
             {
-                ClientId = id,
+                RequestId = id,
                 FreebieRequestId = freebieId
             };
             if (User.Identity is ClaimsIdentity identity
@@ -33,69 +34,84 @@ public class ApproveFreebies : ControllerBase
                 command.ApprovedBy = userId;
             }
 
-            //
-            // if (User.Identity is ClaimsIdentity identity
-            //     && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
-            // {
-            //     command.AddedBy = userId;
-            // };
-
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Freebie Request has been approved");
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class ApproveFreebiesCommand : IRequest<Unit>
+    public class ApproveFreebiesCommand : IRequest<Result<Unit>>
     {
-        public int ClientId { get; set; }
+        public int RequestId { get; set; }
         public int FreebieRequestId { get; set; }
         public int ApprovedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<ApproveFreebiesCommand, Unit>
+    public class Handler : IRequestHandler<ApproveFreebiesCommand, Result<Unit>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Unit> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
         {
-            var approvals = await _context.Approvals
+            /*var approvals = await _context.Approvals
                 .Include(x => x.Client)
                 .Include(x => x.FreebieRequest)
-                .FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);
+                .Where(x => !x.IsApproved &&
+                            x.ApprovalType == Status.ForFreebieApproval)
+                .FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);*/
 
-            if (approvals == null || !approvals.FreebieRequest.Any())
+            var requestedFreebies = await _context.Requests
+                .Include(freebie => freebie.FreebieRequest)
+                .Where(freebie => freebie.Id == request.RequestId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var approvers = await _context.Approvers
+                .Where(module => module.ModuleName == Modules.FreebiesApproval)
+                .ToListAsync(cancellationToken);
+            
+            var currentApproverLevel = approvers
+                .FirstOrDefault(approver => approver.UserId == requestedFreebies.CurrentApproverId)?.Level;
+            
+            if (currentApproverLevel == null)
             {
-                throw new Exception("No freebies found");
+                return Result<Unit>.Failure(ApprovalErrors.NoApproversFound(Modules.FreebiesApproval));
+            }
+            
+            var nextLevel = currentApproverLevel.Value + 1;
+            var nextApprover = approvers
+                .FirstOrDefault(approver => approver.Level == nextLevel);
+            
+            if (nextApprover == null)
+            {
+                requestedFreebies.Status = Status.Approved;
+            }
+            
+            if (requestedFreebies == null)
+            {
+                return Result<Unit>.Failure(FreebieErrors.NoFreebieFound());
             }
 
-            var freebieRequest = approvals.FreebieRequest.FirstOrDefault(x => x.Id == request.FreebieRequestId);
-
-            if (freebieRequest == null)
-            {
-                throw new Exception("No matching freebie request found");
-            }
-
-            freebieRequest.Status = "Approved";
-            approvals.IsApproved = true;
-            approvals.ApprovedBy = request.ApprovedBy;
-
+            var newApproval = new Approval(
+                requestedFreebies.Id,
+                requestedFreebies.CurrentApproverId,
+                Status.Approved
+            );
+            await _context.Approval.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result<Unit>.Success(Unit.Value, "Freebie request has been approve successfully");
         }
     }
 }

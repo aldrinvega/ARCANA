@@ -2,18 +2,23 @@
 
 public static class Status
 {
-    //Freebies Status
     public const string NoFreebies = "For freebie request";
     public const string ForReleasing = "For releasing";
     public const string Released = "Released";
-
-    //For Prospecting
-
     public const string ApproverApproval = "Approver Approval";
+    public const string UnderReview = "Under review";
+    public const string Approved = "Approved";
+    public const string Rejected = "Rejected";
+    public const string Voided = "Voided";
+    public const string Archived = "Archived";
+    public const string ForListingFeeApproval = "For listing fee approval";
+    public const string DirectRegistrationApproval = "Direct Registration Approval";
+    public const string ForRegularApproval = "For regular approval";
+    public const string ForFreebieApproval = "For freebie approval";
+}
 
-    public const string UNDER_REVIEW = "Under review";
-    public const string APPROVED = "Approved";
-    public const string REJECTED = "Rejected";
-
-    public const string FOR_LISTING_FEE_APPROVAL = "For listing fee approval";
+public static class Origin
+{
+    public const string Direct = "Direct";
+    public const string Prospecting = "Prospecting";
 }

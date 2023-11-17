@@ -21,7 +21,7 @@ public static class ReleasedProspectMappingExtension
                     Province = approvals.Client.OwnersAddress.Province
                 },
             PhoneNumber = approvals.Client.PhoneNumber,
-            AddedBy = approvals.Client.RequestedByUser.Fullname,
+            AddedBy = approvals.Client.AddedByUser.Fullname,
             CustomerType = approvals.Client.CustomerType,
             BusinessName = approvals.Client.BusinessName,
             CreatedAt = approvals.Client.CreatedAt,

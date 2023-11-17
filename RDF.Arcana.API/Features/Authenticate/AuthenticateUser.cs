@@ -56,10 +56,10 @@ public abstract class AuthenticateUser
     public class Handler : IRequestHandler<AuthenticateUserQuery, Result<AuthenticateUserResult>>
     {
         private readonly IConfiguration _configuration;
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
         private readonly IMapper _mapper;
 
-        public Handler(DataContext context, IConfiguration configuration, IMapper mapper)
+        public Handler(ArcanaDbContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
@@ -82,6 +82,11 @@ public abstract class AuthenticateUser
             if (!user.IsActive)
             {
                 return Result<AuthenticateUserResult>.Failure(AuthenticateUserErrors.UnauthorizedAccess());
+            }
+
+            if (user.UserRolesId is null )
+            {
+                return Result<AuthenticateUserResult>.Failure(AuthenticateUserErrors.NoRole());
             }
 
             await _context.SaveChangesAsync(cancellationToken);

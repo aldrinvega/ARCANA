@@ -54,14 +54,14 @@ public class ReleasedProspectingRequest : ControllerBase
     {
         private const string released = "Released";
         private readonly Cloudinary _cloudinary;
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(IOptions<CloudinarySettings> config, DataContext context)
+        public Handler(IOptions<CloudinaryOptions> options, ArcanaDbContext context)
         {
             var account = new Account(
-                config.Value.Cloudname,
-                config.Value.ApiKey,
-                config.Value.ApiSecret
+                options.Value.Cloudname,
+                options.Value.ApiKey,
+                options.Value.ApiSecret
             );
 
             _cloudinary = new Cloudinary(account);
@@ -130,9 +130,7 @@ public class ReleasedProspectingRequest : ControllerBase
                         freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
                         freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
                     }, cancellationToken));
-                }
-
-                ;
+                };
 
                 await Task.WhenAll(uploadTasks);
 

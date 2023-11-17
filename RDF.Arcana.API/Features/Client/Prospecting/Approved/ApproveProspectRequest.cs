@@ -55,9 +55,9 @@ public class ApproveProspectRequest : ControllerBase
 
     public class Handler : IRequestHandler<ApprovedProspectRequestCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -75,7 +75,7 @@ public class ApproveProspectRequest : ControllerBase
                     .Include(x => x.Client)
                     .FirstOrDefaultAsync(
                         x => x.ClientId == request.ProspectId &&
-                             x.ApprovalType == "Approver Approval" &&
+                             x.ApprovalType == Status.ApproverApproval &&
                              x.IsActive == true &&
                              x.IsApproved == false &&
                              x.Client.RegistrationStatus == "Requested" &&

@@ -38,9 +38,9 @@ public class GetAllLocationAsync : ControllerBase
     
     public class Handler : IRequestHandler<GetAllLocationAsyncQuery, PagedList<GetAllLocationAsyncResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

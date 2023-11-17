@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CloudinaryDotNet.Actions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
@@ -86,6 +87,7 @@ public class GetAllClients : ControllerBase
     public class GetAllClientResult
     {
         public int Id { get; set; }
+        public int? RequestId { get; set; }
         public string OwnersName { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
@@ -159,9 +161,9 @@ public class GetAllClients : ControllerBase
         private const string UNDER_REVIEW = "Under review";
         private const string REJECTED = "Rejected";
         private const string APPROVER = "Approver";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -180,17 +182,24 @@ public class GetAllClients : ControllerBase
                 );
             }
 
-            if (request.RoleName != APPROVER)
+            regularClients = request.RoleName switch
             {
-                regularClients = regularClients.Where(x => x.AddedBy == request.AccessBy);
-            }
+                Roles.Approver when !string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                                    request.RegistrationStatus.ToLower() != Status.UnderReview.ToLower() =>
+                    regularClients.Where(clients => clients.Request.Approvals.Any(x =>
+                        x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy)),
+                Roles.Approver => regularClients.Where(clients =>
+                    clients.Request.Status == request.RegistrationStatus &&
+                    clients.Request.CurrentApproverId == request.AccessBy),
+                Roles.Admin or Roles.Cdo => regularClients.Where(x => 
+                    x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus),
+                _ => regularClients
+            };
 
-            if (!string.IsNullOrWhiteSpace(request.RegistrationStatus))
+            if (request.RoleName is Roles.Approver && request.RegistrationStatus == Status.UnderReview)
             {
-                regularClients =
-                    regularClients.Where(clients => clients.RegistrationStatus == request.RegistrationStatus);
+                regularClients = regularClients.Where(x => x.Request.CurrentApproverId == request.AccessBy);
             }
-
             if (request.Origin != null)
             {
                 regularClients = regularClients.Where(x => x.Origin == request.Origin);
@@ -209,6 +218,7 @@ public class GetAllClients : ControllerBase
             var result = regularClients.Select(client => new GetAllClientResult
             {
                 Id = client.Id,
+                RequestId = client.RequestId,
                 OwnersName = client.Fullname,
                 OwnersAddress = client.OwnersAddress != null
                     ? new GetAllClientResult.OwnersAddressCollection
@@ -263,7 +273,7 @@ public class GetAllClients : ControllerBase
                 VariableDiscount = client.VariableDiscount,
                 Longitude = client.Longitude,
                 Latitude = client.Latitude,
-                RequestedBy = client.RequestedByUser.Fullname,
+                RequestedBy = client.AddedByUser.Fullname,
                 Attachments = client.ClientDocuments.Select(cd =>
                     new GetAllClientResult.Attachment
                     {

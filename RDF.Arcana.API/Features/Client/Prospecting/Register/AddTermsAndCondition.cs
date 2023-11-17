@@ -57,11 +57,11 @@ public class AddTermsAndCondition : ControllerBase
         public int Terms { get; set; }
         public int? CreditLimit { get; set; }
         public int? TermDaysId { get; set; }
-        public FixedDiscount FixedDiscounts { get; set; }
+        public Dicount FixedDiscount { get; set; }
         public bool VariableDiscount { get; set; }
         public int AddedBy { get; set; }
 
-        public class FixedDiscount
+        public class Dicount
         {
             public decimal? DiscountPercentage { get; set; }
         }
@@ -69,9 +69,9 @@ public class AddTermsAndCondition : ControllerBase
 
     public class Handler : IRequestHandler<AddTermsAndConditionsCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -116,12 +116,12 @@ public class AddTermsAndCondition : ControllerBase
             existingClient.Terms = termsOptions.Id;
             //For validation
             // Check if the user can have no discount at all
-            if (request.FixedDiscounts.DiscountPercentage != null)
+            if (request.FixedDiscount?.DiscountPercentage != null)
             {
                 var fixedDiscount = new FixedDiscounts
                 {
                     ClientId = existingClient.Id,
-                    DiscountPercentage = request.FixedDiscounts.DiscountPercentage / 100
+                    DiscountPercentage = request.FixedDiscount.DiscountPercentage / 100
                 };
 
                 await _context.FixedDiscounts.AddAsync(fixedDiscount, cancellationToken);
@@ -133,8 +133,6 @@ public class AddTermsAndCondition : ControllerBase
             else
             {
                 existingClient.VariableDiscount = request.VariableDiscount;
-
-
                 await _context.SaveChangesAsync(cancellationToken);
                 return Unit.Value;
             }

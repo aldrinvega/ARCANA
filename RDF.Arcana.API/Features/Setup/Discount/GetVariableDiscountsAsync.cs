@@ -81,9 +81,9 @@ public class GetVariableDiscountsAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetDiscountAsyncQuery, PagedList<GetDiscountAsyncQueryResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

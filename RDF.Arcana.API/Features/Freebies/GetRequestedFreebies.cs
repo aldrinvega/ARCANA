@@ -108,9 +108,9 @@ public class GetRequestedFreebies : ControllerBase
     public class Handler : IRequestHandler<GetRequestedFreebiesQuery,
         PagedList<GetRequestedFreebiesQueryResultCollection>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

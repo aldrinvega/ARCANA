@@ -22,25 +22,23 @@ public class AddAttachmentsForDirectClient : ControllerBase
     }
 
     [HttpPut("AddAttachmentsForDirectClient/{id}")]
-    public async Task<IActionResult> AddRequirementForRegularClients(AddAttachmentsForRegularClientCommand command,
+    public async Task<IActionResult> AddRequirementForRegularClients([FromForm]AddAttachmentsForRegularClientCommand command,
         [FromRoute] int id)
     {
-        command.ClientId = id;
-        var response = new QueryOrCommandResult<object>();
+       
         try
         {
             command.ClientId = id;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add("Attached added successfully");
-            response.Status = StatusCodes.Status200OK;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            response.Messages.Add($"{ex.Message}");
-            response.Status = StatusCodes.Status404NotFound;
-            return Conflict(response);
+            return BadRequest(ex.Message);
         }
     }
 
@@ -59,15 +57,15 @@ public class AddAttachmentsForDirectClient : ControllerBase
     public class Handler : IRequestHandler<AddAttachmentsForRegularClientCommand, Result<object>>
     {
         private readonly Cloudinary _cloudinary;
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context, IOptions<CloudinarySettings> config)
+        public Handler(ArcanaDbContext context, IOptions<CloudinaryOptions> options)
         {
             _context = context;
             var account = new Account(
-                config.Value.Cloudname,
-                config.Value.ApiKey,
-                config.Value.ApiSecret
+                options.Value.Cloudname,
+                options.Value.ApiKey,
+                options.Value.ApiSecret
             );
 
             _cloudinary = new Cloudinary(account);
@@ -108,12 +106,12 @@ public class AddAttachmentsForDirectClient : ControllerBase
                 };
 
                 await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
-                existingClient.RegistrationStatus = Status.UNDER_REVIEW;
+                existingClient.RegistrationStatus = Status.UnderReview;
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Result<object>.Success(null, null);
+            return Result<object>.Success(null, "Attachments uploaded successfully");
         }
     }
 }

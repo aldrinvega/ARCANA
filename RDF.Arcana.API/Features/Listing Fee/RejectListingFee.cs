@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Listing_Fee.Errors;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -16,24 +18,26 @@ public class RejectListingFee : ControllerBase
     }
 
     [HttpPut("RejectListingFee/{id:int}")]
-    public async Task<IActionResult> RejectListingFees([FromRoute] int id, [FromQuery] int listingFeeId)
+    public async Task<IActionResult> RejectListingFees([FromRoute] int id, [FromBody] RejectListingFeeCommand command)
     {
         try
         {
-            var command = new RejectListingFeeCommand
-            {
-                ClientId = id,
-                ListingFeeId = listingFeeId
-            };
+            command.ApprovalId = id;
 
             if (User.Identity is ClaimsIdentity identity
                 && IdentityHelper.TryGetUserId(identity, out var userId))
             {
                 command.RejectedBy = userId;
             }
+            
 
-            await _mediator.Send(command);
-            return Ok();
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
@@ -41,57 +45,45 @@ public class RejectListingFee : ControllerBase
         }
     }
 
-    public class RejectListingFeeCommand : IRequest<Unit>
+    public class RejectListingFeeCommand : IRequest<Result<Unit>>
     {
-        public int ClientId { get; set; }
-        public int ListingFeeId { get; set; }
+        public int ApprovalId { get; set; }
         public int RejectedBy { get; set; }
         public string Reason { get; set; }
     }
 
-    public class Handler : IRequestHandler<RejectListingFeeCommand, Unit>
+    public class Handler : IRequestHandler<RejectListingFeeCommand, Result<Unit>>
     {
-        private const string FOR_LISTING_FEE_APPROVAL = "For listing fee approval";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Unit> Handle(RejectListingFeeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(RejectListingFeeCommand request, CancellationToken cancellationToken)
         {
-            var existingListingFee = await _context.Approvals
-                .Include(x => x.ListingFee)
-                .ThenInclude(x => x.ListingFeeItems)
-                .ThenInclude(x => x.Item)
-                .FirstOrDefaultAsync(
-                    x => x.IsActive &&
-                         x.ClientId == request.ClientId &&
-                         x.IsApproved == false &&
-                         x.ApprovalType == FOR_LISTING_FEE_APPROVAL, cancellationToken);
+            var existingApprovalsForListingFee = await _context.Approvals
+                .Include(listingFee => listingFee.ListingFee)
+                .ThenInclude(listingFeeItems => listingFeeItems.ListingFeeItems)
+                .ThenInclude(X => X.Item)
+                .ThenInclude(X => X.Uom)
+                .FirstOrDefaultAsync(approval => approval.Id == request.ApprovalId, cancellationToken);
 
-            if (existingListingFee is null)
+            if (existingApprovalsForListingFee == null)
             {
-                throw new System.Exception("No Listing Fee found");
+                return Result<Unit>.Failure(ListingFeeErrors.NotFound()); 
             }
-
-            // Locate the specific FreebieRequest to be Rejected
-            var listingFeeToReject = existingListingFee.ListingFee
-                .FirstOrDefault(lf => lf.Id == request.ListingFeeId);
-
-            if (listingFeeToReject == null)
+            foreach (var listingFee in existingApprovalsForListingFee.ListingFee)
             {
-                throw new System.Exception("Freebie Request not found");
+                listingFee.Status = Status.Rejected;
             }
-
-            // Reject the specific FreebieRequest
-            listingFeeToReject.Status = "Rejected";
-            existingListingFee.Reason = request.Reason;
-            existingListingFee.IsApproved = false;
+            
+            existingApprovalsForListingFee.Reason = request.Reason;
+            existingApprovalsForListingFee.IsApproved = false;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result<Unit>.Success(Unit.Value, "Listing fee rejected successfully");
         }
     }
 }

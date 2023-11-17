@@ -7,11 +7,11 @@ using RDF.Arcana.API.Features.Client.Errors;
 namespace RDF.Arcana.API.Features.Client.All;
 
 [Route("api/Clients"), ApiController]
-public class RejectClient : ControllerBase
+public class RejectClientRegistration : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public RejectClient(IMediator mediator)
+    public RejectClientRegistration(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -42,7 +42,7 @@ public class RejectClient : ControllerBase
         }
     }
 
-    public class RejectClientCommand : IRequest<Result<RejectedClientResult>>
+    public record RejectClientCommand : IRequest<Result<RejectedClientResult>>
     {
         public int ClientId { get; set; }
         public string Reason { get; set; }
@@ -62,9 +62,9 @@ public class RejectClient : ControllerBase
         private const string REJECTED = "Rejected";
         private const string DIRECT_REGISTRATION_APPROVAL = "Direct Registration Approval";
         private const string FOR_REGULAR_APPROVAL = "For regular approval";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -75,7 +75,8 @@ public class RejectClient : ControllerBase
             var existingClient = await _context.Clients
                 .Include(x => x.Approvals)
                 .Where(x => x.Approvals.Any(x =>
-                    (x.ApprovalType == DIRECT_REGISTRATION_APPROVAL || x.ApprovalType == FOR_REGULAR_APPROVAL) &&
+                    (x.ApprovalType == DIRECT_REGISTRATION_APPROVAL ||
+                     x.ApprovalType == FOR_REGULAR_APPROVAL) &&
                     x.IsActive &&
                     x.IsApproved == false))
                 .FirstOrDefaultAsync(x =>

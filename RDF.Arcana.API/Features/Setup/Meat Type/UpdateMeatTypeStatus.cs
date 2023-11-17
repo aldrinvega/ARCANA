@@ -25,9 +25,9 @@ public class UpdateMeatTypeStatus : ControllerBase
 
     public class Handler : IRequestHandler<UpdateMeatTypeStatusCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

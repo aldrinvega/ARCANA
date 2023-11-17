@@ -25,9 +25,9 @@ public class UpdateLocationStatus : ControllerBase
     }
     public class Handler : IRequestHandler<UpdateLocationStatusCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

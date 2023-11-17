@@ -28,9 +28,9 @@ public class AddNewProductCategory : ControllerBase
     
     public class Handler : IRequestHandler<AddNewProductCategoryCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

@@ -39,9 +39,9 @@ public class GetProductSubCategories : ControllerBase
 
     public class Handler : IRequestHandler<GetProductSubCategoriesQuery, PagedList<GetProductSubCategoriesResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

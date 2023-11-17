@@ -71,9 +71,9 @@ public class ApproveListingFee : ControllerBase
     public class Handler : IRequestHandler<ApproveListingFeeCommand, Result<ApprovedListingFeeResult>>
     {
         private const string APPROVED = "Approved";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -98,7 +98,6 @@ public class ApproveListingFee : ControllerBase
 
             foreach (var listingFee in existingApprovalsForListingFee.ListingFee)
             {
-                listingFee.ApprovedBy = request.ApprovedBy;
                 listingFee.Status = APPROVED;
             }
 

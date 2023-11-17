@@ -107,9 +107,9 @@ public class GetAllReleasedProspectingRequest : ControllerBase
     public class Handler : IRequestHandler<GetAllReleasedProspectingRequestQuery,
         PagedList<GetAllReleasedProspectingRequestResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -123,7 +123,7 @@ public class GetAllReleasedProspectingRequest : ControllerBase
                     && a.Client.RegistrationStatus == "Released"
                     && a.FreebieRequest.Any(x => x.IsDelivered))
                 .Include(a => a.Client)
-                .ThenInclude(x => x.RequestedByUser)
+                .ThenInclude(x => x.AddedByUser)
                 .Include(x => x.Client)
                 .ThenInclude(x => x.StoreType)
                 .Include(a => a.FreebieRequest)

@@ -17,37 +17,78 @@ public class UntagAndTagUserRolePermission : ControllerBase
         _mediator = mediator;
     }
 
-    public class UntagAndTagUserRoleCommand : IRequest<Unit>
+    public class UntagAndTagUserRoleCommand : IRequest<Result<Unit>>
     {
         public int UserRoleId { get; set; }
-        public ICollection<string> Permissions { get; set; }
+        public ICollection<string> Permissions { get; set; } = new List<string>();
         public string ModifiedBy { get; set; }
 
-        public class Handler : IRequestHandler<UntagAndTagUserRoleCommand, Unit>
+        public class Handler : IRequestHandler<UntagAndTagUserRoleCommand, Result<Unit>>
         {
-            private readonly DataContext _context;
+            private readonly ArcanaDbContext _context;
 
-            public Handler(DataContext context)
+            public Handler(ArcanaDbContext context)
             {
                 _context = context;
             }
 
-            public async Task<Unit> Handle(UntagAndTagUserRoleCommand request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(UntagAndTagUserRoleCommand request, CancellationToken cancellationToken)
             {
-                var existingUseRole = await _context.UserRoles
+                var existingUserRole = await _context.UserRoles
                     .FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
 
-                if (existingUseRole is null)
+                if (existingUserRole is null)
                 {
                     throw new UserRoleNotFoundException();
                 }
 
-                existingUseRole.Permissions = request.Permissions;
-                existingUseRole.UpdatedAt = DateTime.Now;
+                if (existingUserRole.UserRoleName.Contains(Roles.Approver))
+                {
+                    // Get the permissions/modules that are being removed
+                    var removedPermissions = existingUserRole.Permissions?.Except(request.Permissions ?? new List<string>()) ?? Enumerable.Empty<string>();
+
+                    // Get all user ids who have the user role being updated
+                    var userIdsWithRole = await _context.Users
+                        .Where(u => u.UserRolesId == existingUserRole.Id)
+                        .Select(u => u.Id)
+                        .ToListAsync(cancellationToken);
+
+                    // Find first approver that user with role is an approver for any of the removed modules
+                    //Kasi hindi pwede okay.!
+                    var approver = await _context.Approvers
+                        .FirstOrDefaultAsync(a => userIdsWithRole.Contains(a.UserId) && 
+                                                  removedPermissions.Contains(a.ModuleName),
+                            cancellationToken);
+
+                    if (approver != null)
+                    {
+                        return Result<Unit>.Failure(UserRoleErrors.CannotUntag(approver.ModuleName));
+                    }
+                }
                 
-                _context.UserRoles.Update(existingUseRole);
+                
+                string changeMessage = "User Role is unchanged"; //default message
+                if (existingUserRole.Permissions != null && request.Permissions != null)
+                {
+                    changeMessage = existingUserRole.Permissions.Count < request.Permissions.Count 
+                        ? "User Role has been successfully tagged" 
+                        : "User Role has been successfully untagged";
+                }
+                else if (request.Permissions != null)
+                {
+                    // When existingUserRole.Permissions is null, but request.Permissions is not null
+                    changeMessage = "User Role has been successfully tagged";
+                }
+
+                var result = Result<Unit>.Success(Unit.Value, changeMessage);
+               
+                existingUserRole.Permissions = request.Permissions;
+                existingUserRole.UpdatedAt = DateTime.Now;
+                
+                _context.UserRoles.Update(existingUserRole);
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
+
+                return result;
             }
         }
     }
@@ -56,22 +97,20 @@ public class UntagAndTagUserRolePermission : ControllerBase
     public async Task<IActionResult> UntagUserRolePermission([FromRoute] int id,
         [FromBody] UntagAndTagUserRoleCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.UserRoleId = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("User Role has been successfully untagged");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

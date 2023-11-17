@@ -25,9 +25,9 @@ public class UpdateProductSubCategoryStatus : ControllerBase
 
     public class Handler : IRequestHandler<UpdateProductSubCategoryStatusCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

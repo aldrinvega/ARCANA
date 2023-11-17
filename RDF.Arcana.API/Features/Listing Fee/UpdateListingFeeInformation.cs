@@ -57,9 +57,9 @@ public class UpdateListingFeeInformation : ControllerBase
     public class Handler : IRequestHandler<UpdateListingFeeInformationCommand, Unit>
     {
         private const string UNDER_REVIEW = "Under review";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -109,7 +109,7 @@ public class UpdateListingFeeInformation : ControllerBase
                 }
             }
 
-            listingFee.Approvals.ApprovalType = Status.UNDER_REVIEW;
+            listingFee.Approvals.ApprovalType = Status.UnderReview;
             listingFee.Approvals.IsApproved = false;
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;

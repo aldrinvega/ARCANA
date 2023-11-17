@@ -5,7 +5,9 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
+using RDF.Arcana.API.Features.Listing_Fee.Errors;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -21,10 +23,9 @@ public class AddNewListingFee : ControllerBase
         _validator = validator;
     }
 
-    [HttpPost("AddNewListingFee")]
+    [HttpPost("AddNewListingFee")] 
     public async Task<IActionResult> AddNewListingFeeRequest([FromBody] AddNewListingFeeCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var result = await _validator.ValidateAsync(command);
@@ -40,22 +41,22 @@ public class AddNewListingFee : ControllerBase
                 command.RequestedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Listing Fee requested successfully");
+            var response = await _mediator.Send(command);
+
+            if (response.IsFailure)
+            {
+                return BadRequest(response);
+            }
+            
             return Ok(response);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class AddNewListingFeeCommand : IRequest<Unit>
+    public class AddNewListingFeeCommand : IRequest<Result<Unit>>
     {
         public int ClientId { get; set; }
         public int RequestedBy { get; set; }
@@ -70,28 +71,41 @@ public class AddNewListingFee : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<AddNewListingFeeCommand, Unit>
+    public class Handler : IRequestHandler<AddNewListingFeeCommand, Result<Unit>>
     {
-        private const string FOR_APPROVAL = "For listing fee approval";
-        private const string UNDER_REVIEW = "Under review";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewListingFeeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(AddNewListingFeeCommand request, CancellationToken cancellationToken)
         {
             if (!await _context.Clients.AnyAsync(client => client.Id == request.ClientId, cancellationToken))
             {
-                throw new ClientIsNotFound(request.ClientId);
+                return Result<Unit>.Failure(ClientErrors.NotFound());
+            }
+            
+            foreach (var item in request.ListingItems)
+            {
+                var existingRequest = await _context.ListingFeeItems
+                    .Include(x => x.Item)
+                    .Include(f => f.ListingFee)
+                    .Where(f => f.ItemId == item.ItemId && f.ListingFee.ClientId == request.ClientId &&
+                                f.ListingFee.Status != Status.Rejected)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (existingRequest != null)
+                {
+                    return Result<Unit>.Failure(ListingFeeErrors.AlreadyRequested(existingRequest.Item.ItemDescription));
+                }
             }
 
             var approval = new Approvals
             {
                 ClientId = request.ClientId,
-                ApprovalType = FOR_APPROVAL,
+                ApprovalType = Status.ForListingFeeApproval,
                 IsActive = true,
                 RequestedBy = request.RequestedBy,
             };
@@ -103,7 +117,7 @@ public class AddNewListingFee : ControllerBase
             {
                 ClientId = request.ClientId,
                 ApprovalsId = approval.Id,
-                Status = UNDER_REVIEW,
+                Status = Status.UnderReview,
                 RequestedBy = request.RequestedBy,
                 Total = request.Total
             };
@@ -121,10 +135,8 @@ public class AddNewListingFee : ControllerBase
             {
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);
             }
-
             await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
+            return Result<Unit>.Success(Unit.Value, "Listing Fee requested successfully");
         }
     }
 }

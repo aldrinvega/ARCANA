@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -14,6 +15,6 @@ public class GetAllListingFeeValidator : AbstractValidator<GetAllListingFee.GetA
 
     private static bool BeAValidStatus(string status)
     {
-        return status is "Approved" or "Under review" or "Rejected";
+        return status is Status.Approved or Status.UnderReview or Status.Rejected;
     }
 }

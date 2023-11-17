@@ -4,11 +4,9 @@ using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Data;
 
-public class DataContext : DbContext
+public class ArcanaDbContext : DbContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-    }
+    public ArcanaDbContext(DbContextOptions<ArcanaDbContext> options) : base(options) { }
 
     public virtual DbSet<OwnersAddress> Address { get; set; }
     public virtual DbSet<BusinessAddress> BusinessAddress { get; set; }
@@ -38,6 +36,12 @@ public class DataContext : DbContext
     public virtual DbSet<Terms> Terms { get; set; }
     public virtual DbSet<ListingFee> ListingFees { get; set; }
     public virtual DbSet<ListingFeeItems> ListingFeeItems { get; set; }
+    
+    //Approver 
+    
+    public virtual DbSet<Request> Requests { get; set; }
+    public virtual DbSet<Approval> Approval { get; set; }
+    public virtual DbSet<Approver> Approvers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +54,11 @@ public class DataContext : DbContext
                     (c1, c2) => c1.SequenceEqual(c2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
+        
+        modelBuilder.Entity<Clients>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany(x => x.Clients)
+            .HasForeignKey(x => x.AddedBy);
 
         modelBuilder.Entity<Company>()
             .HasOne(u => u.AddedByUser)
@@ -110,11 +119,6 @@ public class DataContext : DbContext
             .HasOne(u => u.AddedByUser)
             .WithOne()
             .HasForeignKey<UserRoles>(u => u.AddedBy);
-
-        modelBuilder.Entity<Clients>()
-            .HasOne(x => x.RequestedByUser)
-            .WithMany()
-            .HasForeignKey(x => x.AddedBy);
 
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.ModifiedByUser)
@@ -198,7 +202,7 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(x => x.RequestedByUser)
-            .WithMany()
+            .WithMany(x => x.FreebieRequests)
             .HasForeignKey(x => x.RequestedBy);
 
         modelBuilder.Entity<Approvals>()
@@ -213,21 +217,31 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<ListingFee>()
             .HasOne(x => x.RequestedByUser)
-            .WithMany()
+            .WithMany(x => x.ListingFees)
             .HasForeignKey(x => x.RequestedBy);
-        modelBuilder.Entity<ListingFee>()
-            .HasOne(x => x.ApprovedByUser)
-            .WithMany()
-            .HasForeignKey(x => x.ApprovedBy);
-
+        
+        modelBuilder.Entity<Approval>()
+            .HasOne(x => x.Approver)
+            .WithMany(x => x.Approvals)
+            .HasForeignKey(x => x.ApproverId);
+        
+        modelBuilder.Entity<Request>()
+            .HasOne(x => x.Requestor)
+            .WithMany(x => x.RequesterRequests)
+            .HasForeignKey(x => x.RequestorId);
+        
+        modelBuilder.Entity<Request>()
+            .HasOne(x => x.CurrentApprover)
+            .WithMany(x => x.ApproverRequests)
+            .HasForeignKey(x => x.CurrentApproverId);
+        
         modelBuilder.Entity<ListingFee>()
             .Property(p => p.Total)
             .HasColumnType("decimal(8,2)");
-
+        
         modelBuilder.Entity<FixedDiscounts>()
             .Property(p => p.DiscountPercentage)
             .HasColumnType("decimal(8,2)");
-
         modelBuilder.Entity<VariableDiscounts>()
             .Property(p => p.MinimumAmount)
             .HasColumnType("decimal(8,2)");

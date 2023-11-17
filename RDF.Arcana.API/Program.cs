@@ -40,7 +40,7 @@ builder.Services.AddControllers(
 var connectionString = builder.Configuration.GetConnectionString("LiveConnection");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
-builder.Services.AddDbContext<DataContext>(x =>
+builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
     if (connectionString != null) x.UseSqlServer(connectionString).UseSnakeCaseNamingConvention();
 });
@@ -105,7 +105,7 @@ builder.Services.AddAuthentication(authOptions =>
 // builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationMiddlewareResultHandler>();
 // builder.Services.AddScoped<MyAuthenticationFailureHandler>();
 
-builder.Services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+builder.Services.Configure<CloudinaryOptions>(config.GetSection("Cloudinary"));
 
 
 const string clientPermission = "_clientPermission";

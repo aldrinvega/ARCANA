@@ -37,9 +37,9 @@ public class GetCompaniesAsync : ControllerBase
     }
      public class Handler : IRequestHandler<GetCompaniesQuery, PagedList<GetCompaniesResult>>
      {
-         private readonly DataContext _context;
+         private readonly ArcanaDbContext _context;
          
-         public Handler(DataContext context)
+         public Handler(ArcanaDbContext context)
          {
              _context = context;
          }

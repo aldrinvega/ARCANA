@@ -29,6 +29,12 @@ public class User : BaseEntity
     public virtual User AddedByUser { get; set; }
 
     public virtual ICollection<Clients> Clients { get; set; }
+    public virtual ICollection<Request> RequesterRequests { get; set; }
+    public virtual ICollection<Request> ApproverRequests { get; set; }
+    public virtual ICollection<Approver> Approver { get; set; }
+    public virtual ICollection<Approval> Approvals { get; set; }
+    public virtual ICollection<FreebieRequest> FreebieRequests { get; set; }
+    public virtual ICollection<ListingFee> ListingFees { get; set; }
 }
 
 public class UserValidator : AbstractValidator<User>

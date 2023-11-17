@@ -45,7 +45,7 @@ public static class ProspectingMappingProfiles
             PhoneNumber = approvedClient.PhoneNumber,
             EmailAddress = approvedClient.EmailAddress,
             Origin = approvedClient.Origin,
-            AddedBy = approvedClient.RequestedByUser.Fullname,
+            AddedBy = approvedClient.AddedByUser.Fullname,
             OwnersAddress = new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.OwnersAddressCollection
             {
                 HouseNumber = approvedClient.OwnersAddress.HouseNumber,

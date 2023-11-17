@@ -75,9 +75,9 @@ public class GetAllTermsAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetAllTermsAsyncQuery, PagedList<GetAllTermsAsyncResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

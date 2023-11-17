@@ -5,6 +5,7 @@ using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Freebies;
 
@@ -22,7 +23,6 @@ public class RequestFreebies : ControllerBase
     [HttpPost("RequestFreebies/{id}")]
     public async Task<IActionResult> Add(RequestFreebiesCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<RequestFreebiesResult>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -34,21 +34,19 @@ public class RequestFreebies : ControllerBase
             command.ClientId = id;
 
             var freebies = await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Data = freebies;
-            response.Messages.Add("Freebie is requested successfully");
-            response.Success = true;
-            return Ok(response);
+            if (freebies.IsFailure)
+            {
+                return BadRequest(freebies);
+            }
+            return Ok(freebies);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class RequestFreebiesCommand : IRequest<RequestFreebiesResult>
+    public class RequestFreebiesCommand : IRequest<Result<RequestFreebiesResult>>
     {
         public int ClientId { get; set; }
         public List<Freebie> Freebies { get; set; }
@@ -98,18 +96,18 @@ public class RequestFreebies : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<RequestFreebiesCommand, RequestFreebiesResult>
+    public class Handler : IRequestHandler<RequestFreebiesCommand, Result<RequestFreebiesResult>>
     {
-        private const string REJECTED = "Rejected";
-        private const string FOR_FREEBIE_APPROVAL = "For Freebie Approval";
-        private readonly DataContext _context;
+        /*private const string REJECTED = "Rejected";
+        private const string FOR_FREEBIE_APPROVAL = "For Freebie Approval";*/
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
 
-        public async Task<RequestFreebiesResult> Handle(RequestFreebiesCommand request,
+        public async Task<Result<RequestFreebiesResult>> Handle(RequestFreebiesCommand request,
             CancellationToken cancellationToken)
         {
             //Validate if the client is exist
@@ -122,7 +120,7 @@ public class RequestFreebies : ControllerBase
 
             // Check if client has previously requested for freebies
             var previousRequestCount =
-                await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId && f.Status != REJECTED,
+                await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId && f.Status != Status.Rejected,
                     cancellationToken);
 
             // Check if the client has recent request. Succeeding request will subject to approval
@@ -139,7 +137,7 @@ public class RequestFreebies : ControllerBase
             // This will be true if client is requesting freebies for the first time, and will be false for any subsequent requests
             var isFirstRequest = previousRequestCount == 0;
 
-            var status = isFirstRequest ? Status.ForReleasing : Status.ApproverApproval;
+            var status = isFirstRequest ? Status.ForReleasing : Status.UnderReview;
 
             if (request.Freebies.Count > 5)
             {
@@ -158,7 +156,7 @@ public class RequestFreebies : ControllerBase
                     .Include(x => x.Items)
                     .Include(f => f.FreebieRequest)
                     .Where(f => f.ItemId == item.ItemId && f.FreebieRequest.ClientId == request.ClientId &&
-                                f.FreebieRequest.Status != REJECTED)
+                                f.FreebieRequest.Status != Status.Rejected)
                     .FirstOrDefaultAsync(cancellationToken);
 
                 if (existingRequest != null)
@@ -172,12 +170,13 @@ public class RequestFreebies : ControllerBase
             var newApproval = new Approvals
             {
                 ClientId = request.ClientId,
-                ApprovalType = FOR_FREEBIE_APPROVAL,
+                ApprovalType = Status.ForFreebieApproval,
                 IsApproved = isFirstRequest,
                 IsActive = true,
                 RequestedBy = request.AddedBy,
                 ApprovedBy = request.AddedBy
             };
+            
             await _context.Approvals.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -191,16 +190,33 @@ public class RequestFreebies : ControllerBase
                 RequestedBy = request.AddedBy
             };
             _context.FreebieRequests.Add(freebieRequest);
-            await _context.SaveChangesAsync(cancellationToken);
 
-            var freebieRequestObject = new RequestFreebiesResult.Freebie
+            
+            //Get the approver for Freebies module
+
+            if (isFirstRequest == false)
             {
-                FreebieRequestId = freebieRequest.Id,
-                Status = freebieRequest.Status,
-                TransactionNumber = freebieRequest.Id,
-                FreebieItems = new List<RequestFreebiesResult.FreebieItem>()
-            };
+                var approver = await _context.Approvers
+                    .Where(x => x.ModuleName == Modules.FreebiesApproval && x.Level == 1)
+                    .FirstOrDefaultAsync(cancellationToken);
 
+                if (approver is null)
+                {
+                    return Result<RequestFreebiesResult>.Failure(ApprovalErrors.NoApproversFound(Modules.FreebiesApproval));
+                }
+                var newRequest = new Request(
+                    Modules.FreebiesApproval,
+                    request.AddedBy,
+                    approver.UserId,
+                    Status.UnderReview
+                );
+
+                await _context.Requests.AddAsync(newRequest, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+                freebieRequest.RequestId = newRequest.Id;
+            }
+
+            
             // Add the items requested
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {
@@ -218,7 +234,7 @@ public class RequestFreebies : ControllerBase
                     .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
                     .FirstOrDefaultAsync(cancellationToken);
 
-                freebieRequestObject.FreebieItems.Add(new RequestFreebiesResult.FreebieItem
+                /*freebieRequestObject.FreebieItems.Add(new RequestFreebiesResult.FreebieItem
                 {
                     Id = freebieItem.Id,
                     ItemId = freebieItem.ItemId,
@@ -226,7 +242,7 @@ public class RequestFreebies : ControllerBase
                     ItemDescription = itemDetails.ItemDescription,
                     UOM = itemDetails.UomCode,
                     Quantity = freebieItem.Quantity
-                });
+                });*/
 
                 clientFreebies.Add(new RequestFreebiesResult.Freebie
                 {
@@ -248,12 +264,12 @@ public class RequestFreebies : ControllerBase
                 });
             }
 
-            clientFreebies.Add(freebieRequestObject);
+            /*clientFreebies.Add(freebieRequestObject);*/
 
             await _context.SaveChangesAsync(cancellationToken);
 
             //Return the result on the client info including the request.
-            return new RequestFreebiesResult
+            var result =  new RequestFreebiesResult
             {
                 Id = client.Id,
                 OwnersName = client.Fullname,
@@ -270,6 +286,8 @@ public class RequestFreebies : ControllerBase
                 Freebies = clientFreebies,
                 AddedBy = client.AddedBy,
             };
+
+            return Result<RequestFreebiesResult>.Success(result, null);
         }
     }
 }

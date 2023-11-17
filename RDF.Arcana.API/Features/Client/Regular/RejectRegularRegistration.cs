@@ -46,9 +46,9 @@ public class RejectRegularRegistration : ControllerBase
     {
         private const string FOR_REGULAR = "For regular approval";
         private const string REJECTED = "Rejected";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

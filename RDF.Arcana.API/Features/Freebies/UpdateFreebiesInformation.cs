@@ -94,9 +94,9 @@ public class UpdateFreebiesInformation : ControllerBase
 
     public class Handler : IRequestHandler<UpdateFreebiesInformationCommand, UpdateFreebieInformationResult>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

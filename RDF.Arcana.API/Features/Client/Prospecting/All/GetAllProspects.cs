@@ -139,9 +139,9 @@ public class GetAllProspects : ControllerBase
 
     public class Handler : IRequestHandler<GetAllProspectQuery, PagedList<GetAllProspectQueryResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

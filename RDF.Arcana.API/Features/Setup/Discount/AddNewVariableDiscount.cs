@@ -55,9 +55,9 @@ public class AddNewVariableDiscount : ControllerBase
 
     public class Handler : IRequestHandler<AddNewVariableDiscountCommand, Unit>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

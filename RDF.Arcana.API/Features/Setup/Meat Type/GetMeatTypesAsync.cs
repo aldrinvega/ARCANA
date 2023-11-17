@@ -38,9 +38,9 @@ public class GetMeatTypesAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetMeatTypeQuery, PagedList<GetMeatTypeQueryResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

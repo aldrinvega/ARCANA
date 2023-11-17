@@ -76,9 +76,9 @@ public class GetAllClientsInListingFee : ControllerBase
     {
         private const string APPROVED = "Approved";
         private const string UNDER_REVIEW = "Under review";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

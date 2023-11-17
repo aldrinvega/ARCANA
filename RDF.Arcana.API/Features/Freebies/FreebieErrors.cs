@@ -11,4 +11,6 @@ public class FreebieErrors
 
     public static Error AlreadyRequested(string itemDescription) => new Error("Freebie.AlreadyRequested",
         $"{itemDescription} has already been requested.");
+
+    public static Error NoFreebieFound() => new Error("Freebie.NoFreebieFound", "No freebie found");
 }

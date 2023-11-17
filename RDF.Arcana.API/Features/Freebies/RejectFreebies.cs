@@ -48,9 +48,9 @@ public class RejectFreebies : ControllerBase
     public class Handler : IRequestHandler<RejectFreebiesCommand, Unit>
     {
         private const string FREEBIE_RELEASED = "Released";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

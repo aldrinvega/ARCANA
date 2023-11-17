@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
+using RDF.Arcana.API.Features.Client.Errors;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Register;
 
@@ -24,25 +24,23 @@ public class AddAttachments : ControllerBase
     [HttpPut("AddAttachments/{id}")]
     public async Task<IActionResult> AddRequirements([FromForm] AddAttachedmentsCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.ClientId = id;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add("Attached added successfully");
-            response.Status = StatusCodes.Status200OK;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            response.Messages.Add($"{ex.Message}");
-            response.Status = StatusCodes.Status404NotFound;
-            return Conflict(response);
+            return BadRequest(ex.Message);
         }
     }
 
-    public class AddAttachedmentsCommand : IRequest<Unit>
+    public class AddAttachedmentsCommand : IRequest<Result<Unit>>
     {
         public int ClientId { get; set; }
 
@@ -55,24 +53,24 @@ public class AddAttachments : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<AddAttachedmentsCommand, Unit>
+    public class Handler : IRequestHandler<AddAttachedmentsCommand, Result<Unit>>
     {
         private readonly Cloudinary _cloudinary;
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context, IOptions<CloudinarySettings> config)
+        public Handler(ArcanaDbContext context, IOptions<CloudinaryOptions> options)
         {
             _context = context;
             var account = new Account(
-                config.Value.Cloudname,
-                config.Value.ApiKey,
-                config.Value.ApiSecret
+                options.Value.Cloudname,
+                options.Value.ApiKey,
+                options.Value.ApiSecret
             );
 
             _cloudinary = new Cloudinary(account);
         }
 
-        public async Task<Unit> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
                 .Include(x => x.ClientDocuments)
@@ -82,7 +80,7 @@ public class AddAttachments : ControllerBase
 
             if (existingClient == null)
             {
-                throw new ClientIsNotFound(request.ClientId);
+                return Result<Unit>.Failure(ClientErrors.NotFound());
             }
 
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
@@ -111,7 +109,7 @@ public class AddAttachments : ControllerBase
             }
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result<Unit>.Success(Unit.Value, "Attachments uploaded successfully");
         }
     }
 }

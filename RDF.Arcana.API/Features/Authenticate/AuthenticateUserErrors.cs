@@ -9,4 +9,6 @@ public class AuthenticateUserErrors
 
     public static Error UnauthorizedAccess() =>
         new Error("Authenticate.UnauthorizedAccess", "You are not authorized to log in.");
+    public static Error NoRole() =>
+        new Error("Authenticate.NoRole", "There is no role assigned to this user. Contact admin");
 }

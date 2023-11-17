@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 
@@ -24,6 +26,19 @@ public class GetAllApprovedProspectAsync : ControllerBase
         var response = new QueryOrCommandResult<object>();
         try
         {
+            if (User.Identity is ClaimsIdentity identity)
+            {
+                if (IdentityHelper.TryGetUserId(identity, out var userId))
+                {
+                    query.AddedBy = userId;
+                }
+
+                var role = IdentityHelper.GetRole(identity);
+                if (!string.IsNullOrEmpty(role))
+                {
+                    query.Role = role;
+                }
+            }
             var approvedProspect = await _mediator.Send(query);
 
             Response.AddPaginationHeader(
@@ -71,6 +86,8 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public string FreebieStatus { get; set; }
         public string? SortColumn { get; set; }
         public string? SortOrder { get; set; }
+        public int AddedBy { get; set; }
+        public string Role { get; set; }
     }
 
     public class GetAllApprovedProspectResult
@@ -118,9 +135,9 @@ public class GetAllApprovedProspectAsync : ControllerBase
 
     public class Handler : IRequestHandler<GetAllApprovedProspectQuery, PagedList<GetAllApprovedProspectResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -129,7 +146,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Clients> approvedProspect = _context.Clients
-                .Include(x => x.RequestedByUser)
+                .Include(x => x.AddedByUser)
                 .Include(x => x.OwnersAddress)
                 .Include(x => x.Approvals)
                 .ThenInclude(x => x.FreebieRequest)
@@ -137,7 +154,13 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .ThenInclude(x => x.Items)
                 .ThenInclude(x => x.Uom)
                 .Include(x => x.StoreType)
-                .Where(x => x.RegistrationStatus != "Registered" && x.RegistrationStatus != "Under review");
+                .Where(x => x.RegistrationStatus != "Registered" && 
+                            x.RegistrationStatus != "Under review" );
+
+            if (request.Role is not Roles.Admin)
+            {
+                approvedProspect = approvedProspect.Where(x => x.AddedBy == request.AddedBy);
+            }
 
             approvedProspect = GetFreebiesByStatus(request, approvedProspect);
 

@@ -66,9 +66,9 @@ public class AddNewUser : ControllerBase
         public class Handler : IRequestHandler<AddNewUserCommand, Unit>
         {
             private readonly Cloudinary _cloudinary;
-            private readonly DataContext _context;
+            private readonly ArcanaDbContext _context;
 
-            public Handler(DataContext context, IOptions<CloudinarySettings> config)
+            public Handler(ArcanaDbContext context, IOptions<CloudinaryOptions> config)
             {
                 _context = context;
                 var account = new Account(

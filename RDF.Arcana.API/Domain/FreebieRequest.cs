@@ -9,6 +9,7 @@ public class FreebieRequest : BaseEntity
 
     public Clients Clients { get; set; }
     public int ApprovalsId { get; set; }
+    public int? RequestId { get; set; }
 
     public Approvals Approvals { get; set; }
 
@@ -21,4 +22,5 @@ public class FreebieRequest : BaseEntity
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public virtual ICollection<FreebieItems> FreebieItems { get; set; }
     public virtual User RequestedByUser { get; set; }
+    public virtual Request Request { get; set; }
 }

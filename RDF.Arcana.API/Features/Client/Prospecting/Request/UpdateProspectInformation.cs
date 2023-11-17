@@ -58,9 +58,9 @@ public class UpdateProspectInformation : ControllerBase
         private const string PROSPECT_TYPE = "Prospect";
         private const string APPROVER_APPROVAL = "Approver Approval";
 
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

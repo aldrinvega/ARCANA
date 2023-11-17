@@ -37,9 +37,9 @@ public class GetStoreTypesAsync : ControllerBase
     
     public class Handler : IRequestHandler<GetStoreTypesQuery, PagedList<GetStoreTypesQueryResult>>
     {
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }

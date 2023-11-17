@@ -99,13 +99,9 @@ public class GetAllListingFee : ControllerBase
 
     public class Handler : IRequestHandler<GetAllListingFeeQuery, PagedList<ClientsWithListingFee>>
     {
-        private const string FOR_LISTING_FEE_APPROVAL = "For listing fee approval";
-        private const string APPROVED = "Approved";
-        private const string UNDER_REVIEW = "Under review";
-        private const string REJECTED = "Rejected";
-        private readonly DataContext _context;
+        private readonly ArcanaDbContext _context;
 
-        public Handler(DataContext context)
+        public Handler(ArcanaDbContext context)
         {
             _context = context;
         }
@@ -117,7 +113,6 @@ public class GetAllListingFee : ControllerBase
                 .Include(x => x.Approvals)
                 .Include(x => x.Client)
                 .Include(x => x.RequestedByUser)
-                .Include(x => x.ApprovedByUser)
                 .Include(x => x.ListingFeeItems)
                 .ThenInclude(x => x.Item)
                 .ThenInclude(x => x.Uom);

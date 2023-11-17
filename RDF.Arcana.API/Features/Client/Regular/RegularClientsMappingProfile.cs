@@ -193,7 +193,7 @@ public static class RegularClientsMappingProfile
             VariableDiscount = client.VariableDiscount, // Ensure a default value if VariableDiscount can be null
             Longitude = client.Longitude,
             Latitude = client.Latitude,
-            RequestedBy = client.RequestedByUser.Fullname,
+            RequestedBy = client.AddedByUser.Fullname,
             Attachments = client.ClientDocuments?.Select(cd =>
                 new GetAllClients.GetAllClientResult.Attachment
                 {
