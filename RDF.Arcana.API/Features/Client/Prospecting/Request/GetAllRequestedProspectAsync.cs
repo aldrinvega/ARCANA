@@ -21,7 +21,6 @@ public class GetAllRequestedProspectAsync : ControllerBase
     [HttpGet("GetAllRequestedProspect")]
     public async Task<IActionResult> GetAllRequestedProspect([FromQuery] GetAllRequestedProspectQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var requestedProspect = await _mediator.Send(query);
@@ -35,32 +34,25 @@ public class GetAllRequestedProspectAsync : ControllerBase
                 requestedProspect.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    requestedProspect,
-                    requestedProspect.CurrentPage,
-                    requestedProspect.PageSize,
-                    requestedProspect.TotalCount,
-                    requestedProspect.TotalPages,
-                    requestedProspect.HasPreviousPage,
-                    requestedProspect.HasNextPage
-                }
+                requestedProspect,
+                requestedProspect.CurrentPage,
+                requestedProspect.PageSize,
+                requestedProspect.TotalCount,
+                requestedProspect.TotalPages,
+                requestedProspect.HasPreviousPage,
+                requestedProspect.HasNextPage
             };
 
-            result.Messages.Add("Successfully Fetch Data");
 
-            return Ok(result);
+            var successResult = Result.Success(result);
+
+            return Ok(successResult);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return Ok(e.Message);
         }
     }
 
@@ -107,7 +99,7 @@ public class GetAllRequestedProspectAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Approvals> requestedProspect = _context.Approvals.Where(x =>
-                    x.Client.RegistrationStatus == "Approved"
+                    x.Client.RegistrationStatus == Status.Approved
                     && x.IsApproved == true
                 )
                 .Include(x => x.Client)
@@ -118,13 +110,13 @@ public class GetAllRequestedProspectAsync : ControllerBase
             if (!string.IsNullOrEmpty(request.Search))
             {
                 requestedProspect = requestedProspect.Where(x =>
-                    x.Client.Fullname.Contains(request.Search) && x.Client.CustomerType == "Prospect");
+                    x.Client.Fullname.Contains(request.Search) && x.Client.CustomerType == CustomerType.Prospect);
             }
 
             if (request.Status != null)
             {
                 requestedProspect = requestedProspect.Where(x =>
-                    x.IsActive == request.Status && x.Client.CustomerType == "Prospect");
+                    x.IsActive == request.Status && x.Client.CustomerType == CustomerType.Prospect);
             }
 
             var result = requestedProspect.Select(x => x.ToGetAllRequestedProspectResult());

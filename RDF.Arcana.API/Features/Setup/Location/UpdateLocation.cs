@@ -18,13 +18,13 @@ public class UpdateLocation : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateLocationCommand : IRequest<Unit>
+    public class UpdateLocationCommand : IRequest<Result>
     {
         public int LocationId { get; set; }
         public string LocationName { get; set; }
         public string ModifiedBy { get; set; }
     }
-    public class Handler : IRequestHandler<UpdateLocationCommand, Unit>
+    public class Handler : IRequestHandler<UpdateLocationCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -33,19 +33,14 @@ public class UpdateLocation : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateLocationCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateLocationCommand request, CancellationToken cancellationToken)
         {
             var existingLocation =
                 await _context.Locations.FirstOrDefaultAsync(x => x.Id == request.LocationId, cancellationToken);
 
             if (existingLocation is null)
             {
-                throw new NoLocationFoundException();
-            }
-
-            if (existingLocation.LocationName == request.LocationName)
-            {
-                throw new System.Exception("No changes");
+                return LocationErrors.NotFound();
             }
 
             var isLocationAlreadyExist = await _context.Locations
@@ -62,29 +57,27 @@ public class UpdateLocation : ControllerBase
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPut("UpdateLocation/{id:int}")]
     public async Task<IActionResult> Update(UpdateLocationCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.LocationId = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add("Location updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            return Ok(response);
+           var result = await _mediator.Send(command);
+           if (result.IsFailure)
+           {
+               return BadRequest(result);
+           }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

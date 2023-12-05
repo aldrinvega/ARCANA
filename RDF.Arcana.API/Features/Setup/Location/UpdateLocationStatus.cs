@@ -18,12 +18,12 @@ public class UpdateLocationStatus : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateLocationStatusCommand : IRequest<Unit>
+    public class UpdateLocationStatusCommand : IRequest<Result>
     {
         public int LocationId { get; set; }
         public string ModifiedBy { get; set; }
     }
-    public class Handler : IRequestHandler<UpdateLocationStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateLocationStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -32,10 +32,10 @@ public class UpdateLocationStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateLocationStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateLocationStatusCommand request, CancellationToken cancellationToken)
         {
-            var validateLocation =
-                await _context.Locations.FirstOrDefaultAsync(x => x.Id == request.LocationId,
+            var validateLocation = await _context.Locations.FirstOrDefaultAsync(x => 
+                    x.Id == request.LocationId,
                     cancellationToken);
 
             if (validateLocation is null)
@@ -47,13 +47,12 @@ public class UpdateLocationStatus : ControllerBase
             validateLocation.ModifiedBy = request.ModifiedBy ?? "Admin";
             validateLocation.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     [HttpPatch("UpdateLocationStatus/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateLocationStatusCommand
@@ -61,15 +60,16 @@ public class UpdateLocationStatus : ControllerBase
                 LocationId = id,
                 ModifiedBy = User.Identity?.Name
             };
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add("Successfully updated the status");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }      
     }
 

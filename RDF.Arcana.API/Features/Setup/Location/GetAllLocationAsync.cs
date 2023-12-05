@@ -82,27 +82,23 @@ public class GetAllLocationAsync : ControllerBase
                 result.HasNextPage
             );
 
-            var results = new QueryOrCommandResult<object>()
+            var results = new
             {
-                Success = true,
-                Data = new
-                {
-                    result,
-                    result.CurrentPage,
-                    result.PageSize,
-                    result.TotalCount,
-                    result.TotalPages,
-                    result.HasPreviousPage,
-                    result.HasNextPage
-                }
+                result,
+                result.CurrentPage,
+                result.PageSize,
+                result.TotalCount,
+                result.TotalPages,
+                result.HasPreviousPage,
+                result.HasNextPage
             };
-            results.Messages.Add("Successfully Data Fetch");
-            return Ok(results);
+
+            var successResult = Result.Success(results);
+            return Ok(successResult);
         }
         catch (System.Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 }

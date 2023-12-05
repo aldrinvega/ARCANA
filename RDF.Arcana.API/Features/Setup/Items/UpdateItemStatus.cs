@@ -17,12 +17,12 @@ public class UpdateItemStatus : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateItemStatusCommand : IRequest<Unit>
+    public class UpdateItemStatusCommand : IRequest<Result>
     {
         public int Id { get; set; }
         public string ModifiedBy { get; set; }
     }
-    public class Handler : IRequestHandler<UpdateItemStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateItemStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -31,27 +31,26 @@ public class UpdateItemStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateItemStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateItemStatusCommand request, CancellationToken cancellationToken)
         {
             var item = await _context.Items.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         
             if (item == null)
             {
-                throw new ItemNotFoundException();
+                return ItemErrors.NotFound(request.Id);
             }
         
             item.IsActive = !item.IsActive;
             item.ModifiedBy = request.ModifiedBy ?? "Admin";
             item.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPatch("UpdateItemStatus/{id:int}")]
     public async Task<IActionResult> UpdateStatus([FromRoute]int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateItemStatusCommand
@@ -59,17 +58,16 @@ public class UpdateItemStatus : ControllerBase
                 Id = id,
                 ModifiedBy = User.Identity?.Name
             };
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Successfully updated the item status");
-            return Ok(response);
+           var result = await _mediator.Send(command);
+           if (result.IsFailure)
+           {
+               return BadRequest(result);
+           }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }      
     }
 }

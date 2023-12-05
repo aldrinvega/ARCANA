@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Setup.Items.Exceptions;
-using RDF.Arcana.API.Features.Setup.Meat_Type.Exceptions;
-using RDF.Arcana.API.Features.Setup.Product_Category.Exceptions;
-using RDF.Arcana.API.Features.Setup.UOM.Exceptions;
+using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Setup.Meat_Type;
+using RDF.Arcana.API.Features.Setup.Product_Category;
+using RDF.Arcana.API.Features.Setup.UOM;
 
 namespace RDF.Arcana.API.Features.Setup.Items;
 
@@ -21,7 +21,7 @@ public class AddNewItems : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewItemsCommand : IRequest<Unit>
+    public class AddNewItemsCommand : IRequest<Result>
     {
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }
@@ -29,9 +29,10 @@ public class AddNewItems : ControllerBase
         public int UomId { get; set; }
         public int ProductSubCategoryId { get; set; }
         public int MeatTypeId { get; set; }
+        public decimal Price { get; set; }
     }
     
-    public class Handler : IRequestHandler<AddNewItemsCommand, Unit>
+    public class Handler : IRequestHandler<AddNewItemsCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -40,34 +41,35 @@ public class AddNewItems : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewItemsCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewItemsCommand request, CancellationToken cancellationToken)
         {
-            var existingItem = await _context.Items.FirstOrDefaultAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
-            var validateProductCategory =
-                await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductSubCategoryId,
-                    cancellationToken);
+            var existingItem = await _context.Items.FirstOrDefaultAsync(x => 
+                x.ItemCode == request.ItemCode && x.UomId == request.UomId, cancellationToken);
+            
+            var validateProductCategory = await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductSubCategoryId, cancellationToken);
+            
             var validateUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
-            var validateMeatType =
-                await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
+            
+            var validateMeatType = await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
 
             if (existingItem is not null)
             {
-                throw new ItemAlreadyExistException();
+                return ItemErrors.AlreadyExist(request.ItemCode);
             }
 
             if (validateUom is null)
             {
-                throw new UomNotFoundException();
+                return UomErrors.NotFound();
             }
 
             if (validateProductCategory is null)
             {
-                throw new NoProductCategoryFoundException();
+                return ProductCategoryErrors.NotFound();
             }
 
             if (validateMeatType is null)
             {
-                throw new MeatTypeNotFoundException();
+                return MeatTypeErrors.NotFound();
             }
 
             var items = new Domain.Items
@@ -83,8 +85,19 @@ public class AddNewItems : ControllerBase
 
             await _context.Items.AddAsync(items, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+
+            var newPriceChange = new ItemPriceChange
+            {
+                ItemId = items.Id,
+                EffectivityDate = DateTime.Now,
+                AddedBy = request.AddedBy,
+                Price = request.Price
+            };
+
+            await _context.ItemPriceChanges.AddAsync(newPriceChange, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             
-            return Unit.Value;
+            return Result.Success();
 
         }
     }
@@ -92,7 +105,6 @@ public class AddNewItems : ControllerBase
     [HttpPost("AddNewItem")]
     public async Task<IActionResult> AddNewItem(AddNewItemsCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity 
@@ -100,16 +112,16 @@ public class AddNewItems : ControllerBase
             {
                 command.AddedBy = userId;
             }
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add($"Item {command.ItemCode} successfully added");
-            response.Status = StatusCodes.Status200OK;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

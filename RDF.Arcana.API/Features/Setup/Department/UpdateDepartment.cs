@@ -17,14 +17,14 @@ public class UpdateDepartment : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateDepartmentCommand : IRequest<Unit>
+    public class UpdateDepartmentCommand : IRequest<Result>
     {
         public int DepartmentId { get; set; }
         public string DepartmentName { get; set; }
         public string ModifiedBy { get; set; }
     }
      
-     public class Handler : IRequestHandler<UpdateDepartmentCommand, Unit>
+     public class Handler : IRequestHandler<UpdateDepartmentCommand, Result>
      {
          private readonly ArcanaDbContext _context;
 
@@ -33,7 +33,7 @@ public class UpdateDepartment : ControllerBase
              _context = context;
          }
 
-         public async Task<Unit> Handle(UpdateDepartmentCommand request, CancellationToken cancellationToken)
+         public async Task<Result> Handle(UpdateDepartmentCommand request, CancellationToken cancellationToken)
          {
              var validateDepartment =
                  await _context.Departments.FirstOrDefaultAsync(d => d.Id == request.DepartmentId,
@@ -49,41 +49,35 @@ public class UpdateDepartment : ControllerBase
                  validateDepartment.UpdatedAt = DateTime.Now;
 
                  await _context.SaveChangesAsync(cancellationToken);
-                 return Unit.Value;
-
-             }
-            
-             if (validateDepartmentName.DepartmentName == request.DepartmentName && validateDepartmentName.Id == request.DepartmentId)
-             {
-                 throw new System.Exception("No changes");
+                 return Result.Success();
              }
             
              if (validateDepartmentName.DepartmentName == request.DepartmentName && validateDepartmentName.Id != request.DepartmentId)
              {
-                 throw new DepartmentAlreadyExistException(request.DepartmentName);
+                 return DepartmentErrors.AlreadyExist(request.DepartmentName);
              }
-             
-             return Unit.Value;
+
+             return Result.Success();
          }
      }
      
      [HttpPut("UpdateDepartment/{id:int}")]
      public async Task<IActionResult> Update(UpdateDepartmentCommand command, [FromRoute]int id)
      {
-         var response = new QueryOrCommandResult<object>();
          try
          {
              command.DepartmentId = id;
              command.ModifiedBy = User.Identity?.Name;
-             await _mediator.Send(command);
-             response.Success = true;
-             response.Messages.Add("Department successfully updated");
-             return Ok(response);
+             var result = await _mediator.Send(command);
+             if (result.IsFailure)
+             {
+                 return BadRequest(result);
+             }
+             return Ok(result);
          }
          catch (System.Exception e)
          {
-             response.Messages.Add(e.Message);
-             return Conflict(response);
+             return BadRequest(e.Message);
          }
      }
 }

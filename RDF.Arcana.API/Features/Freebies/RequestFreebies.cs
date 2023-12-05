@@ -46,7 +46,7 @@ public class RequestFreebies : ControllerBase
         }
     }
 
-    public class RequestFreebiesCommand : IRequest<Result<RequestFreebiesResult>>
+    public class RequestFreebiesCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public List<Freebie> Freebies { get; set; }
@@ -62,11 +62,13 @@ public class RequestFreebies : ControllerBase
     {
         public int Id { get; set; }
         public string OwnersName { get; set; }
+        public string EmailAddress { get; set; }
+        public string StoreType { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string BusinessName { get; set; }
         public int AddedBy { get; set; }
-        public IEnumerable<Freebie> Freebies { get; set; }
+        public IEnumerable<FreebieCollection> Freebies { get; set; }
 
         public class OwnersAddressCollection
         {
@@ -77,15 +79,15 @@ public class RequestFreebies : ControllerBase
             public string Province { get; set; }
         }
 
-        public class Freebie
+        public class FreebieCollection
         {
             public int FreebieRequestId { get; set; }
             public string Status { get; set; }
             public int TransactionNumber { get; set; }
-            public ICollection<FreebieItem> FreebieItems { get; set; }
+            public ICollection<FreebieItemForDirectClient> FreebieItems { get; set; }
         }
 
-        public class FreebieItem
+        public class FreebieItemForDirectClient
         {
             public int? Id { get; set; }
             public int ItemId { get; set; }
@@ -96,7 +98,7 @@ public class RequestFreebies : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<RequestFreebiesCommand, Result<RequestFreebiesResult>>
+    public class Handler : IRequestHandler<RequestFreebiesCommand, Result>
     {
         /*private const string REJECTED = "Rejected";
         private const string FOR_FREEBIE_APPROVAL = "For Freebie Approval";*/
@@ -107,17 +109,19 @@ public class RequestFreebies : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<RequestFreebiesResult>> Handle(RequestFreebiesCommand request,
+        public async Task<Result> Handle(RequestFreebiesCommand request,
             CancellationToken cancellationToken)
         {
             //Validate if the client is exist
             var client = await _context.Clients
+                             .Include(storeType => storeType.StoreType)
                              .Include(x => x.OwnersAddress)
                              .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken) ??
                          throw new ClientIsNotFound(request.ClientId);
 
-            var clientFreebies = new List<RequestFreebiesResult.Freebie>();
+            var clientFreebies = new List<RequestFreebiesResult.FreebieItemForDirectClient>();
 
+            var freebieResult = new List<RequestFreebiesResult.FreebieCollection>();
             // Check if client has previously requested for freebies
             var previousRequestCount =
                 await _context.FreebieRequests.CountAsync(f => f.ClientId == request.ClientId && f.Status != Status.Rejected,
@@ -129,9 +133,11 @@ public class RequestFreebies : ControllerBase
                      (x.Status == Status.ForReleasing || x.Status == Status.ApproverApproval),
                 cancellationToken);
 
+            /*var freebiesResult = IList<RequestFreebiesResult.FreebieCollection>(); */
+
             if (withRecentRequest != null)
             {
-                throw new Exception($"Client has {withRecentRequest.Status.ToLower()} freebies");
+                return FreebieErrors.WithRecentRequest(withRecentRequest.Status);
             }
 
             // This will be true if client is requesting freebies for the first time, and will be false for any subsequent requests
@@ -141,12 +147,12 @@ public class RequestFreebies : ControllerBase
 
             if (request.Freebies.Count > 5)
             {
-                throw new Exception("Freebie request is not exceeding to 5 items");
+                return FreebieErrors.Exceed5Items();
             }
 
             if (request.Freebies.Select(x => x.ItemId).Distinct().Count() != request.Freebies.Count)
             {
-                throw new Exception("Items cannot be repeated.");
+               return FreebieErrors.CannotBeRepeated();
             }
 
             //Validate if the Item is already requested | 1 item per client
@@ -161,8 +167,7 @@ public class RequestFreebies : ControllerBase
 
                 if (existingRequest != null)
                 {
-                    throw new Exception(
-                        $"{existingRequest.Items.ItemDescription} has already been requested.");
+                    return FreebieErrors.AlreadyRequested(existingRequest.Items.ItemDescription);
                 }
             }
 
@@ -202,7 +207,7 @@ public class RequestFreebies : ControllerBase
 
                 if (approver is null)
                 {
-                    return Result<RequestFreebiesResult>.Failure(ApprovalErrors.NoApproversFound(Modules.FreebiesApproval));
+                    return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
                 }
                 var newRequest = new Request(
                     Modules.FreebiesApproval,
@@ -228,13 +233,15 @@ public class RequestFreebies : ControllerBase
                 await _context.FreebieItems.AddAsync(freebieItem, cancellationToken);
 
                 //Get the items details that has been requested
+                //Get the item details inserted by Item Id
                 var itemDetails = await _context.Items
                     .Include(x => x.Uom)
                     .Where(i => i.Id == freebieItem.ItemId)
                     .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
                     .FirstOrDefaultAsync(cancellationToken);
-
-                /*freebieRequestObject.FreebieItems.Add(new RequestFreebiesResult.FreebieItem
+                        
+                //Add the item details to be return
+                clientFreebies.Add(new RequestFreebiesResult.FreebieItemForDirectClient
                 {
                     Id = freebieItem.Id,
                     ItemId = freebieItem.ItemId,
@@ -242,29 +249,18 @@ public class RequestFreebies : ControllerBase
                     ItemDescription = itemDetails.ItemDescription,
                     UOM = itemDetails.UomCode,
                     Quantity = freebieItem.Quantity
-                });*/
-
-                clientFreebies.Add(new RequestFreebiesResult.Freebie
-                {
-                    FreebieRequestId = freebieRequest.Id,
-                    Status = freebieRequest.Status,
-                    TransactionNumber = freebieRequest.Id,
-                    FreebieItems = new List<RequestFreebiesResult.FreebieItem>
-                    {
-                        new()
-                        {
-                            Id = freebieItem.Id,
-                            ItemId = freebieItem.ItemId,
-                            ItemCode = itemDetails.ItemCode,
-                            ItemDescription = itemDetails.ItemDescription,
-                            UOM = itemDetails.UomCode,
-                            Quantity = freebieItem.Quantity
-                        }
-                    }
                 });
             }
+            
+            //Result for the added freebies
 
-            /*clientFreebies.Add(freebieRequestObject);*/
+            freebieResult.Add( new RequestFreebiesResult.FreebieCollection
+            {
+                FreebieRequestId = freebieRequest.Id,
+                Status = freebieRequest.Status,
+                TransactionNumber = freebieRequest.Id,
+                FreebieItems = clientFreebies,
+            });
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -273,6 +269,8 @@ public class RequestFreebies : ControllerBase
             {
                 Id = client.Id,
                 OwnersName = client.Fullname,
+                EmailAddress = client.EmailAddress,
+                StoreType = client.StoreType.StoreTypeName,
                 OwnersAddress = new RequestFreebiesResult.OwnersAddressCollection
                 {
                     HouseNumber = client.OwnersAddress.HouseNumber,
@@ -283,11 +281,11 @@ public class RequestFreebies : ControllerBase
                 },
                 PhoneNumber = client.PhoneNumber,
                 BusinessName = client.BusinessName,
-                Freebies = clientFreebies,
+                Freebies = freebieResult,
                 AddedBy = client.AddedBy,
             };
 
-            return Result<RequestFreebiesResult>.Success(result, null);
+            return Result.Success(result);
         }
     }
-}
+}                                                                        

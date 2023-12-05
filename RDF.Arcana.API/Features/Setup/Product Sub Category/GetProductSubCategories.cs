@@ -74,7 +74,6 @@ public class GetProductSubCategories : ControllerBase
     [HttpGet("GetProductSubCategories")]
     public async Task<IActionResult> Get([FromQuery]GetProductSubCategoriesQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var productSubCategories =  await _mediator.Send(query);
@@ -87,30 +86,24 @@ public class GetProductSubCategories : ControllerBase
                 productSubCategories.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    productSubCategories,
-                    productSubCategories.CurrentPage,
-                    productSubCategories.PageSize,
-                    productSubCategories.TotalCount,
-                    productSubCategories.TotalPages,
-                    productSubCategories.HasPreviousPage,
-                    productSubCategories.HasNextPage
+                productSubCategories,
+                productSubCategories.CurrentPage,
+                productSubCategories.PageSize,
+                productSubCategories.TotalCount,
+                productSubCategories.TotalPages,
+                productSubCategories.HasPreviousPage,
+                productSubCategories.HasNextPage
 
-                }
             };
-            result.Messages.Add("Successfully Fetch Data");
-            return Ok(result);
+
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

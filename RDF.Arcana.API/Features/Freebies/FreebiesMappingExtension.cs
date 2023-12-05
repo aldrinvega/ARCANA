@@ -7,10 +7,9 @@ public static class FreebiesMappingExtension
     public static GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
         ToGetRequestedFreebiesQueryResult(this Approvals freebies)
     {
-        var status = freebies.FreebieRequest == null ? "For freebie request" : "Freebie Releasing";
         return new GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
         {
-            GetRequestedFreebiesQueryResults = freebies.FreebieRequest.Select(freebieRequest =>
+            GetRequestedFreebiesQueryResults = freebies.FreebieRequest?.Select(freebieRequest =>
                 new GetRequestedFreebies.GetRequestedFreebiesQueryResult
                 {
                     FreebieRequestId = freebieRequest.Id,
@@ -33,7 +32,6 @@ public static class FreebiesMappingExtension
                             ItemCode = x.Items.ItemCode,
                             Quantity = x.Quantity,
                         }).ToList(),
-                    // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
                 }).ToList()
         };
     }
@@ -66,7 +64,6 @@ public static class FreebiesMappingExtension
                             ItemCode = x.Items.ItemCode,
                             Quantity = x.Quantity,
                         }).ToList(),
-                    // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
                 }).ToList()
         };
     }
@@ -99,7 +96,6 @@ public static class FreebiesMappingExtension
                             ItemCode = x.Items.ItemCode,
                             Quantity = x.Quantity,
                         }).ToList(),
-                    // DateCreated = freebies.CreatedAt.ToString("yyyy-MM-dd")
                 }).ToList()
         };
     }
@@ -129,7 +125,16 @@ public static class FreebiesMappingExtension
                     Id = fi.Id,
                     ItemCode = fi.Items.ItemCode,
                     Quantity = fi.Quantity
-                }) ?? new List<GetAllFreebies.GetAllFreebiesResult.Freebie>()).ToList()
+                }) ?? new List<GetAllFreebies.GetAllFreebiesResult.Freebie>()).ToList(),
+            FreebieApprovalHistories = freebies.Request.Approvals
+                ?.OrderByDescending(a => a.CreatedAt)
+                .Select( a => new GetAllFreebies.GetAllFreebiesResult.FreebieApprovalHistory
+                {
+                    Module = a.Request.Module,
+                    Approver = a.Approver.Fullname,
+                    CreatedAt = a.CreatedAt,
+                    Status = a.Status,
+                })
         };
     }
 }

@@ -21,7 +21,6 @@ public class GetProductCategoryAsync : ControllerBase
     [HttpGet("GetProductCategory")]
     public async Task<IActionResult> GetProductCategory([FromQuery] GetProductCategoryAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var result = await _mediator.Send(query);
@@ -34,29 +33,23 @@ public class GetProductCategoryAsync : ControllerBase
                 result.HasNextPage
             );
 
-            var productCategories = new QueryOrCommandResult<object>
+            var productCategories = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    result,
-                    result.CurrentPage,
-                    result.PageSize,
-                    result.TotalCount,
-                    result.TotalPages,
-                    result.HasPreviousPage,
-                    result.HasNextPage
-                }
+                result,
+                result.CurrentPage,
+                result.PageSize,
+                result.TotalCount,
+                result.TotalPages,
+                result.HasPreviousPage,
+                result.HasNextPage
             };
-            productCategories.Messages.Add("Successfully fetch data");
-            return Ok(productCategories);
+
+            var successResult = Result.Success(productCategories);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 

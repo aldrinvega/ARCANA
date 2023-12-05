@@ -38,7 +38,6 @@ public class Clients : BaseEntity
     [ForeignKey("StoreType")] public int? StoreTypeId { get; set; }
     public string RegistrationStatus { get; set; }
     public int? Terms { get; set; }
-    public int? ModeOfPayment { get; set; }
     public bool? DirectDelivery { get; set; }
     public int? BookingCoverageId { get; set; }
     public int AddedBy { get; set; }
@@ -51,8 +50,6 @@ public class Clients : BaseEntity
     public int? RequestId { get; set; }
     public int? FixedDiscountId { get; set; }
     public bool? VariableDiscount { get; set; }
-    
-    
     public virtual User ModifiedByUser { get; set; }
     public virtual User AddedByUser { get; set; }
     public virtual List<ClientDocuments> ClientDocuments { get; set; }
@@ -62,9 +59,9 @@ public class Clients : BaseEntity
     public virtual FixedDiscounts FixedDiscounts { get; set; }
     public virtual StoreType StoreType { get; set; }
     public virtual BookingCoverages BookingCoverages { get; set; }
-    public virtual ModeOfPayment ModeOfPayments { get; set; }
     public virtual TermOptions Term { get; set; }
     public virtual OwnersAddress OwnersAddress { get; set; }
     public virtual BusinessAddress BusinessAddress { get; set; }
     public virtual Request Request { get; set; }
+    public virtual ICollection<ClientModeOfPayment> ClientModeOfPayment { get; set; }
 }

@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Listing_Fee.Errors;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -22,15 +24,8 @@ public class RejectListingFee : ControllerBase
     {
         try
         {
-            command.ApprovalId = id;
-
-            if (User.Identity is ClaimsIdentity identity
-                && IdentityHelper.TryGetUserId(identity, out var userId))
-            {
-                command.RejectedBy = userId;
-            }
+            command.RequestId = id;
             
-
             var result = await _mediator.Send(command);
 
             if (result.IsFailure)
@@ -45,14 +40,13 @@ public class RejectListingFee : ControllerBase
         }
     }
 
-    public class RejectListingFeeCommand : IRequest<Result<Unit>>
+    public class RejectListingFeeCommand : IRequest<Result>
     {
-        public int ApprovalId { get; set; }
-        public int RejectedBy { get; set; }
+        public int RequestId { get; set; }
         public string Reason { get; set; }
     }
 
-    public class Handler : IRequestHandler<RejectListingFeeCommand, Result<Unit>>
+    public class Handler : IRequestHandler<RejectListingFeeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -61,29 +55,49 @@ public class RejectListingFee : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<Unit>> Handle(RejectListingFeeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(RejectListingFeeCommand request, CancellationToken cancellationToken)
         {
-            var existingApprovalsForListingFee = await _context.Approvals
-                .Include(listingFee => listingFee.ListingFee)
-                .ThenInclude(listingFeeItems => listingFeeItems.ListingFeeItems)
-                .ThenInclude(X => X.Item)
-                .ThenInclude(X => X.Uom)
-                .FirstOrDefaultAsync(approval => approval.Id == request.ApprovalId, cancellationToken);
+            var existingApprovalsForListingFee =
+                await _context.Requests
+                    .Include(x => x.ListingFee)
+                    .Include(approval => approval.Approvals)
+                    .FirstOrDefaultAsync(
+                        x => x.Id == request.RequestId &&
+                             x.Status != Status.Rejected,
+                        cancellationToken);
 
             if (existingApprovalsForListingFee == null)
             {
-                return Result<Unit>.Failure(ListingFeeErrors.NotFound()); 
-            }
-            foreach (var listingFee in existingApprovalsForListingFee.ListingFee)
-            {
-                listingFee.Status = Status.Rejected;
+                return ListingFeeErrors.NotFound();
             }
             
-            existingApprovalsForListingFee.Reason = request.Reason;
-            existingApprovalsForListingFee.IsApproved = false;
+            var approvers = await _context.Approvers
+                .Where(module => module.ModuleName == Modules.ListingFeeApproval)
+                .ToListAsync(cancellationToken);
+            
+            var currentApproverLevel = approvers
+                .FirstOrDefault(approver => approver.UserId == existingApprovalsForListingFee.CurrentApproverId)?.Level;
+            
+            if (currentApproverLevel == null)
+            {
+                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
+            }
+
+            var newApproval = new Approval(
+                existingApprovalsForListingFee.Id,
+                existingApprovalsForListingFee.CurrentApproverId,
+                Status.Rejected,
+                request.Reason,
+                true
+            );
+            
+            existingApprovalsForListingFee.ListingFee.Status = Status.Rejected;
+            existingApprovalsForListingFee.Status = Status.Rejected;
+
+            await _context.Approval.AddAsync(newApproval, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Result<Unit>.Success(Unit.Value, "Listing fee rejected successfully");
+            return Result.Success();
         }
     }
 }

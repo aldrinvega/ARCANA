@@ -17,13 +17,13 @@ public class UpdateUserStatus : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateUserStatusCommand : IRequest<Unit>
+    public class UpdateUserStatusCommand : IRequest<Result>
     {
         public int UserId { get; set; }
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateUserStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateUserStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -32,24 +32,23 @@ public class UpdateUserStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateUserStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUserStatusCommand request, CancellationToken cancellationToken)
         {
             var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
             if (existingUser is null)
-                throw new NoUserFoundException();
+                return UserErrors.NotFound();
 
             existingUser.IsActive = !existingUser.IsActive;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPatch("UpdateUserStatus/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateUserStatusCommand
@@ -57,17 +56,16 @@ public class UpdateUserStatus : ControllerBase
                 UserId = id,
                 ModifiedBy = User.Identity?.Name
             };
-            await _mediator.Send(command);
-            response.Messages.Add("User status has been updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

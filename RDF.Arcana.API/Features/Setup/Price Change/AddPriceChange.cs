@@ -1,0 +1,83 @@
+﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+
+namespace RDF.Arcana.API.Features.Setup.Price_Change;
+[Route("api/PriceChange"), ApiController]
+
+public class AddPriceChange : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public AddPriceChange(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPost("AddNewPriceChange")]
+    public async Task<IActionResult> Add([FromBody]AddPriceChangeCommand command)
+    {
+        try
+        {
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    public class AddPriceChangeCommand : IRequest<Result>
+    {
+        public int ItemId { get; set; }
+        public decimal Price { get; set; }
+        public DateTime EffectivityDate { get; set; }
+    }
+
+    public class Handler : IRequestHandler<AddPriceChangeCommand, Result>
+    {
+        private readonly ArcanaDbContext _context;
+
+        public Handler(ArcanaDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Result> Handle(AddPriceChangeCommand request, CancellationToken cancellationToken)
+        {
+            var priceChange = await _context.ItemPriceChanges
+                .Include(item => item.Item)
+                .FirstOrDefaultAsync(item => item.ItemId == request.ItemId
+                                             && item.EffectivityDate == request.EffectivityDate,
+                    cancellationToken);
+
+            if (priceChange != null)
+            {
+                // If price change already exists for the specified EffectivityDate, update the price
+                priceChange.Price = request.Price;
+            }
+            else
+            {
+                // Else add new price change
+                var newPriceChange = new ItemPriceChange
+                {
+                    ItemId = request.ItemId,
+                    Price = request.Price,
+                    EffectivityDate = request.EffectivityDate
+                };
+                await _context.AddAsync(newPriceChange, cancellationToken);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+            return Result.Success();
+        }
+    }
+}

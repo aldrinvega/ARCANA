@@ -2,7 +2,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Client.All;
 
@@ -19,13 +21,13 @@ public class RejectClientRegistration : ControllerBase
     [HttpPut("RejectClientRegistration/{id:int}")]
     public async Task<IActionResult> RejectClients([FromRoute] int id, [FromBody] RejectClientCommand command)
     {
-        command.ClientId = id;
+        command.RequestId = id;
         try
         {
             if (User.Identity is ClaimsIdentity identity
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
             {
-                command.RequestedBy = userId;
+                command.AccessBy = userId;
             }
 
             var result = await _mediator.Send(command);
@@ -42,11 +44,11 @@ public class RejectClientRegistration : ControllerBase
         }
     }
 
-    public record RejectClientCommand : IRequest<Result<RejectedClientResult>>
+    public record RejectClientCommand : IRequest<Result>
     {
-        public int ClientId { get; set; }
+        public int RequestId { get; set; }
         public string Reason { get; set; }
-        public int RequestedBy { get; set; }
+        public int AccessBy { get; set; }
     }
 
     public sealed record RejectedClientResult
@@ -57,11 +59,8 @@ public class RejectClientRegistration : ControllerBase
         public string Reason { get; set; }
     }
 
-    public class Handler : IRequestHandler<RejectClientCommand, Result<RejectedClientResult>>
+    public class Handler : IRequestHandler<RejectClientCommand, Result>
     {
-        private const string REJECTED = "Rejected";
-        private const string DIRECT_REGISTRATION_APPROVAL = "Direct Registration Approval";
-        private const string FOR_REGULAR_APPROVAL = "For regular approval";
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -69,58 +68,86 @@ public class RejectClientRegistration : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<RejectedClientResult>> Handle(RejectClientCommand request,
+        public async Task<Result> Handle(RejectClientCommand request,
             CancellationToken cancellationToken)
         {
-            var existingClient = await _context.Clients
-                .Include(x => x.Approvals)
-                .Where(x => x.Approvals.Any(x =>
-                    (x.ApprovalType == DIRECT_REGISTRATION_APPROVAL ||
-                     x.ApprovalType == FOR_REGULAR_APPROVAL) &&
-                    x.IsActive &&
-                    x.IsApproved == false))
+            
+            var existingClientRequest = await _context.Requests
+                .Where(client => client.Status != Status.Rejected)
+                .Include(client => client.Clients).ThenInclude(clients => clients.ListingFees)
+                .ThenInclude(listingFee => listingFee.Request)
                 .FirstOrDefaultAsync(x =>
-                    x.Id == request.ClientId, cancellationToken);
+                    x.Id == request.RequestId, cancellationToken);
 
-            if (existingClient == null)
+            if (existingClientRequest == null)
             {
-                return Result<RejectedClientResult>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
 
-            // Adjust this kapag may Approval system na dapat ang approver na naka assign lang ang makaka reject nito
-
-            /*if (existingClient.AddedBy != request.RequestedBy)
+            if (existingClientRequest.Status == Status.Rejected)
             {
-                return Result<RejectedClientResult>.Failure(ClientErrors.Unauthorized());
-            }*/
-
-            if (existingClient.RegistrationStatus == REJECTED)
-            {
-                return Result<RejectedClientResult>.Failure(
-                    ClientErrors.AlreadyRejected(existingClient.RegistrationStatus));
+                return ClientErrors.AlreadyRejected(existingClientRequest.Clients.BusinessName);
             }
 
-            existingClient.RegistrationStatus = REJECTED;
-            foreach (var approval in existingClient.Approvals.Where(approval =>
-                         approval.ApprovalType == DIRECT_REGISTRATION_APPROVAL))
+            if (existingClientRequest.CurrentApproverId != request.AccessBy)
             {
-                approval.IsActive = false;
-                approval.IsActive = false;
-                approval.Reason = request.Reason;
+                return ApprovalErrors.NotAllowed(Modules.RegistrationApproval);
             }
+
+            if (existingClientRequest.Status == Status.Rejected)
+            {
+                return ClientErrors.AlreadyRejected(existingClientRequest.Status);
+            }
+            
+            var underReviewListingFee = existingClientRequest.Clients?.ListingFees?
+              .Where(lf => lf.Status == Status.UnderReview)
+              .ToList();
+            
+            if (underReviewListingFee is not null)
+            {
+                foreach (var listingFee in underReviewListingFee)
+                {
+                    var newListingFeeApproval = new Approval(
+                        listingFee.RequestId,
+                        listingFee.Request.CurrentApproverId,
+                        Status.Rejected,
+                        request.Reason,
+                        true
+                    );
+                    
+                    listingFee.Status = Status.Rejected;
+                    listingFee.Request.Status = Status.Rejected;
+
+                    await _context.Approval.AddAsync(newListingFeeApproval, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+            }
+
+            var newApproval = new Approval
+            (
+                existingClientRequest.Id,
+                existingClientRequest.CurrentApproverId,
+                Status.Rejected,
+                request.Reason,
+                true
+            );
+            
+            await _context.Approval.AddAsync(newApproval, cancellationToken);
+            
+            existingClientRequest.Status = Status.Rejected;
+            existingClientRequest.Clients.RegistrationStatus = Status.Rejected;
 
             await _context.SaveChangesAsync(cancellationToken);
 
             var result = new RejectedClientResult
             {
-                ClientId = existingClient.Id,
-                Fullname = existingClient.Fullname,
-                BusinessName = existingClient.BusinessName,
+                ClientId = existingClientRequest.Id,
+                Fullname = existingClientRequest.Clients.Fullname,
+                BusinessName = existingClientRequest.Clients.BusinessName,
                 Reason = request.Reason
             };
 
-            return Result<RejectedClientResult>.Success(result,
-                $"{existingClient.BusinessName} is rejected successfully");
+            return Result.Success(result);
         }
     }
 }

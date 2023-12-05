@@ -10,5 +10,6 @@ public class ModeOfPayment : BaseEntity
     public int AddedBy { get; set; }
     public bool IsActive { get; set; }
     public virtual User AddedByUser { get; set; }
+    public virtual ICollection<ClientModeOfPayment> ClientModeOfPayments { get; set; }
 }
 

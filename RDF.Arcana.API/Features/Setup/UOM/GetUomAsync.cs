@@ -21,7 +21,6 @@ public class GetUomAsync : ControllerBase
     [HttpGet("GetUom")]
     public async Task<IActionResult> GetUom([FromQuery] GetUomAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
 
         try
         {
@@ -35,29 +34,23 @@ public class GetUomAsync : ControllerBase
                 uom.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Status = StatusCodes.Status200OK,
-                Success = true,
-                Data = new
-                {
-                    uom,
-                    uom.CurrentPage,
-                    uom.PageSize,
-                    uom.TotalCount,
-                    uom.TotalPages,
-                    uom.HasPreviousPage,
-                    uom.HasNextPage
-                }
+                uom,
+                uom.CurrentPage,
+                uom.PageSize,
+                uom.TotalCount,
+                uom.TotalPages,
+                uom.HasPreviousPage,
+                uom.HasNextPage
             };
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 

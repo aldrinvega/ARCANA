@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Setup.Company.Errors;
 using RDF.Arcana.API.Features.Setup.Company.Exceptions;
 
 namespace RDF.Arcana.API.Features.Setup.Company;
@@ -17,14 +18,14 @@ public class UpdateCompany : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateCompanyCommand : IRequest<Unit>
+    public class UpdateCompanyCommand : IRequest<Result>
     {
         public int CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string ModifiedBy { get; set; }
     }
  
-    public class Handler : IRequestHandler<UpdateCompanyCommand, Unit>
+    public class Handler : IRequestHandler<UpdateCompanyCommand, Result>
     {
         private readonly ArcanaDbContext _context;
  
@@ -33,7 +34,7 @@ public class UpdateCompany : ControllerBase
             _context = context;
         }
  
-        public async Task<Unit> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
         {
             var existingCompany = await _context.Companies.FirstOrDefaultAsync(
                 x => x.Id == request.CompanyId, cancellationToken
@@ -41,12 +42,7 @@ public class UpdateCompany : ControllerBase
  
             if (existingCompany is null)
             {
-                throw new NoCompanyFoundException();
-            }
- 
-            if (existingCompany.CompanyName == request.CompanyName)
-            {
-                throw new Exception("No changes");
+                return CompanyErrors.NotFound();
             }
  
             var isCompanyAlreadyExist = await _context.Companies
@@ -62,7 +58,7 @@ public class UpdateCompany : ControllerBase
             existingCompany.UpdatedAt = DateTime.UtcNow;
  
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
@@ -70,21 +66,22 @@ public class UpdateCompany : ControllerBase
     [Route("UpdateCompany/{id:int}")]
     public async Task<IActionResult> Update(UpdateCompany.UpdateCompanyCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.ModifiedBy = User.Identity?.Name;
             command.CompanyId = id;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add("Company successfully updated");
-            return Ok(response);
+           var result =  await _mediator.Send(command);
+
+           if (result.IsFailure)
+           {
+               return BadRequest(result);
+           }
+           
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Success = false;
-            response.Messages.Add(e.Message);
-            return Ok(response);
+            return BadRequest(e.Message);
         }
     }
 }

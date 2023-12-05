@@ -5,6 +5,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Client.Errors;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
 
@@ -31,7 +32,7 @@ public class ValidationException : Exception
     public IEnumerable<string> Errors { get; }
 }
 
-public class AddNewProspectCommand : IRequest<AddNewProspectResult>
+public class AddNewProspectCommand : IRequest<Result>
 {
     [Required] public string OwnersName { get; set; }
     [Required] public string EmailAddress { get; set; }
@@ -72,12 +73,8 @@ public class AddNewProspectResult
     }
 }
 
-public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResult>
+public class Handler : IRequestHandler<AddNewProspectCommand, Result>
 {
-    private const string Prospect = "Prospect";
-    private const string APPROVED_STATUS = "Requested";
-    private const string ORIGIN = "Prospecting";
-    private const string APPROVER_APPROVAL = "Approver Approval";
     private readonly ArcanaDbContext _context;
 
     public Handler(ArcanaDbContext context)
@@ -85,15 +82,9 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
         _context = context;
     }
 
-    public async Task<AddNewProspectResult> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
     {
-        var validationErrors = new List<string>();
-
-        // Check if business name is null or empty
-        if (string.IsNullOrEmpty(request.BusinessName))
-        {
-            validationErrors.Add("Business Name cannot be empty");
-        }
+        
 
         var existingProspectCustomer =
             await _context.Clients.FirstOrDefaultAsync(
@@ -104,13 +95,9 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
 
         if (existingProspectCustomer != null)
         {
-            validationErrors.Add("The prospect with the given details already exists");
+            return ClientErrors.AlreadyExist(existingProspectCustomer.Fullname);
         }
-
-        if (validationErrors.Any())
-        {
-            throw new ValidationException(validationErrors);
-        }
+        
 
         var address = new OwnersAddress
         {
@@ -131,31 +118,16 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             EmailAddress = request.EmailAddress,
             BusinessName = request.BusinessName,
             StoreTypeId = request.StoreTypeId,
-            RegistrationStatus = APPROVED_STATUS,
-            Origin = ORIGIN,
+            RegistrationStatus = Status.Requested,
+            Origin = Origin.Prospecting,
             AddedBy = request.AddedBy
         };
 
         await _context.Clients.AddAsync(prospectingClients, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        var approval = new Approvals
-        {
-            ClientId = prospectingClients.Id,
-            ApprovalType = APPROVER_APPROVAL,
-            IsApproved = true,
-            IsActive = true,
-            RequestedBy = request.AddedBy,
-            ApprovedBy = request.AddedBy
-        };
-
-        // Add the new request to the database
-        await _context.Approvals.AddAsync(approval, cancellationToken);
         
-
-        
-
-        return new AddNewProspectResult
+        var result = new AddNewProspectResult
         {
             Id = prospectingClients.Id,
             OwnersName = prospectingClients.Fullname,
@@ -173,6 +145,8 @@ public class Handler : IRequestHandler<AddNewProspectCommand, AddNewProspectResu
             StoreTypeId = prospectingClients.StoreTypeId,
             AddedBy = prospectingClients.AddedBy
         };
+
+        return Result.Success(result);
     }
 }
 
@@ -190,7 +164,6 @@ public class AddNewProspect : ControllerBase
     [HttpPost("AddNewProspect")]
     public async Task<IActionResult> Add(AddNewProspectCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -200,17 +173,16 @@ public class AddNewProspect : ControllerBase
             }
 
             var result = await _mediator.Send(command);
-            response.Data = result;
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("The new prospect is requested successfully");
-            return Ok(response);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

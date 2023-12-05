@@ -30,7 +30,7 @@ public class GetAllApprovers : ControllerBase
         }
     }
 
-    public class GetAllApproversQuery : IRequest<Result<IEnumerable<GetAllApproversResult>>> {}
+    public class GetAllApproversQuery : IRequest<Result> {}
 
     public class GetAllApproversResult
     {
@@ -38,7 +38,7 @@ public class GetAllApprovers : ControllerBase
         public string Fullname { get; set; }
     }
     
-    public class Handler : IRequestHandler<GetAllApproversQuery, Result<IEnumerable<GetAllApproversResult>>>
+    public class Handler : IRequestHandler<GetAllApproversQuery, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -47,7 +47,7 @@ public class GetAllApprovers : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<IEnumerable<GetAllApproversResult>>> Handle(GetAllApproversQuery request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetAllApproversQuery request, CancellationToken cancellationToken)
         {
             var approvers = await _context.Users
                 .Include(ur => ur.UserRoles)
@@ -60,7 +60,7 @@ public class GetAllApprovers : ControllerBase
                 Fullname = x.Fullname
             });
 
-            return Result<IEnumerable<GetAllApproversResult>>.Success(result, null);
+            return Result.Success(result);
         }
     }
 }

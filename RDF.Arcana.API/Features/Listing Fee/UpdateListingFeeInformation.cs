@@ -1,8 +1,11 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Listing_Fee.Errors;
 using RDF.Arcana.API.Features.Listing_Fee.Exception;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -10,41 +13,44 @@ namespace RDF.Arcana.API.Features.Listing_Fee;
 public class UpdateListingFeeInformation : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IValidator<UpdateListingFeeInformationCommand> _validator;
 
-    public UpdateListingFeeInformation(IMediator mediator)
+    public UpdateListingFeeInformation(IMediator mediator, IValidator<UpdateListingFeeInformationCommand> validator)
     {
         _mediator = mediator;
+        _validator = validator;
     }
 
     [HttpPut("UpdateListingFeeItems/{id:int}")]
     public async Task<IActionResult> UpdateListingFeeItems([FromBody] UpdateListingFeeInformationCommand command,
         [FromRoute] int id, [FromQuery] int listingFeeId)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
+            var validate = await _validator.ValidateAsync(command);
+
+            if (!validate.IsValid)
+            {
+                return BadRequest(validate);
+            }
             command.ClientId = id;
             command.ListingFeeId = listingFeeId;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Listing Fee items updated successfully");
-            return Ok(response);
+           var result =  await _mediator.Send(command);
+           
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class UpdateListingFeeInformationCommand : IRequest<Unit>
+    public class UpdateListingFeeInformationCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public int ListingFeeId { get; set; }
         public decimal Total { get; set; }
-        public List<ListingItem> ListingFeeItems { get; set; }
+        public List<ListingItem> ListingItems { get; set; }
 
         public class ListingItem
         {
@@ -54,9 +60,8 @@ public class UpdateListingFeeInformation : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<UpdateListingFeeInformationCommand, Unit>
+    public class Handler : IRequestHandler<UpdateListingFeeInformationCommand, Result>
     {
-        private const string UNDER_REVIEW = "Under review";
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -64,20 +69,30 @@ public class UpdateListingFeeInformation : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateListingFeeInformationCommand command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateListingFeeInformationCommand command, CancellationToken cancellationToken)
         {
             var listingFee = await _context.ListingFees
                 .Include(x => x.ListingFeeItems)
                 .Where(lf => lf.ClientId == command.ClientId && lf.Id == command.ListingFeeId)
-                .Include(x => x.Approvals)
+                .Include(x => x.Request)
+                .ThenInclude(x => x.Approvals)
+                .FirstOrDefaultAsync(cancellationToken);
+            
+            var approver = await _context.Approvers
+                .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (listingFee == null)
-                throw new ListingFeeNotFound();
-            if (command.ListingFeeItems == null)
-                throw new ArgumentException("ListingFeeItems cannot be null");
+            if (approver is null)
+            {
+                return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
+            }
 
-            var listingFeeItems = command.ListingFeeItems.Select(x => x.ItemId).ToList();
+            if (listingFee == null)
+            {
+                return ListingFeeErrors.NotFound();
+            }
+
+            var listingFeeItems = command.ListingItems.Select(x => x.ItemId).ToList();
             var existingItemList = listingFee.ListingFeeItems.Select(x => x.ItemId).ToList();
             var toRemove = existingItemList.Except(listingFeeItems);
 
@@ -87,7 +102,7 @@ public class UpdateListingFeeInformation : ControllerBase
                 listingFee.ListingFeeItems.Remove(forRemove);
             }
 
-            foreach (var item in command.ListingFeeItems)
+            foreach (var item in command.ListingItems)
             {
                 var listingFeeItemToAdd = listingFee.ListingFeeItems.FirstOrDefault(x => x.ItemId == item.ItemId);
 
@@ -108,11 +123,26 @@ public class UpdateListingFeeInformation : ControllerBase
                     });
                 }
             }
-
-            listingFee.Approvals.ApprovalType = Status.UnderReview;
-            listingFee.Approvals.IsApproved = false;
+            listingFee.Request.Status = Status.UnderReview;
+            listingFee.Request.CurrentApproverId = approver.UserId;
+            listingFee.Status = Status.UnderReview;
+            listingFee.Total = command.Total;
+            
+            foreach (var approval in listingFee.Request.Approvals)
+            {
+                approval.IsActive = false;
+            }
+            
+            var newUpdateHistory = new UpdateRequestTrail(
+                listingFee.RequestId,
+                Modules.RegistrationApproval,
+                DateTime.Now,
+                listingFee.RequestedBy);
+            
+            await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
+            
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

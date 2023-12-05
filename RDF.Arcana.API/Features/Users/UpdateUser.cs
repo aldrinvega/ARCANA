@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Setup.UserRoles;
 using RDF.Arcana.API.Features.Setup.UserRoles.Exceptions;
 using RDF.Arcana.API.Features.Users.Exceptions;
 
@@ -17,29 +19,28 @@ public class UpdateUser : ControllerBase
         _mediator = mediator;
     }
 
+    [AllowAnonymous]
     [HttpPut("UpdateUser/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateUserCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.UserId = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("User has been updated successfully");
-            return Ok(response);
+           var result = await _mediator.Send(command);
+           if (result.IsFailure)
+           {
+               return BadRequest(result);
+           }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class UpdateUserCommand : IRequest<Unit>
+    public class UpdateUserCommand : IRequest<Result>
     {
         public int UserId { get; set; }
         public string FullIdNo { get; set; }
@@ -52,7 +53,7 @@ public class UpdateUser : ControllerBase
         public int? UserRoleId { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateUserCommand, Unit>
+    public class Handler : IRequestHandler<UpdateUserCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -61,7 +62,7 @@ public class UpdateUser : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
             /*var validateCompany =
@@ -79,7 +80,7 @@ public class UpdateUser : ControllerBase
                     await _context.Users.FirstOrDefaultAsync(x => x.Username == request.Username, cancellationToken);
                 if (existingUser != null)
                 {
-                    throw new UsernameAlreadyExistException();
+                    return UserErrors.UserAlreadyExist();
                 }
             }
 
@@ -90,7 +91,7 @@ public class UpdateUser : ControllerBase
             if (validateLocation is null)
                 throw new NoLocationFoundException();*/
             if (validateUserRole is null)
-                throw new UserRoleNotFoundException();
+                UserRoleErrors.NotFound();
 
             user.FullIdNo = request.FullIdNo;
             user.Fullname = request.Fullname;
@@ -102,7 +103,7 @@ public class UpdateUser : ControllerBase
             user.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

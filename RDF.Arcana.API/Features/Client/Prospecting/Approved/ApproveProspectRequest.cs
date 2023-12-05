@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Clients.Prospecting.Approved;
@@ -19,41 +20,27 @@ public class ApproveProspectRequest : ControllerBase
     [HttpPut("ApproveProspectRequest/{id}")]
     public async Task<IActionResult> Approved(int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new ApprovedProspectRequestCommand
             {
                 ProspectId = id,
             };
-
-            // if (User.Identity is ClaimsIdentity identity
-            //     && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
-            // {
-            //     command.ApprovedBy = userId;
-            // };
-
             await _mediator.Send(command);
-
-            response.Messages.Add("Prospect has been approved successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            return Ok();
         }
         catch (System.Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class ApprovedProspectRequestCommand : IRequest<Unit>
+    public class ApprovedProspectRequestCommand : IRequest<Result>
     {
         public int ProspectId { get; set; }
     }
 
-    public class Handler : IRequestHandler<ApprovedProspectRequestCommand, Unit>
+    public class Handler : IRequestHandler<ApprovedProspectRequestCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -62,13 +49,8 @@ public class ApproveProspectRequest : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(ApprovedProspectRequestCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ApprovedProspectRequestCommand request, CancellationToken cancellationToken)
         {
-            // Validate the approved by user
-            // if (request.ApprovedBy < 1)
-            // {
-            //     throw new ArgumentException("Invalid user ID");
-            // }
 
             var requestedClients =
                 await _context.Approvals
@@ -84,18 +66,18 @@ public class ApproveProspectRequest : ControllerBase
 
             if (requestedClients is null)
             {
-                throw new NoProspectClientFound();
+                return ClientErrors.NotFound();
             }
 
             if (requestedClients.IsApproved)
             {
-                throw new System.Exception("This client is already approved");
+                return ClientErrors.AlreadyApproved(requestedClients.Client.BusinessName);
             }
 
             requestedClients.IsApproved = true;
             requestedClients.Client.RegistrationStatus = "Approved";
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

@@ -19,13 +19,13 @@ public class AddNewProductSubCategory : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewProductSubCategoryCommand : IRequest<Unit>
+    public class AddNewProductSubCategoryCommand : IRequest<Result>
     {
         public string ProductSubCategoryName { get; set; }
         public int ProductCategoryId { get; set; }
         public int AddedBy { get; set; }
     }
-    public class Handler : IRequestHandler<AddNewProductSubCategoryCommand, Unit>
+    public class Handler : IRequestHandler<AddNewProductSubCategoryCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -34,7 +34,7 @@ public class AddNewProductSubCategory : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewProductSubCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewProductSubCategoryCommand request, CancellationToken cancellationToken)
         {
             var existingProductSubCategory =
                 await _context.ProductSubCategories.FirstOrDefaultAsync(
@@ -42,7 +42,7 @@ public class AddNewProductSubCategory : ControllerBase
 
             if (existingProductSubCategory != null)
             {
-                throw new ProductSubCategoryAlreadyExistException(request.ProductSubCategoryName);
+                return ProductSubCategoryErrors.AlreadyExist(request.ProductSubCategoryName);
             }
 
             var productSubCategory = new ProductSubCategory
@@ -55,7 +55,7 @@ public class AddNewProductSubCategory : ControllerBase
 
             await _context.ProductSubCategories.AddAsync(productSubCategory, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
@@ -63,7 +63,6 @@ public class AddNewProductSubCategory : ControllerBase
     public async Task<IActionResult> Add(
         AddNewProductSubCategoryCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity 
@@ -71,17 +70,16 @@ public class AddNewProductSubCategory : ControllerBase
             {
                 command.AddedBy = userId;
             }
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Product Sub Category successfully added");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

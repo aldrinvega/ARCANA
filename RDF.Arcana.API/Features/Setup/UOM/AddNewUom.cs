@@ -19,13 +19,13 @@ public class AddNewUom : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewUomCommand : IRequest<Unit>
+    public class AddNewUomCommand : IRequest<Result>
     {
         public string UomCode { get; set; }
         public string UomDescription { get; set; }
         public int AddedBy { get; set; }
     }
-    public class Handler : IRequestHandler<AddNewUomCommand, Unit>
+    public class Handler : IRequestHandler<AddNewUomCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -34,13 +34,13 @@ public class AddNewUom : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewUomCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewUomCommand request, CancellationToken cancellationToken)
         {
             var existingUom =
                 await _context.Uoms.FirstOrDefaultAsync(x => x.UomCode == request.UomCode, cancellationToken);
             if (existingUom is not null)
             {
-                throw new UomAlreadyExistException();
+                return UomErrors.AlreadyExist(request.UomDescription);
             }
 
             var uom = new Uom
@@ -52,14 +52,13 @@ public class AddNewUom : ControllerBase
             };
             await _context.Uoms.AddAsync(uom, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPost("AddNewUom")]
     public async Task<IActionResult> Add(AddNewUomCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity 
@@ -67,17 +66,17 @@ public class AddNewUom : ControllerBase
             {
                 command.AddedBy = userId;
             }
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("UOM has been added successfully");
-            return Ok(response);
+
+            var result =  await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

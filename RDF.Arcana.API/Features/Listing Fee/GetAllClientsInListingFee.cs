@@ -46,7 +46,7 @@ public class GetAllClientsInListingFee : ControllerBase
                 regularClient.HasNextPage
             };
 
-            var successResult = Result<object>.Success(result, "Data fetch successfully");
+            var successResult = Result.Success(result);
 
             return Ok(successResult);
         }
@@ -70,12 +70,30 @@ public class GetAllClientsInListingFee : ControllerBase
         public int Id { get; set; }
         public string OwnersName { get; set; }
         public string BusinessName { get; set; }
+        public IEnumerable<ListingFee> ListingFees { get; set; }
+
+        public class ListingFee
+        {
+            public int Id { get; set; }
+            public int RequestId { get; set; }
+            public string Status { get; set; }
+            public IEnumerable<ListingItem> ListingItems { get; set; }
+        }
+        public class ListingItem
+        {
+            public int Id { get; set; }
+            public int ItemId { get; set; }
+            public string ItemCode { get; set; }
+            public string ItemDescription { get; set; }
+            public string Uom { get; set; }
+            public int Sku { get; set; }
+            public decimal UnitCost { get; set; }
+            public int Quantity { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllClientsInListingFeeQuery, PagedList<GetAllClientsInListingFeeResult>>
     {
-        private const string APPROVED = "Approved";
-        private const string UNDER_REVIEW = "Under review";
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -86,7 +104,33 @@ public class GetAllClientsInListingFee : ControllerBase
         public async Task<PagedList<GetAllClientsInListingFeeResult>> Handle(GetAllClientsInListingFeeQuery request,
             CancellationToken cancellationToken)
         {
-            var clientsListingFee = _context.Clients.AsNoTracking();
+            var clientsListingFee = _context.Clients
+                .Include(mop => mop.ClientModeOfPayment)
+                .Include(abu => abu.AddedByUser)
+                .Include(rq => rq.Request)
+                .ThenInclude(user => user.Requestor)
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.Approvals)
+                .ThenInclude(cap => cap.Approver)
+                .Include(st => st.StoreType)
+                .Include(fd => fd.FixedDiscounts)
+                .Include(to => to.Term)
+                .ThenInclude(tt => tt.Terms)
+                .Include(to => to.Term)
+                .ThenInclude(td => td.TermDays)
+                .Include(ba => ba.BusinessAddress)
+                .Include(oa => oa.OwnersAddress)
+                .Include(bc => bc.BookingCoverages)
+                .Include(fr => fr.FreebiesRequests)
+                .ThenInclude(fi => fi.FreebieItems)
+                .ThenInclude(item => item.Items)
+                .ThenInclude(uom => uom.Uom)
+                .Include(lf => lf.ListingFees)
+                .ThenInclude(li => li.ListingFeeItems)
+                .ThenInclude(item => item.Item)
+                .ThenInclude(uom => uom.Uom)
+                .Include(cd => cd.ClientDocuments)
+                .AsNoTracking();
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -115,8 +159,8 @@ public class GetAllClientsInListingFee : ControllerBase
             if (request.IncludeRejected == false)
             {
                 clientsListingFee = clientsListingFee.Where(x =>
-                    x.RegistrationStatus == APPROVED ||
-                    x.RegistrationStatus == UNDER_REVIEW);
+                    x.RegistrationStatus == Status.ForFreebieApproval ||
+                    x.RegistrationStatus == Status.UnderReview);
             }
 
             var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());

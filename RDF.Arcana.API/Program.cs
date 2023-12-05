@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using B2Net.Models;
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,7 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Behaviors;
-using RDF.Arcana.API.Common.Middleware;
 using RDF.Arcana.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,24 +25,25 @@ builder.Services.AddMediatR(x =>
     x.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
 builder.Services.AddControllers(
-    config =>
+    options =>
     {
         var policy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             .Build();
 
-        config.Filters.Add(new AuthorizeFilter(policy));
+        options.Filters.Add(new AuthorizeFilter(policy));
     }
 ).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("LiveConnection");
+var connectionString = builder.Configuration.GetConnectionString("ETD");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
     if (connectionString != null) x.UseSqlServer(connectionString).UseSnakeCaseNamingConvention();
+    
 });
 
 builder.Services.AddControllers();
@@ -133,11 +134,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapCarter();
-
 app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseCors(clientPermission);
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 // app.UseAuthorization();
 app.MapControllers();
 app.Run();

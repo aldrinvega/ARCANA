@@ -22,7 +22,6 @@ public class GetAllDirectRegistrationClients : ControllerBase
     public async Task<IActionResult> GetAllDirectRegistrationClient(
         [FromQuery] GetAllDirectRegistrationClientsQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var directRegistrationClients = await _mediator.Send(query);
@@ -36,32 +35,25 @@ public class GetAllDirectRegistrationClients : ControllerBase
                 directRegistrationClients.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    directRegistrationClients,
-                    directRegistrationClients.CurrentPage,
-                    directRegistrationClients.PageSize,
-                    directRegistrationClients.TotalCount,
-                    directRegistrationClients.TotalPages,
-                    directRegistrationClients.HasPreviousPage,
-                    directRegistrationClients.HasNextPage
-                }
+                directRegistrationClients,
+                directRegistrationClients.CurrentPage,
+                directRegistrationClients.PageSize,
+                directRegistrationClients.TotalCount,
+                directRegistrationClients.TotalPages,
+                directRegistrationClients.HasPreviousPage,
+                directRegistrationClients.HasNextPage
             };
 
-            result.Messages.Add("Successfully Fetch Data");
 
-            return Ok(result);
+            var successResult = Result.Success(result);
+
+            return Ok(successResult);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return BadRequest(e.Message);
         }
     }
 

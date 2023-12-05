@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Mapster;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RDF.Arcana.API.Domain;
 
@@ -7,7 +8,6 @@ namespace RDF.Arcana.API.Data;
 public class ArcanaDbContext : DbContext
 {
     public ArcanaDbContext(DbContextOptions<ArcanaDbContext> options) : base(options) { }
-
     public virtual DbSet<OwnersAddress> Address { get; set; }
     public virtual DbSet<BusinessAddress> BusinessAddress { get; set; }
     public virtual DbSet<User> Users { get; set; }
@@ -36,13 +36,17 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Terms> Terms { get; set; }
     public virtual DbSet<ListingFee> ListingFees { get; set; }
     public virtual DbSet<ListingFeeItems> ListingFeeItems { get; set; }
+    public virtual DbSet<UpdateRequestTrail> UpdateRequestTrails { get; set; }
     
     //Approver 
     
     public virtual DbSet<Request> Requests { get; set; }
     public virtual DbSet<Approval> Approval { get; set; }
     public virtual DbSet<Approver> Approvers { get; set; }
-
+    public virtual DbSet<RequestApprovers> RequestApprovers {get; set;}
+    public virtual DbSet<ItemPriceChange> ItemPriceChanges { get; set; }
+    public virtual DbSet<ClientModeOfPayment> ClientModeOfPayments { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserRoles>()
@@ -117,8 +121,8 @@ public class ArcanaDbContext : DbContext
 
         modelBuilder.Entity<UserRoles>()
             .HasOne(u => u.AddedByUser)
-            .WithOne()
-            .HasForeignKey<UserRoles>(u => u.AddedBy);
+            .WithMany()
+            .HasForeignKey(u => u.AddedBy);
 
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.ModifiedByUser)
@@ -164,11 +168,6 @@ public class ArcanaDbContext : DbContext
             .HasOne(x => x.BookingCoverages)
             .WithMany()
             .HasForeignKey(x => x.BookingCoverageId);
-
-        modelBuilder.Entity<Clients>()
-            .HasOne(x => x.ModeOfPayments)
-            .WithMany()
-            .HasForeignKey(x => x.ModeOfPayment);
 
         modelBuilder.Entity<ModeOfPayment>()
             .HasOne(x => x.AddedByUser)
@@ -234,6 +233,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(x => x.CurrentApprover)
             .WithMany(x => x.ApproverRequests)
             .HasForeignKey(x => x.CurrentApproverId);
+
+        modelBuilder.Entity<UpdateRequestTrail>()
+            .HasOne(x => x.Request)
+            .WithMany(x => x.UpdateRequestTrails)
+            .HasForeignKey(x => x.RequestId);
         
         modelBuilder.Entity<ListingFee>()
             .Property(p => p.Total)
@@ -242,15 +246,19 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<FixedDiscounts>()
             .Property(p => p.DiscountPercentage)
             .HasColumnType("decimal(8,2)");
+        
         modelBuilder.Entity<VariableDiscounts>()
             .Property(p => p.MinimumAmount)
-            .HasColumnType("decimal(8,2)");
+            .HasColumnType("decimal(18,6)");
+
         modelBuilder.Entity<VariableDiscounts>()
             .Property(p => p.MaximumAmount)
-            .HasColumnType("decimal(8,2)");
+            .HasColumnType("decimal(18,6)");
+        
         modelBuilder.Entity<VariableDiscounts>()
             .Property(p => p.MinimumPercentage)
             .HasColumnType("decimal(8,2)");
+        
         modelBuilder.Entity<VariableDiscounts>()
             .Property(p => p.MaximumPercentage)
             .HasColumnType("decimal(8,2)");
@@ -273,5 +281,83 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<BusinessAddress>()
             .Property(p => p.Id)
             .UseHiLo("arcana_hilo_sequence");
+
+
+        modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                Id = 1,
+                Fullname = "Admin",
+                Username = "admin",
+                Password = BCrypt.Net.BCrypt.HashPassword("admin"),
+                UserRolesId = 1
+            });
+
+        modelBuilder.Entity<UserRoles>().HasData(new UserRoles
+        {
+            Id = 1,
+            UserRoleName = "Admin",
+            IsActive = true,
+            Permissions = new List<string>
+            {
+            "User Management",
+            "User Account",
+            "User Role",
+            "Company",
+            "Department",
+            "Location",
+            "Masterlist",
+            "Products",
+            "Meat Type",
+            "UOM",
+            "Discount Type",
+            "Terms",
+            "Customer Registration",
+            "Prospect",
+            "Direct",
+            "Freebies",
+            "Inventory",
+            "Setup",
+            "Product Category",
+            "Product Sub Category",
+            "Unit of Measurements",
+            "Store Type",
+            "Discount",
+            "Term Days",
+            "Approval",
+            "Freebie Approval",
+            "Direct Approval",
+            "Admin Dashboard",
+            "Direct Registration",
+            "Listing Fee",
+            "Registration Approval",
+            "Sp. Discount Approval",
+            "Listing Fee Approval",
+            "Business Type",
+            "Registration",
+            "Customer Management",
+            "Product Setup",
+            "Variable Discount"
+            }
+        });
+
+        modelBuilder.Entity<BookingCoverages>().HasData(
+            new BookingCoverages { Id = 1, BookingCoverage = "F1", AddedBy = 1, IsActive = true},
+            new BookingCoverages { Id = 2, BookingCoverage = "F2", AddedBy = 1, IsActive = true},
+            new BookingCoverages { Id = 3, BookingCoverage = "F3", AddedBy = 1, IsActive = true},
+            new BookingCoverages { Id = 4, BookingCoverage = "F4", AddedBy = 1, IsActive = true},
+            new BookingCoverages { Id = 5, BookingCoverage = "F5", AddedBy = 1, IsActive = true}
+         );
+
+        modelBuilder.Entity<Terms>().HasData(
+            new Terms { Id = 1, TermType = "COD", AddedBy = 1, IsActive = true},
+            new Terms { Id = 2, TermType = "1 Up 1 Down", AddedBy = 1, IsActive = true},
+            new Terms { Id = 3, TermType = "Credit Type", AddedBy = 1, IsActive = true}
+        );
+
+        modelBuilder.Entity<ModeOfPayment>().HasData(
+            new ModeOfPayment { Id = 1, Payment = "Cash", AddedBy = 1, IsActive = true},
+            new ModeOfPayment { Id = 2, Payment = "Online/Check", AddedBy = 1, IsActive = true}
+        );
     }
 }

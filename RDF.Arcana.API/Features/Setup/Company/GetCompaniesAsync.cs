@@ -71,7 +71,6 @@ public class GetCompaniesAsync : ControllerBase
      [HttpGet("GetAllCompanies")]
      public async Task<IActionResult> GetAllCompanies([FromQuery]GetCompaniesQuery request)
      {
-         var response = new QueryOrCommandResult<object>();
       
          try
          {
@@ -84,28 +83,23 @@ public class GetCompaniesAsync : ControllerBase
                  companies.HasPreviousPage,
                  companies.HasNextPage
              );
-             var results = new QueryOrCommandResult<object>
+             var results = new
              {
-                 Success = true,
-                 Data = new
-                 {
-                     companies,
-                     companies.CurrentPage,
-                     companies.PageSize,
-                     companies.TotalCount,
-                     companies.TotalPages,
-                     companies.HasPreviousPage,
-                     companies.HasNextPage
-                 },
-                 Status = StatusCodes.Status200OK
+                 companies,
+                 companies.CurrentPage,
+                 companies.PageSize,
+                 companies.TotalCount,
+                 companies.TotalPages,
+                 companies.HasPreviousPage,
+                 companies.HasNextPage
              };
-             results.Messages.Add("Successfully Fetch");
-             return Ok(results);
+
+             var successResult = Result.Success(results);
+             return Ok(successResult);
          }
          catch (Exception e)
          {
-             response.Status = StatusCodes.Status409Conflict;
-             return Conflict(e.Message);
+             return BadRequest(e.Message);
          }
      }
 }

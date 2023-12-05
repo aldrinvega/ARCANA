@@ -20,25 +20,23 @@ public class UpdateVariableDiscount : ControllerBase
     public async Task<IActionResult> Update([FromRoute] int id,
         [FromBody] UpdateDiscountCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.Id = id;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Discount has been successfully updated");
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class UpdateDiscountCommand : IRequest<Unit>
+    public class UpdateDiscountCommand : IRequest<Result>
     {
         public int Id { get; set; }
         public decimal LowerBound { get; set; }
@@ -48,7 +46,7 @@ public class UpdateVariableDiscount : ControllerBase
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateDiscountCommand, Unit>
+    public class Handler : IRequestHandler<UpdateDiscountCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -57,7 +55,7 @@ public class UpdateVariableDiscount : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
         {
             var existingDiscount = await _context.Discounts.FindAsync(request.Id);
 
@@ -103,7 +101,7 @@ public class UpdateVariableDiscount : ControllerBase
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

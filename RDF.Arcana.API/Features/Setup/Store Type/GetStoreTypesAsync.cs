@@ -77,7 +77,6 @@ public class GetStoreTypesAsync : ControllerBase
     [HttpGet("GetAllStoreTypes")]
     public async Task<IActionResult> GetAllStoreTypes([FromQuery]GetStoreTypesQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var storeTypes = await _mediator.Send(query);
@@ -91,30 +90,23 @@ public class GetStoreTypesAsync : ControllerBase
                 storeTypes.HasNextPage
                 );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Status = StatusCodes.Status200OK,
-                Success = true,
-                Data = new
-                {
-                    storeTypes,
-                    storeTypes.CurrentPage,
-                    storeTypes.PageSize,
-                    storeTypes.TotalCount,
-                    storeTypes.TotalPages,
-                    storeTypes.HasPreviousPage,
-                    storeTypes.HasNextPage
-                }
+                storeTypes,
+                storeTypes.CurrentPage,
+                storeTypes.PageSize,
+                storeTypes.TotalCount,
+                storeTypes.TotalPages,
+                storeTypes.HasPreviousPage,
+                storeTypes.HasNextPage
             };
-            
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

@@ -39,7 +39,7 @@ public class VoidClientRegistration : ControllerBase
         }
     }
 
-    public class VoidClientCommand : IRequest<Result<VoidClientResult>>
+    public class VoidClientCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
     }
@@ -51,7 +51,7 @@ public class VoidClientRegistration : ControllerBase
         public string BusinessName { get; set; }
     }
 
-    public class Handler : IRequestHandler<VoidClientCommand, Result<VoidClientResult>>
+    public class Handler : IRequestHandler<VoidClientCommand, Result>
     {
         private readonly ArcanaDbContext _context;
         public Handler(ArcanaDbContext context)
@@ -59,7 +59,7 @@ public class VoidClientRegistration : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<VoidClientResult>> Handle(VoidClientCommand request,
+        public async Task<Result> Handle(VoidClientCommand request,
             CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
@@ -73,12 +73,12 @@ public class VoidClientRegistration : ControllerBase
 
             if (existingClient == null)
             {
-                return Result<VoidClientResult>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
 
             if (existingClient.RegistrationStatus == Status.Voided)
             {
-                return Result<VoidClientResult>.Failure(ClientErrors.AlreadyRejected(existingClient.BusinessName));
+                return ClientErrors.AlreadyRejected(existingClient.BusinessName);
             }
 
             existingClient.RegistrationStatus = Status.Voided;
@@ -98,8 +98,7 @@ public class VoidClientRegistration : ControllerBase
                 BusinessName = existingClient.BusinessName
             };
 
-            return Result<VoidClientResult>.Success(result,
-                $"{existingClient.BusinessName} is voided successfully");
+            return Result.Success();
         }
     }
 }

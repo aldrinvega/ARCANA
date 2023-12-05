@@ -16,5 +16,5 @@ public class Approvals : BaseEntity
     public User ApproveByUser { get; set; }
     public User RequestedByUser { get; set; }
     public virtual ICollection<FreebieRequest> FreebieRequest { get; set; }
-    public virtual ICollection<ListingFee> ListingFee { get; set; }
+    /*public virtual ICollection<ListingFee> ListingFee { get; set; }*/
 }

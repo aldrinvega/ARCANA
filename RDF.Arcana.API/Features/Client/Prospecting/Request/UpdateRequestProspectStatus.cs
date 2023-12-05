@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
-namespace RDF.Arcana.API.Features.Clients.Prospecting.Request;
+namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
 
 [Route("api/Prospecting")]
 [ApiController]
@@ -17,13 +18,13 @@ public class UpdateRequestProspectStatus : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateRequestProspectStatusCommand : IRequest<Unit>
+    public class UpdateRequestProspectStatusCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         // public string Reason { get; set; }
     }
     
-    public class Handler : IRequestHandler<UpdateRequestProspectStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateRequestProspectStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -32,28 +33,27 @@ public class UpdateRequestProspectStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateRequestProspectStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateRequestProspectStatusCommand request, CancellationToken cancellationToken)
         {
             var existingRequestedProspect =
                 await _context.Approvals.FirstOrDefaultAsync(x => x.ClientId == request.ClientId && x.IsApproved == false && x.ApprovalType =="Approver Approval", cancellationToken);
 
             if (existingRequestedProspect is null)
             {
-                throw new ClientIsNotFound(request.ClientId);
+                return ClientErrors.NotFound();
             }
 
             existingRequestedProspect.IsActive = !existingRequestedProspect.IsActive;
             // existingRequestedProspect.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 
     [HttpPatch("UpdateRequestedProspectStatus/{id:int}")]
     public async Task<IActionResult> Update(int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateRequestProspectStatusCommand
@@ -61,17 +61,18 @@ public class UpdateRequestProspectStatus : ControllerBase
                 ClientId = id
             };
 
-            await _mediator.Send(command);
-            response.Messages.Add("Client status has been updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            
+            return Ok(result);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

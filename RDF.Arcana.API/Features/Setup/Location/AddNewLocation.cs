@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Setup.Items;
 using RDF.Arcana.API.Features.Setup.Location.Exception;
 
 namespace RDF.Arcana.API.Features.Setup.Location;
@@ -18,13 +19,13 @@ public class AddNewLocation : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewLocationCommand : IRequest<Unit>
+    public class AddNewLocationCommand : IRequest<Result>
     {
         public string LocationName { get; set; }
         public int AddedBy { get; set; }
     }
     
-    public class Handler : IRequestHandler<AddNewLocationCommand, Unit>
+    public class Handler : IRequestHandler<AddNewLocationCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -33,14 +34,14 @@ public class AddNewLocation : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewLocationCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewLocationCommand request, CancellationToken cancellationToken)
         {
             var existingLocation =
                 await _context.Locations.FirstOrDefaultAsync(x => x.LocationName == request.LocationName,
                     cancellationToken);
             if (existingLocation is not null)
             {
-                throw new LocationAlreadyExist();
+                return LocationErrors.AlreadyExist(request.LocationName);
             }
            
             var location = new Domain.Location
@@ -52,14 +53,13 @@ public class AddNewLocation : ControllerBase
 
             await _context.Locations.AddAsync(location, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPost("AddNewLocation")]
     public async Task<IActionResult> Add(AddNewLocationCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity 
@@ -67,17 +67,17 @@ public class AddNewLocation : ControllerBase
             {
                 command.AddedBy = userId;
             }
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Messages.Add($"Location {command.LocationName} successfully added");
-            response.Status = StatusCodes.Status200OK;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
 
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

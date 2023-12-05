@@ -20,7 +20,6 @@ public class GetAllFreebies : ControllerBase
     [HttpGet("GetAllFreebies")]
     public async Task<IActionResult> GetAllApprovedFreebiesAsync([FromQuery] GetAllFreebiesQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var freebies = await _mediator.Send(query);
@@ -34,30 +33,23 @@ public class GetAllFreebies : ControllerBase
                 freebies.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    approvedFreebies = freebies,
-                    freebies.CurrentPage,
-                    freebies.PageSize,
-                    freebies.TotalCount,
-                    freebies.TotalPages,
-                    freebies.HasPreviousPage,
-                    freebies.HasNextPage
-                }
+                approvedFreebies = freebies,
+                freebies.CurrentPage,
+                freebies.PageSize,
+                freebies.TotalCount,
+                freebies.TotalPages,
+                freebies.HasPreviousPage,
+                freebies.HasNextPage
             };
 
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
@@ -79,6 +71,7 @@ public class GetAllFreebies : ControllerBase
 
         public int? FreebieRequestId { get; set; }
         public List<Freebie> Freebies { get; set; }
+        public IEnumerable<FreebieApprovalHistory> FreebieApprovalHistories { get; set; }
 
         public class Freebie
         {
@@ -94,6 +87,15 @@ public class GetAllFreebies : ControllerBase
             public string BarangayName { get; set; }
             public string City { get; set; }
             public string Province { get; set; }
+        }
+        
+        public class FreebieApprovalHistory
+        {
+            public string Module { get; set; }
+            public string Approver { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public string Status { get; set; }
+            public string Reason { get; set; }
         }
     }
 

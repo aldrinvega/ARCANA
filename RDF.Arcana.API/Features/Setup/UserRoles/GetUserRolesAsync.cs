@@ -20,7 +20,6 @@ public class GetUserRolesAsync : ControllerBase
     [HttpGet("GetUserRoles")]
     public async Task<IActionResult> GetUserRoles([FromQuery] GetUserRolesAsync.GetUserRoleAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var userRoles = await _mediator.Send(query);
@@ -34,30 +33,23 @@ public class GetUserRolesAsync : ControllerBase
                 userRoles.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    userRoles,
-                    userRoles.CurrentPage,
-                    userRoles.PageSize,
-                    userRoles.TotalCount,
-                    userRoles.TotalPages,
-                    userRoles.HasPreviousPage,
-                    userRoles.HasNextPage
-                }
+                userRoles,
+                userRoles.CurrentPage,
+                userRoles.PageSize,
+                userRoles.TotalCount,
+                userRoles.TotalPages,
+                userRoles.HasPreviousPage,
+                userRoles.HasNextPage
             };
 
-            response.Messages.Add("Successfully fetch data");
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 

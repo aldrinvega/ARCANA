@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Setup.Meat_Type.Exceptions;
 
 namespace RDF.Arcana.API.Features.Setup.Meat_Type;
 
-[Route("api/[controller]")]
+[Route("api/MeatType")]
 [ApiController]
 
 public class UpdateMeatTypeStatus : ControllerBase
@@ -17,13 +16,13 @@ public class UpdateMeatTypeStatus : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateMeatTypeStatusCommand : IRequest<Unit>
+    public class UpdateMeatTypeStatusCommand : IRequest<Result>
     {
         public int MeatTypeId { get; set; }
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateMeatTypeStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateMeatTypeStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -32,28 +31,26 @@ public class UpdateMeatTypeStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateMeatTypeStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateMeatTypeStatusCommand request, CancellationToken cancellationToken)
         {
-            var existingMeatType =
-                await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
+            var existingMeatType = await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
 
             if (existingMeatType is null)
             {
-                throw new MeatTypeNotFoundException();
+                return MeatTypeErrors.NotFound();
             }
 
             existingMeatType.IsActive = !existingMeatType.IsActive;
             existingMeatType.UpdatedAt = DateTime.Now;
-            existingMeatType.ModifiedBy = request.ModifiedBy ?? "Admin";
+            existingMeatType.ModifiedBy = request.ModifiedBy ?? Roles.Admin;
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPatch("UpdateMeatTypeStatus/{id:int}")]
     public async Task<IActionResult> UpdateStatus([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateMeatTypeStatusCommand
@@ -61,17 +58,16 @@ public class UpdateMeatTypeStatus : ControllerBase
                 MeatTypeId = id,
                 ModifiedBy = User.Identity?.Name
             };
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Meat type status updated successfully.");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(ex.Message);
-            return Conflict(response);
+            return BadRequest(ex.Message);
         }
     }
 }

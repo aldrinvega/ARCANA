@@ -85,25 +85,23 @@ public class GetDepartmentAsync : ControllerBase
                 department.HasNextPage
             );
 
-            var results = new QueryOrCommandResult<object>
+            var results = new
             {
-                Success = true,
-                Data = new
-                {
-                    department,
-                    department.CurrentPage,
-                    department.PageSize,
-                    department.TotalCount,
-                    department.TotalPages,
-                    department.HasPreviousPage,
-                    department.HasNextPage
-                }
+                department,
+                department.CurrentPage,
+                department.PageSize,
+                department.TotalCount,
+                department.TotalPages,
+                department.HasPreviousPage,
+                department.HasNextPage
             };
-            return Ok(results);
+
+            var successResult = Result.Success(results);
+            return Ok(successResult);
         }
         catch (System.Exception e)
         {
-            return Conflict(e.Message);
+            return BadRequest(e.Message);
         }
     }
 }

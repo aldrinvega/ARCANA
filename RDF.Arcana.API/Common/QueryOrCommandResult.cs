@@ -1,39 +1,53 @@
-﻿namespace RDF.Arcana.API.Common;
+﻿#nullable enable
+namespace RDF.Arcana.API.Common;
 
-public class QueryOrCommandResult<T>
+public class Result
 {
-    public int Status { get; set; }
-    public bool Success { get; set; }
-    public T Data { get; set; }
-    public List<string> Messages { get; set; } = new();
-}
-
-public class Result<T>
-{
-    private Result(bool isSuccess, Error error, string successMessage = "", T data = default)
+    protected internal Result(bool isSuccess, Error error)
     {
-        if (isSuccess && error != Error.None ||
-            !isSuccess && error == Error.None)
+        switch (isSuccess)
         {
-            throw new ArgumentException("Invalid Error", nameof(error));
+            case true when error != Error.None:
+                throw new InvalidOperationException();
+            case false when error == Error.None:
+                throw new InvalidOperationException();
+            default:
+                IsSuccess = isSuccess;
+                Error = error;
+                break;
         }
-
-        IsSuccess = isSuccess;
-        Error = error;
-        Data = data;
-        SuccessMessage = successMessage;
     }
 
-    public bool IsSuccess { get; set; }
+    public bool IsSuccess { get; }
+
     public bool IsFailure => !IsSuccess;
-    public Error Error { get; set; }
-    public T Data { get; }
-    public string SuccessMessage { get; }
-    public static Result<T> Success(T data, string successMessage) => new(true, Error.None, successMessage, data);
-    public static Result<T> Failure(Error error) => new(false, error);
+
+    public Error Error { get; }
+
+    public static Result Success() => new(true, Error.None);
+
+    public static Result<TValue> Success<TValue>(TValue data) => new(data, true, Error.None);
+
+    public static Result Failure(Error error) => new(false, error);
+
+    public static Result<TValue> Failure<TValue>(Error error) => new(default, false, error);
+
+    public static Result Create(bool condition) => condition ? Success() : Failure(Error.ConditionNotMet);
+
+    public static Result<TValue> Create<TValue>(TValue? data) => data is not null ? Success(data) : Failure<TValue>(Error.NullValue);
 }
 
-public sealed record Error(string Code, string Description)
+public class Result<TValue> : Result
 {
-    public static readonly Error None = new(string.Empty, string.Empty);
+    private readonly TValue? _value;
+
+    protected internal Result(TValue? data, bool isSuccess, Error error)
+        : base(isSuccess, error) =>
+        _value = data;
+
+    public TValue Value => IsSuccess
+        ? _value!
+        : throw new InvalidOperationException("The value of a failure result can not be accessed.");
+
+    public static implicit operator Result<TValue>(TValue? data) => Create(data);
 }

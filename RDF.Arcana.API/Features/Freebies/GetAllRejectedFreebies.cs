@@ -23,7 +23,6 @@ public class GetAllRejectedFreebies : ControllerBase
     public async Task<IActionResult> GetAllRejectedFreebiesAsync(
         [FromQuery] GetAllRejectedFreebiesQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -43,30 +42,23 @@ public class GetAllRejectedFreebies : ControllerBase
                 rejectedFreebies.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    rejectedFreebies,
-                    rejectedFreebies.CurrentPage,
-                    rejectedFreebies.PageSize,
-                    rejectedFreebies.TotalCount,
-                    rejectedFreebies.TotalPages,
-                    rejectedFreebies.HasPreviousPage,
-                    rejectedFreebies.HasNextPage
-                }
+                rejectedFreebies,
+                rejectedFreebies.CurrentPage,
+                rejectedFreebies.PageSize,
+                rejectedFreebies.TotalCount,
+                rejectedFreebies.TotalPages,
+                rejectedFreebies.HasPreviousPage,
+                rejectedFreebies.HasNextPage
             };
 
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 

@@ -17,13 +17,13 @@ public class UntagAndTagUserRolePermission : ControllerBase
         _mediator = mediator;
     }
 
-    public class UntagAndTagUserRoleCommand : IRequest<Result<Unit>>
+    public class UntagAndTagUserRoleCommand : IRequest<Result>
     {
         public int UserRoleId { get; set; }
         public ICollection<string> Permissions { get; set; } = new List<string>();
         public string ModifiedBy { get; set; }
 
-        public class Handler : IRequestHandler<UntagAndTagUserRoleCommand, Result<Unit>>
+        public class Handler : IRequestHandler<UntagAndTagUserRoleCommand, Result>
         {
             private readonly ArcanaDbContext _context;
 
@@ -32,7 +32,7 @@ public class UntagAndTagUserRolePermission : ControllerBase
                 _context = context;
             }
 
-            public async Task<Result<Unit>> Handle(UntagAndTagUserRoleCommand request, CancellationToken cancellationToken)
+            public async Task<Result> Handle(UntagAndTagUserRoleCommand request, CancellationToken cancellationToken)
             {
                 var existingUserRole = await _context.UserRoles
                     .FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
@@ -62,7 +62,7 @@ public class UntagAndTagUserRolePermission : ControllerBase
 
                     if (approver != null)
                     {
-                        return Result<Unit>.Failure(UserRoleErrors.CannotUntag(approver.ModuleName));
+                        return UserRoleErrors.CannotUntag(approver.ModuleName);
                     }
                 }
                 
@@ -80,7 +80,7 @@ public class UntagAndTagUserRolePermission : ControllerBase
                     changeMessage = "User Role has been successfully tagged";
                 }
 
-                var result = Result<Unit>.Success(Unit.Value, changeMessage);
+                var result = Result<Unit>.Success();
                
                 existingUserRole.Permissions = request.Permissions;
                 existingUserRole.UpdatedAt = DateTime.Now;

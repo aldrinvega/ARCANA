@@ -18,27 +18,25 @@ public class GetFreebiesById : ControllerBase
     [HttpGet("GetFreebiesById/{id}")]
     public async Task<IActionResult> GetFreebiesByIdController([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<GetFreebiesByIdResult>();
         try
         {
             var query = new GetFreebiesByIdQuery();
             query.ClientId = id;
             var result = await _mediator.Send(query);
-            response.Messages.Add("Data fetch successfully");
-            response.Data = result;
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status404NotFound;
-            return NotFound(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class GetFreebiesByIdQuery : IRequest<GetFreebiesByIdResult>
+    public class GetFreebiesByIdQuery : IRequest<Result>
     {
         public int ClientId { get; set; }
     }
@@ -60,7 +58,7 @@ public class GetFreebiesById : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<GetFreebiesByIdQuery, GetFreebiesByIdResult>
+    public class Handler : IRequestHandler<GetFreebiesByIdQuery, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -69,7 +67,7 @@ public class GetFreebiesById : ControllerBase
             _context = context;
         }
 
-        public async Task<GetFreebiesByIdResult> Handle(GetFreebiesByIdQuery request,
+        public async Task<Result> Handle(GetFreebiesByIdQuery request,
             CancellationToken cancellationToken)
         {
             var existingFreebies = await _context.FreebieRequests
@@ -78,7 +76,7 @@ public class GetFreebiesById : ControllerBase
                 .ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);
 
-            return new GetFreebiesByIdResult
+            var result =  new GetFreebiesByIdResult
             {
                 TransactionNumber = existingFreebies.Id,
                 Status = existingFreebies.Status,
@@ -92,6 +90,8 @@ public class GetFreebiesById : ControllerBase
                     Quantity = x.Quantity
                 }).ToList()
             };
+
+            return Result.Success(result);
         }
     }
 }

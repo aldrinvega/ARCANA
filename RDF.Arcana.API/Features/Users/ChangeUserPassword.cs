@@ -19,26 +19,24 @@ public class ChangeUserPassword : ControllerBase
     [HttpPatch("ChangeUserPassword/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ChangeUserPasswordCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.UserId = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Messages.Add("Password has been updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class ChangeUserPasswordCommand : IRequest<Unit>
+    public class ChangeUserPasswordCommand : IRequest<Result>
     {
         public int UserId { get; set; }
         public string OldPassword { get; set; }
@@ -46,7 +44,7 @@ public class ChangeUserPassword : ControllerBase
         public string Password { get; set; }
     }
 
-    public class Handler : IRequestHandler<ChangeUserPasswordCommand, Unit>
+    public class Handler : IRequestHandler<ChangeUserPasswordCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -55,25 +53,25 @@ public class ChangeUserPassword : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _context.Users
                 .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
             if (user == null)
             {
-                throw new NoUserFoundException();
+                return UserErrors.NotFound();
             }
 
             if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password))
             {
-                throw new System.Exception("Old password is not correct");
+                return UserErrors.OldPasswordIncorrect();
             }
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             user.IsPasswordChanged = true;
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

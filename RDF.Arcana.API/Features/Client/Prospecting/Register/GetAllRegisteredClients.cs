@@ -20,7 +20,6 @@ public class GetAllRegisteredClients : ControllerBase
     [HttpGet("GetRegisteredClients")]
     public async Task<IActionResult> Get([FromQuery] GetAllRegisteredClientsCommand query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var registeredClients = await _mediator.Send(query);
@@ -34,12 +33,8 @@ public class GetAllRegisteredClients : ControllerBase
                 registeredClients.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new 
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
                     requestedProspect = registeredClients,
                     registeredClients.CurrentPage,
                     registeredClients.PageSize,
@@ -47,19 +42,14 @@ public class GetAllRegisteredClients : ControllerBase
                     registeredClients.TotalPages,
                     registeredClients.HasPreviousPage,
                     registeredClients.HasNextPage
-                }
             };
 
-            result.Messages.Add("Successfully Fetch Data");
-
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return BadRequest(e.Message);
         }
     }
 
@@ -134,7 +124,6 @@ public class GetAllRegisteredClients : ControllerBase
                 .Include(x => x.FreebiesRequests)
                 .Include(x => x.FixedDiscounts)
                 .Include(x => x.Approvals)
-                .Include(x => x.ModeOfPayments)
                 .Include(x => x.Term)
                 .Include(x => x.ClientDocuments)
                 .Include(x => x.StoreType)
@@ -184,7 +173,6 @@ public class GetAllRegisteredClients : ControllerBase
                     StoreTypeId = client.StoreTypeId ?? 0,
                     RegistrationStatus = client.RegistrationStatus,
                     Terms = client.Terms ?? 0,
-                    ModeOfPayment = client.ModeOfPayment ?? 0,
                     DirectDelivery = client.DirectDelivery,
                     FixedDiscounts = new GetAllRegisteredClientsResult.FixedDiscount
                     {

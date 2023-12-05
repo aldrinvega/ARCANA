@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Released;
@@ -24,35 +25,33 @@ public class ReleasedProspectingRequest : ControllerBase
     public async Task<IActionResult> ReleasedProspecting([FromForm] ReleasedProspectingRequestCommand command,
         [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<UploadPhotoResult>();
         try
         {
             command.FreebieRequestId = id;
 
             var result = await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Freebie Request has been released");
-            response.Success = true;
-            return Ok(response);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class ReleasedProspectingRequestCommand : IRequest<Unit>
+    public class ReleasedProspectingRequestCommand : IRequest<Result>
     {
         public int FreebieRequestId { get; set; }
         public IFormFile PhotoProof { get; set; }
         public IFormFile ESignature { get; set; }
     }
 
-    public class Handler : IRequestHandler<ReleasedProspectingRequestCommand, Unit>
+    public class Handler : IRequestHandler<ReleasedProspectingRequestCommand, Result>
     {
-        private const string released = "Released";
         private readonly Cloudinary _cloudinary;
         private readonly ArcanaDbContext _context;
 
@@ -68,7 +67,7 @@ public class ReleasedProspectingRequest : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(ReleasedProspectingRequestCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ReleasedProspectingRequestCommand request, CancellationToken cancellationToken)
         {
             var validateClientRequest = await _context.Approvals
                 .Include(x => x.FreebieRequest)
@@ -82,7 +81,7 @@ public class ReleasedProspectingRequest : ControllerBase
 
             if (validateClientRequest is null)
             {
-                throw new NoProspectClientFound();
+                return ClientErrors.NotFound();
             }
 
             var uploadTasks = new List<Task>();
@@ -142,7 +141,7 @@ public class ReleasedProspectingRequest : ControllerBase
                 // if (specificFreebieRequest != null){ /* update specificFreebieRequest */ }
             }
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

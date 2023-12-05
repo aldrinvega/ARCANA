@@ -13,11 +13,11 @@ public static class ListingFeeMappingExtension
             BusinessName = listingFee.Client.BusinessName,
             CreateAt = listingFee.CratedAt.ToString("yyyy-MM-dd hh:mm:ss"),
             ListingFeeId = listingFee.Id,
-            ApprovalId = listingFee.ApprovalsId,
+            RequestId = listingFee.RequestId,
             Status = listingFee.Status,
             RequestedBy = listingFee.RequestedByUser.Fullname,
             Total = listingFee.Total,
-            CancellationReason = listingFee.Approvals.Reason,
+            /*CancellationReason = listingFee.Approvals.Reason,*/
             ListingItems = listingFee.ListingFeeItems.Select(li =>
                 new GetAllListingFee.ClientsWithListingFee.ListingItem
                 {
@@ -27,7 +27,15 @@ public static class ListingFeeMappingExtension
                     Uom = li.Item.Uom.UomCode,
                     Sku = li.Sku,
                     UnitCost = li.UnitCost
-                }).ToList()
+                }).ToList(),
+            ListingFeeApprovalHistories = listingFee.Request.Approvals?.OrderByDescending(a => a.CreatedAt)
+                .Select( a => new GetAllListingFee.ClientsWithListingFee.ListingFeeApprovalHistory
+                {
+                    Module = a.Request.Module,
+                    Approver = a.Approver.Fullname,
+                    CreatedAt = a.CreatedAt,
+                    Status = a.Status,
+                })
         };
     }
 }

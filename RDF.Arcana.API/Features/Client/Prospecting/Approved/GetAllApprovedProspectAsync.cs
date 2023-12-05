@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
@@ -23,7 +24,6 @@ public class GetAllApprovedProspectAsync : ControllerBase
     [HttpGet("GetAllApprovedProspect")]
     public async Task<IActionResult> GetAllRequestedProspect([FromQuery] GetAllApprovedProspectQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity)
@@ -39,6 +39,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
                     query.Role = role;
                 }
             }
+
             var approvedProspect = await _mediator.Send(query);
 
             Response.AddPaginationHeader(
@@ -50,31 +51,25 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 approvedProspect.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    requestedProspect = approvedProspect,
-                    approvedProspect.CurrentPage,
-                    approvedProspect.PageSize,
-                    approvedProspect.TotalCount,
-                    approvedProspect.TotalPages,
-                    approvedProspect.HasPreviousPage,
-                    approvedProspect.HasNextPage
-                }
+                requestedProspect = approvedProspect,
+                approvedProspect.CurrentPage,
+                approvedProspect.PageSize,
+                approvedProspect.TotalCount,
+                approvedProspect.TotalPages,
+                approvedProspect.HasPreviousPage,
+                approvedProspect.HasNextPage
+
             };
 
-            result.Messages.Add("Successfully Fetch Data");
-            return Ok(result);
+            var successResult = Result.Success(result);
+            
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return BadRequest(e.Message);
         }
     }
 
@@ -84,8 +79,8 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public bool? Status { get; set; }
         public string StoreType { get; set; }
         public string FreebieStatus { get; set; }
-        public string? SortColumn { get; set; }
-        public string? SortOrder { get; set; }
+        public string SortColumn { get; set; }
+        public string SortOrder { get; set; }
         public int AddedBy { get; set; }
         public string Role { get; set; }
     }
@@ -110,6 +105,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
             public int FreebieRequestId { get; set; }
             public string Status { get; set; }
             public int TransactionNumber { get; set; }
+            public string ESignature { get; set; }
             public ICollection<FreebieItem> FreebieItems { get; set; }
         }
 
@@ -131,6 +127,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
             public string City { get; set; }
             public string Province { get; set; }
         }
+        
     }
 
     public class Handler : IRequestHandler<GetAllApprovedProspectQuery, PagedList<GetAllApprovedProspectResult>>
@@ -154,8 +151,9 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .ThenInclude(x => x.Items)
                 .ThenInclude(x => x.Uom)
                 .Include(x => x.StoreType)
-                .Where(x => x.RegistrationStatus != "Registered" && 
-                            x.RegistrationStatus != "Under review" );
+                .Where(x => x.RegistrationStatus != Status.Approved && 
+                            x.RegistrationStatus != Status.UnderReview &&
+                            x.RegistrationStatus != Status.Rejected);
 
             if (request.Role is not Roles.Admin)
             {
@@ -232,20 +230,15 @@ public class GetAllApprovedProspectAsync : ControllerBase
             if (request.FreebieStatus != null)
             {
                 approvedProspect = approvedProspect
-                    .Where(x => x.Approvals.OrderByDescending(a => a.CreatedAt).Any() &&
-                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
-                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).Any() &&
-                                x.Approvals.OrderByDescending(a => a.CreatedAt).First()
-                                    .FreebieRequest.OrderByDescending(f => f.CreatedAt).First()
-                                    .Status == request.FreebieStatus);
+                    .Where(client => client.FreebiesRequests.OrderByDescending(req => req.CreatedAt)
+                        .FirstOrDefault().Status == request.FreebieStatus);
             }
             else
             {
-                approvedProspect = approvedProspect.Where(x =>
-                    x.Approvals.All(a =>
-                        !a.FreebieRequest.Any() ||
-                        a.FreebieRequest.OrderByDescending(fr => fr.CreatedAt)
-                            .FirstOrDefault().Status == "Rejected"));
+                approvedProspect = approvedProspect.Where(client =>
+                    !client.FreebiesRequests.Any() ||
+                    client.FreebiesRequests.OrderByDescending(req => req.CreatedAt)
+                        .FirstOrDefault().Status == Status.Rejected);
             }
 
             return approvedProspect;

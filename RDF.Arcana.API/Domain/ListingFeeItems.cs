@@ -8,7 +8,7 @@ public class ListingFeeItems : BaseEntity
     public int ItemId { get; set; }
     public int Sku { get; set; }
     public decimal UnitCost { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; }
 
     public virtual ListingFee ListingFee { get; set; }

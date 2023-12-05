@@ -41,7 +41,7 @@ public class AddNewCompany : ControllerBase
     }
 
 
-    public class AddNewCompanyCommand : IRequest<Result<CompanyResult>>
+    public class AddNewCompanyCommand : IRequest<Result>
     {
         public string CompanyName { get; set; }
         public int AddedBy { get; set; }
@@ -54,7 +54,7 @@ public class AddNewCompany : ControllerBase
         public bool IsActive { get; set; }
     }
 
-    public class Handler : IRequestHandler<AddNewCompanyCommand, Result<CompanyResult>>
+    public class Handler : IRequestHandler<AddNewCompanyCommand, Result>
     {
         private readonly ArcanaDbContext _context;
         private readonly IMapper _mapper;
@@ -65,7 +65,7 @@ public class AddNewCompany : ControllerBase
             _mapper = mapper;
         }
 
-        public async Task<Result<CompanyResult>> Handle(AddNewCompanyCommand command,
+        public async Task<Result> Handle(AddNewCompanyCommand command,
             CancellationToken cancellationToken)
         {
             var existingCompany =
@@ -74,7 +74,7 @@ public class AddNewCompany : ControllerBase
 
             if (existingCompany != null)
             {
-                return Result<CompanyResult>.Failure(CompanyErrors.AlreadyExist(command.CompanyName));
+                return CompanyErrors.AlreadyExist(command.CompanyName);
             }
 
             var company = new Domain.Company
@@ -94,7 +94,7 @@ public class AddNewCompany : ControllerBase
             await _context.Companies.AddAsync(company, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<CompanyResult>.Success(result, "Company added successfully");
+            return Result.Success(result);
         }
     }
 }

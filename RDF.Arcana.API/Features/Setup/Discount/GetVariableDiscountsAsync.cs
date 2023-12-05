@@ -20,7 +20,6 @@ public class GetVariableDiscountsAsync : ControllerBase
     [HttpGet("GetVariableDiscount")]
     public async Task<IActionResult> GetAllDiscount([FromQuery] GetDiscountAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var discount = await _mediator.Send(query);
@@ -34,29 +33,23 @@ public class GetVariableDiscountsAsync : ControllerBase
                 discount.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    discount,
-                    discount.CurrentPage,
-                    discount.PageSize,
-                    discount.TotalCount,
-                    discount.TotalPages,
-                    discount.HasPreviousPage,
-                    discount.HasNextPage
-                }
+                discount,
+                discount.CurrentPage,
+                discount.PageSize,
+                discount.TotalCount,
+                discount.TotalPages,
+                discount.HasPreviousPage,
+                discount.HasNextPage
             };
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
@@ -73,6 +66,8 @@ public class GetVariableDiscountsAsync : ControllerBase
         public decimal MaximumAmount { get; set; }
         public decimal MinimumPercentage { get; set; }
         public decimal MaximumPercentage { get; set; }
+        public int TotalActives { get; set; }
+        public decimal CurrentAmount { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
         public string AddedBy { get; set; }

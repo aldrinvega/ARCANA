@@ -6,8 +6,8 @@ using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
-using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 using RDF.Arcana.API.Features.Listing_Fee.Errors;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -56,7 +56,7 @@ public class AddNewListingFee : ControllerBase
         }
     }
 
-    public class AddNewListingFeeCommand : IRequest<Result<Unit>>
+    public class AddNewListingFeeCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public int RequestedBy { get; set; }
@@ -71,7 +71,7 @@ public class AddNewListingFee : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<AddNewListingFeeCommand, Result<Unit>>
+    public class Handler : IRequestHandler<AddNewListingFeeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -80,11 +80,11 @@ public class AddNewListingFee : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<Unit>> Handle(AddNewListingFeeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewListingFeeCommand request, CancellationToken cancellationToken)
         {
             if (!await _context.Clients.AnyAsync(client => client.Id == request.ClientId, cancellationToken))
             {
-                return Result<Unit>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
             
             foreach (var item in request.ListingItems)
@@ -98,25 +98,44 @@ public class AddNewListingFee : ControllerBase
 
                 if (existingRequest != null)
                 {
-                    return Result<Unit>.Failure(ListingFeeErrors.AlreadyRequested(existingRequest.Item.ItemDescription));
+                    return ListingFeeErrors.AlreadyRequested(existingRequest.Item.ItemDescription);
                 }
             }
 
-            var approval = new Approvals
+            var approvers = await _context.Approvers
+                .Where(x => x.ModuleName == Modules.RegistrationApproval)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
+                
+            if (!approvers.Any())
             {
-                ClientId = request.ClientId,
-                ApprovalType = Status.ForListingFeeApproval,
-                IsActive = true,
-                RequestedBy = request.RequestedBy,
-            };
+                return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
+            }
 
-            await _context.Approvals.AddAsync(approval, cancellationToken);
+            var newRequest = new Request(
+                Modules.ListingFeeApproval,
+                request.RequestedBy,
+                approvers.First().UserId,
+                Status.UnderReview
+            );
+                
+            await _context.Requests.AddAsync(newRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+
+            foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
+                     {
+                         ApproverId = approver.UserId,
+                         RequestId = newRequest.Id,
+                         Level = approver.Level,
+                     }))
+            {
+                _context.RequestApprovers.Add(newRequestApprover);
+            }
 
             var listingFee = new ListingFee
             {
                 ClientId = request.ClientId,
-                ApprovalsId = approval.Id,
+                RequestId = newRequest.Id,
                 Status = Status.UnderReview,
                 RequestedBy = request.RequestedBy,
                 Total = request.Total
@@ -135,8 +154,9 @@ public class AddNewListingFee : ControllerBase
             {
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);
             }
+            
             await _context.SaveChangesAsync(cancellationToken);
-            return Result<Unit>.Success(Unit.Value, "Listing Fee requested successfully");
+            return Result.Success();
         }
     }
 }

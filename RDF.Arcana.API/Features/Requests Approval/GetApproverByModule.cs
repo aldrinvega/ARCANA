@@ -34,7 +34,7 @@ public class GetApproverByModule : ControllerBase
         }
     }
 
-    public record GetApproverByModuleQuery : IRequest<Result<GetApproverByModuleResult>>
+    public record GetApproverByModuleQuery : IRequest<Result>
     {
         public string ModuleName { get; set; }
     }
@@ -53,7 +53,7 @@ public class GetApproverByModule : ControllerBase
         }
     }
     
-    public class Handler : IRequestHandler<GetApproverByModuleQuery, Result<GetApproverByModuleResult>>
+    public class Handler : IRequestHandler<GetApproverByModuleQuery, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -62,7 +62,7 @@ public class GetApproverByModule : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<GetApproverByModuleResult>> Handle(GetApproverByModuleQuery request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetApproverByModuleQuery request, CancellationToken cancellationToken)
         {
             var existingApprovers = await _context.Approvers
                 .Include(user => user.User)
@@ -70,8 +70,7 @@ public class GetApproverByModule : ControllerBase
 
             if (!existingApprovers.Any())
             {
-                return Result<GetApproverByModuleResult>.Failure(
-                    ApprovalErrors.NoApproversFound(request.ModuleName));
+                return ApprovalErrors.NoApproversFound(request.ModuleName);
             }
 
             var approvers = existingApprovers.Select(approver => new GetApproverByModuleResult.Approver
@@ -88,7 +87,7 @@ public class GetApproverByModule : ControllerBase
                 Approvers = approvers
             };
 
-            return Result<GetApproverByModuleResult>.Success(result, "Approvers fetch successfully");
+            return Result.Success();
 
         }
     }

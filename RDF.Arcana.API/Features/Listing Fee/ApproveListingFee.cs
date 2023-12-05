@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Listing_Fee.Errors;
+using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -24,7 +25,7 @@ public class ApproveListingFee : ControllerBase
         {
             var command = new ApproveListingFeeCommand
             {
-                ApprovalId = id
+                RequestId = id
             };
             if (User.Identity is ClaimsIdentity identity
                 && IdentityHelper.TryGetUserId(identity, out var userId))
@@ -46,9 +47,9 @@ public class ApproveListingFee : ControllerBase
         }
     }
 
-    public class ApproveListingFeeCommand : IRequest<Result<ApprovedListingFeeResult>>
+    public class ApproveListingFeeCommand : IRequest<Result>
     {
-        public int ApprovalId { get; set; }
+        public int RequestId { get; set; }
         public int ApprovedBy { get; set; }
     }
 
@@ -68,9 +69,8 @@ public class ApproveListingFee : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<ApproveListingFeeCommand, Result<ApprovedListingFeeResult>>
+    public class Handler : IRequestHandler<ApproveListingFeeCommand, Result>
     {
-        private const string APPROVED = "Approved";
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -78,46 +78,52 @@ public class ApproveListingFee : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<ApprovedListingFeeResult>> Handle(ApproveListingFeeCommand request,
+        public async Task<Result> Handle(ApproveListingFeeCommand request,
             CancellationToken cancellationToken)
         {
-            var existingApprovalsForListingFee = await _context.Approvals
-                .Include(listingFee => listingFee.ListingFee)
-                .ThenInclude(listingFeeItems => listingFeeItems.ListingFeeItems)
-                .ThenInclude(X => X.Item)
-                .ThenInclude(X => X.Uom)
-                .FirstOrDefaultAsync(approval => approval.Id == request.ApprovalId, cancellationToken);
 
-            if (existingApprovalsForListingFee == null)
+            var listingFees = await _context.Requests
+                .Include(listing => listing.ListingFee)
+                .Where(lf => lf.Id == request.RequestId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var approvers = await _context.RequestApprovers
+                .Where(module => module.RequestId == request.RequestId)
+                .ToListAsync(cancellationToken);
+            var currentApproverLevel = approvers
+                .FirstOrDefault(approver => 
+                    approver.ApproverId == listingFees.CurrentApproverId)?.Level;
+            
+            if (currentApproverLevel == null)
             {
-                return Result<ApprovedListingFeeResult>.Failure(ListingFeeErrors.NotFound());
+                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
             }
-
-            existingApprovalsForListingFee.IsApproved = true;
-            existingApprovalsForListingFee.ApprovedBy = request.ApprovedBy;
-
-            foreach (var listingFee in existingApprovalsForListingFee.ListingFee)
+            
+            var newApproval = new Approval(
+                listingFees.Id,
+                listingFees.CurrentApproverId,
+                Status.Approved,
+                null,
+                true
+            );
+            
+            var nextLevel = currentApproverLevel.Value + 1;
+            var nextApprover = approvers
+                .FirstOrDefault(approver => approver.Level == nextLevel);
+            
+            if (nextApprover == null)
             {
-                listingFee.Status = APPROVED;
+                listingFees.Status = Status.Approved;
             }
-
+            else
+            {
+                listingFees.CurrentApproverId = nextApprover.ApproverId;
+            }
+            
+            await _context.Approval.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            var result = new ApprovedListingFeeResult
-            {
-                Id = existingApprovalsForListingFee.Id,
-                Status = APPROVED,
-                ListingFeeItems = existingApprovalsForListingFee.ListingFee.SelectMany(lf =>
-                    lf.ListingFeeItems.Select(lfi => new ApprovedListingFeeResult.ListingFeeItem
-                    {
-                        ItemCode = lfi.Item.ItemCode,
-                        ItemDescription = lfi.Item.ItemDescription,
-                        Uom = lfi.Item.Uom.UomCode,
-                        Total = lf.Total
-                    })).ToList()
-            };
-
-
-            return Result<ApprovedListingFeeResult>.Success(result, "Listing Fee approved successfully");
+            
+            return Result.Success();
         }
     }
 }

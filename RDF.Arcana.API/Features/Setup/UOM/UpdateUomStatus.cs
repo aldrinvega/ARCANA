@@ -17,13 +17,13 @@ public class UpdateUomStatus : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateUomStatusCommand : IRequest<bool>
+    public class UpdateUomStatusCommand : IRequest<Result>
     {
         public int UomId { get; set; }
         public string ModifiedBy { get; set; }
     }
     
-    public class Handler : IRequestHandler<UpdateUomStatusCommand, bool>
+    public class Handler : IRequestHandler<UpdateUomStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -32,13 +32,13 @@ public class UpdateUomStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<bool> Handle(UpdateUomStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUomStatusCommand request, CancellationToken cancellationToken)
         {
             var existingUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
 
             if (existingUom is null)
             {
-                throw new UomNotFoundException();
+                return UomErrors.NotFound();
             }
 
             existingUom.IsActive = !existingUom.IsActive;
@@ -46,14 +46,13 @@ public class UpdateUomStatus : ControllerBase
             existingUom.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return true;
+            return Result.Success();
         }
     }
     
     [HttpPatch("UpdateUomStatus/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateUomStatusCommand
@@ -61,17 +60,16 @@ public class UpdateUomStatus : ControllerBase
                 UomId = id,
                 ModifiedBy = User.Identity?.Name
             };
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("UOM status haas been updated successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Ok(response);
+            return BadRequest(e.Message);
         }
     }
 }

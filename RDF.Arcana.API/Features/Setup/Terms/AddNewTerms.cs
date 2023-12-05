@@ -1,7 +1,10 @@
 ﻿using System.Security.Claims;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Setup.Term_Days;
 using RDF.Arcana.API.Features.Setup.Terms.Exceptions;
 
 namespace RDF.Arcana.API.Features.Setup.Terms;
@@ -20,7 +23,6 @@ public class AddNewTerms : ControllerBase
     [HttpPost("AddNewTerm")]
     public async Task<IActionResult> AddNewTerm([FromBody] AddNewTermsCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -29,26 +31,26 @@ public class AddNewTerms : ControllerBase
                 command.AddedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add($"{command.TermType} is added successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class AddNewTermsCommand : IRequest<Unit>
+    public class AddNewTermsCommand : IRequest<Result>
     {
         public string TermType { get; set; }
         public int AddedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<AddNewTermsCommand, Unit>
+    public class Handler : IRequestHandler<AddNewTermsCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -57,14 +59,14 @@ public class AddNewTerms : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewTermsCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewTermsCommand request, CancellationToken cancellationToken)
         {
             var validateTerm =
                 await _context.Terms.FirstOrDefaultAsync(x => x.TermType == request.TermType, cancellationToken);
 
             if (validateTerm != null)
             {
-                throw new TermAlreadyExistException(request.TermType);
+                return TermErrors.AlreadyExist(request.TermType);
             }
 
             var terms = new Domain.Terms
@@ -76,7 +78,7 @@ public class AddNewTerms : ControllerBase
             await _context.Terms.AddAsync(terms, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

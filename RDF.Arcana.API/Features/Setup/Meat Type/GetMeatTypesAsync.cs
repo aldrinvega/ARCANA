@@ -7,7 +7,7 @@ using RDF.Arcana.API.Common.Pagination;
  
  namespace RDF.Arcana.API.Features.Setup.Meat_Type;
  
- [Route("api/[controller]")]
+ [Route("api/MeatType")]
  [ApiController]
 
 public class GetMeatTypesAsync : ControllerBase
@@ -71,7 +71,7 @@ public class GetMeatTypesAsync : ControllerBase
                 AddedBy = m.AddedByUser.Fullname,
                 IsActive = m.IsActive
             });
-
+            
             return await PagedList<GetMeatTypeQueryResult>.CreateAsync(meatTypes, request.PageNumber, request.PageSize);
         }
     }
@@ -79,7 +79,6 @@ public class GetMeatTypesAsync : ControllerBase
     [HttpGet("GetMeatType")]
     public async Task<IActionResult> GetMeatTypes([FromQuery] GetMeatTypesAsync.GetMeatTypeQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var meatTypes = await _mediator.Send(query);
@@ -91,10 +90,8 @@ public class GetMeatTypesAsync : ControllerBase
                 meatTypes.HasPreviousPage,
                 meatTypes.HasNextPage
             );
-
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Data = new
+            
+            var result =  new
             {
                 meatTypes,
                 meatTypes.CurrentPage,
@@ -105,16 +102,13 @@ public class GetMeatTypesAsync : ControllerBase
                 meatTypes.HasNextPage
             };
 
-            response.Messages.Add("Successfully fetch data");
+            var successResult = Result.Success(result);
 
-            return Ok(response);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

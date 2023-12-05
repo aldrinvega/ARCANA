@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Notification;
 
@@ -15,22 +19,32 @@ public class NotificationService : ControllerBase
         _mediator = mediator;
     }
 
-    public class NotificationServiceQuery : IRequest<NotificationServiceQueryResult>{}
-
-    public class NotificationServiceQueryResult
+    public sealed record NotificationServiceQuery : IRequest<Result>
     {
-        public int RequestedClient  { get; set; }
-        public int ArchivedRequestedClient { get; set; }
-        public int RejectedClient { get; set; }
-        public int ArchivedRejectedClient { get; set; }
-        public int ApprovedClient { get; set; }
-        public int ArchivedApprovedClient { get; set; }
-        
-        /// Freebies  
-        public int RequestedFreebies { get; set; }
+        public int AddedBy { get; set; }
+        public string Role { get; set; }
     }
 
-    public class Handler : IRequestHandler<NotificationServiceQuery, NotificationServiceQueryResult>
+    private class NotificationServiceQueryResult
+    {
+        //Client (Prospecting)
+        public int ForFreebies  { get; set; }
+        public int ForReleasing { get; set; }
+        public int Released { get; set; }
+        
+        //Client (Approval)
+        public int PendingClient { get; set; }
+        public int ApprovedClient { get; set; }
+        public int RejectedClient { get; set; }
+        
+        /// ListingFee  
+        public int PendingListingFee { get; set; }
+
+        public int ApprovedListingFee { get; set; }
+        public int RejectedListingFee { get; set; }
+    }
+
+    public class Handler : IRequestHandler<NotificationServiceQuery, Result>
      {
          private readonly ArcanaDbContext _context;
      
@@ -39,30 +53,131 @@ public class NotificationService : ControllerBase
              _context = context;
          }
          
-         public async Task<NotificationServiceQueryResult> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
+         public Task<Result> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
          {
-             var getAllRequestedClient = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == true && x.IsApproved);
-             var getAllArchivedRequestedClient = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == false);
-     
-             var getAllRejectedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsApproved == false);
-             var getAllArchivedRejectedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == false && x.Client.RegistrationStatus == "Rejected");
-     
-             var getAllApprovedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == true && x.IsApproved == true);
-             var getAllArchivedApprovedClients = _context.Approvals.Count(x => x.ApprovalType == "Prospecting Approval" && x.IsActive == true && x.IsApproved == true && x.Client.RegistrationStatus == "Approed");
-             // var getAllRequestedFreebies = _context.FreebieRequests.Count(x => x.StatusId == 2 && x.IsActive == true);
-     
+             var pendingCount = 0;
+             var approvedCount = 0;
+             var rejectedCount = 0;
+             var pendingListingFeeCount = 0;
+             var approveListingFeeCount = 0;
+             var rejectedListingFeeCount = 0;
+             var forFreebiesCount = 0;
+             var forReleasingCount = 0;
+             var releasedCount = 0;
+             
+             switch (request.Role)
+             {
+                 case Roles.Approver:
+                     pendingCount = _context.Clients
+                         .Include(x => x.Request)
+                         .ThenInclude(ap => ap.Approvals)
+                         .Count(x => x.Request.CurrentApproverId == request.AddedBy && x.Request.Status == Status.UnderReview && x.Request.Module == Modules.RegistrationApproval );
+
+                     approvedCount = _context.Clients
+                         .Include(x => x.Request)
+                         .ThenInclude(ap => ap.Approvals)
+                         .Where(x => x.Approvals != null)
+                         .SelectMany(x => x.Request.Approvals)
+                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Approved && ap.Request.Module == Modules.RegistrationApproval);
+                 
+                     rejectedCount = _context.Clients
+                         .Include(x => x.Request)
+                         .ThenInclude(ap => ap.Approvals)
+                         .Where(x => x.Approvals != null)
+                         .SelectMany(x => x.Request.Approvals)
+                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Rejected && ap.Request.Module == Modules.RegistrationApproval);
+                     
+                     pendingListingFeeCount = _context.ListingFees
+                         .Include(x => x.Request)
+                         .Count(approval => approval.Request.CurrentApproverId == request.AddedBy
+                                            && approval.Request.Status == Status.UnderReview
+                                            && approval.Request.Module == Modules.ListingFeeApproval);
+
+                    approveListingFeeCount = _context.ListingFees
+                        .Include(x => x.Request)
+                        .ThenInclude(ap => ap.Approvals)
+                        .Where(x => x.Request.Approvals != null)
+                        .SelectMany(x => x.Request.Approvals)
+                         .Count(approval => approval.ApproverId == request.AddedBy && approval.Status == Status.Approved && approval.Request.Module == Modules.ListingFeeApproval);
+
+                    rejectedListingFeeCount = _context.ListingFees
+                        .Include(x => x.Request)
+                        .ThenInclude(ap => ap.Approvals)
+                        .Where(x => x.Request.Approvals != null)
+                        .SelectMany(x => x.Request.Approvals)
+                        .Count(approval => approval.ApproverId == request.AddedBy
+                                            && approval.Status == Status.Rejected
+                                            && approval.Request.Module == Modules.ListingFeeApproval);
+                     break;
+                 
+                 case Roles.Cdo or Roles.Admin:
+                     
+                     pendingCount = _context.Clients
+                         .Count(x => x.AddedBy == request.AddedBy && 
+                                     x.RegistrationStatus == Status.UnderReview && 
+                                     x.IsActive );
+
+                     approvedCount = _context.Clients
+                         .Count(x => x.AddedBy == request.AddedBy && 
+                                     x.RegistrationStatus == Status.Approved && 
+                                     x.IsActive);
+                 
+                     rejectedCount = _context.Clients
+                         .Include(x => x.Request)
+                         .ThenInclude(ap => ap.Approvals)
+                         .Count(x => x.AddedBy == request.AddedBy && 
+                                     x.Request.Status == Status.Rejected && 
+                                     x.IsActive);
+                 
+                     pendingListingFeeCount= _context.ListingFees
+                         .Count(ap => ap.RequestedBy == request.AddedBy && 
+                                      ap.Status == Status.UnderReview && 
+                                      ap.IsActive);
+
+                     approveListingFeeCount= _context.ListingFees
+                         .Count(ap => ap.RequestedBy == request.AddedBy && 
+                                      ap.Status == Status.Approved && 
+                                      ap.IsActive );
+                 
+                     rejectedListingFeeCount = _context.ListingFees
+                         .Count(ap => 
+                             ap.RequestedBy == request.AddedBy && 
+                             ap.Status == Status.Rejected && ap.IsActive);
+                 
+                     forFreebiesCount =  _context.Clients
+                         .Count(x => 
+                             x.RegistrationStatus == Status.Requested && 
+                             x.AddedBy == request.AddedBy && x.IsActive);
+                     forReleasingCount = _context.Clients
+                         .Where(client => client.IsActive)
+                         .Include(x => x.FreebiesRequests)
+                         .Count(x => x.FreebiesRequests.Any(x => 
+                             x.Status == Status.ForReleasing && 
+                             x.RequestedBy == request.AddedBy));
+                     releasedCount = _context.Clients
+                         .Where(x => 
+                             x.IsActive && 
+                             x.RegistrationStatus == Status.PendingRegistration)
+                         .Include(x => x.FreebiesRequests)
+                         .Count(x => x.FreebiesRequests.Any(x => 
+                             x.Status == Status.Released && x.RequestedBy == request.AddedBy));
+                     break;
+             }
+
              var result = new NotificationServiceQueryResult
              {
-                 RequestedClient = getAllRequestedClient,
-                 ArchivedRequestedClient = getAllArchivedRequestedClient,
-                 RejectedClient = getAllRejectedClients,
-                 ArchivedRejectedClient = getAllArchivedRejectedClients,
-                 ApprovedClient = getAllApprovedClients,
-                 ArchivedApprovedClient = getAllArchivedApprovedClients,
-                 // RequestedFreebies = getAllRequestedFreebies
+                 ForFreebies = forFreebiesCount,
+                 ForReleasing = forReleasingCount,
+                 Released = releasedCount,
+                 PendingClient = pendingCount,
+                 ApprovedClient = approvedCount,
+                 RejectedClient = rejectedCount,
+                 PendingListingFee = pendingListingFeeCount,
+                 ApprovedListingFee = approveListingFeeCount,
+                 RejectedListingFee = rejectedListingFeeCount
              };
-     
-             return await Task.FromResult(result);
+
+             return Task.FromResult<Result>(Result.Success(result));
          }
      }
 
@@ -71,7 +186,21 @@ public class NotificationService : ControllerBase
     {
         try
         {
+            
             var query = new NotificationServiceQuery();
+            if (User.Identity is ClaimsIdentity identity)
+            {
+                if (IdentityHelper.TryGetUserId(identity, out var userId))
+                {
+                    query.AddedBy = userId;
+                }
+
+                var role = IdentityHelper.GetRole(identity);
+                if (!string.IsNullOrEmpty(role))
+                {
+                    query.Role = role;
+                }
+            }
             var notification = await _mediator.Send(query);
             return Ok(notification);
         }

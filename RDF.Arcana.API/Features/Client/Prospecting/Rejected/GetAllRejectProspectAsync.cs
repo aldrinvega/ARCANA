@@ -21,7 +21,6 @@ public class GetAllRejectProspectAsync : ControllerBase
     [HttpGet("GetAllRejectedProspect")]
     public async Task<IActionResult> GetAllRejectedProspect([FromQuery] GetAllRejectProspectQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var rejectedProspect = await _mediator.Send(query);
@@ -35,32 +34,24 @@ public class GetAllRejectProspectAsync : ControllerBase
                 rejectedProspect.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    requestedProspect = rejectedProspect,
-                    rejectedProspect.CurrentPage,
-                    rejectedProspect.PageSize,
-                    rejectedProspect.TotalCount,
-                    rejectedProspect.TotalPages,
-                    rejectedProspect.HasPreviousPage,
-                    rejectedProspect.HasNextPage
-                }
+                requestedProspect = rejectedProspect,
+                rejectedProspect.CurrentPage,
+                rejectedProspect.PageSize,
+                rejectedProspect.TotalCount,
+                rejectedProspect.TotalPages,
+                rejectedProspect.HasPreviousPage,
+                rejectedProspect.HasNextPage
+
             };
 
-            result.Messages.Add("Successfully Fetch Data");
-
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return Ok(e.Message);
         }
     }
 

@@ -12,7 +12,7 @@ namespace RDF.Arcana.API.Features.Authenticate;
 
 public abstract class AuthenticateUser
 {
-    public class AuthenticateUserQuery : IRequest<Result<AuthenticateUserResult>>
+    public class AuthenticateUserQuery : IRequest<Result>
     {
         public AuthenticateUserQuery(string username)
         {
@@ -53,7 +53,7 @@ public abstract class AuthenticateUser
         public bool IsPasswordChanged { get; set; }
     }
 
-    public class Handler : IRequestHandler<AuthenticateUserQuery, Result<AuthenticateUserResult>>
+    public class Handler : IRequestHandler<AuthenticateUserQuery, Result>
     {
         private readonly IConfiguration _configuration;
         private readonly ArcanaDbContext _context;
@@ -66,7 +66,7 @@ public abstract class AuthenticateUser
             _mapper = mapper;
         }
 
-        public async Task<Result<AuthenticateUserResult>> Handle(AuthenticateUserQuery command,
+        public async Task<Result> Handle(AuthenticateUserQuery command,
             CancellationToken cancellationToken)
         {
             var user = await _context.Users
@@ -76,17 +76,17 @@ public abstract class AuthenticateUser
             //Verify if the credentials is correct
             if (user == null || !BCrypt.Net.BCrypt.Verify(command.Password, user.Password))
             {
-                return Result<AuthenticateUserResult>.Failure(AuthenticateUserErrors.UsernamePasswordIncorrect());
+                return AuthenticateUserErrors.UsernamePasswordIncorrect();
             }
 
             if (!user.IsActive)
             {
-                return Result<AuthenticateUserResult>.Failure(AuthenticateUserErrors.UnauthorizedAccess());
+                return AuthenticateUserErrors.UnauthorizedAccess();
             }
 
             if (user.UserRolesId is null )
             {
-                return Result<AuthenticateUserResult>.Failure(AuthenticateUserErrors.NoRole());
+                return AuthenticateUserErrors.NoRole();
             }
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -95,7 +95,7 @@ public abstract class AuthenticateUser
 
             var results = user.ToGetAuthenticatedUserResult(token);
 
-            return Result<AuthenticateUserResult>.Success(results, "Log In successfully");
+            return Result.Success(results);
         }
 
         private string GenerateJwtToken(User user)

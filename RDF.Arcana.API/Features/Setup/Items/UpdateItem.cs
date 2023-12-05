@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Setup.Items.Exceptions;
+using RDF.Arcana.API.Features.Setup.Price_Change;
 
 namespace RDF.Arcana.API.Features.Setup.Items;
 
@@ -17,7 +19,7 @@ public class UpdateItem : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateItemCommand : IRequest<Unit>
+    public class UpdateItemCommand : IRequest<Result>
     {
         public int Id { get; set; }
         public string ItemCode { get; set; }
@@ -26,9 +28,11 @@ public class UpdateItem : ControllerBase
         public int UomId { get; set; }
         public int ProductSubCategoryId { get; set; }
         public int MeatTypeId { get; set; }
+        public decimal Price { get; set; }
+        public DateTime EffectivityDate { get; set; }
     }
     
-    public class Handler : IRequestHandler<UpdateItemCommand, Unit>
+    public class Handler : IRequestHandler<UpdateItemCommand, Result>
     {
         private readonly ArcanaDbContext _context;
     
@@ -37,10 +41,12 @@ public class UpdateItem : ControllerBase
             _context = context;
         }
     
-        public async Task<Unit> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
          {
              var existingItem = 
-                 await _context.Items.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+                 await _context.Items
+                     .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+             
          
              if (existingItem.ItemCode != request.ItemCode)
              {
@@ -48,54 +54,43 @@ public class UpdateItem : ControllerBase
                      await _context.Items.FirstOrDefaultAsync(x => x.ItemCode == request.ItemCode, cancellationToken);
                  if (validateItemCode is not null)
                  {
-                     throw new Exception("Item code already exists.");
+                     return ItemErrors.NotFound(request.Id);
                  }
              }
-         
-             if (existingItem.ItemCode == request.ItemCode &&
-                 existingItem.ItemDescription == request.ItemDescription &&
-                 existingItem.UomId == request.UomId &&
-                 existingItem.ProductSubCategoryId == request.ProductSubCategoryId &&
-                 existingItem.MeatTypeId == request.MeatTypeId
-             )
-             {
-                 throw new Exception("No changes");
-             }
-
-             existingItem.ItemCode = existingItem.ItemCode;
+             
+             existingItem.ItemCode = request.ItemCode;
              existingItem.ItemDescription = request.ItemDescription;
              existingItem.UomId = request.UomId;
              existingItem.ProductSubCategoryId = request.ProductSubCategoryId;
              existingItem.MeatTypeId = request.MeatTypeId;
              existingItem.UpdatedAt = DateTime.Now;
-             existingItem.ModifiedBy = request.ModifiedBy ?? "Admin";
+             existingItem.ModifiedBy = request.ModifiedBy ?? Roles.Admin;
          
              await _context.SaveChangesAsync(cancellationToken);
-         
-             return Unit.Value;
+
+             return Result.Success();
          }
     }
-    
+
     [HttpPut("UpdateItem/{id:int}")]
     public async Task<IActionResult> Update(UpdateItemCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.ModifiedBy = User.Identity?.Name;
             command.Id = id;
-            await _mediator.Send(command);
-            response.Messages.Add("ItemCode has been updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Ok(response);
+            return Ok(e.Message);
         }
     }
-    
+
 }

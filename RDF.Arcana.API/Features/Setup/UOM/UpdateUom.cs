@@ -19,26 +19,24 @@ public class UpdateUom : ControllerBase
     [HttpPut("UpdateUom/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, UpdateUomCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.UomId = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("UOM has been updated successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class UpdateUomCommand : IRequest<Unit>
+    public class UpdateUomCommand : IRequest<Result>
     {
         public int UomId { get; set; }
         public string UomCode { get; set; }
@@ -46,7 +44,7 @@ public class UpdateUom : ControllerBase
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateUomCommand, Unit>
+    public class Handler : IRequestHandler<UpdateUomCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -55,13 +53,13 @@ public class UpdateUom : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateUomCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUomCommand request, CancellationToken cancellationToken)
         {
             var existingUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
 
             if (existingUom is null)
             {
-                throw new UomNotFoundException();
+                return UomErrors.NotFound();
             }
 
             var isUomAlreadyExist =
@@ -70,14 +68,9 @@ public class UpdateUom : ControllerBase
 
             if (isUomAlreadyExist)
             {
-                throw new UomAlreadyExistException();
+                return UomErrors.AlreadyExist(request.UomCode);
             }
-
-            if (existingUom.UomCode == request.UomCode && existingUom.UomDescription == request.UomDescription)
-            {
-                throw new Exception("No changes");
-            }
-
+            
             existingUom.UomCode = request.UomCode;
             existingUom.UomDescription = request.UomDescription;
             existingUom.ModifiedBy = request.ModifiedBy;
@@ -85,7 +78,7 @@ public class UpdateUom : ControllerBase
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

@@ -22,7 +22,6 @@ public class GetAllReleasedProspectingRequest : ControllerBase
     public async Task<IActionResult> GetAllReleasedProspectingRequestAsync(
         [FromQuery] GetAllReleasedProspectingRequestQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var releasedProspecting = await _mediator.Send(query);
@@ -36,30 +35,23 @@ public class GetAllReleasedProspectingRequest : ControllerBase
                 releasedProspecting.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    releasedProspecting,
-                    releasedProspecting.CurrentPage,
-                    releasedProspecting.PageSize,
-                    releasedProspecting.TotalCount,
-                    releasedProspecting.TotalPages,
-                    releasedProspecting.HasPreviousPage,
-                    releasedProspecting.HasNextPage
-                }
+                releasedProspecting,
+                releasedProspecting.CurrentPage,
+                releasedProspecting.PageSize,
+                releasedProspecting.TotalCount,
+                releasedProspecting.TotalPages,
+                releasedProspecting.HasPreviousPage,
+                releasedProspecting.HasNextPage
             };
 
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 

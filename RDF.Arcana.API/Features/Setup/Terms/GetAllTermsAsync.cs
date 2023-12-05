@@ -20,7 +20,6 @@ public class GetAllTermsAsync : ControllerBase
     [HttpGet("GetAllTerms")]
     public async Task<IActionResult> GetAllTerms([FromQuery] GetAllTermsAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var terms = await _mediator.Send(query);
@@ -34,27 +33,23 @@ public class GetAllTermsAsync : ControllerBase
                 terms.HasNextPage
             );
 
-            var results = new QueryOrCommandResult<object>
+            var results = new
             {
-                Success = true,
-                Data = new
-                {
-                    terms,
-                    terms.CurrentPage,
-                    terms.PageSize,
-                    terms.TotalCount,
-                    terms.TotalPages,
-                    terms.HasPreviousPage,
-                    terms.HasNextPage
-                }
+                terms,
+                terms.CurrentPage,
+                terms.PageSize,
+                terms.TotalCount,
+                terms.TotalPages,
+                terms.HasPreviousPage,
+                terms.HasNextPage
             };
-            return Ok(results);
+
+            var successResult = Result.Success(results);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status200OK;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 

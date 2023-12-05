@@ -1,4 +1,5 @@
-﻿using RDF.Arcana.API.Domain;
+﻿using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Prospecting.Approved;
 using RDF.Arcana.API.Features.Client.Prospecting.Rejected;
 using RDF.Arcana.API.Features.Client.Prospecting.Request;
@@ -63,6 +64,7 @@ public static class ProspectingMappingProfiles
                     FreebieRequestId = fr.Id,
                     Status = fr.Status,
                     TransactionNumber = fr.Id,
+                    ESignature = fr.ESignaturePath,
                     FreebieItems = fr.FreebieItems.Select(i =>
                         new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.FreebieItem
                         {

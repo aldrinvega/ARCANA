@@ -4,6 +4,8 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
+using RDF.Arcana.API.Features.Setup.Mode_Of_Payment;
+using RDF.Arcana.API.Features.Setup.Terms;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Register;
 
@@ -22,7 +24,6 @@ public class AddTermsAndCondition : ControllerBase
     public async Task<IActionResult> AddTermsCondition([FromBody] AddTermsAndConditionsCommand command,
         [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -32,28 +33,27 @@ public class AddTermsAndCondition : ControllerBase
             }
 
             command.ClientId = id;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Terms and Conditions added successfully");
-            return Ok(response);
+           var result =  await _mediator.Send(command);
+           if (result.IsFailure)
+           {
+               return BadRequest(result);
+           }
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            response.Messages.Add(ex.Message);
-            response.Status = StatusCodes.Status404NotFound;
-            return Conflict(response);
+            return Conflict(ex.Message);
         }
     }
 
-    public class AddTermsAndConditionsCommand : IRequest<Unit>
+    public record AddTermsAndConditionsCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
         public int BookingCoverageId { get; set; }
-        public int ModeOfPayment { get; set; }
+        public ICollection<ClientModeOfPayment> ModeOfPayments { get; set; }
         public int Terms { get; set; }
         public int? CreditLimit { get; set; }
         public int? TermDaysId { get; set; }
@@ -65,9 +65,13 @@ public class AddTermsAndCondition : ControllerBase
         {
             public decimal? DiscountPercentage { get; set; }
         }
+        public class ClientModeOfPayment
+        {
+            public int ModeOfPaymentId { get; set; }
+        }
     }
 
-    public class Handler : IRequestHandler<AddTermsAndConditionsCommand, Unit>
+    public class Handler : IRequestHandler<AddTermsAndConditionsCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -76,7 +80,7 @@ public class AddTermsAndCondition : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddTermsAndConditionsCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddTermsAndConditionsCommand request, CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients.FirstOrDefaultAsync(
                 x => x.Id == request.ClientId, cancellationToken
@@ -87,7 +91,6 @@ public class AddTermsAndCondition : ControllerBase
             existingClient.Freezer = request.Freezer;
             existingClient.DirectDelivery = request.DirectDelivery;
             existingClient.BookingCoverageId = request.BookingCoverageId;
-            existingClient.ModeOfPayment = request.ModeOfPayment;
 
             var limit = request.CreditLimit;
 
@@ -100,7 +103,26 @@ public class AddTermsAndCondition : ControllerBase
 
             if (validateTerms is null)
             {
-                throw new Exception("Terms not found");
+                return TermErrors.NotFound();
+            }
+
+            foreach (var modeOfPayment in request.ModeOfPayments)
+            {
+                var existingModePayment = await _context.ModeOfPayments.FirstOrDefaultAsync(x => 
+                        x.Id == modeOfPayment.ModeOfPaymentId,
+                        cancellationToken);
+
+                if (existingModePayment is null)
+                {
+                    return ModeOfPaymentErrors.NotFound();
+                }
+
+                var newPaymentMethod = new ClientModeOfPayment
+                {
+                    ClientId = existingClient.Id,
+                    ModeOfPaymentId = modeOfPayment.ModeOfPaymentId,
+                };
+                _context.ClientModeOfPayments.Add(newPaymentMethod);
             }
 
             var termsOptions = new TermOptions
@@ -129,15 +151,16 @@ public class AddTermsAndCondition : ControllerBase
 
                 var discountId = fixedDiscount.Id;
                 existingClient.FixedDiscountId = discountId;
+                await _context.SaveChangesAsync(cancellationToken);
             }
             else
             {
                 existingClient.VariableDiscount = request.VariableDiscount;
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
+                return Result.Success();
             }
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

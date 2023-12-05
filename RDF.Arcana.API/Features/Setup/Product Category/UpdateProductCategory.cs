@@ -17,12 +17,12 @@ public class UpdateProductCategory : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateProductCategoryCommand : IRequest<Unit>
+    public class UpdateProductCategoryCommand : IRequest<Result>
     {
         public int ProductCategoryId { get; set; }
         public string ProductCategoryName { get; set; }
     }
-    public class Handler : IRequestHandler<UpdateProductCategoryCommand, Unit>
+    public class Handler : IRequestHandler<UpdateProductCategoryCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -31,7 +31,7 @@ public class UpdateProductCategory : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateProductCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateProductCategoryCommand request, CancellationToken cancellationToken)
         {
             var existingProductCategory =
                 await _context.ProductCategories.FirstOrDefaultAsync(x => x.Id == request.ProductCategoryId,
@@ -46,8 +46,7 @@ public class UpdateProductCategory : ControllerBase
                 existingProductCategory.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
-
+                return Result.Success();
             }
             
             if (validateCategoryName.ProductCategoryName == request.ProductCategoryName && validateCategoryName.Id == request.ProductCategoryId)
@@ -60,29 +59,26 @@ public class UpdateProductCategory : ControllerBase
                 throw new ProductCategoryAlreadyExistException();
             }
             
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPut("UpdateProductCategory/{id:int}")]
     public async Task<IActionResult> Update([FromBody]UpdateProductCategoryCommand command, [FromRoute]int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.ProductCategoryId = id;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Product Category has been updated successfully");
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

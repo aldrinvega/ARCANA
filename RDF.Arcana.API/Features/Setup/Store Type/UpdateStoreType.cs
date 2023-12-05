@@ -18,14 +18,14 @@ public class UpdateStoreType : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateStoreTypeCommand : IRequest<Unit>
+    public class UpdateStoreTypeCommand : IRequest<Result>
     {
         public int Id { get; set; }
         public string StoreTypeName { get; set; }
         public int? ModifiedBy { get; set; }
     }
     
-    public class Handler : IRequestHandler<UpdateStoreTypeCommand, Unit>
+    public class Handler : IRequestHandler<UpdateStoreTypeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -34,19 +34,15 @@ public class UpdateStoreType : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateStoreTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateStoreTypeCommand request, CancellationToken cancellationToken)
         {
             var existingStoreType =
                 await _context.StoreTypes.FirstOrDefaultAsync(x => x.Id == request.Id,
                     cancellationToken);
-            if (existingStoreType.StoreTypeName == request.StoreTypeName)
-            {
-                throw new System.Exception("No changes");
-            }
 
             if (existingStoreType is null)
             {
-                throw new StoreTypeNotFoundException();
+                return StoreTypeErrors.AlreadyExist(request.StoreTypeName);
             }
 
             existingStoreType.StoreTypeName = request.StoreTypeName;
@@ -54,14 +50,13 @@ public class UpdateStoreType : ControllerBase
             existingStoreType.UpdateAt = DateTime.Now;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 
     [HttpPut("UpdateStoreType/{id}")]
     public async Task<IActionResult> Update([FromBody] UpdateStoreTypeCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.Id = id;
@@ -71,17 +66,17 @@ public class UpdateStoreType : ControllerBase
                 command.ModifiedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Store type is updated successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

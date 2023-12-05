@@ -20,8 +20,6 @@ public class GetItemsAsync : ControllerBase
     [HttpGet("GetAllItems")]
     public async Task<IActionResult> GetAllItems([FromQuery] GetItemsAsyncQuery request)
     {
-        var response = new QueryOrCommandResult<object>();
-
         try
         {
             var items = await _mediator.Send(request);
@@ -33,27 +31,23 @@ public class GetItemsAsync : ControllerBase
                 items.HasPreviousPage,
                 items.HasNextPage
             );
-            var results = new QueryOrCommandResult<object>
+            var results = new
             {
-                Success = true,
-                Data = new
-                {
-                    items,
-                    items.CurrentPage,
-                    items.PageSize,
-                    items.TotalCount,
-                    items.TotalPages,
-                    items.HasPreviousPage,
-                    items.HasNextPage
-                },
-                Status = StatusCodes.Status200OK
+
+                items,
+                items.CurrentPage,
+                items.PageSize,
+                items.TotalCount,
+                items.TotalPages,
+                items.HasPreviousPage,
+                items.HasNextPage
             };
-            results.Messages.Add("Successfully Fetched");
-            return Ok(results);
+
+            var successResult = Result.Success(results);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
             return Conflict(e.Message);
         }
     }
@@ -77,6 +71,24 @@ public class GetItemsAsync : ControllerBase
         public bool IsActive { get; set; }
         public string AddedBy { get; set; }
         public string ModifiedBy { get; set; }
+        public IEnumerable<PriceChangeHistory> PriceChangeHistories { get; set; }
+        public IEnumerable<FuturePriceChange> FuturePriceChanges { get; set; }
+
+        public class PriceChangeHistory
+        {
+            public int Id { get; set; }
+            public decimal Price { get; set; }
+            public string EffectivityDate { get; set; }
+        }
+
+        public class FuturePriceChange
+        {
+            public int Id { get; set; }
+            public decimal Price { get; set; }
+            public string EffectivityDate { get; set; }
+        }
+        
+        
     }
 
     public class Handler : IRequestHandler<GetItemsAsyncQuery, PagedList<GetItemsAsyncResult>>
@@ -95,6 +107,7 @@ public class GetItemsAsync : ControllerBase
                 .Include(x => x.AddedByUser)
                 .Include(x => x.Uom)
                 .Include(x => x.MeatType)
+                .Include(x => x.ItemPriceChange)
                 .Include(x => x.ProductSubCategory)
                 .ThenInclude(x => x.ProductCategory);
 

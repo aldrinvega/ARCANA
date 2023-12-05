@@ -19,13 +19,13 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
             _mediator = mediator;
         }
 
-        public class AddNewModeOfPaymentCommand : IRequest<Unit>
+        public class AddNewModeOfPaymentCommand : IRequest<Result>
         {
             public string Payment { get; set; }
             public int AddedBy { get; set; }
         }
 
-        public class Handler : IRequestHandler<AddNewModeOfPaymentCommand, Unit>
+        public class Handler : IRequestHandler<AddNewModeOfPaymentCommand, Result>
         {
             private readonly ArcanaDbContext _context;
 
@@ -34,13 +34,13 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
                 _context = context;
             }
 
-            public async Task<Unit> Handle(AddNewModeOfPaymentCommand request, CancellationToken cancellationToken)
+            public async Task<Result> Handle(AddNewModeOfPaymentCommand request, CancellationToken cancellationToken)
             {
                 var existingPayment = await _context.ModeOfPayments.FirstOrDefaultAsync(x => x.Payment == request.Payment, cancellationToken);
 
                 if (existingPayment != null)
                 {
-                    throw new InvalidOperationException("Payment Method already exist");
+                    return ModeOfPaymentErrors.AlreadyExist(request.Payment);
                 }
 
                 var paymentMethod = new ModeOfPayment
@@ -53,14 +53,13 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
                 await _context.ModeOfPayments.AddAsync(paymentMethod, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return Unit.Value;
+                return Result.Success();
             }
         }
 
         [HttpPost("AddNewPaymentMethod")]
         public async Task<IActionResult> AddPaymentMethod(AddNewModeOfPaymentCommand command)
         {
-            var response = new QueryOrCommandResult<object>();
             try
             {
                 if (User.Identity is ClaimsIdentity identity
@@ -68,16 +67,12 @@ namespace RDF.Arcana.API.Features.Setup.Mode_Of_Payment
                 {
                     command.AddedBy = userId;
                 }
-                await _mediator.Send(command);
-                response.Success = true;
-                response.Status = StatusCodes.Status200OK;
-                response.Messages.Add($"Payment method added successfully");
-                return Ok(response);
+                var result = await _mediator.Send(command);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                response.Messages.Add(ex.Message);
-                return Conflict(response);
+                return BadRequest(ex.Message);
             }
         }
     }

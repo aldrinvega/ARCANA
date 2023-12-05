@@ -34,19 +34,19 @@ public class AddApproversPerModule : ControllerBase
         }
     }
 
-    public record AddApproversPerModuleCommand : IRequest<Result<Unit>>
+    public record AddApproversPerModuleCommand : IRequest<Result>
     {
 
+        public string ModuleName { get; set; }
         public IEnumerable<Approver> Approvers { get; set; }
         public class Approver
         {
             public int UserId { get; set; }
-            public string ModuleName { get; set; }
             public int Level { get; set; }
         }
         
     }
-    public class Handler : IRequestHandler<AddApproversPerModuleCommand, Result<Unit>>
+    public class Handler : IRequestHandler<AddApproversPerModuleCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -55,14 +55,14 @@ public class AddApproversPerModule : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<Unit>> Handle(AddApproversPerModuleCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddApproversPerModuleCommand request, CancellationToken cancellationToken)
         {
             foreach (var approver in request.Approvers)
             {
                 var existingApprover = await _context.Approvers
                     .FirstOrDefaultAsync(ap =>
                         ap.UserId == approver.UserId &&
-                        ap.ModuleName == approver.ModuleName,
+                        ap.ModuleName == request.ModuleName,
                     cancellationToken);
 
                 var user = await _context.Users
@@ -73,26 +73,26 @@ public class AddApproversPerModule : ControllerBase
 
                 if (existingApprover is not null)
                 {
-                    return Result<Unit>.Failure(ApprovalErrors.ApproverAlreadyExist(existingApprover.ModuleName));
+                    return ApprovalErrors.ApproverAlreadyExist(existingApprover.ModuleName);
                 }
 
                 if (user is null) continue;
-                if (!user.UserRoles.Permissions.Contains(approver.ModuleName))
+                if (!user.UserRoles.Permissions.Contains(request.ModuleName))
                 {
-                    return Result<Unit>.Failure(ApprovalErrors.NoAccess(approver.ModuleName, user.Fullname));
+                    return ApprovalErrors.NoAccess(request.ModuleName, user.Fullname);
                 }
 
                 var newApprover = new Approver
                 {
                     UserId = approver.UserId,
-                    ModuleName = approver.ModuleName,
+                    ModuleName = request.ModuleName,
                     Level = approver.Level
                 };
                 _context.Approvers.Add(newApprover);
             }
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Result<Unit>.Success(Unit.Value, "Approvers added successfully");
+            return Result.Success();
         }
     }
 }

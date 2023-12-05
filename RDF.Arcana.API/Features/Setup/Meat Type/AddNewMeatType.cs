@@ -19,13 +19,13 @@ public class AddNewMeatType : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewMeatTypeCommand : IRequest<Unit>
+    public class AddNewMeatTypeCommand : IRequest<Result>
     {
         public string MeatTypeName { get; set; }
         public int AddedBy { get; set; }
     }
     
-    public class Handler : IRequestHandler<AddNewMeatTypeCommand, Unit>
+    public class Handler : IRequestHandler<AddNewMeatTypeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -34,14 +34,15 @@ public class AddNewMeatType : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewMeatTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewMeatTypeCommand request, CancellationToken cancellationToken)
         {
-            var existingMeatType =
-                await _context.MeatTypes.FirstOrDefaultAsync(x => x.MeatTypeName == request.MeatTypeName,cancellationToken);
+            var existingMeatType = await _context.MeatTypes.FirstOrDefaultAsync(x => 
+                x.MeatTypeName == request.MeatTypeName,
+                cancellationToken);
 
             if (existingMeatType is not null)
             {
-                throw new MeatTypeIsAlreadyExistException(request.MeatTypeName);
+                return MeatTypeErrors.AlreadyExist(request.MeatTypeName);
             }
 
             var meatType = new MeatType
@@ -55,14 +56,13 @@ public class AddNewMeatType : ControllerBase
             await _context.MeatTypes.AddAsync(meatType, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPost("AddNewMeatType")]
     public async Task<IActionResult> Add(AddNewMeatTypeCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity 
@@ -70,18 +70,16 @@ public class AddNewMeatType : ControllerBase
             {
                 command.AddedBy = userId;
             }
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Meat Type successfully added");
-            return Ok(response);
+            var result =  await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
-
 }

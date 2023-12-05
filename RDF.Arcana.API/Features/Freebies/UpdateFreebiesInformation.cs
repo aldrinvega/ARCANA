@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
@@ -21,27 +22,24 @@ public class UpdateFreebiesInformation : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateFreebiesInformationCommand command, [FromRoute] int id,
         [FromQuery] int freebieId)
     {
-        var response = new QueryOrCommandResult<UpdateFreebieInformationResult>();
         try
         {
             command.ClientId = id;
             command.FreebieRequestId = freebieId;
             var result = await _mediator.Send(command);
-            response.Data = result;
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Freebies are updated successfully");
-            return Ok(response);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class UpdateFreebiesInformationCommand : IRequest<UpdateFreebieInformationResult>
+    public class UpdateFreebiesInformationCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public int FreebieRequestId { get; set; }
@@ -92,7 +90,7 @@ public class UpdateFreebiesInformation : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<UpdateFreebiesInformationCommand, UpdateFreebieInformationResult>
+    public class Handler : IRequestHandler<UpdateFreebiesInformationCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -101,7 +99,7 @@ public class UpdateFreebiesInformation : ControllerBase
             _context = context;
         }
 
-        public async Task<UpdateFreebieInformationResult> Handle(UpdateFreebiesInformationCommand request,
+        public async Task<Result> Handle(UpdateFreebiesInformationCommand request,
             CancellationToken cancellationToken)
         {
             var clientFreebies = new List<UpdateFreebieInformationResult.Freebie>();
@@ -117,13 +115,13 @@ public class UpdateFreebiesInformation : ControllerBase
                 .ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync(
                     x => x.ClientId == request.ClientId &&
-                         x.ApprovalType == "For Freebie Approval" &&
+                         x.ApprovalType == Status.ForFreebieApproval &&
                          x.FreebieRequest.Any(x => x.Id == request.FreebieRequestId),
                     cancellationToken);
 
             if (approvals is null)
             {
-                throw new Exception("No approvals found");
+                return FreebieErrors.NoFreebieApprovalFound();
             }
 
             var freebieRequestToUpdate = approvals.FreebieRequest
@@ -131,7 +129,7 @@ public class UpdateFreebiesInformation : ControllerBase
 
             if (freebieRequestToUpdate == null)
             {
-                throw new Exception("Freebie Request not found");
+                return FreebieErrors.NoFreebieFound();
             }
 
             var requestItemIds = request.Freebies.Select(f => f.ItemId).ToList();
@@ -213,7 +211,7 @@ public class UpdateFreebiesInformation : ControllerBase
             await _context.SaveChangesAsync(cancellationToken);
 
 
-            return new UpdateFreebieInformationResult
+            var result = new UpdateFreebieInformationResult
             {
                 Id = client.Id,
                 OwnersName = client.Fullname,
@@ -230,6 +228,8 @@ public class UpdateFreebiesInformation : ControllerBase
                 Freebies = clientFreebies,
                 AddedBy = client.AddedBy
             };
+
+            return Result.Success(result);
         }
     }
 }

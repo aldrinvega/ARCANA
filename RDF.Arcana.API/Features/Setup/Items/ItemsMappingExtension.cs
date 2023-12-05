@@ -2,9 +2,11 @@
 
 public static class ItemsMappingExtension
 {
+   
     public static GetItemsAsync.GetItemsAsyncResult
         ToGetItemsAsyncResult(this Domain.Items items)
     {
+        var now = DateTime.Today;
         return new GetItemsAsync.GetItemsAsyncResult
         {
             Id = items.Id,
@@ -16,6 +18,23 @@ public static class ItemsMappingExtension
             ProductSubCategoryName = items.ProductSubCategory.ProductSubCategoryName,
             MeatType = items.MeatType?.MeatTypeName,
             IsActive = items.IsActive,
+            PriceChangeHistories = items.ItemPriceChange
+                .Where(pc => pc.EffectivityDate <= now)
+                .OrderByDescending(p => p.EffectivityDate)
+                .Select(pc => new GetItemsAsync.GetItemsAsyncResult.PriceChangeHistory
+                {
+                    Id = pc.Id,
+                    Price = pc.Price,
+                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy")
+                }),
+            FuturePriceChanges = items.ItemPriceChange
+                .Where(p => p.EffectivityDate > now)
+                .Select(pc => new GetItemsAsync.GetItemsAsyncResult.FuturePriceChange
+                {
+                    Id = pc.Id,
+                    Price = pc.Price,
+                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy")
+                }),
             AddedBy = items.AddedByUser.Fullname,
             ModifiedBy = items.ModifiedBy
         };

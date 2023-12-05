@@ -64,7 +64,6 @@ public class GetAllBookingCoverages : ControllerBase
     [HttpGet("GetAllBookingCoverages")]
     public async Task<IActionResult> Get([FromQuery] GetAllBookingCoveragesQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var bookingCoverages = await _mediator.Send(query);
@@ -78,11 +77,7 @@ public class GetAllBookingCoverages : ControllerBase
                 bookingCoverages.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
-            {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
+            var result = new 
                 {
                     requestedProspect = bookingCoverages,
                     bookingCoverages.CurrentPage,
@@ -91,19 +86,15 @@ public class GetAllBookingCoverages : ControllerBase
                     bookingCoverages.TotalPages,
                     bookingCoverages.HasPreviousPage,
                     bookingCoverages.HasNextPage
-                }
-            };
+                };
 
-            result.Messages.Add("Successfully Fetch Data");
+            var successResult = Result.Success(result);
 
-            return Ok(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return BadRequest(e.Message);
         }
     }
 }

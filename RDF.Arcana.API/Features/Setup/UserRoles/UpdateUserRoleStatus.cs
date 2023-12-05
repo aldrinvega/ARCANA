@@ -19,7 +19,6 @@ public class UpdateUserRoleStatus : ControllerBase
     [HttpPatch("UpdateUserRoleStatus/{id:int}")]
     public async Task<IActionResult> UpdateUserRole([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateUserRoleStatusCommand
@@ -27,27 +26,26 @@ public class UpdateUserRoleStatus : ControllerBase
                 UserRoleId = id,
                 ModifiedBy = User.Identity?.Name
             };
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("User Role has been updated successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class UpdateUserRoleStatusCommand : IRequest<Unit>
+    public class UpdateUserRoleStatusCommand : IRequest<Result>
     {
         public int UserRoleId { get; set; }
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateUserRoleStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateUserRoleStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -56,7 +54,7 @@ public class UpdateUserRoleStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateUserRoleStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUserRoleStatusCommand request, CancellationToken cancellationToken)
         {
             var existingUserRole =
                 await _context.UserRoles
@@ -75,14 +73,13 @@ public class UpdateUserRoleStatus : ControllerBase
 
             if (existingUserRole.IsActive && existingUserRole.Users != null && existingUserRole.IsActive)
             {
-                throw new Exception(
-                    $"Operation failed: User Role cannot be archived because it is currently associated with the user '{existingUserRole.Users.FirstOrDefault()?.Fullname}'.");
+                return UserRoleErrors.CannotArchive(existingUserRole.Users.FirstOrDefault()?.Fullname);
             }
 
             existingUserRole.IsActive = !existingUserRole.IsActive;
             existingUserRole.ModifiedBy = request.ModifiedBy;
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

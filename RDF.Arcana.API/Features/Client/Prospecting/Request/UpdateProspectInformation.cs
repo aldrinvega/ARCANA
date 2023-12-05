@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
@@ -19,25 +20,24 @@ public class UpdateProspectInformation : ControllerBase
     [HttpPut("UpdateProspectInformation/{id:int}")]
     public async Task<IActionResult> UpdateProspect([FromRoute] int id, [FromBody] UpdateProspectRequestCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.ClientId = id;
-            await _mediator.Send(command);
-            response.Messages.Add("Client information updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+           var result = await _mediator.Send(command);
+
+           if (result.IsFailure)
+           {
+               return BadRequest(result);
+           }
+            return Ok(result);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 
-    public class UpdateProspectRequestCommand : IRequest<Unit>
+    public class UpdateProspectRequestCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
@@ -52,11 +52,9 @@ public class UpdateProspectInformation : ControllerBase
         public int StoreTypeId { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateProspectRequestCommand, Unit>
+    public class Handler : IRequestHandler<UpdateProspectRequestCommand, Result>
     {
-        private const string APPROVED_STATUS = "Approved";
-        private const string PROSPECT_TYPE = "Prospect";
-        private const string APPROVER_APPROVAL = "Approver Approval";
+
 
         private readonly ArcanaDbContext _context;
 
@@ -65,7 +63,7 @@ public class UpdateProspectInformation : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateProspectRequestCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateProspectRequestCommand request, CancellationToken cancellationToken)
         {
             var existingClient =
                 await _context.Approvals
@@ -74,19 +72,19 @@ public class UpdateProspectInformation : ControllerBase
                     .FirstOrDefaultAsync(
                         x => x.ClientId == request.ClientId
                              && x.IsActive == true
-                             && x.ApprovalType == APPROVER_APPROVAL,
+                             && x.ApprovalType == Status.ApproverApproval,
                         cancellationToken);
 
             if (existingClient is null)
             {
-                throw new ClientIsNotFound(request.ClientId);
+                return ClientErrors.NotFound();
             }
-
+            
             existingClient.Client.Fullname = request.OwnersName;
             existingClient.Client.PhoneNumber = request.PhoneNumber;
             existingClient.Client.BusinessName = request.BusinessName;
             existingClient.IsApproved = true;
-            existingClient.Client.RegistrationStatus = APPROVED_STATUS;
+            existingClient.Client.RegistrationStatus = Status.Approved;
             existingClient.Client.StoreTypeId = request.StoreTypeId;
 
             existingClient.Client.OwnersAddress.HouseNumber = request.HouseNumber;
@@ -96,7 +94,7 @@ public class UpdateProspectInformation : ControllerBase
             existingClient.Client.OwnersAddress.Province = request.Province;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

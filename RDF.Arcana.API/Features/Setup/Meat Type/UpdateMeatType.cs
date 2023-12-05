@@ -5,7 +5,7 @@ using RDF.Arcana.API.Features.Setup.Meat_Type.Exceptions;
 
 namespace RDF.Arcana.API.Features.Setup.Meat_Type;
 
-[Route("api/[controller]")]
+[Route("api/MeatType")]
 [ApiController]
 
 public class UpdateMeatType : ControllerBase
@@ -17,14 +17,14 @@ public class UpdateMeatType : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateMeatTypeCommand : IRequest<Unit>
+    public class UpdateMeatTypeCommand : IRequest<Result>
     {
         public int MeatTypeId { get; set; }
         public string MeatTypeName { get; set; }
         public string ModifiedBy { get; set; }
     }
     
-    public class Handler : IRequestHandler<UpdateMeatTypeCommand, Unit>
+    public class Handler : IRequestHandler<UpdateMeatTypeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -33,12 +33,11 @@ public class UpdateMeatType : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateMeatTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateMeatTypeCommand request, CancellationToken cancellationToken)
         {
             var existingMeatType = await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
 
-            var validateMeatTypeName =
-                await _context.MeatTypes.Where(x => x.MeatTypeName == request.MeatTypeName).FirstOrDefaultAsync(cancellationToken);
+            var validateMeatTypeName = await _context.MeatTypes.Where(x => x.MeatTypeName == request.MeatTypeName).FirstOrDefaultAsync(cancellationToken);
 
             if (validateMeatTypeName is null)
             {
@@ -47,44 +46,35 @@ public class UpdateMeatType : ControllerBase
                 existingMeatType.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
-
-            }
-            
-            if (validateMeatTypeName.MeatTypeName == request.MeatTypeName && validateMeatTypeName.Id == request.MeatTypeId)
-            {
-                throw new Exception("No changes");
+                return Result.Success();
             }
             
             if (validateMeatTypeName.MeatTypeName == request.MeatTypeName && validateMeatTypeName.Id != request.MeatTypeId)
             {
                 throw new MeatTypeIsAlreadyExistException(request.MeatTypeName);
             }
-           
             
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPut("UpdateMeatType/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, UpdateMeatTypeCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.ModifiedBy = User.Identity?.Name;
             command.MeatTypeId = id;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("Meat type updated successfully.");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(ex.Message);
-            return Conflict(response);
+            return Conflict(ex.Message);
         }
     }
 }

@@ -1,10 +1,11 @@
+using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -25,6 +26,19 @@ public class GetAllListingFee : ControllerBase
     {
         try
         {
+            
+            if (User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                query.AccessBy = userId;
+
+                var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (roleClaim != null)
+                {
+                    query.RoleName = roleClaim.Value;
+                }
+            }
             var validationResult = await _validator.ValidateAsync(query);
 
             if (!validationResult.IsValid)
@@ -54,7 +68,7 @@ public class GetAllListingFee : ControllerBase
                 listingFees.HasNextPage
             };
 
-            var successResult = Result<object>.Success(result, "Data fetch successfully");
+            var successResult = Result.Success(result);
 
             return Ok(successResult);
         }
@@ -68,6 +82,8 @@ public class GetAllListingFee : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public string RoleName { get; set; }
+        public int AccessBy { get; set; }
         public string ListingFeeStatus { get; set; }
     }
 
@@ -77,13 +93,14 @@ public class GetAllListingFee : ControllerBase
         public string ClientName { get; set; }
         public string BusinessName { get; set; }
         public int ListingFeeId { get; set; }
-        public int ApprovalId { get; set; }
+        public int RequestId { get; set; }
         public string Status { get; set; }
         public string RequestedBy { get; set; }
         public decimal Total { get; set; }
         public string CreateAt { get; set; }
         public string CancellationReason { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
+        public IEnumerable<ListingFeeApprovalHistory> ListingFeeApprovalHistories { get; set; }
 
         public class ListingItem
         {
@@ -94,6 +111,14 @@ public class GetAllListingFee : ControllerBase
             public int Sku { get; set; }
             public decimal UnitCost { get; set; }
             public int Quantity { get; set; }
+        }
+        public class ListingFeeApprovalHistory
+        {
+            public string Module { get; set; }
+            public string Approver { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public string Status { get; set; }
+            public string Reason { get; set; }
         }
     }
 
@@ -109,23 +134,40 @@ public class GetAllListingFee : ControllerBase
         public Task<PagedList<ClientsWithListingFee>> Handle(GetAllListingFeeQuery request,
             CancellationToken cancellationToken)
         {
-            IQueryable<ListingFee> listingFees = _context.ListingFees
-                .Include(x => x.Approvals)
+            var listingFees = _context.ListingFees
                 .Include(x => x.Client)
+                .AsSplitQuery()
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.Approvals)
                 .Include(x => x.RequestedByUser)
                 .Include(x => x.ListingFeeItems)
                 .ThenInclude(x => x.Item)
-                .ThenInclude(x => x.Uom);
-
+                .ThenInclude(x => x.Uom)
+                .AsSingleQuery();
+            
             if (!string.IsNullOrEmpty(request.Search))
             {
                 listingFees = listingFees.Where(x =>
                     x.Client.BusinessName.Contains(request.Search) || x.Client.Fullname.Contains(request.Search));
             }
 
-            if (!string.IsNullOrEmpty(request.ListingFeeStatus))
+            listingFees = request.RoleName switch
             {
-                listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus);
+                Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
+                                     request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower() =>
+                    listingFees.Where(lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive)),
+                Roles.Approver => listingFees.Where(lf =>
+                    lf.Request.Status == request.ListingFeeStatus && 
+                    lf.Request.CurrentApproverId == request.AccessBy),
+                Roles.Admin or Roles.Cdo => listingFees.Where(x =>
+                    x.RequestedBy == request.AccessBy && x.Status == request.ListingFeeStatus),
+                _ => listingFees
+            };
+
+            if (request.RoleName is Roles.Approver && request.ListingFeeStatus == Status.UnderReview)
+            {
+                listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy);
             }
 
             if (request.Status != null)
@@ -133,7 +175,36 @@ public class GetAllListingFee : ControllerBase
                 listingFees = listingFees.Where(x => x.IsActive == request.Status);
             }
 
-            var result = listingFees.Select(x => x.ToGetAllListingFeeResult());
+            var result = listingFees.Select(listingFee => new ClientsWithListingFee
+            {
+                ClientId = listingFee.ClientId,
+                ClientName = listingFee.Client.Fullname,
+                BusinessName = listingFee.Client.BusinessName,
+                CreateAt = listingFee.CratedAt.ToString("yyyy-MM-dd hh:mm:ss"),
+                ListingFeeId = listingFee.Id,
+                RequestId = listingFee.RequestId,
+                Status = listingFee.Status,
+                RequestedBy = listingFee.RequestedByUser.Fullname,
+                Total = listingFee.Total,
+                ListingItems = listingFee.ListingFeeItems.Select(li =>
+                    new ClientsWithListingFee.ListingItem
+                    {
+                        ItemId = li.ItemId,
+                        ItemCode = li.Item.ItemCode,
+                        ItemDescription = li.Item.ItemDescription,
+                        Uom = li.Item.Uom.UomCode,
+                        Sku = li.Sku,
+                        UnitCost = li.UnitCost
+                    }).ToList(),
+                ListingFeeApprovalHistories = listingFee.Request.Approvals.OrderByDescending(a => a.CreatedAt)
+                    .Select( a => new ClientsWithListingFee.ListingFeeApprovalHistory
+                    {
+                        Module = a.Request.Module,
+                        Approver = a.Approver.Fullname,
+                        CreatedAt = a.CreatedAt,
+                        Status = a.Status,
+                    })
+            }).OrderBy(x => x.ClientId);
 
             return PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);
         }

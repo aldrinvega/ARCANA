@@ -18,14 +18,14 @@ public class UpdateTermDays : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateTermDaysCommand : IRequest<Unit>
+    public class UpdateTermDaysCommand : IRequest<Result>
     {
         public int Id { get; set; }
         public int Days { get; set; }
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateTermDaysCommand, Unit>
+    public class Handler : IRequestHandler<UpdateTermDaysCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -34,7 +34,7 @@ public class UpdateTermDays : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateTermDaysCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateTermDaysCommand request, CancellationToken cancellationToken)
         {
             var existingTermDays =
                 await _context.TermDays.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
@@ -42,11 +42,6 @@ public class UpdateTermDays : ControllerBase
             if (existingTermDays is null)
             {
                 throw new TermDaysNotFoundException();
-            }
-
-            if (existingTermDays.Days == request.Days)
-            {
-                throw new Exception("No changes");
             }
 
             var isTermDaysAlreadyExist = await _context.TermDays
@@ -63,29 +58,27 @@ public class UpdateTermDays : ControllerBase
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPut("UpdateTermDays/{id:int}")]
     public async Task<IActionResult> Update([FromBody]UpdateTermDaysCommand command, [FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.Id = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Term days has been updated successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

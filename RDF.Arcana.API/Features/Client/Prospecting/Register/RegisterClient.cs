@@ -4,7 +4,8 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
+using RDF.Arcana.API.Features.Client.Errors;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Register;
 
@@ -23,7 +24,6 @@ public class RegisterClient : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterClientCommand request, [FromRoute] int id,
         CancellationToken cancellationToken)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -33,26 +33,27 @@ public class RegisterClient : ControllerBase
             }
 
             request.ClientId = id;
-            await _mediator.Send(request, cancellationToken);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(request, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            response.Status = StatusCodes.Status404NotFound;
-            response.Messages.Add(ex.Message);
-
-            return Conflict(response);
+            return Conflict(ex.Message);
         }
     }
 
-    public class RegisterClientCommand : IRequest<Unit>
+    public class RegisterClientCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public string HouseNumber { get; set; }
         public string StreetName { get; set; }
         public string BarangayName { get; set; }
+        public int? StoreTypeId { get; set; }
         public DateTime BirthDate { get; set; }
         public string City { get; set; }
         public string Province { get; set; }
@@ -64,9 +65,8 @@ public class RegisterClient : ControllerBase
         public string Latitude { get; set; }
         public int RequestedBy { get; set; }
 
-        public class Handler : IRequestHandler<RegisterClientCommand, Unit>
+        public class Handler : IRequestHandler<RegisterClientCommand, Result>
         {
-            private const string FOR_REGULAR = "For regular approval";
             private readonly ArcanaDbContext _context;
 
             public Handler(ArcanaDbContext context)
@@ -74,7 +74,7 @@ public class RegisterClient : ControllerBase
                 _context = context;
             }
 
-            public async Task<Unit> Handle(RegisterClientCommand request, CancellationToken cancellationToken)
+            public async Task<Result> Handle(RegisterClientCommand request, CancellationToken cancellationToken)
             {
                 var existingClient = await _context.Clients
                     .Where(x => x.RegistrationStatus == "Pending registration")
@@ -82,7 +82,7 @@ public class RegisterClient : ControllerBase
 
                 if (existingClient == null)
                 {
-                    throw new ClientIsNotFound(request.ClientId);
+                    return ClientErrors.NotFound();
                 }
 
                 var businessAddress = new BusinessAddress
@@ -93,32 +93,28 @@ public class RegisterClient : ControllerBase
                     City = request.City,
                     Province = request.Province
                 };
-
-                var approval = new Approvals
-                {
-                    ClientId = existingClient.Id,
-                    ApprovalType = FOR_REGULAR,
-                    RequestedBy = request.RequestedBy,
-                    IsApproved = false,
-                    IsActive = true,
-                };
+                
                 
                 var approvers = await _context.Approvers
-                    .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1).FirstOrDefaultAsync(cancellationToken);
+                    .Where(x => x.ModuleName == Modules.RegistrationApproval)
+                    .OrderBy(x => x.Level)
+                    .ToListAsync(cancellationToken);
+
+                if (!approvers.Any())
+                {
+                    return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
+                }
 
                 var newRequest = new Domain.Request
                 (
                     Modules.RegistrationApproval, 
                     request.RequestedBy, 
-                    approvers.UserId, 
+                    approvers.First().UserId, 
                     Status.UnderReview
                 );
 
                 await _context.Requests.AddAsync(newRequest, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-
                 await _context.BusinessAddress.AddAsync(businessAddress, cancellationToken);
-                await _context.Approvals.AddAsync(approval, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
                 var dateOfBirth = DateOnly.FromDateTime(request.BirthDate);
@@ -132,9 +128,20 @@ public class RegisterClient : ControllerBase
                 existingClient.Latitude = request.Latitude;
                 existingClient.DateOfBirthDB = dateOfBirth;
                 existingClient.RequestId = newRequest.Id;
-
+                existingClient.StoreTypeId = request.StoreTypeId;
+                
+                foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
+                         {
+                             ApproverId = approver.UserId,
+                             RequestId = newRequest.Id,
+                             Level = approver.Level,
+                         }))
+                {
+                    _context.RequestApprovers.Add(newRequestApprover);
+                }
+                
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
+                return Result.Success();
             }
         }
     }

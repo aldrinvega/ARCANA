@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Client.Errors;
 
 namespace RDF.Arcana.API.Features.Client.Direct;
 
@@ -18,7 +19,6 @@ public class UpdateDirectRegistrationStatus : ControllerBase
     [HttpPatch("UpdateDirectRegisteredClientStatus/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateDirectRegisteredClientStatusCommand
@@ -34,12 +34,12 @@ public class UpdateDirectRegistrationStatus : ControllerBase
         }
     }
 
-    public class UpdateDirectRegisteredClientStatusCommand : IRequest<Unit>
+    public class UpdateDirectRegisteredClientStatusCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateDirectRegisteredClientStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateDirectRegisteredClientStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -48,7 +48,7 @@ public class UpdateDirectRegistrationStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateDirectRegisteredClientStatusCommand request,
+        public async Task<Result> Handle(UpdateDirectRegisteredClientStatusCommand request,
             CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId,
@@ -56,13 +56,13 @@ public class UpdateDirectRegistrationStatus : ControllerBase
 
             if (existingClient == null)
             {
-                throw new Exception("No clients found");
+                return ClientErrors.NotFound();
             }
 
             existingClient.IsActive = !existingClient.IsActive;
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

@@ -21,7 +21,6 @@ public class AddNewDepartment : ControllerBase
     [HttpPost("AddNewDepartment")]
     public async Task<IActionResult> AddDepartment(AddNewDepartmentCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -30,27 +29,26 @@ public class AddNewDepartment : ControllerBase
                 command.AddedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add($"Department {command.DepartmentName} successfully added");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Success = false;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class AddNewDepartmentCommand : IRequest<Unit>
+    public class AddNewDepartmentCommand : IRequest<Result>
     {
         public string DepartmentName { get; set; }
         public int AddedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<AddNewDepartmentCommand, Unit>
+    public class Handler : IRequestHandler<AddNewDepartmentCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -59,7 +57,7 @@ public class AddNewDepartment : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewDepartmentCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewDepartmentCommand request, CancellationToken cancellationToken)
         {
             var validateDepartment = await _context.Departments.SingleOrDefaultAsync(
                 x => x.DepartmentName == request.DepartmentName,
@@ -81,7 +79,7 @@ public class AddNewDepartment : ControllerBase
             await _context.Departments.AddAsync(department, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
@@ -22,11 +23,11 @@ public class AddNewUser : ControllerBase
         _mediator = mediator;
     }
 
+    [AllowAnonymous]
     [HttpPost]
     [Route("AddNewUser")]
     public async Task<ActionResult> Add([FromBody] AddNewUserCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -36,20 +37,20 @@ public class AddNewUser : ControllerBase
             }
 
             var result = await _mediator.Send(command);
-            response.Success = true;
-            response.Data = result;
-            response.Messages.Add("User added successfully");
-            return Ok(response);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+           
+            return Ok( result);
         }
         catch (System.Exception e)
         {
-            response.Success = false;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class AddNewUserCommand : IRequest<Unit>
+    public class AddNewUserCommand : IRequest<Result>
     {
         public string FullIdNo { get; set; }
         public string Fullname { get; set; }
@@ -60,10 +61,10 @@ public class AddNewUser : ControllerBase
         public int? DepartmentId { get; set; }
         public int? UserRoleId { get; set; }
         public int? CompanyId { get; set; }
-        public IFormFile ProfilePicture { get; set; }
+        public string ProfilePicture { get; set; }
 
 
-        public class Handler : IRequestHandler<AddNewUserCommand, Unit>
+        public class Handler : IRequestHandler<AddNewUserCommand, Result>
         {
             private readonly Cloudinary _cloudinary;
             private readonly ArcanaDbContext _context;
@@ -80,14 +81,14 @@ public class AddNewUser : ControllerBase
                 _cloudinary = new Cloudinary(account);
             }
 
-            public async Task<Unit> Handle(AddNewUserCommand command, CancellationToken cancellationToken)
+            public async Task<Result> Handle(AddNewUserCommand command, CancellationToken cancellationToken)
             {
                 // Check if the username already exists
                 var existingUserWithSameUsername =
                     await _context.Users.FirstOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
                 if (existingUserWithSameUsername != null)
                 {
-                    throw new UserAlreadyExistWithUsername(command.Username);
+                    return UserErrors.UsernameAlreadyExist(command.Username);
                 }
 
                 // Check if the fullname and fullidno already exist together
@@ -96,7 +97,7 @@ public class AddNewUser : ControllerBase
                         cancellationToken);
                 if (existingUserWithSameFullnameAndId != null)
                 {
-                    throw new UserAlreadyExistException();
+                    return UserErrors.UserAlreadyExist();
                 }
 
                 var user = new User
@@ -109,28 +110,13 @@ public class AddNewUser : ControllerBase
                     LocationId = command.LocationId,
                     DepartmentId = command.DepartmentId,
                     UserRolesId = command.UserRoleId,
-                    IsActive = true
+                    IsActive = true,
+                    ProfilePicture = URL.ProfilePicture,
                 };
 
-
-                if (command.ProfilePicture != null)
-                {
-                    await using var stream = command.ProfilePicture.OpenReadStream();
-
-                    var attachmentParams = new ImageUploadParams
-                    {
-                        File = new FileDescription(command.ProfilePicture.FileName, stream),
-                        PublicId = $"{command.Username}/{command.ProfilePicture.FileName}"
-                    };
-
-                    var attachmentResult = await _cloudinary.UploadAsync(attachmentParams);
-                    user.ProfilePicture = attachmentResult.SecureUrl.ToString();
-                }
-
-                _context.Users.Add(user);
-                var id = user.Id;
+                await _context.Users.AddAsync(user, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
+                return Result.Success();
             }
         }
     }

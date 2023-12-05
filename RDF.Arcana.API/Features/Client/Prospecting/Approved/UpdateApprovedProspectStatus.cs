@@ -19,7 +19,6 @@ public class UpdateApprovedProspectStatus : ControllerBase
     [HttpPatch("UpdateApprovedProspectStatus/{id:int}")]
     public async Task<IActionResult> Update(int id)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var command = new UpdateApprovedProspectStatusCommand
@@ -28,16 +27,11 @@ public class UpdateApprovedProspectStatus : ControllerBase
             };
 
             await _mediator.Send(command);
-            response.Messages.Add("Client status has been updated successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            return Ok();
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 

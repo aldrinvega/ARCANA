@@ -70,7 +70,6 @@ public class ModeOfPayments : ControllerBase
     public async Task<IActionResult> DirectClientRegistration(
         [FromQuery] GetAllModeOfPaymentsAsync.GetAllModeOfPaymentsAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var result = await _mediator.Send(query);
@@ -83,29 +82,23 @@ public class ModeOfPayments : ControllerBase
                 result.HasNextPage
             );
 
-            var modeOfPayments = new QueryOrCommandResult<object>
+            var modeOfPayments = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    result,
-                    result.CurrentPage,
-                    result.PageSize,
-                    result.TotalCount,
-                    result.TotalPages,
-                    result.HasPreviousPage,
-                    result.HasNextPage
-                }
+                result,
+                result.CurrentPage,
+                result.PageSize,
+                result.TotalCount,
+                result.TotalPages,
+                result.HasPreviousPage,
+                result.HasNextPage
             };
-            modeOfPayments.Messages.Add("Successfully fetch data");
-            return Ok(modeOfPayments);
+
+            var successResult = Result.Success(modeOfPayments);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

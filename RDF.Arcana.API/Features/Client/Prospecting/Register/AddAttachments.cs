@@ -22,17 +22,17 @@ public class AddAttachments : ControllerBase
     }
 
     [HttpPut("AddAttachments/{id}")]
-    public async Task<IActionResult> AddRequirements([FromForm] AddAttachedmentsCommand command, [FromRoute] int id)
+    public async Task<IActionResult> AddRequirements([FromForm] AddAttachmentsCommand command, [FromRoute] int id)
     {
         try
         {
             command.ClientId = id;
             var result = await _mediator.Send(command);
-            if (result.IsFailure)
+            return result.IsFailure switch
             {
-                return BadRequest(result);
-            }
-            return Ok(result);
+                true => BadRequest(result),
+                false => Ok(result),
+            };
         }
         catch (Exception ex)
         {
@@ -40,7 +40,7 @@ public class AddAttachments : ControllerBase
         }
     }
 
-    public class AddAttachedmentsCommand : IRequest<Result<Unit>>
+    public class AddAttachmentsCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
 
@@ -53,7 +53,7 @@ public class AddAttachments : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<AddAttachedmentsCommand, Result<Unit>>
+    public class Handler : IRequestHandler<AddAttachmentsCommand, Result>
     {
         private readonly Cloudinary _cloudinary;
         private readonly ArcanaDbContext _context;
@@ -70,7 +70,7 @@ public class AddAttachments : ControllerBase
             _cloudinary = new Cloudinary(account);
         }
 
-        public async Task<Result<Unit>> Handle(AddAttachedmentsCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddAttachmentsCommand request, CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
                 .Include(x => x.ClientDocuments)
@@ -80,7 +80,7 @@ public class AddAttachments : ControllerBase
 
             if (existingClient == null)
             {
-                return Result<Unit>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
 
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
@@ -107,9 +107,7 @@ public class AddAttachments : ControllerBase
                 existingClient.RegistrationStatus = "Under review";
                 await _context.SaveChangesAsync(cancellationToken);
             }
-
-            await _context.SaveChangesAsync(cancellationToken);
-            return Result<Unit>.Success(Unit.Value, "Attachments uploaded successfully");
+            return Result.Success();
         }
     }
 }

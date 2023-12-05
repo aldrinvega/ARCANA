@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
@@ -17,10 +18,10 @@ public class AddNewUserRoles : ControllerBase
         _mediator = mediator;
     }
 
+    [AllowAnonymous]
     [HttpPost("AddNewUserRole")]
     public async Task<IActionResult> Add(AddNewUserRolesCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -29,28 +30,28 @@ public class AddNewUserRoles : ControllerBase
                 command.AddedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("User Role has been added successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class AddNewUserRolesCommand : IRequest<Unit>
+    public class AddNewUserRolesCommand : IRequest<Result>
     {
         public string RoleName { get; set; }
         public List<string> Permissions { get; set; }
-        public int AddedBy { get; set; }
+        public int? AddedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<AddNewUserRolesCommand, Unit>
+    public class Handler : IRequestHandler<AddNewUserRolesCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -59,7 +60,7 @@ public class AddNewUserRoles : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewUserRolesCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewUserRolesCommand request, CancellationToken cancellationToken)
         {
             var existingUserRole = await _context.UserRoles
                 .Include(x => x.Users)
@@ -68,7 +69,7 @@ public class AddNewUserRoles : ControllerBase
 
             if (existingUserRole is not null)
             {
-                throw new UserRoleAlreadyExistException();
+                return UserRoleErrors.AlreadyExist(request.RoleName);
             }
 
             var userRole = new Domain.UserRoles
@@ -82,7 +83,7 @@ public class AddNewUserRoles : ControllerBase
             await _context.UserRoles.AddAsync(userRole, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

@@ -21,7 +21,6 @@ public class GetUsersAsync : ControllerBase
     [HttpGet("GetUser")]
     public async Task<IActionResult> Get([FromQuery] GetUsersAsync.GetUserAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var users = await _mediator.Send(query);
@@ -35,30 +34,23 @@ public class GetUsersAsync : ControllerBase
                 users.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>()
+            var result = new
             {
-                Success = true,
-                Data = new
-                {
-                    users,
-                    users.CurrentPage,
-                    users.PageSize,
-                    users.TotalCount,
-                    users.TotalPages,
-                    users.HasPreviousPage,
-                    users.HasNextPage
-                }
+                users,
+                users.CurrentPage,
+                users.PageSize,
+                users.TotalCount,
+                users.TotalPages,
+                users.HasPreviousPage,
+                users.HasNextPage
             };
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Successfully fetch data");
-            return Ok(result);
+
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (System.Exception e)
         {
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 

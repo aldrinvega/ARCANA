@@ -3,9 +3,9 @@ using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
-public class GetAllListingFeeValidator : AbstractValidator<GetAllListingFee.GetAllListingFeeQuery>
+public class GetAllListingValidator : AbstractValidator<GetAllListingFee.GetAllListingFeeQuery>
 {
-    public GetAllListingFeeValidator()
+    public GetAllListingValidator()
     {
         RuleFor(x => x.ListingFeeStatus)
             .Must(BeAValidStatus)
@@ -16,5 +16,15 @@ public class GetAllListingFeeValidator : AbstractValidator<GetAllListingFee.GetA
     private static bool BeAValidStatus(string status)
     {
         return status is Status.Approved or Status.UnderReview or Status.Rejected;
+    }
+}
+
+public class UpdateListingFeeValidator : AbstractValidator<UpdateListingFeeInformation.UpdateListingFeeInformationCommand>
+{
+    public UpdateListingFeeValidator()
+    {
+        RuleFor(x => x.ListingItems)
+            .NotNull()
+            .WithMessage("Listing fee items must not be empty");
     }
 }

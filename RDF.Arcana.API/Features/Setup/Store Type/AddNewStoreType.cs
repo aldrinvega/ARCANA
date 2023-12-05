@@ -22,7 +22,6 @@ public class AddNewStoreType : ControllerBase
     [HttpPost("AddNewStoreType")]
     public async Task<IActionResult> Add([FromBody] AddNewStoreTypeCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -31,27 +30,26 @@ public class AddNewStoreType : ControllerBase
                 command.AddedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Messages.Add($"{command.StoreTypeName} added successfully");
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (System.Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 
-    public class AddNewStoreTypeCommand : IRequest<Unit>
+    public class AddNewStoreTypeCommand : IRequest<Result>
     {
         public string StoreTypeName { get; set; }
         public int? AddedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<AddNewStoreTypeCommand, Unit>
+    public class Handler : IRequestHandler<AddNewStoreTypeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -60,7 +58,7 @@ public class AddNewStoreType : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewStoreTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewStoreTypeCommand request, CancellationToken cancellationToken)
         {
             var existingStoreType =
                 await _context.StoreTypes.FirstOrDefaultAsync(x => x.StoreTypeName == request.StoreTypeName,
@@ -68,7 +66,7 @@ public class AddNewStoreType : ControllerBase
 
             if (existingStoreType is not null)
             {
-                throw new StoreTypeAlreadyExistException(request.StoreTypeName);
+                return StoreTypeErrors.AlreadyExist(request.StoreTypeName);
             }
 
             var storeType = new StoreType
@@ -81,7 +79,7 @@ public class AddNewStoreType : ControllerBase
             await _context.StoreTypes.AddAsync(storeType, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

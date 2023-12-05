@@ -5,6 +5,7 @@ using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Requests_Approval;
+
 [Route("api/Approver"), ApiController]
 
 public class UpdateApproversPerModule : ControllerBase
@@ -17,7 +18,8 @@ public class UpdateApproversPerModule : ControllerBase
     }
 
     [HttpPut("UpdateApproversPerModule")]
-    public async Task<IActionResult> UpdateApprovers([FromBody]UpdateApproversPerModuleCommand command, [FromQuery] string moduleName)
+    public async Task<IActionResult> UpdateApprovers([FromBody] UpdateApproversPerModuleCommand command,
+        [FromQuery] string moduleName)
     {
         try
         {
@@ -36,11 +38,11 @@ public class UpdateApproversPerModule : ControllerBase
         }
     }
 
-    public record UpdateApproversPerModuleCommand : IRequest<Result<UpdateApproversPerModuleResult>>
+    public record UpdateApproversPerModuleCommand : IRequest<Result>
     {
         public string ModuleName { get; set; }
-        
         public ICollection<ApproverToUpdatePerModule> Approvers { get; set; }
+
         public class ApproverToUpdatePerModule
         {
             public int UserId { get; set; }
@@ -48,20 +50,7 @@ public class UpdateApproversPerModule : ControllerBase
         }
     }
 
-    public record UpdateApproversPerModuleResult
-    {
-        public string ModuleName { get; set; }
-        public ICollection<ApproverToUpdate> Approvers { get; set; }
-        
-        public class ApproverToUpdate
-        {
-            public int UserId { get; set; }
-            public int Level { get; set; }
-        }
-        
-    }
-    
-    public class Handler : IRequestHandler<UpdateApproversPerModuleCommand, Result<UpdateApproversPerModuleResult>>
+    public class Handler : IRequestHandler<UpdateApproversPerModuleCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -70,64 +59,43 @@ public class UpdateApproversPerModule : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<UpdateApproversPerModuleResult>> Handle(UpdateApproversPerModuleCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateApproversPerModuleCommand request,
+            CancellationToken cancellationToken)
         {
-            var existingModule = await _context.Approvers
-                .Include(user => user.User)
-                .Where(module => module.ModuleName == request.ModuleName).ToListAsync(cancellationToken);
+            var existingApprovers = await _context.Approvers
+                .Where(approver => approver.ModuleName == request.ModuleName)
+                .ToListAsync(cancellationToken);
 
-            if (!existingModule.Any())
+            var sentUserIds = request.Approvers.Select(a => a.UserId).ToList();
+
+            // Remove approvers in the database that does not exist in the request
+            var approversToRemove =
+                existingApprovers.Where(approver => !sentUserIds.Contains(approver.UserId)).ToList();
+            _context.Approvers.RemoveRange(approversToRemove);
+
+            foreach (var sentApprover in request.Approvers)
             {
-                return Result<UpdateApproversPerModuleResult>.Failure(ApprovalErrors
-                    .NoApproversFound(request.ModuleName));
-            }
-            
-            var approverResult = new Collection<UpdateApproversPerModuleResult.ApproverToUpdate>();
+                var existingApprover = existingApprovers.FirstOrDefault(a => a.UserId == sentApprover.UserId);
 
-            foreach (var approvers in request.Approvers)
-            {
-
-                var approverEntity = new Approver
+                if (existingApprover != null) // If the approver exists in the database, update the approver
                 {
-                    UserId = approvers.UserId,
-                    Level = approvers.Level
-                };
-
-                var user = await _context.Users
-                    .Include(user => user.UserRoles)
-                    .FirstOrDefaultAsync(user => user.Id == approvers.UserId, cancellationToken);
-
-                if (!user.UserRoles.Permissions.Contains(request.ModuleName))
-                {
-                    return Result<UpdateApproversPerModuleResult>
-                        .Failure(ApprovalErrors.NoAccess(request.ModuleName, user.Fullname));
+                    existingApprover.Level = sentApprover.Level;
                 }
-
-                await _context.Approvers.Upsert(approverEntity)
-                    .On(c => new { c.ModuleName, c.UserId })
-                    .WhenMatched(c => new Approver
-                    {
-                        UserId = approverEntity.UserId,
-                        Level = approverEntity.Level
-                    }).RunAsync(cancellationToken);
-                
-                approverResult.Add(new UpdateApproversPerModuleResult.ApproverToUpdate
+                else // If the approver does not exist in the database, add the approver
                 {
-                    UserId = approverEntity.UserId,
-                    Level = approverEntity.Level
-                });
+                    _context.Approvers.Add(new Approver
+                    {
+                        UserId = sentApprover.UserId,
+                        Level = sentApprover.Level,
+                        ModuleName = request.ModuleName,
+                        IsActive = true
+                    });
+                }
             }
 
-            var result = new UpdateApproversPerModuleResult
-            {
-                ModuleName = request.ModuleName,
-                Approvers = approverResult,
-            };
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<UpdateApproversPerModuleResult>
-                .Success(result, $"Approvers for the module {request.ModuleName} have been successfully updated.");
-
+            return Result.Success();
         }
     }
 }

@@ -76,7 +76,6 @@ public class GetTermDaysAsync : ControllerBase
     [HttpGet("GetTermDays")]
     public async Task<IActionResult> GetTermDays([FromQuery]GetTermDaysAsyncQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var termDays = await _mediator.Send(query);
@@ -88,30 +87,23 @@ public class GetTermDaysAsync : ControllerBase
                 termDays.HasPreviousPage,
                 termDays.HasNextPage
             );
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Status = StatusCodes.Status200OK,
-                Success = true,
-                Data = new
-                {
-                    termDays,
-                    termDays.CurrentPage,
-                    termDays.PageSize,
-                    termDays.TotalCount,
-                    termDays.TotalPages,
-                    termDays.HasPreviousPage,
-                    termDays.HasNextPage
-                }
+                termDays,
+                termDays.CurrentPage,
+                termDays.PageSize,
+                termDays.TotalCount,
+                termDays.TotalPages,
+                termDays.HasPreviousPage,
+                termDays.HasNextPage
             };
-            
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

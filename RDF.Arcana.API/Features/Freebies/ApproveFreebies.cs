@@ -19,14 +19,13 @@ public class ApproveFreebies : ControllerBase
     }
 
     [HttpPatch("ApproveFreebieRequest/{id:int}")]
-    public async Task<IActionResult> ApproveFreebieRequest([FromRoute] int id, [FromQuery] int freebieId)
+    public async Task<IActionResult> ApproveFreebieRequest([FromRoute] int id)
     {
         try
         {
             var command = new ApproveFreebiesCommand
             {
-                RequestId = id,
-                FreebieRequestId = freebieId
+                RequestId = id
             };
             if (User.Identity is ClaimsIdentity identity
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
@@ -47,31 +46,23 @@ public class ApproveFreebies : ControllerBase
         }
     }
 
-    public class ApproveFreebiesCommand : IRequest<Result<Unit>>
+    public class ApproveFreebiesCommand : IRequest<Result>
     {
         public int RequestId { get; set; }
-        public int FreebieRequestId { get; set; }
         public int ApprovedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<ApproveFreebiesCommand, Result<Unit>>
+    public class Handler : IRequestHandler<ApproveFreebiesCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
         {
             _context = context;
-        }
+        } 
 
-        public async Task<Result<Unit>> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ApproveFreebiesCommand request, CancellationToken cancellationToken)
         {
-            /*var approvals = await _context.Approvals
-                .Include(x => x.Client)
-                .Include(x => x.FreebieRequest)
-                .Where(x => !x.IsApproved &&
-                            x.ApprovalType == Status.ForFreebieApproval)
-                .FirstOrDefaultAsync(x => x.ClientId == request.ClientId, cancellationToken);*/
-
             var requestedFreebies = await _context.Requests
                 .Include(freebie => freebie.FreebieRequest)
                 .Where(freebie => freebie.Id == request.RequestId)
@@ -86,32 +77,34 @@ public class ApproveFreebies : ControllerBase
             
             if (currentApproverLevel == null)
             {
-                return Result<Unit>.Failure(ApprovalErrors.NoApproversFound(Modules.FreebiesApproval));
+                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
             }
             
             var nextLevel = currentApproverLevel.Value + 1;
             var nextApprover = approvers
                 .FirstOrDefault(approver => approver.Level == nextLevel);
             
+            var newApproval = new Approval(
+                requestedFreebies.Id,
+                requestedFreebies.CurrentApproverId,
+                Status.Approved,
+                null,
+                true
+            );
+            
             if (nextApprover == null)
             {
                 requestedFreebies.Status = Status.Approved;
             }
-            
-            if (requestedFreebies == null)
+            else
             {
-                return Result<Unit>.Failure(FreebieErrors.NoFreebieFound());
+                requestedFreebies.CurrentApproverId = nextApprover.UserId;
             }
-
-            var newApproval = new Approval(
-                requestedFreebies.Id,
-                requestedFreebies.CurrentApproverId,
-                Status.Approved
-            );
+            
             await _context.Approval.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<Unit>.Success(Unit.Value, "Freebie request has been approve successfully");
+            return Result.Success();
         }
     }
 }

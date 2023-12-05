@@ -42,7 +42,7 @@ public class AddAttachmentsForDirectClient : ControllerBase
         }
     }
 
-    public class AddAttachmentsForRegularClientCommand : IRequest<Result<object>>
+    public class AddAttachmentsForRegularClientCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public List<Files> Attachments { get; set; }
@@ -54,7 +54,7 @@ public class AddAttachmentsForDirectClient : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<AddAttachmentsForRegularClientCommand, Result<object>>
+    public class Handler : IRequestHandler<AddAttachmentsForRegularClientCommand, Result>
     {
         private readonly Cloudinary _cloudinary;
         private readonly ArcanaDbContext _context;
@@ -71,7 +71,7 @@ public class AddAttachmentsForDirectClient : ControllerBase
             _cloudinary = new Cloudinary(account);
         }
 
-        public async Task<Result<object>> Handle(AddAttachmentsForRegularClientCommand request,
+        public async Task<Result> Handle(AddAttachmentsForRegularClientCommand request,
             CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
@@ -85,33 +85,42 @@ public class AddAttachmentsForDirectClient : ControllerBase
             }
 
             if (request.Attachments == null)
-                return Result<object>.Failure(DirectRegistrationErrors.NoAttachmentFound());
+                return DirectRegistrationErrors.NoAttachmentFound();
+            
+            var uploadTasks = new List<Task>();
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
             {
-                await using var stream = documents.Attachment.OpenReadStream();
-
-                var attachmentsParams = new ImageUploadParams
+                uploadTasks.Add(Task.Run(async () =>
                 {
-                    File = new FileDescription(documents.Attachment.FileName, stream),
-                    PublicId = $"{HttpUtility.UrlEncode(existingClient.BusinessName)}/{documents.Attachment.FileName}"
-                };
+                    await using var stream = documents.Attachment.OpenReadStream();
 
-                var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
+                    var attachmentsParams = new ImageUploadParams
+                    {
+                        File = new FileDescription(documents.Attachment.FileName, stream),
+                        PublicId =
+                            $"{HttpUtility.UrlEncode(existingClient.BusinessName)}/{documents.Attachment.FileName}"
+                    };
 
-                var attachments = new ClientDocuments
-                {
-                    DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
-                    ClientId = existingClient.Id,
-                    DocumentType = documents.DocumentType
-                };
+                    var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
-                await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
-                existingClient.RegistrationStatus = Status.UnderReview;
-                await _context.SaveChangesAsync(cancellationToken);
+                    var attachments = new ClientDocuments
+                    {
+                        DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
+                        ClientId = existingClient.Id,
+                        DocumentType = documents.DocumentType
+                    };
+
+                    await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
+                    existingClient.RegistrationStatus = Status.UnderReview;
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                }, cancellationToken));
             }
+            
+            await Task.WhenAll(uploadTasks);
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Result<object>.Success(null, "Attachments uploaded successfully");
+            return Result.Success();
         }
     }
 }

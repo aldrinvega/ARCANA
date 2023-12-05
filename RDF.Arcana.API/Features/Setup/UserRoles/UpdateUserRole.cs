@@ -17,14 +17,14 @@ public class UpdateUserRole : ControllerBase
         _mediator = mediator;
     }
 
-    public class UpdateUserRoleCommand : IRequest<Unit>
+    public class UpdateUserRoleCommand : IRequest<Result>
     {
         public int UserRoleId { get; set; }
         public string RoleName { get; set; }
         public string ModifiedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateUserRoleCommand, Unit>
+    public class Handler : IRequestHandler<UpdateUserRoleCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -33,14 +33,14 @@ public class UpdateUserRole : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
         {
             var existingUserRole =
                 await _context.UserRoles.FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
 
             if (existingUserRole is null)
             {
-                throw new UserRoleNotFoundException();
+                return UserRoleErrors.NotFound();
             }
 
             var validateRoleName =
@@ -52,42 +52,36 @@ public class UpdateUserRole : ControllerBase
                 existingUserRole.UpdatedAt = DateTime.Now;
     
                 await _context.SaveChangesAsync(cancellationToken);
-                return Unit.Value;
+                return Result.Success();
             }
-    
-            if (validateRoleName.UserRoleName == request.RoleName && validateRoleName.Id == request.UserRoleId)
-            {
-                throw new Exception("No changes");
-            }
+            
 
             if (validateRoleName.UserRoleName == request.RoleName && validateRoleName.Id != request.UserRoleId)
             {
-                throw new Exception("Role already exists.");
+                return UserRoleErrors.AlreadyExist(request.RoleName);
             }
 
-            return Unit.Value;
+            return Result.Success();
         }
     }
     
     [HttpPut("UpdateUserRole/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody]UpdateUserRoleCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             command.UserRoleId = id;
             command.ModifiedBy = User.Identity?.Name;
-            await _mediator.Send(command);
-            response.Status = StatusCodes.Status200OK;
-            response.Success = true;
-            response.Messages.Add("User Role has been updated successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status409Conflict;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 }

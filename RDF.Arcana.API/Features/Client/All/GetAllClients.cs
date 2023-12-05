@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using CloudinaryDotNet.Actions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
@@ -63,7 +62,7 @@ public class GetAllClients : ControllerBase
                 regularClient.HasNextPage
             };
 
-            var successResult = Result<object>.Success(result, "Data fetch successfully");
+            var successResult = Result.Success(result);
 
             return Ok(successResult);
         }
@@ -84,7 +83,7 @@ public class GetAllClients : ControllerBase
         public string RoleName { get; set; }
     }
 
-    public class GetAllClientResult
+    public sealed record GetAllClientResult
     {
         public int Id { get; set; }
         public int? RequestId { get; set; }
@@ -104,7 +103,7 @@ public class GetAllClients : ControllerBase
         public string TypeOfCustomer { get; set; }
         public bool? DirectDelivery { get; set; }
         public string BookingCoverage { get; set; }
-        public string ModeOfPayment { get; set; }
+        public IEnumerable<ModeOfPayment> ModeOfPayments { get; set; }
         public ClientTerms Terms { get; set; }
         public FixedDiscounts FixedDiscount { get; set; }
         public bool? VariableDiscount { get; set; }
@@ -112,13 +111,19 @@ public class GetAllClients : ControllerBase
         public string Latitude { get; set; }
         public string RequestedBy { get; set; }
         public IEnumerable<Attachment> Attachments { get; set; }
+        public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
+        public IEnumerable<ClientApprovalHistory> ClientApprovalHistories { get; set; }
+        public IEnumerable<FreebiesCollection> Freebies { get; set; }
+        public IEnumerable<ListingFeeCollection> ListingFees { get; set; }
 
-
+        public class ModeOfPayment
+        {
+            public int Id { get; set; }
+        }
         public class FixedDiscounts
         {
             public decimal? DiscountPercentage { get; set; }
         }
-
         public class Attachment
         {
             public int DocumentId { get; set; }
@@ -152,15 +157,62 @@ public class GetAllClients : ControllerBase
             public int? TermDays { get; set; }
             public int? TermDaysId { get; set; }
         }
+        public class ClientApprovalHistory
+        {
+            public string Module { get; set; }
+            public string Approver { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public string Status { get; set; }
+            public int? Level { get; set; }
+            public string Reason { get; set; }
+        }
+        
+        public class UpdateHistory
+        {
+            public string Module { get; set; }
+            public DateTime UpdatedAt { get; set; }
+        }
+
+        public class FreebiesCollection
+        {
+            public int? TransactionNumber { get; set; }
+            public string Status { get; set; }
+            public string ESignature { get; set; }
+
+            public int? FreebieRequestId { get; set; }
+            public IEnumerable<Items> Freebies { get; set; }
+        }
+            
+        public class Items
+        {
+            public int? Id { get; set; }
+            public string ItemCode { get; set; }
+            public string ItemDescription { get; set; }
+            public string Uom { get; set; }
+            public int? Quantity { get; set; }
+        }
+
+        public class ListingFeeCollection
+        {
+            public int Id { get; set; }
+            public int RequestId { get; set; }
+            public decimal Total { get; set; }
+            public IEnumerable<ListingItems> ListingItems { get; set; }
+        }
+
+        public class ListingItems
+        {
+            public int? Id { get; set; }
+            public string ItemCode { get; set; }
+            public int Sku { get; set; }
+            public string ItemDescription { get; set; }
+            public string Uom { get; set; }
+            public decimal? UnitCost { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllClientsQuery, PagedList<GetAllClientResult>>
     {
-        private const string REGULAR = "Regular";
-        private const string APPROVED = "Approved";
-        private const string UNDER_REVIEW = "Under review";
-        private const string REJECTED = "Rejected";
-        private const string APPROVER = "Approver";
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -171,7 +223,48 @@ public class GetAllClients : ControllerBase
         public async Task<PagedList<GetAllClientResult>> Handle(GetAllClientsQuery request,
             CancellationToken cancellationToken)
         {
-            var regularClients = _context.Clients.AsNoTracking();
+            var regularClients = _context.Clients
+                .Include(mop => mop.ClientModeOfPayment)
+                .AsSplitQuery()
+                .Include(abu => abu.AddedByUser)
+                .AsSplitQuery()
+                .Include(rq => rq.Request)
+                .ThenInclude(user => user.Requestor)
+                .Include(ah => ah.Request)
+                .ThenInclude(ah => ah.UpdateRequestTrails)
+                .AsSplitQuery()
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.Approvals)
+                .ThenInclude(cap => cap.Approver)
+                .AsSplitQuery()
+                .Include(st => st.StoreType)
+                .AsSplitQuery()
+                .Include(fd => fd.FixedDiscounts)
+                .AsSplitQuery()
+                .Include(to => to.Term)
+                .ThenInclude(tt => tt.Terms)
+                .AsSplitQuery()
+                .Include(to => to.Term)
+                .ThenInclude(td => td.TermDays)
+                .AsSplitQuery()
+                .Include(ba => ba.BusinessAddress)
+                .AsSplitQuery()
+                .Include(oa => oa.OwnersAddress)
+                .AsSplitQuery()
+                .Include(bc => bc.BookingCoverages)
+                .AsSplitQuery()
+                .Include(fr => fr.FreebiesRequests)
+                .ThenInclude(fi => fi.FreebieItems)
+                .ThenInclude(item => item.Items)
+                .ThenInclude(uom => uom.Uom)
+                .AsSplitQuery()
+                .Include(lf => lf.ListingFees)
+                .ThenInclude(li => li.ListingFeeItems)
+                .ThenInclude(item => item.Item)
+                .ThenInclude(uom => uom.Uom)
+                .AsSplitQuery()
+                .Include(cd => cd.ClientDocuments)
+                .AsSplitQuery();
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -181,13 +274,14 @@ public class GetAllClients : ControllerBase
                     x.Fullname.Contains(request.Search)
                 );
             }
-
+            // To Separate Under Review & Approved Request between CDO and Approver including Admin
+            // (Request and Approval)
+            //To get the Approved Request, Approval table need to access and the role need to be Approver
             regularClients = request.RoleName switch
             {
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                Roles.Approver when !string.IsNullOrWhiteSpace(request.RegistrationStatus) && 
                                     request.RegistrationStatus.ToLower() != Status.UnderReview.ToLower() =>
-                    regularClients.Where(clients => clients.Request.Approvals.Any(x =>
-                        x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy)),
+                    regularClients.Where(clients => clients.Request.Approvals.Any(x => x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy && x.IsActive == true)),
                 Roles.Approver => regularClients.Where(clients =>
                     clients.Request.Status == request.RegistrationStatus &&
                     clients.Request.CurrentApproverId == request.AccessBy),
@@ -195,25 +289,35 @@ public class GetAllClients : ControllerBase
                     x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus),
                 _ => regularClients
             };
+            
+            //Get all the under review request for the Approver
+            //It will access the request table where status is Under Review
+            //And CurrentApproverId is the Logged In user (Approver)
 
             if (request.RoleName is Roles.Approver && request.RegistrationStatus == Status.UnderReview)
             {
                 regularClients = regularClients.Where(x => x.Request.CurrentApproverId == request.AccessBy);
             }
+            
+            //Filter based on origin (Prospect or Direct)
             if (request.Origin != null)
             {
                 regularClients = regularClients.Where(x => x.Origin == request.Origin);
             }
-
+            
+            //Filter based on StoreType or BusinessType
             if (!string.IsNullOrEmpty(request.StoreType))
             {
                 regularClients = regularClients.Where(x => x.StoreType.StoreTypeName == request.StoreType);
             }
-
+            
+            //Filter based on Status
             if (request.Status != null)
             {
                 regularClients = regularClients.Where(x => x.IsActive == request.Status);
             }
+            
+            //Get the result
 
             var result = regularClients.Select(client => new GetAllClientResult
             {
@@ -245,6 +349,10 @@ public class GetAllClients : ControllerBase
                         Province = client.BusinessAddress.Province
                     }
                     : null,
+                ModeOfPayments = client.ClientModeOfPayment.Select(mop => new GetAllClientResult.ModeOfPayment
+                {
+                    Id = mop.ModeOfPaymentId
+                }),
                 StoreType = client.StoreType.StoreTypeName,
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
@@ -253,7 +361,6 @@ public class GetAllClients : ControllerBase
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,
                 BookingCoverage = client.BookingCoverages.BookingCoverage,
-                ModeOfPayment = client.ModeOfPayments.Payment,
                 Terms = client.Term != null
                     ? new GetAllClientResult.ClientTerms
                     {
@@ -280,9 +387,60 @@ public class GetAllClients : ControllerBase
                         DocumentId = cd.Id,
                         DocumentLink = cd.DocumentPath,
                         DocumentType = cd.DocumentType
+                    }),
+                ClientApprovalHistories = client.Request.Approvals == null ? null :
+                    client.Request.Approvals.OrderByDescending(a => a.CreatedAt)
+                    .Select( a => new GetAllClientResult.ClientApprovalHistory
+                    {
+                        Module = a.Request.Module,
+                        Approver = a.Approver.Fullname,
+                        CreatedAt = a.CreatedAt,
+                        Status = a.Status,
+                        Level = a.Approver.Approver.FirstOrDefault().Level,
+                        Reason = a.Request.Approvals.FirstOrDefault().Reason
+                    }),
+                UpdateHistories = client.Request.UpdateRequestTrails == null ? null :
+                    client.Request.UpdateRequestTrails.Select(uh => new GetAllClientResult.UpdateHistory
+                    {
+                        Module = uh.ModuleName,
+                        UpdatedAt = uh.UpdatedAt
+                    }),
+                Freebies = client.FreebiesRequests
+                    .Where(fr => fr.Status == Status.Approved || fr.Status == Status.Released)
+                    .Select(x => new GetAllClientResult.FreebiesCollection
+                {
+                    TransactionNumber = x.Id,
+                    FreebieRequestId = x.Id,
+                    Status = x.Status,
+                    ESignature = x.ESignaturePath,
+                    Freebies = x.FreebieItems.Select(x => new GetAllClientResult.Items
+                    {
+                        Id = x.Id,
+                        ItemCode = x.Items.ItemCode,
+                        ItemDescription = x.Items.ItemDescription,
+                            Uom = x.Items.Uom.UomCode,
+                        Quantity = x.Quantity
                     })
+                }),
+                ListingFees = client.ListingFees.Select( lf => new GetAllClientResult.ListingFeeCollection
+                {
+                    Id = lf.Id,
+                    RequestId = lf.RequestId,
+                    Total = lf.Total,
+                    ListingItems = lf.ListingFeeItems.Select(lfi => new GetAllClientResult.ListingItems
+                    {
+                        Id = lfi.Id,
+                        ItemCode = lfi.Item.ItemCode,
+                        ItemDescription = lfi.Item.ItemDescription,
+                        Sku = lfi.Sku,
+                        UnitCost = lfi.UnitCost,
+                        Uom = lfi.Item.Uom.UomCode
+                    })
+                })
             });
 
+            result = result.OrderBy(r => r.Id);
+            //Return the result
             return await PagedList<GetAllClientResult>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
     }

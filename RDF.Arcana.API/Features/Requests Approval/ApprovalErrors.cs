@@ -10,4 +10,8 @@ public class ApprovalErrors
         new Error("Approval.NoAccess", $"{fullname} cannot be assigned due to no access to the {moduleName} module.");
     public static Error NoApproversFound(string moduleName) =>
         new Error("Approval.NoApproversFound", $"No approvers found for {moduleName}");
+    public static Error NotAllowed(string moduleName) =>
+        new Error("Approval.NotAllowed", $"You are not allowed to approve {moduleName} request");
+    public static Error ExistingRequest(string moduleName) =>
+        new Error("Approval.ExistingRequest", $"There are already approval requests for the module {moduleName}. Please resolve them before updating approvers.");
 }

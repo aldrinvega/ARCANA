@@ -21,7 +21,6 @@ public class GetRequestedFreebies : ControllerBase
     [HttpGet("GetAllFreebieRequests")]
     public async Task<IActionResult> GetAllFreebieRequests([FromQuery] GetRequestedFreebiesQuery queryResult)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var freebieRequest = await _mediator.Send(queryResult);
@@ -35,10 +34,7 @@ public class GetRequestedFreebies : ControllerBase
                 freebieRequest.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
-            {
-                Status = StatusCodes.Status200OK,
-                Data = new
+            var result = new
                 {
                     freebieRequest,
                     freebieRequest.PageSize,
@@ -46,20 +42,15 @@ public class GetRequestedFreebies : ControllerBase
                     freebieRequest.TotalPages,
                     freebieRequest.HasPreviousPage,
                     freebieRequest.HasNextPage
-                },
-                Success = true
-            };
+                };
 
-            result.Messages.Add("Successfully fetch data");
+            var successResult = Result.Success(result);
 
-            return Ok(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 

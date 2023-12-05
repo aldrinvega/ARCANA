@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
+using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Client.Regular;
 
@@ -21,7 +23,7 @@ public class RejectRegularRegistration : ControllerBase
     {
         try
         {
-            command.ClientId = id;
+            command.RequestId = id;
             var result = await _mediator.Send(command);
             if (result.IsFailure)
             {
@@ -36,16 +38,14 @@ public class RejectRegularRegistration : ControllerBase
         }
     }
 
-    public class RejectRegularRegistrationCommand : IRequest<Result<object>>
+    public class RejectRegularRegistrationCommand : IRequest<Result>
     {
-        public int ClientId { get; set; }
+        public int RequestId { get; set; }
         public string Reason { get; set; }
     }
 
-    public class Handler : IRequestHandler<RejectRegularRegistrationCommand, Result<object>>
+    public class Handler : IRequestHandler<RejectRegularRegistrationCommand, Result>
     {
-        private const string FOR_REGULAR = "For regular approval";
-        private const string REJECTED = "Rejected";
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -53,34 +53,55 @@ public class RejectRegularRegistration : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<object>> Handle(RejectRegularRegistrationCommand request,
+        public async Task<Result> Handle(RejectRegularRegistrationCommand request,
             CancellationToken cancellationToken)
         {
             var regularClients =
-                await _context.Approvals
-                    .Include(x => x.Client)
+                await _context.Requests
+                    .Include(x => x.Clients)
+                    .Include(approval => approval.Approvals)
                     .FirstOrDefaultAsync(
-                        x => x.ClientId == request.ClientId &&
-                             x.ApprovalType == FOR_REGULAR &&
-                             x.IsApproved == false &&
-                             x.IsActive == true,
+                        x => x.Id == request.RequestId &&
+                             x.Status != Status.Rejected,
                         cancellationToken);
 
             if (regularClients == null)
             {
-                return Result<object>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
 
-            if (regularClients.Client.RegistrationStatus == REJECTED)
+            if (regularClients.Clients.RegistrationStatus == Status.Rejected)
             {
-                return Result<object>.Failure(ClientErrors.AlreadyRejected(regularClients.Client.BusinessName));
+                return ClientErrors.AlreadyRejected(regularClients.Clients.BusinessName);
+            }
+            
+            var approvers = await _context.Approvers
+                .Where(module => module.ModuleName == Modules.RegistrationApproval)
+                .ToListAsync(cancellationToken);
+            
+            var currentApproverLevel = approvers
+                .FirstOrDefault(approver => approver.UserId == regularClients.CurrentApproverId)?.Level;
+            
+            if (currentApproverLevel == null)
+            {
+                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
             }
 
-            regularClients.Reason = request.Reason;
-            regularClients.Client.RegistrationStatus = REJECTED;
+            var newApproval = new Approval(
+                regularClients.Id,
+                regularClients.CurrentApproverId,
+                Status.Rejected,
+                request.Reason,
+                true
+            );
+
+            await _context.Approval.AddAsync(newApproval, cancellationToken);
+
+            regularClients.Clients.RegistrationStatus = Status.Rejected;
+            regularClients.Status = Status.Rejected;
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result<object>.Success(null, "Regular registration rejected successfully");
+            return Result.Success();
         }
     }
 }

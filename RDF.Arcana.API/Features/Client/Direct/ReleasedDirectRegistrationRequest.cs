@@ -40,14 +40,14 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
         }
     }
 
-    public class ReleasedDirectRegistrationRequestCommand : IRequest<Result<Unit>>
+    public record ReleasedDirectRegistrationRequestCommand : IRequest<Result<Unit>>
     {
         public int FreebieRequestId { get; set; }
         public IFormFile PhotoProof { get; set; }
         public IFormFile ESignature { get; set; }
     }
 
-    public class Handler : IRequestHandler<ReleasedDirectRegistrationRequestCommand, Result<Unit>>
+    public class Handler : IRequestHandler<ReleasedDirectRegistrationRequestCommand, Result>
     {
         private readonly Cloudinary _cloudinary;
         private readonly ArcanaDbContext _context;
@@ -64,7 +64,7 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<Unit>> Handle(ReleasedDirectRegistrationRequestCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ReleasedDirectRegistrationRequestCommand request, CancellationToken cancellationToken)
         {
             var validateClientRequest = await _context.Approvals
                 .Include(x => x.FreebieRequest)
@@ -78,7 +78,7 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
 
             if (validateClientRequest is null)
             {
-                return Result<Unit>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
 
             var uploadTasks = new List<Task>();
@@ -107,12 +107,12 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
                         };
 
 
-                        var photoproofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
+                        var photoProofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
                         var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
 
-                        if (photoproofUploadResult.Error != null)
+                        if (photoProofUploadResult.Error != null)
                         {
-                            throw new Exception(photoproofUploadResult.Error.Message);
+                            throw new Exception(photoProofUploadResult.Error.Message);
                         }
 
                         if (eSignatureUploadResult.Error != null)
@@ -121,7 +121,7 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
                         }
                         freebieRequest.Status = "Released";
                         freebieRequest.IsDelivered = true;
-                        freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
+                        freebieRequest.PhotoProofPath = photoProofUploadResult.SecureUrl.ToString();
                         freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
                     }, cancellationToken));
                 };
@@ -130,7 +130,7 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
-            return Result<Unit>.Success(Unit.Value, "Freebie Request has been released");
+            return Result.Success();
         }
     }
 }

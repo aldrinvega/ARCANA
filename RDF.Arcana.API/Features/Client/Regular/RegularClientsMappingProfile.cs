@@ -40,7 +40,6 @@ public static class RegularClientsMappingProfile
             TypeOfCustomer = regularClients.CustomerType,
             DirectDelivery = regularClients.DirectDelivery,
             BookingCoverage = regularClients.BookingCoverages.BookingCoverage,
-            ModeOfPayment = regularClients.ModeOfPayments.Payment,
             Terms = regularClients.Terms != null
                 ? new GetAllRegularClients.GetAllRegularClientResult.ClientTerms
                 {
@@ -100,12 +99,11 @@ public static class RegularClientsMappingProfile
             StoreType = client.StoreType?.StoreTypeName,
             AuthorizedRepresentative = client.RepresentativeName,
             AuthorizedRepresentativePosition = client.RepresentativePosition,
-            Cluster = client.Cluster, // Ensure a default value if Cluster can be null
-            Freezer = client.Freezer, // Ensure a default value if Freezer can be null
+            Cluster = client.Cluster,
+            Freezer = client.Freezer,
             TypeOfCustomer = client.CustomerType,
-            DirectDelivery = client.DirectDelivery, // Ensure a default value if DirectDelivery can be null
+            DirectDelivery = client.DirectDelivery, 
             BookingCoverage = client.BookingCoverages?.BookingCoverage,
-            ModeOfPayment = client.ModeOfPayments?.Payment,
             Terms = client.Term != null
                 ? new GetAllProspects.GetAllProspectQueryResult.ClientTerms
                 {
@@ -121,7 +119,7 @@ public static class RegularClientsMappingProfile
                     DiscountPercentage = client.FixedDiscounts.DiscountPercentage
                 }
                 : null,
-            VariableDiscount = client.VariableDiscount, // Ensure a default value if VariableDiscount can be null
+            VariableDiscount = client.VariableDiscount,
             Longitude = client.Longitude,
             Latitude = client.Latitude,
             Attachments = client.ClientDocuments?.Select(cd =>
@@ -169,12 +167,11 @@ public static class RegularClientsMappingProfile
             StoreType = client.StoreType?.StoreTypeName,
             AuthorizedRepresentative = client.RepresentativeName,
             AuthorizedRepresentativePosition = client.RepresentativePosition,
-            Cluster = client.Cluster, // Ensure a default value if Cluster can be null
-            Freezer = client.Freezer, // Ensure a default value if Freezer can be null
+            Cluster = client.Cluster,
+            Freezer = client.Freezer,
             TypeOfCustomer = client.CustomerType,
-            DirectDelivery = client.DirectDelivery, // Ensure a default value if DirectDelivery can be null
+            DirectDelivery = client.DirectDelivery,
             BookingCoverage = client.BookingCoverages?.BookingCoverage,
-            ModeOfPayment = client.ModeOfPayments?.Payment,
             Terms = client.Term != null
                 ? new GetAllClients.GetAllClientResult.ClientTerms
                 {
@@ -190,7 +187,7 @@ public static class RegularClientsMappingProfile
                     DiscountPercentage = client.FixedDiscounts.DiscountPercentage
                 }
                 : null,
-            VariableDiscount = client.VariableDiscount, // Ensure a default value if VariableDiscount can be null
+            VariableDiscount = client.VariableDiscount,
             Longitude = client.Longitude,
             Latitude = client.Latitude,
             RequestedBy = client.AddedByUser.Fullname,
@@ -212,6 +209,19 @@ public static class RegularClientsMappingProfile
             Id = client.Id,
             OwnersName = client.Fullname,
             BusinessName = client.BusinessName,
+            ListingFees = client.ListingFees.Select(x => new GetAllClientsInListingFee.GetAllClientsInListingFeeResult.ListingFee{
+            Id = x.Id,
+            RequestId = x.RequestId,
+            ListingItems = x.ListingFeeItems.Select(lf => new GetAllClientsInListingFee.GetAllClientsInListingFeeResult.ListingItem
+            {
+                Id = lf.Id,
+                ItemId = lf.ItemId,
+                ItemCode = lf.Item.ItemCode,
+                ItemDescription = lf.Item.ItemDescription,
+                Sku = lf.Sku,
+                UnitCost = lf.UnitCost
+            })
+            })
         };
     }
 }

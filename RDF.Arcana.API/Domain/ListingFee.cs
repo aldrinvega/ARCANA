@@ -6,7 +6,6 @@ public class ListingFee : BaseEntity
 {
     public int ClientId { get; set; }
     public int RequestId { get; set; }
-    public int ApprovalsId { get; set; }
     public DateTime CratedAt { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = true;
     public bool IsDelivered { get; set; }
@@ -15,7 +14,7 @@ public class ListingFee : BaseEntity
     public decimal Total { get; set; }
     public virtual Clients Client { get; set; }
     public virtual User RequestedByUser { get; set; }
-    public Approvals Approvals { get; set; }
+    
     public virtual Request Request { get; set; }
     public virtual ICollection<ListingFeeItems> ListingFeeItems { get; set; }
 }

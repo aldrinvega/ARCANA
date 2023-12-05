@@ -47,7 +47,7 @@ public class ReleaseFreebies : ControllerBase
         public IFormFile ESignature { get; set; }
     }
 
-    public class Handler : IRequestHandler<ReleaseFreebiesCommand, Result<Unit>>
+    public class Handler : IRequestHandler<ReleaseFreebiesCommand, Result>
     {
         private readonly Cloudinary _cloudinary;
         private readonly ArcanaDbContext _context;
@@ -64,7 +64,7 @@ public class ReleaseFreebies : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<Unit>> Handle(ReleaseFreebiesCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(ReleaseFreebiesCommand request, CancellationToken cancellationToken)
         {
             var validateClientRequest = await _context.Approvals
                 .Include(x => x.FreebieRequest)
@@ -78,7 +78,7 @@ public class ReleaseFreebies : ControllerBase
 
             if (validateClientRequest is null)
             {
-                return Result<Unit>.Failure(ClientErrors.NotFound());
+                return ClientErrors.NotFound();
             }
 
             var uploadTasks = new List<Task>();
@@ -130,7 +130,7 @@ public class ReleaseFreebies : ControllerBase
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
-            return Result<Unit>.Success(Unit.Value, "Freebie Request has been released");
+            return Result.Success();
         }
     }
 }

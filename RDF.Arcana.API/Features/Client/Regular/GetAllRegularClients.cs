@@ -21,7 +21,6 @@ public class GetAllRegularClients : ControllerBase
     public async Task<IActionResult> GetAllDirectRegistrationClient(
         [FromQuery] GetAllRegularClientQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var regularClient = await _mediator.Send(query);
@@ -46,16 +45,13 @@ public class GetAllRegularClients : ControllerBase
                 regularClient.HasNextPage
             };
 
-            var successResult = Result<object>.Success(result, "Data fetch successfully");
+            var successResult = Result.Success(result);
 
             return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return Ok(e.Message);
         }
     }
 
@@ -149,7 +145,6 @@ public class GetAllRegularClients : ControllerBase
                 .Include(st => st.StoreType)
                 .Include(fd => fd.FixedDiscounts)
                 .Include(bc => bc.BookingCoverages)
-                .Include(mop => mop.ModeOfPayments)
                 .Include(cd => cd.ClientDocuments)
                 .Include(fr => fr.FreebiesRequests)
                 .ThenInclude(fi => fi.FreebieItems)

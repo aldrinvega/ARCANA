@@ -22,7 +22,6 @@ public class GetAllProspects : ControllerBase
     public async Task<IActionResult> GetAllDirectRegistrationClient(
         [FromQuery] GetAllProspectQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var regularClient = await _mediator.Send(query);
@@ -36,32 +35,24 @@ public class GetAllProspects : ControllerBase
                 regularClient.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    regularClient,
-                    regularClient.CurrentPage,
-                    regularClient.PageSize,
-                    regularClient.TotalCount,
-                    regularClient.TotalPages,
-                    regularClient.HasPreviousPage,
-                    regularClient.HasNextPage
-                }
+                regularClient,
+                regularClient.CurrentPage,
+                regularClient.PageSize,
+                regularClient.TotalCount,
+                regularClient.TotalPages,
+                regularClient.HasPreviousPage,
+                regularClient.HasNextPage
             };
 
-            result.Messages.Add("Successfully Fetch Data");
+            var successResult = Result.Success(result);
 
-            return Ok(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-
-            return Ok(response);
+            return Ok(e.Message);
         }
     }
 
@@ -155,7 +146,6 @@ public class GetAllProspects : ControllerBase
                 .Include(st => st.StoreType)
                 .Include(fd => fd.FixedDiscounts)
                 .Include(bc => bc.BookingCoverages)
-                .Include(mop => mop.ModeOfPayments)
                 .Include(cd => cd.ClientDocuments)
                 .Include(fr => fr.FreebiesRequests)
                 .ThenInclude(fi => fi.FreebieItems)

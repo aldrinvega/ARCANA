@@ -40,7 +40,6 @@ public static class DirectRegistrationMappingExtensions
             CustomerType = directRegistrationClients.Client.CustomerType,
             DirectDelivery = directRegistrationClients.Client.DirectDelivery,
             BookingCoverage = directRegistrationClients.Client.BookingCoverages.BookingCoverage,
-            ModeOfPayment = directRegistrationClients.Client.ModeOfPayments.Payment,
             RegistrationStatus = directRegistrationClients.Client.RegistrationStatus,
             IsActive = directRegistrationClients.Client.IsActive,
             AddedBy = directRegistrationClients.RequestedByUser.Fullname,

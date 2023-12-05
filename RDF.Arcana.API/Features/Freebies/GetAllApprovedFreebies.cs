@@ -21,7 +21,6 @@ public class GetAllApprovedFreebies : ControllerBase
     [HttpGet("GetAllApprovedFreebies")]
     public async Task<IActionResult> GetAllApprovedFreebiesAsync([FromQuery] GetAllApprovedFreebiesQuery query)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             var approvedFreebies = await _mediator.Send(query);
@@ -35,30 +34,23 @@ public class GetAllApprovedFreebies : ControllerBase
                 approvedFreebies.HasNextPage
             );
 
-            var result = new QueryOrCommandResult<object>
+            var result = new
             {
-                Success = true,
-                Status = StatusCodes.Status200OK,
-                Data = new
-                {
-                    approvedFreebies,
-                    approvedFreebies.CurrentPage,
-                    approvedFreebies.PageSize,
-                    approvedFreebies.TotalCount,
-                    approvedFreebies.TotalPages,
-                    approvedFreebies.HasPreviousPage,
-                    approvedFreebies.HasNextPage
-                }
+                approvedFreebies,
+                approvedFreebies.CurrentPage,
+                approvedFreebies.PageSize,
+                approvedFreebies.TotalCount,
+                approvedFreebies.TotalPages,
+                approvedFreebies.HasPreviousPage,
+                approvedFreebies.HasNextPage
             };
 
-            result.Messages.Add("Successfully fetch data");
-            return Ok(result);
+            var successResult = Result.Success(result);
+            return Ok(successResult);
         }
         catch (Exception e)
         {
-            response.Messages.Add(e.Message);
-            response.Status = StatusCodes.Status409Conflict;
-            return Conflict(response);
+            return BadRequest(e.Message);
         }
     }
 

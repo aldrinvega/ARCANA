@@ -19,13 +19,13 @@ public class AddNewBookingCoverage : ControllerBase
         _mediator = mediator;
     }
 
-    public class AddNewBookingCoverageCommand : IRequest<Unit>
+    public class AddNewBookingCoverageCommand : IRequest<Result>
     {
         public string BookingCoverage { get; set; }
         public int AddedBy { get; set; }
     }
 
-    public class Handler : IRequestHandler<AddNewBookingCoverageCommand, Unit>
+    public class Handler : IRequestHandler<AddNewBookingCoverageCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -34,7 +34,7 @@ public class AddNewBookingCoverage : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(AddNewBookingCoverageCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddNewBookingCoverageCommand request, CancellationToken cancellationToken)
         {
             var existingBookingCoverage =
                 await _context.BookingCoverages.FirstOrDefaultAsync(x => x.BookingCoverage == request.BookingCoverage,
@@ -52,7 +52,7 @@ public class AddNewBookingCoverage : ControllerBase
             };
             await _context.BookingCoverages.AddAsync(bookingCoverage, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
 
         }
     }
@@ -60,7 +60,6 @@ public class AddNewBookingCoverage : ControllerBase
     [HttpPost("AddNewBookingCoverage")]
     public async Task<IActionResult> Add([FromBody] AddNewBookingCoverageCommand command)
     {
-        var response = new QueryOrCommandResult<object>();
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -69,17 +68,17 @@ public class AddNewBookingCoverage : ControllerBase
                 command.AddedBy = userId;
             }
 
-            await _mediator.Send(command);
-            response.Success = true;
-            response.Status = StatusCodes.Status200OK;
-            response.Messages.Add("Booking Coverage added successfully");
-            return Ok(response);
+            var result = await _mediator.Send(command);
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+           
+            return Ok(result);
         }
         catch (Exception e)
         {
-            response.Status = StatusCodes.Status404NotFound;
-            response.Messages.Add(e.Message);
-            return Conflict(response);
+            return Conflict(e.Message);
         }
     }
 }

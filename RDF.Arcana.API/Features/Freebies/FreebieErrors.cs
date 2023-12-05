@@ -13,4 +13,9 @@ public class FreebieErrors
         $"{itemDescription} has already been requested.");
 
     public static Error NoFreebieFound() => new Error("Freebie.NoFreebieFound", "No freebie found");
+
+    public static Error WithRecentRequest(string status) =>
+        new Error("Freebie.WithRecentRequest", $"Client has {status.ToLower()} freebies");
+
+    public static Error NoFreebieApprovalFound() => new Error("Freebie.NoApprovalFound", "No Freebie approval found");
 }
