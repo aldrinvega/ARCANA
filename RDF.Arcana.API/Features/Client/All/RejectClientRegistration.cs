@@ -73,11 +73,11 @@ public class RejectClientRegistration : ControllerBase
         {
             
             var existingClientRequest = await _context.Requests
-                .Where(client => client.Status != Status.Rejected)
-                .Include(client => client.Clients).ThenInclude(clients => clients.ListingFees)
-                .ThenInclude(listingFee => listingFee.Request)
-                .FirstOrDefaultAsync(x =>
-                    x.Id == request.RequestId, cancellationToken);
+                .Include(client => client.Clients)
+                .ThenInclude(listingfee => listingfee.ListingFees)
+                .ThenInclude(rq => rq.Request)
+                .Where(client => client.Id == request.RequestId)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (existingClientRequest == null)
             {

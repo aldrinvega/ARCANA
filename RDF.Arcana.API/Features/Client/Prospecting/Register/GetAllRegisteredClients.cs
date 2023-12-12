@@ -176,7 +176,7 @@ public class GetAllRegisteredClients : ControllerBase
                     DirectDelivery = client.DirectDelivery,
                     FixedDiscounts = new GetAllRegisteredClientsResult.FixedDiscount
                     {
-                        FixedDiscountId = client.FixedDiscounts.ClientId,
+                        /*FixedDiscountId = client.FixedDiscounts.ClientId,*/
                         DiscountPercentage = client.FixedDiscounts.DiscountPercentage
                     },
                     BookingCoverageId = client.BookingCoverageId ?? 0,

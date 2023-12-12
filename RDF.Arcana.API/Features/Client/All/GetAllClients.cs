@@ -86,6 +86,7 @@ public class GetAllClients : ControllerBase
     public sealed record GetAllClientResult
     {
         public int Id { get; set; }
+        public DateTime CreatedAt { get; set; }
         public int? RequestId { get; set; }
         public string OwnersName { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
@@ -94,6 +95,7 @@ public class GetAllClients : ControllerBase
         public DateOnly DateOfBirth { get; set; }
         public string TinNumber { get; set; }
         public string BusinessName { get; set; }
+        public string Origin { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
         public string StoreType { get; set; }
         public string AuthorizedRepresentative { get; set; }
@@ -197,6 +199,8 @@ public class GetAllClients : ControllerBase
             public int Id { get; set; }
             public int RequestId { get; set; }
             public decimal Total { get; set; }
+            public string Status { get; set; }
+            public string ApprovalDate { get; set; }
             public IEnumerable<ListingItems> ListingItems { get; set; }
         }
 
@@ -223,48 +227,36 @@ public class GetAllClients : ControllerBase
         public async Task<PagedList<GetAllClientResult>> Handle(GetAllClientsQuery request,
             CancellationToken cancellationToken)
         {
-            var regularClients = _context.Clients
+            var regularClients = _context.Clients.AsNoTracking();
+                /*.AsSplitQuery()
                 .Include(mop => mop.ClientModeOfPayment)
-                .AsSplitQuery()
                 .Include(abu => abu.AddedByUser)
-                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(user => user.Requestor)
-                .Include(ah => ah.Request)
+                .Include(rq => rq.Request)
                 .ThenInclude(ah => ah.UpdateRequestTrails)
-                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
                 .ThenInclude(cap => cap.Approver)
-                .AsSplitQuery()
                 .Include(st => st.StoreType)
-                .AsSplitQuery()
                 .Include(fd => fd.FixedDiscounts)
-                .AsSplitQuery()
                 .Include(to => to.Term)
                 .ThenInclude(tt => tt.Terms)
-                .AsSplitQuery()
                 .Include(to => to.Term)
                 .ThenInclude(td => td.TermDays)
-                .AsSplitQuery()
                 .Include(ba => ba.BusinessAddress)
-                .AsSplitQuery()
                 .Include(oa => oa.OwnersAddress)
-                .AsSplitQuery()
                 .Include(bc => bc.BookingCoverages)
-                .AsSplitQuery()
                 .Include(fr => fr.FreebiesRequests)
                 .ThenInclude(fi => fi.FreebieItems)
                 .ThenInclude(item => item.Items)
                 .ThenInclude(uom => uom.Uom)
-                .AsSplitQuery()
                 .Include(lf => lf.ListingFees)
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .AsSplitQuery()
                 .Include(cd => cd.ClientDocuments)
-                .AsSplitQuery();
+                .AsSingleQuery();*/
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -322,7 +314,9 @@ public class GetAllClients : ControllerBase
             var result = regularClients.Select(client => new GetAllClientResult
             {
                 Id = client.Id,
+                CreatedAt = client.CreatedAt,
                 RequestId = client.RequestId,
+                Origin = client.Origin,
                 OwnersName = client.Fullname,
                 OwnersAddress = client.OwnersAddress != null
                     ? new GetAllClientResult.OwnersAddressCollection
@@ -374,6 +368,7 @@ public class GetAllClients : ControllerBase
                 FixedDiscount = client.FixedDiscounts != null
                     ? new GetAllClientResult.FixedDiscounts
                     {
+                        
                         DiscountPercentage = client.FixedDiscounts.DiscountPercentage
                     }
                     : null,
@@ -397,7 +392,8 @@ public class GetAllClients : ControllerBase
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
                         Level = a.Approver.Approver.FirstOrDefault().Level,
-                        Reason = a.Request.Approvals.FirstOrDefault().Reason
+                        Reason = a.Reason
+                        
                     }),
                 UpdateHistories = client.Request.UpdateRequestTrails == null ? null :
                     client.Request.UpdateRequestTrails.Select(uh => new GetAllClientResult.UpdateHistory
@@ -427,6 +423,8 @@ public class GetAllClients : ControllerBase
                     Id = lf.Id,
                     RequestId = lf.RequestId,
                     Total = lf.Total,
+                    Status = lf.Status,
+                    ApprovalDate = lf.ApprovalDate.ToString("MM/dd/yyyy HH:mm:ss"),
                     ListingItems = lf.ListingFeeItems.Select(lfi => new GetAllClientResult.ListingItems
                     {
                         Id = lfi.Id,

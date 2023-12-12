@@ -76,7 +76,6 @@ public class GetAllClientsInListingFee : ControllerBase
         {
             public int Id { get; set; }
             public int RequestId { get; set; }
-            public string Status { get; set; }
             public IEnumerable<ListingItem> ListingItems { get; set; }
         }
         public class ListingItem
@@ -104,7 +103,7 @@ public class GetAllClientsInListingFee : ControllerBase
         public async Task<PagedList<GetAllClientsInListingFeeResult>> Handle(GetAllClientsInListingFeeQuery request,
             CancellationToken cancellationToken)
         {
-            var clientsListingFee = _context.Clients
+            IQueryable<Domain.Clients> clientsListingFee = _context.Clients
                 .Include(mop => mop.ClientModeOfPayment)
                 .Include(abu => abu.AddedByUser)
                 .Include(rq => rq.Request)
@@ -129,8 +128,7 @@ public class GetAllClientsInListingFee : ControllerBase
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .Include(cd => cd.ClientDocuments)
-                .AsNoTracking();
+                .Include(cd => cd.ClientDocuments);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -159,8 +157,9 @@ public class GetAllClientsInListingFee : ControllerBase
             if (request.IncludeRejected == false)
             {
                 clientsListingFee = clientsListingFee.Where(x =>
-                    x.RegistrationStatus == Status.ForFreebieApproval ||
-                    x.RegistrationStatus == Status.UnderReview);
+                    x.RegistrationStatus == Status.Approved ||
+                    x.RegistrationStatus == Status.UnderReview ||
+                    x.RegistrationStatus == Status.Requested);
             }
 
             var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());

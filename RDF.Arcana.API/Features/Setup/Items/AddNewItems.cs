@@ -44,28 +44,29 @@ public class AddNewItems : ControllerBase
         public async Task<Result> Handle(AddNewItemsCommand request, CancellationToken cancellationToken)
         {
             var existingItem = await _context.Items.FirstOrDefaultAsync(x => 
-                x.ItemCode == request.ItemCode && x.UomId == request.UomId, cancellationToken);
+                    x.ItemCode == request.ItemCode, 
+                cancellationToken);
             
-            var validateProductCategory = await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductSubCategoryId, cancellationToken);
-            
-            var validateUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
-            
-            var validateMeatType = await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
-
             if (existingItem is not null)
             {
                 return ItemErrors.AlreadyExist(request.ItemCode);
             }
-
-            if (validateUom is null)
-            {
-                return UomErrors.NotFound();
-            }
-
+            
+            var validateProductCategory = await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductSubCategoryId, cancellationToken);
+            
             if (validateProductCategory is null)
             {
                 return ProductCategoryErrors.NotFound();
             }
+            
+            var validateUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
+            
+            if (validateUom is null)
+            {
+                return UomErrors.NotFound();
+            }
+            
+            var validateMeatType = await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
 
             if (validateMeatType is null)
             {

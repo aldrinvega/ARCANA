@@ -91,13 +91,14 @@ public class GetAllListingFee : ControllerBase
     {
         public int ClientId { get; set; }
         public string ClientName { get; set; }
+        public string RegistrationStatus { get; set; }
         public string BusinessName { get; set; }
         public int ListingFeeId { get; set; }
         public int RequestId { get; set; }
         public string Status { get; set; }
         public string RequestedBy { get; set; }
         public decimal Total { get; set; }
-        public string CreateAt { get; set; }
+        public string CreatedAt { get; set; }
         public string CancellationReason { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
         public IEnumerable<ListingFeeApprovalHistory> ListingFeeApprovalHistories { get; set; }
@@ -116,6 +117,7 @@ public class GetAllListingFee : ControllerBase
         {
             public string Module { get; set; }
             public string Approver { get; set; }
+            public int Level { get; set; }
             public DateTime CreatedAt { get; set; }
             public string Status { get; set; }
             public string Reason { get; set; }
@@ -140,6 +142,7 @@ public class GetAllListingFee : ControllerBase
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
                 .Include(x => x.RequestedByUser)
+                .AsSplitQuery()
                 .Include(x => x.ListingFeeItems)
                 .ThenInclude(x => x.Item)
                 .ThenInclude(x => x.Uom)
@@ -179,8 +182,9 @@ public class GetAllListingFee : ControllerBase
             {
                 ClientId = listingFee.ClientId,
                 ClientName = listingFee.Client.Fullname,
+                RegistrationStatus = listingFee.Client.RegistrationStatus,
                 BusinessName = listingFee.Client.BusinessName,
-                CreateAt = listingFee.CratedAt.ToString("yyyy-MM-dd hh:mm:ss"),
+                CreatedAt = listingFee.CratedAt.ToString("yyyy-MM-dd"),
                 ListingFeeId = listingFee.Id,
                 RequestId = listingFee.RequestId,
                 Status = listingFee.Status,
@@ -201,6 +205,8 @@ public class GetAllListingFee : ControllerBase
                     {
                         Module = a.Request.Module,
                         Approver = a.Approver.Fullname,
+                        Level = a.Approver.Approver.FirstOrDefault().Level,
+                        Reason = a.Request.Approvals.FirstOrDefault().Reason,
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
                     })

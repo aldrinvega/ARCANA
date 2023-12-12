@@ -114,6 +114,8 @@ public class ApproveListingFee : ControllerBase
             if (nextApprover == null)
             {
                 listingFees.Status = Status.Approved;
+                listingFees.ListingFee.Status = Status.Approved;
+                listingFees.ListingFee.ApprovalDate = DateTime.Now;
             }
             else
             {

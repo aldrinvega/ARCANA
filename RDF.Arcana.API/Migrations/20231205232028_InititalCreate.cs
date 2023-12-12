@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace RDF.Arcana.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InititalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,8 +55,8 @@ namespace RDF.Arcana.API.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    minimum_amount = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
-                    maximum_amount = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
+                    minimum_amount = table.Column<decimal>(type: "decimal(18,6)", nullable: false),
+                    maximum_amount = table.Column<decimal>(type: "decimal(18,6)", nullable: false),
                     minimum_percentage = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
                     maximum_percentage = table.Column<decimal>(type: "decimal(8,2)", nullable: false),
                     is_subject_to_approval = table.Column<bool>(type: "bit", nullable: false),
@@ -63,6 +65,25 @@ namespace RDF.Arcana.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_variable_discounts", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "approval",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    request_id = table.Column<int>(type: "int", nullable: false),
+                    approver_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    is_active = table.Column<bool>(type: "bit", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_approval", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,6 +103,22 @@ namespace RDF.Arcana.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_approvals", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "approvers",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    module_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    level = table.Column<int>(type: "int", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_approvers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,6 +154,23 @@ namespace RDF.Arcana.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "client_mode_of_payments",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    client_id = table.Column<int>(type: "int", nullable: false),
+                    mode_of_payment_id = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_client_mode_of_payments", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "clients",
                 columns: table => new
                 {
@@ -137,11 +191,9 @@ namespace RDF.Arcana.API.Migrations
                     origin = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     term_days = table.Column<int>(type: "int", nullable: true),
                     discount_id = table.Column<int>(type: "int", nullable: true),
-                    client_type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     store_type_id = table.Column<int>(type: "int", nullable: true),
                     registration_status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     terms = table.Column<int>(type: "int", nullable: true),
-                    mode_of_payment = table.Column<int>(type: "int", nullable: true),
                     direct_delivery = table.Column<bool>(type: "bit", nullable: true),
                     booking_coverage_id = table.Column<int>(type: "int", nullable: true),
                     added_by = table.Column<int>(type: "int", nullable: false),
@@ -151,10 +203,9 @@ namespace RDF.Arcana.API.Migrations
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     longitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     latitude = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    request_id = table.Column<int>(type: "int", nullable: true),
                     fixed_discount_id = table.Column<int>(type: "int", nullable: true),
-                    variable_discount = table.Column<bool>(type: "bit", nullable: true),
-                    variable_discounts_id = table.Column<int>(type: "int", nullable: true),
-                    user_id = table.Column<int>(type: "int", nullable: true)
+                    variable_discount = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -164,7 +215,7 @@ namespace RDF.Arcana.API.Migrations
                         column: x => x.owners_address_id,
                         principalTable: "address",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_clients_booking_coverages_booking_coverages_id",
                         column: x => x.booking_coverage_id,
@@ -175,19 +226,13 @@ namespace RDF.Arcana.API.Migrations
                         column: x => x.business_address_id,
                         principalTable: "business_address",
                         principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_clients_variable_discounts_variable_discounts_id",
-                        column: x => x.variable_discounts_id,
-                        principalTable: "variable_discounts",
-                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "fixed_discounts",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<int>(type: "int", nullable: false),
                     client_id = table.Column<int>(type: "int", nullable: false),
                     discount_percentage = table.Column<decimal>(type: "decimal(8,2)", nullable: true)
                 },
@@ -199,7 +244,7 @@ namespace RDF.Arcana.API.Migrations
                         column: x => x.client_id,
                         principalTable: "clients",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -281,6 +326,7 @@ namespace RDF.Arcana.API.Migrations
                     id = table.Column<int>(type: "int", nullable: false),
                     client_id = table.Column<int>(type: "int", nullable: false),
                     approvals_id = table.Column<int>(type: "int", nullable: false),
+                    request_id = table.Column<int>(type: "int", nullable: true),
                     status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     is_delivered = table.Column<bool>(type: "bit", nullable: false),
                     photo_proof_path = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -302,7 +348,24 @@ namespace RDF.Arcana.API.Migrations
                         column: x => x.client_id,
                         principalTable: "clients",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "item_price_changes",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    item_id = table.Column<int>(type: "int", nullable: false),
+                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    effectivity_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    added_by = table.Column<int>(type: "int", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_item_price_changes", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -348,7 +411,7 @@ namespace RDF.Arcana.API.Migrations
                         column: x => x.item_id,
                         principalTable: "items",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -358,30 +421,23 @@ namespace RDF.Arcana.API.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     client_id = table.Column<int>(type: "int", nullable: false),
-                    approvals_id = table.Column<int>(type: "int", nullable: false),
+                    request_id = table.Column<int>(type: "int", nullable: false),
                     crated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     is_delivered = table.Column<bool>(type: "bit", nullable: false),
                     status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     requested_by = table.Column<int>(type: "int", nullable: false),
-                    approved_by = table.Column<int>(type: "int", nullable: true),
                     total = table.Column<decimal>(type: "decimal(8,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_listing_fees", x => x.id);
                     table.ForeignKey(
-                        name: "fk_listing_fees_approvals_approvals_id",
-                        column: x => x.approvals_id,
-                        principalTable: "approvals",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
                         name: "fk_listing_fees_clients_client_id",
                         column: x => x.client_id,
                         principalTable: "clients",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -477,7 +533,62 @@ namespace RDF.Arcana.API.Migrations
                         column: x => x.product_category_id,
                         principalTable: "product_categories",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "request_approvers",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    request_id = table.Column<int>(type: "int", nullable: false),
+                    approver_id = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    level = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_request_approvers", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "requests",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    module = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    requestor_id = table.Column<int>(type: "int", nullable: false),
+                    current_approver_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_requests", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "update_request_trails",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    request_id = table.Column<int>(type: "int", nullable: true),
+                    module_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_by = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_update_request_trails", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_update_request_trails_requests_request_id",
+                        column: x => x.request_id,
+                        principalTable: "requests",
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -590,7 +701,7 @@ namespace RDF.Arcana.API.Migrations
                     permissions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    added_by = table.Column<int>(type: "int", nullable: false),
+                    added_by = table.Column<int>(type: "int", nullable: true),
                     modified_by = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     is_active = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -650,6 +761,57 @@ namespace RDF.Arcana.API.Migrations
                         principalColumn: "id");
                 });
 
+            migrationBuilder.InsertData(
+                table: "user_roles",
+                columns: new[] { "id", "added_by", "created_at", "is_active", "modified_by", "permissions", "updated_at", "user_role_name" },
+                values: new object[] { 1, null, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(935), true, null, "[\"User Management\",\"User Account\",\"User Role\",\"Company\",\"Department\",\"Location\",\"Masterlist\",\"Products\",\"Meat Type\",\"UOM\",\"Discount Type\",\"Terms\",\"Customer Registration\",\"Prospect\",\"Direct\",\"Freebies\",\"Inventory\",\"Setup\",\"Product Category\",\"Product Sub Category\",\"Unit of Measurements\",\"Store Type\",\"Discount\",\"Term Days\",\"Approval\",\"Freebie Approval\",\"Direct Approval\",\"Admin Dashboard\",\"Direct Registration\",\"Listing Fee\",\"Registration Approval\",\"Sp. Discount Approval\",\"Listing Fee Approval\",\"Business Type\",\"Registration\",\"Customer Management\",\"Product Setup\",\"Variable Discount\"]", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: new[] { "id", "added_by", "company_id", "created_at", "department_id", "full_id_no", "fullname", "is_active", "is_password_changed", "location_id", "password", "profile_picture", "updated_at", "user_roles_id", "username" },
+                values: new object[] { 1, null, null, new DateTime(2023, 12, 6, 7, 20, 27, 363, DateTimeKind.Local).AddTicks(9426), null, null, "Admin", false, false, null, "$2a$11$OdL5XApSeVZs6UO2R6IpCuNC1vW1jLneu6bnZc0pv.STfzFibIAz2", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "booking_coverages",
+                columns: new[] { "id", "added_by", "booking_coverage", "created_at", "is_active", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, 1, "F1", new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1161), true, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1162) },
+                    { 2, 1, "F2", new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1169), true, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1170) },
+                    { 3, 1, "F3", new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1172), true, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1172) },
+                    { 4, 1, "F4", new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1174), true, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1175) },
+                    { 5, 1, "F5", new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1201), true, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1202) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "mode_of_payments",
+                columns: new[] { "id", "added_by", "created_at", "is_active", "payment", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1691), true, "Cash", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 1, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1698), true, "Online/Check", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "terms",
+                columns: new[] { "id", "added_by", "created_at", "is_active", "term_type", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1326), true, "COD", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 1, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1398), true, "1 Up 1 Down", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 1, new DateTime(2023, 12, 6, 7, 20, 27, 591, DateTimeKind.Local).AddTicks(1433), true, "Credit Type", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_approval_approver_id",
+                table: "approval",
+                column: "approver_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_approval_request_id",
+                table: "approval",
+                column: "request_id");
+
             migrationBuilder.CreateIndex(
                 name: "ix_approvals_approved_by",
                 table: "approvals",
@@ -666,6 +828,11 @@ namespace RDF.Arcana.API.Migrations
                 column: "requested_by");
 
             migrationBuilder.CreateIndex(
+                name: "ix_approvers_user_id",
+                table: "approvers",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_booking_coverages_added_by",
                 table: "booking_coverages",
                 column: "added_by");
@@ -674,6 +841,16 @@ namespace RDF.Arcana.API.Migrations
                 name: "ix_client_documents_client_id",
                 table: "client_documents",
                 column: "client_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_mode_of_payments_client_id",
+                table: "client_mode_of_payments",
+                column: "client_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_client_mode_of_payments_mode_of_payment_id",
+                table: "client_mode_of_payments",
+                column: "mode_of_payment_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_clients_added_by",
@@ -696,11 +873,6 @@ namespace RDF.Arcana.API.Migrations
                 column: "fixed_discount_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_clients_mode_of_payment",
-                table: "clients",
-                column: "mode_of_payment");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_clients_modified_by",
                 table: "clients",
                 column: "modified_by");
@@ -711,6 +883,13 @@ namespace RDF.Arcana.API.Migrations
                 column: "owners_address_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_clients_request_id",
+                table: "clients",
+                column: "request_id",
+                unique: true,
+                filter: "[request_id] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_clients_store_type_id",
                 table: "clients",
                 column: "store_type_id");
@@ -719,16 +898,6 @@ namespace RDF.Arcana.API.Migrations
                 name: "ix_clients_terms",
                 table: "clients",
                 column: "terms");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_clients_user_id",
-                table: "clients",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_clients_variable_discounts_id",
-                table: "clients",
-                column: "variable_discounts_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_companies_added_by",
@@ -771,9 +940,21 @@ namespace RDF.Arcana.API.Migrations
                 column: "client_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_freebie_requests_request_id",
+                table: "freebie_requests",
+                column: "request_id",
+                unique: true,
+                filter: "[request_id] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_freebie_requests_requested_by",
                 table: "freebie_requests",
                 column: "requested_by");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_item_price_changes_item_id",
+                table: "item_price_changes",
+                column: "item_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_items_added_by",
@@ -806,19 +987,14 @@ namespace RDF.Arcana.API.Migrations
                 column: "listing_fee_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_listing_fees_approvals_id",
-                table: "listing_fees",
-                column: "approvals_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_listing_fees_approved_by",
-                table: "listing_fees",
-                column: "approved_by");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_listing_fees_client_id",
                 table: "listing_fees",
                 column: "client_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_listing_fees_request_id",
+                table: "listing_fees",
+                column: "request_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_listing_fees_requested_by",
@@ -854,6 +1030,21 @@ namespace RDF.Arcana.API.Migrations
                 name: "ix_product_sub_categories_product_category_id",
                 table: "product_sub_categories",
                 column: "product_category_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_request_approvers_request_id",
+                table: "request_approvers",
+                column: "request_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_requests_current_approver_id",
+                table: "requests",
+                column: "current_approver_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_requests_requestor_id",
+                table: "requests",
+                column: "requestor_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_store_types_added_by",
@@ -901,6 +1092,11 @@ namespace RDF.Arcana.API.Migrations
                 column: "added_by");
 
             migrationBuilder.CreateIndex(
+                name: "ix_update_request_trails_request_id",
+                table: "update_request_trails",
+                column: "request_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_user_roles_added_by",
                 table: "user_roles",
                 column: "added_by");
@@ -932,6 +1128,22 @@ namespace RDF.Arcana.API.Migrations
                 column: "user_roles_id");
 
             migrationBuilder.AddForeignKey(
+                name: "fk_approval_requests_request_id",
+                table: "approval",
+                column: "request_id",
+                principalTable: "requests",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_approval_users_approver_id",
+                table: "approval",
+                column: "approver_id",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
                 name: "fk_approvals_clients_client_id",
                 table: "approvals",
                 column: "client_id",
@@ -955,6 +1167,14 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
+                name: "fk_approvers_users_user_id",
+                table: "approvers",
+                column: "user_id",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
                 name: "fk_booking_coverages_users_added_by",
                 table: "booking_coverages",
                 column: "added_by",
@@ -971,6 +1191,22 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
+                name: "fk_client_mode_of_payments_clients_client_id",
+                table: "client_mode_of_payments",
+                column: "client_id",
+                principalTable: "clients",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_client_mode_of_payments_mode_of_payments_mode_of_payment_id",
+                table: "client_mode_of_payments",
+                column: "mode_of_payment_id",
+                principalTable: "mode_of_payments",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
                 name: "fk_clients_fixed_discounts_fixed_discounts_id",
                 table: "clients",
                 column: "fixed_discount_id",
@@ -978,10 +1214,10 @@ namespace RDF.Arcana.API.Migrations
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_mode_of_payments_mode_of_payments_id",
+                name: "fk_clients_requests_request_id",
                 table: "clients",
-                column: "mode_of_payment",
-                principalTable: "mode_of_payments",
+                column: "request_id",
+                principalTable: "requests",
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
@@ -999,14 +1235,7 @@ namespace RDF.Arcana.API.Migrations
                 principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_users_modified_by_user_id",
-                table: "clients",
-                column: "modified_by",
-                principalTable: "users",
-                principalColumn: "id");
-
-            migrationBuilder.AddForeignKey(
-                name: "fk_clients_users_requested_by_user_id",
+                name: "fk_clients_users_added_by_user_id",
                 table: "clients",
                 column: "added_by",
                 principalTable: "users",
@@ -1014,9 +1243,9 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
-                name: "fk_clients_users_user_id",
+                name: "fk_clients_users_modified_by_user_id",
                 table: "clients",
-                column: "user_id",
+                column: "modified_by",
                 principalTable: "users",
                 principalColumn: "id");
 
@@ -1061,10 +1290,25 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
+                name: "fk_freebie_requests_requests_request_id",
+                table: "freebie_requests",
+                column: "request_id",
+                principalTable: "requests",
+                principalColumn: "id");
+
+            migrationBuilder.AddForeignKey(
                 name: "fk_freebie_requests_users_requested_by_user_id",
                 table: "freebie_requests",
                 column: "requested_by",
                 principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_item_price_changes_items_item_id",
+                table: "item_price_changes",
+                column: "item_id",
+                principalTable: "items",
                 principalColumn: "id",
                 onDelete: ReferentialAction.NoAction);
 
@@ -1109,11 +1353,12 @@ namespace RDF.Arcana.API.Migrations
                 onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
-                name: "fk_listing_fees_users_approved_by_user_id",
+                name: "fk_listing_fees_requests_request_id",
                 table: "listing_fees",
-                column: "approved_by",
-                principalTable: "users",
-                principalColumn: "id");
+                column: "request_id",
+                principalTable: "requests",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_listing_fees_users_requested_by_user_id",
@@ -1159,6 +1404,30 @@ namespace RDF.Arcana.API.Migrations
                 name: "fk_product_sub_categories_users_added_by",
                 table: "product_sub_categories",
                 column: "added_by",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_request_approvers_requests_request_id",
+                table: "request_approvers",
+                column: "request_id",
+                principalTable: "requests",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_requests_users_current_approver_id",
+                table: "requests",
+                column: "current_approver_id",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.NoAction);
+
+            migrationBuilder.AddForeignKey(
+                name: "fk_requests_users_requestor_id",
+                table: "requests",
+                column: "requestor_id",
                 principalTable: "users",
                 principalColumn: "id",
                 onDelete: ReferentialAction.NoAction);
@@ -1222,20 +1491,27 @@ namespace RDF.Arcana.API.Migrations
                 table: "user_roles",
                 column: "added_by",
                 principalTable: "users",
-                principalColumn: "id",
-                onDelete: ReferentialAction.NoAction);
+                principalColumn: "id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "fk_fixed_discounts_clients_clients_id",
-                table: "fixed_discounts");
+                name: "fk_clients_requests_request_id",
+                table: "clients");
 
             migrationBuilder.DropForeignKey(
-                name: "fk_term_options_clients_clients_id",
-                table: "term_options");
+                name: "fk_booking_coverages_users_added_by",
+                table: "booking_coverages");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_clients_users_added_by_user_id",
+                table: "clients");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_clients_users_modified_by_user_id",
+                table: "clients");
 
             migrationBuilder.DropForeignKey(
                 name: "fk_companies_users_added_by",
@@ -1250,11 +1526,48 @@ namespace RDF.Arcana.API.Migrations
                 table: "locations");
 
             migrationBuilder.DropForeignKey(
+                name: "fk_store_types_users_added_by_user_id",
+                table: "store_types");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_store_types_users_modified_by",
+                table: "store_types");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_term_days_users_added_by",
+                table: "term_days");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_term_options_users_added_by_user_id",
+                table: "term_options");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_terms_users_added_by_user_id",
+                table: "terms");
+
+            migrationBuilder.DropForeignKey(
                 name: "fk_user_roles_users_added_by",
                 table: "user_roles");
 
+            migrationBuilder.DropForeignKey(
+                name: "fk_fixed_discounts_clients_clients_id",
+                table: "fixed_discounts");
+
+            migrationBuilder.DropForeignKey(
+                name: "fk_term_options_clients_clients_id",
+                table: "term_options");
+
+            migrationBuilder.DropTable(
+                name: "approval");
+
+            migrationBuilder.DropTable(
+                name: "approvers");
+
             migrationBuilder.DropTable(
                 name: "client_documents");
+
+            migrationBuilder.DropTable(
+                name: "client_mode_of_payments");
 
             migrationBuilder.DropTable(
                 name: "discounts");
@@ -1263,7 +1576,22 @@ namespace RDF.Arcana.API.Migrations
                 name: "freebie_items");
 
             migrationBuilder.DropTable(
+                name: "item_price_changes");
+
+            migrationBuilder.DropTable(
                 name: "listing_fee_items");
+
+            migrationBuilder.DropTable(
+                name: "request_approvers");
+
+            migrationBuilder.DropTable(
+                name: "update_request_trails");
+
+            migrationBuilder.DropTable(
+                name: "variable_discounts");
+
+            migrationBuilder.DropTable(
+                name: "mode_of_payments");
 
             migrationBuilder.DropTable(
                 name: "freebie_requests");
@@ -1275,6 +1603,9 @@ namespace RDF.Arcana.API.Migrations
                 name: "listing_fees");
 
             migrationBuilder.DropTable(
+                name: "approvals");
+
+            migrationBuilder.DropTable(
                 name: "meat_types");
 
             migrationBuilder.DropTable(
@@ -1284,10 +1615,25 @@ namespace RDF.Arcana.API.Migrations
                 name: "uoms");
 
             migrationBuilder.DropTable(
-                name: "approvals");
+                name: "product_categories");
 
             migrationBuilder.DropTable(
-                name: "product_categories");
+                name: "requests");
+
+            migrationBuilder.DropTable(
+                name: "users");
+
+            migrationBuilder.DropTable(
+                name: "companies");
+
+            migrationBuilder.DropTable(
+                name: "departments");
+
+            migrationBuilder.DropTable(
+                name: "locations");
+
+            migrationBuilder.DropTable(
+                name: "user_roles");
 
             migrationBuilder.DropTable(
                 name: "clients");
@@ -1305,37 +1651,16 @@ namespace RDF.Arcana.API.Migrations
                 name: "fixed_discounts");
 
             migrationBuilder.DropTable(
-                name: "mode_of_payments");
-
-            migrationBuilder.DropTable(
                 name: "store_types");
 
             migrationBuilder.DropTable(
                 name: "term_options");
 
             migrationBuilder.DropTable(
-                name: "variable_discounts");
-
-            migrationBuilder.DropTable(
                 name: "term_days");
 
             migrationBuilder.DropTable(
                 name: "terms");
-
-            migrationBuilder.DropTable(
-                name: "users");
-
-            migrationBuilder.DropTable(
-                name: "companies");
-
-            migrationBuilder.DropTable(
-                name: "departments");
-
-            migrationBuilder.DropTable(
-                name: "locations");
-
-            migrationBuilder.DropTable(
-                name: "user_roles");
 
             migrationBuilder.DropSequence(
                 name: "arcana_hilo_sequence");

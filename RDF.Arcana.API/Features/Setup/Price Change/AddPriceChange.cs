@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Setup.Items;
 
 namespace RDF.Arcana.API.Features.Setup.Price_Change;
 [Route("api/PriceChange"), ApiController]
@@ -53,19 +54,13 @@ public class AddPriceChange : ControllerBase
 
         public async Task<Result> Handle(AddPriceChangeCommand request, CancellationToken cancellationToken)
         {
-            var priceChange = await _context.ItemPriceChanges
-                .Include(item => item.Item)
-                .FirstOrDefaultAsync(item => item.ItemId == request.ItemId
-                                             && item.EffectivityDate == request.EffectivityDate,
-                    cancellationToken);
+            var validateItem = await _context.Items.FirstOrDefaultAsync(item => 
+                item.Id == request.ItemId, cancellationToken);
 
-            if (priceChange != null)
+            if (validateItem is null)
             {
-                // If price change already exists for the specified EffectivityDate, update the price
-                priceChange.Price = request.Price;
+                return ItemErrors.NotFound(request.ItemId);
             }
-            else
-            {
                 // Else add new price change
                 var newPriceChange = new ItemPriceChange
                 {
@@ -74,7 +69,6 @@ public class AddPriceChange : ControllerBase
                     EffectivityDate = request.EffectivityDate
                 };
                 await _context.AddAsync(newPriceChange, cancellationToken);
-            }
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

@@ -26,7 +26,7 @@ public class ReleaseFreebies : ControllerBase
     {
         try
         {
-            command.FreebieRequestId = id;
+            command.ClientId = id;
             var result = await _mediator.Send(command);
             if (result.IsFailure)
             {
@@ -40,9 +40,9 @@ public class ReleaseFreebies : ControllerBase
         }
     }
 
-    public class ReleaseFreebiesCommand : IRequest<Result<Unit>>
+    public class ReleaseFreebiesCommand : IRequest<Result>
     {
-        public int FreebieRequestId { get; set; }
+        public int ClientId { get; set; }
         public IFormFile PhotoProof { get; set; }
         public IFormFile ESignature { get; set; }
     }
@@ -66,15 +66,12 @@ public class ReleaseFreebies : ControllerBase
 
         public async Task<Result> Handle(ReleaseFreebiesCommand request, CancellationToken cancellationToken)
         {
-            var validateClientRequest = await _context.Approvals
-                .Include(x => x.FreebieRequest)
-                .Include(x => x.Client)
+            var validateClientRequest = await _context.FreebieRequests
+                .Include(x => x.Clients)
                 .FirstOrDefaultAsync(x =>
-                    x.FreebieRequest.Any(x => x.Id == request.FreebieRequestId) &&
-                    x.ApprovalType == "For Freebie Approval" &&
-                    x.FreebieRequest.Any(x => x.IsDelivered == false) &&
-                    x.IsActive == true &&
-                    x.IsApproved == false, cancellationToken);
+                    x.ClientId == request.ClientId && 
+                    x.IsDelivered == false &&
+                    x.Status == Status.ForReleasing, cancellationToken);
 
             if (validateClientRequest is null)
             {
@@ -82,53 +79,50 @@ public class ReleaseFreebies : ControllerBase
             }
 
             var uploadTasks = new List<Task>();
-
-            foreach (var freebieRequest in validateClientRequest.FreebieRequest)
+            
+            if (request.PhotoProof.Length > 0 || request.ESignature.Length > 0)
             {
-                if (request.PhotoProof.Length > 0 || request.ESignature.Length > 0)
+                uploadTasks.Add(Task.Run(async () =>
                 {
-                    uploadTasks.Add(Task.Run(async () =>
+                    await using var stream = request.PhotoProof.OpenReadStream();
+                    await using var esignatureStream = request.ESignature.OpenReadStream();
+
+                    var photoProofParams = new ImageUploadParams
                     {
-                        await using var stream = request.PhotoProof.OpenReadStream();
-                        await using var esignatureStream = request.ESignature.OpenReadStream();
+                        File = new FileDescription(request.PhotoProof.FileName, stream),
+                        PublicId =
+                            $"{WebUtility.UrlEncode(validateClientRequest.Clients.BusinessName)}/{request.PhotoProof.FileName}"
+                    };
 
-                        var photoProofParams = new ImageUploadParams
-                        {
-                            File = new FileDescription(request.PhotoProof.FileName, stream),
-                            PublicId =
-                                $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.PhotoProof.FileName}"
-                        };
-
-                        var eSignaturePhotoParams = new ImageUploadParams
-                        {
-                            File = new FileDescription(request.ESignature.FileName, esignatureStream),
-                            PublicId =
-                                $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.ESignature.FileName}"
-                        };
+                    var eSignaturePhotoParams = new ImageUploadParams
+                    {
+                        File = new FileDescription(request.ESignature.FileName, esignatureStream),
+                        PublicId =
+                            $"{WebUtility.UrlEncode(validateClientRequest.Clients.BusinessName)}/{request.ESignature.FileName}"
+                    };
 
 
-                        var photoproofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
-                        var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
+                    var photoproofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
+                    var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
 
-                        if (photoproofUploadResult.Error != null)
-                        {
-                            throw new Exception(photoproofUploadResult.Error.Message);
-                        }
+                    if (photoproofUploadResult.Error != null)
+                    {
+                        throw new Exception(photoproofUploadResult.Error.Message);
+                    }
 
-                        if (eSignatureUploadResult.Error != null)
-                        {
-                            throw new Exception(eSignatureUploadResult.Error.Message);
-                        }
-                        freebieRequest.Status = "Released";
-                        freebieRequest.IsDelivered = true;
-                        freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
-                        freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
-                    }, cancellationToken));
-                };
+                    if (eSignatureUploadResult.Error != null)
+                    {
+                        throw new Exception(eSignatureUploadResult.Error.Message);
+                    }
+                    validateClientRequest.Status = "Released";
+                    validateClientRequest.IsDelivered = true;
+                    validateClientRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
+                    validateClientRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
+                }, cancellationToken));
+            };
 
-                await Task.WhenAll(uploadTasks);
-                await _context.SaveChangesAsync(cancellationToken);
-            }
+            await Task.WhenAll(uploadTasks);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

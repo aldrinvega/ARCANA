@@ -209,15 +209,16 @@ public static class RegularClientsMappingProfile
             Id = client.Id,
             OwnersName = client.Fullname,
             BusinessName = client.BusinessName,
-            ListingFees = client.ListingFees.Select(x => new GetAllClientsInListingFee.GetAllClientsInListingFeeResult.ListingFee{
+            ListingFees = client.ListingFees?.Select(x => new GetAllClientsInListingFee.GetAllClientsInListingFeeResult.ListingFee{
             Id = x.Id,
             RequestId = x.RequestId,
-            ListingItems = x.ListingFeeItems.Select(lf => new GetAllClientsInListingFee.GetAllClientsInListingFeeResult.ListingItem
+            ListingItems = x.ListingFeeItems?.Select(lf => new GetAllClientsInListingFee.GetAllClientsInListingFeeResult.ListingItem
             {
                 Id = lf.Id,
                 ItemId = lf.ItemId,
                 ItemCode = lf.Item.ItemCode,
                 ItemDescription = lf.Item.ItemDescription,
+                Uom = lf.Item.Uom.UomCode,
                 Sku = lf.Sku,
                 UnitCost = lf.UnitCost
             })

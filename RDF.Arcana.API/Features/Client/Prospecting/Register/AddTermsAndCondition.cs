@@ -142,7 +142,7 @@ public class AddTermsAndCondition : ControllerBase
             {
                 var fixedDiscount = new FixedDiscounts
                 {
-                    ClientId = existingClient.Id,
+                    /*ClientId = existingClient.Id,*/
                     DiscountPercentage = request.FixedDiscount.DiscountPercentage / 100
                 };
 

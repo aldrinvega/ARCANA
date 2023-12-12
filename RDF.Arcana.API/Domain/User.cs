@@ -18,6 +18,8 @@ public class User : BaseEntity
     public int? DepartmentId { get; set; }
     public int? LocationId { get; set; }
     public int? UserRolesId { get; set; }
+    
+    
 
     [ForeignKey("AddedByUser")] public int? AddedBy { get; set; }
 
@@ -35,6 +37,7 @@ public class User : BaseEntity
     public virtual ICollection<Approval> Approvals { get; set; }
     public virtual ICollection<FreebieRequest> FreebieRequests { get; set; }
     public virtual ICollection<ListingFee> ListingFees { get; set; }
+    public virtual CdoCluster CdoCluster { get; set; }
 }
 
 public class UserValidator : AbstractValidator<User>

@@ -68,9 +68,17 @@ public class ApproveClientRegistration : ControllerBase
                 .Include(client => client.Clients)
                 .ThenInclude(listingfee => listingfee.ListingFees)
                 .ThenInclude(rq => rq.Request)
-                .Where(client => client.CurrentApproverId == request.UserId  &&
-                                 client.Id == request.RequestId)
+                .Where(client => client.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
+            
+            
+            /*var existingClientRequest = await _context.Requests
+                .Include(client => client.Clients)
+                .ThenInclude(listingFee => listingFee.Request)
+                .Include(request => request.Clients)
+                .ThenInclude(clients => clients.ListingFees)
+                .FirstOrDefaultAsync(x =>
+                    x.Id == request.RequestId, cancellationToken);*/
 
             if (requestedClient?.Clients is null)
             {
@@ -81,9 +89,9 @@ public class ApproveClientRegistration : ControllerBase
                 .Where(rq => rq.RequestId == request.RequestId)
                 .ToListAsync(cancellationToken);
 
-            /*var underReviewListingFee = requestedClient.Clients?.ListingFees?
+            var underReviewListingFee = requestedClient.Clients?.ListingFees?
                 .Where(lf => lf.Status == Status.UnderReview)
-                .ToList();*/
+                .ToList();
             
             var currentApproverLevel = registrationApprovers
                 .FirstOrDefault(approver => approver.ApproverId == requestedClient.CurrentApproverId)?.Level;
@@ -93,7 +101,7 @@ public class ApproveClientRegistration : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
             
-            /*if (underReviewListingFee is not null)
+            if (underReviewListingFee is not null)
             {
                 foreach (var listingFee in underReviewListingFee)
                 {
@@ -117,6 +125,7 @@ public class ApproveClientRegistration : ControllerBase
                     {
                         listingFee.Status = Status.Approved;
                         listingFee.Request.Status = Status.Approved;
+                        listingFee.ApprovalDate = DateTime.Now;
                     }
                     else
                     {
@@ -127,7 +136,7 @@ public class ApproveClientRegistration : ControllerBase
                     await _context.SaveChangesAsync(cancellationToken);
                 
                 }
-            }*/
+            }
             
             
             var newApproval = new Approval(

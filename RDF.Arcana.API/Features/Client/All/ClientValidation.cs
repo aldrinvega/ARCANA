@@ -25,16 +25,15 @@ public class ClientValidation : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return BadRequest(e.Message);
         }
     }
 
     public class ClientValidationCommand : IRequest<Result>
     {
+        public int ClientId { get; set; }
         public string BusinessName { get; set; }
         public string Fullname { get; set; }
-        public int BusinessTypeId { get; set; }
     }
     public class Handler : IRequestHandler<ClientValidationCommand, Result>
     {
@@ -47,22 +46,16 @@ public class ClientValidation : ControllerBase
 
         public async Task<Result> Handle(ClientValidationCommand request, CancellationToken cancellationToken)
         {
-            var validateFullname =
-                await _context.Clients.Where(x => x.Fullname == request.Fullname).FirstOrDefaultAsync(cancellationToken);
-            var validateBusinessName = await _context.Clients
-                .Where(x => x.BusinessName == request.BusinessName && x.StoreTypeId == request.BusinessTypeId).FirstOrDefaultAsync(cancellationToken);
+            var existingBusiness = await _context.Clients
+                .Where(x => 
+                    /*(request.ClientId == 0 || x.Id != request.ClientId) &&*/
+                    x.Fullname == request.Fullname &&
+                    x.BusinessName == request.BusinessName)
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (validateFullname != null)
-            {
-                return ClientErrors.AlreadyExist(request.Fullname);
-            }
-
-            if (validateBusinessName != null)
-            {
-                return ClientErrors.BusinessAlreadyExist(request.BusinessName);
-            }
-            
-            return Result.Success();
+            return existingBusiness != null 
+                ? ClientErrors.AlreadyExist(request.BusinessName) 
+                : Result.Success();
         }
     }
 }

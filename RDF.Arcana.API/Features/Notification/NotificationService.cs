@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Notification;
 
@@ -143,20 +142,28 @@ public class NotificationService : ControllerBase
                          .Count(ap => 
                              ap.RequestedBy == request.AddedBy && 
                              ap.Status == Status.Rejected && ap.IsActive);
-                 
-                     forFreebiesCount =  _context.Clients
-                         .Count(x => 
-                             x.RegistrationStatus == Status.Requested && 
-                             x.AddedBy == request.AddedBy && x.IsActive);
+
+                     forFreebiesCount = _context.Clients
+                         .Where(x =>
+                             x.RegistrationStatus == Status.Requested &&
+                             x.AddedBy == request.AddedBy &&
+                             x.IsActive &&
+                             x.Origin == Origin.Prospecting)
+                         .Include(fr => fr.FreebiesRequests)
+                         .Count(x => !x.FreebiesRequests.Any());
+                     
                      forReleasingCount = _context.Clients
-                         .Where(client => client.IsActive)
+                         .Where(client => client.IsActive &&
+                                          client.RegistrationStatus == Status.Requested)
                          .Include(x => x.FreebiesRequests)
                          .Count(x => x.FreebiesRequests.Any(x => 
                              x.Status == Status.ForReleasing && 
                              x.RequestedBy == request.AddedBy));
+                     
                      releasedCount = _context.Clients
                          .Where(x => 
                              x.IsActive && 
+                             x.Origin == Origin.Prospecting &&
                              x.RegistrationStatus == Status.PendingRegistration)
                          .Include(x => x.FreebiesRequests)
                          .Count(x => x.FreebiesRequests.Any(x => 

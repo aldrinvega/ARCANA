@@ -236,16 +236,14 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     _context.ClientModeOfPayments.Add(newPaymentMethod);
                 }
 
-                if (request.FixedDiscount != null)
+                if (request.FixedDiscount.DiscountPercentage != null)
                 {
                     var fixedDiscount = new FixedDiscounts
                     {
-                        ClientId = directClients.Id,
-                        DiscountPercentage = request.FixedDiscount.DiscountPercentage
-                    };
+                        /*ClientId = directClients.Id,*/
+                        DiscountPercentage = request.FixedDiscount.DiscountPercentage / 100
+                    }; 
                     _context.FixedDiscounts.Add(fixedDiscount);
-                    await _context.SaveChangesAsync(cancellationToken);
-
                     directClients.FixedDiscountId = fixedDiscount.Id;
                 }
                 else

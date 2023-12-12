@@ -6,7 +6,7 @@ public static class ItemsMappingExtension
     public static GetItemsAsync.GetItemsAsyncResult
         ToGetItemsAsyncResult(this Domain.Items items)
     {
-        var now = DateTime.Today;
+        var now = DateTime.Now;
         return new GetItemsAsync.GetItemsAsyncResult
         {
             Id = items.Id,
@@ -25,7 +25,7 @@ public static class ItemsMappingExtension
                 {
                     Id = pc.Id,
                     Price = pc.Price,
-                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy")
+                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy HH:mm:ss")
                 }),
             FuturePriceChanges = items.ItemPriceChange
                 .Where(p => p.EffectivityDate > now)
@@ -33,7 +33,7 @@ public static class ItemsMappingExtension
                 {
                     Id = pc.Id,
                     Price = pc.Price,
-                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy")
+                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy HH:mm:ss")
                 }),
             AddedBy = items.AddedByUser.Fullname,
             ModifiedBy = items.ModifiedBy

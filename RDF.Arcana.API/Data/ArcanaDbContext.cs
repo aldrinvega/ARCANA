@@ -46,6 +46,8 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<RequestApprovers> RequestApprovers {get; set;}
     public virtual DbSet<ItemPriceChange> ItemPriceChanges { get; set; }
     public virtual DbSet<ClientModeOfPayment> ClientModeOfPayments { get; set; }
+    public virtual DbSet<Cluster> Clusters { get; set; }
+    public virtual DbSet<CdoCluster> CdoClusters { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -194,10 +196,10 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.FixedDiscountId);
 
-        modelBuilder.Entity<FixedDiscounts>()
+        /*modelBuilder.Entity<FixedDiscounts>()
             .HasOne(x => x.Clients)
             .WithMany()
-            .HasForeignKey(x => x.ClientId);
+            .HasForeignKey(x => x.ClientId);*/
 
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(x => x.RequestedByUser)
@@ -279,6 +281,9 @@ public class ArcanaDbContext : DbContext
             .Property(p => p.Id)
             .UseHiLo("arcana_hilo_sequence");
         modelBuilder.Entity<BusinessAddress>()
+            .Property(p => p.Id)
+            .UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<FixedDiscounts>()
             .Property(p => p.Id)
             .UseHiLo("arcana_hilo_sequence");
 

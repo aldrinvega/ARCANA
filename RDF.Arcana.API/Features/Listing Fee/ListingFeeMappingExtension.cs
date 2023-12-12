@@ -11,7 +11,7 @@ public static class ListingFeeMappingExtension
             ClientId = listingFee.ClientId,
             ClientName = listingFee.Client.Fullname,
             BusinessName = listingFee.Client.BusinessName,
-            CreateAt = listingFee.CratedAt.ToString("yyyy-MM-dd hh:mm:ss"),
+            CreatedAt = listingFee.CratedAt.ToString("yyyy-MM-dd"),
             ListingFeeId = listingFee.Id,
             RequestId = listingFee.RequestId,
             Status = listingFee.Status,
