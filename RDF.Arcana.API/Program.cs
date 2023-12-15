@@ -37,7 +37,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("ETD");
+var connectionString = builder.Configuration.GetConnectionString("Smarter");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<ArcanaDbContext>(x =>

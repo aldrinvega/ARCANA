@@ -82,7 +82,7 @@ public class NotificationService : ControllerBase
                      rejectedCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
-                         .Where(x => x.Approvals != null)
+                         .Where(x => x.Approvals != null && x.Request.Status != Status.UnderReview)
                          .SelectMany(x => x.Request.Approvals)
                          .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Rejected && ap.Request.Module == Modules.RegistrationApproval);
                      
@@ -102,6 +102,7 @@ public class NotificationService : ControllerBase
                     rejectedListingFeeCount = _context.ListingFees
                         .Include(x => x.Request)
                         .ThenInclude(ap => ap.Approvals)
+                        .Where(x => x.Status == Status.Rejected)
                         .Where(x => x.Request.Approvals != null)
                         .SelectMany(x => x.Request.Approvals)
                         .Count(approval => approval.ApproverId == request.AddedBy

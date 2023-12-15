@@ -66,19 +66,8 @@ public class ApproveClientRegistration : ControllerBase
         {
             var requestedClient = await _context.Requests
                 .Include(client => client.Clients)
-                .ThenInclude(listingfee => listingfee.ListingFees)
-                .ThenInclude(rq => rq.Request)
                 .Where(client => client.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
-            
-            
-            /*var existingClientRequest = await _context.Requests
-                .Include(client => client.Clients)
-                .ThenInclude(listingFee => listingFee.Request)
-                .Include(request => request.Clients)
-                .ThenInclude(clients => clients.ListingFees)
-                .FirstOrDefaultAsync(x =>
-                    x.Id == request.RequestId, cancellationToken);*/
 
             if (requestedClient?.Clients is null)
             {
@@ -88,10 +77,6 @@ public class ApproveClientRegistration : ControllerBase
             var registrationApprovers = await _context.RequestApprovers
                 .Where(rq => rq.RequestId == request.RequestId)
                 .ToListAsync(cancellationToken);
-
-            var underReviewListingFee = requestedClient.Clients?.ListingFees?
-                .Where(lf => lf.Status == Status.UnderReview)
-                .ToList();
             
             var currentApproverLevel = registrationApprovers
                 .FirstOrDefault(approver => approver.ApproverId == requestedClient.CurrentApproverId)?.Level;
@@ -100,44 +85,6 @@ public class ApproveClientRegistration : ControllerBase
             {
                 return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
-            
-            if (underReviewListingFee is not null)
-            {
-                foreach (var listingFee in underReviewListingFee)
-                {
-                    var listingFeeApprover = await _context.RequestApprovers
-                        .Where(rq => rq.RequestId == listingFee.RequestId)
-                        .ToListAsync(cancellationToken);
-                    
-                    var newListingFeeApproval = new Approval(
-                        listingFee.RequestId,
-                        listingFee.Request.CurrentApproverId,
-                        Status.Approved,
-                        null,
-                        true
-                    );
-                
-                    var nextApprovalLevelLevel = currentApproverLevel.Value + 1;
-                    var nextListingFeeApprover = listingFeeApprover
-                        .FirstOrDefault(approver => approver.Level == nextApprovalLevelLevel);
-
-                    if (nextListingFeeApprover == null)
-                    {
-                        listingFee.Status = Status.Approved;
-                        listingFee.Request.Status = Status.Approved;
-                        listingFee.ApprovalDate = DateTime.Now;
-                    }
-                    else
-                    {
-                        listingFee.Request.CurrentApproverId = nextListingFeeApprover.ApproverId;
-                    }
-                
-                    await _context.Approval.AddAsync(newListingFeeApproval, cancellationToken);
-                    await _context.SaveChangesAsync(cancellationToken);
-                
-                }
-            }
-            
             
             var newApproval = new Approval(
                 requestedClient.Id,
