@@ -74,9 +74,6 @@ public class RejectClientRegistration : ControllerBase
             
             var existingClientRequest = await _context.Requests
                 .Include(client => client.Clients)
-                .ThenInclude(listingfee => listingfee.ListingFees)
-                .ThenInclude(rq => rq.Request)
-                .Where(client => client.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (existingClientRequest == null)
@@ -97,30 +94,6 @@ public class RejectClientRegistration : ControllerBase
             if (existingClientRequest.Status == Status.Rejected)
             {
                 return ClientErrors.AlreadyRejected(existingClientRequest.Status);
-            }
-            
-            var underReviewListingFee = existingClientRequest.Clients?.ListingFees?
-              .Where(lf => lf.Status == Status.UnderReview)
-              .ToList();
-            
-            if (underReviewListingFee is not null)
-            {
-                foreach (var listingFee in underReviewListingFee)
-                {
-                    var newListingFeeApproval = new Approval(
-                        listingFee.RequestId,
-                        listingFee.Request.CurrentApproverId,
-                        Status.Rejected,
-                        request.Reason,
-                        true
-                    );
-                    
-                    listingFee.Status = Status.Rejected;
-                    listingFee.Request.Status = Status.Rejected;
-
-                    await _context.Approval.AddAsync(newListingFeeApproval, cancellationToken);
-                    await _context.SaveChangesAsync(cancellationToken);
-                }
             }
 
             var newApproval = new Approval

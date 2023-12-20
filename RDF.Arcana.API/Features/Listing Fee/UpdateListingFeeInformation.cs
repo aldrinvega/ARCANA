@@ -79,12 +79,12 @@ public class UpdateListingFeeInformation : ControllerBase
                 .FirstOrDefaultAsync(cancellationToken);
             
             var approver = await _context.Approvers
-                .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1)
+                .Where(x => x.ModuleName == Modules.ListingFeeApproval && x.Level == 1)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (approver is null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
 
             if (listingFee == null)

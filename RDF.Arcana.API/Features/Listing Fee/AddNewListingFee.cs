@@ -103,7 +103,7 @@ public class AddNewListingFee : ControllerBase
             }
 
             var approvers = await _context.Approvers
-                .Where(x => x.ModuleName == Modules.RegistrationApproval)
+                .Where(x => x.ModuleName == Modules.ListingFeeApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
                 
