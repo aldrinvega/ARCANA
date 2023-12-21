@@ -232,7 +232,7 @@ public class UpdateClientInformation : ControllerBase
             existingClient.BusinessAddress.Barangay = request.BusinessAddress.BarangayName;
             existingClient.RepresentativeName = request.AuthorizedRepresentative;
             existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
-            existingClient.Cluster = request.Cluster;
+            existingClient.ClusterId = request.Cluster;
             existingClient.Freezer = request.Freezer;
             existingClient.CustomerType = request.TypeOfCustomer;
             existingClient.DirectDelivery = request.DirectDelivery;

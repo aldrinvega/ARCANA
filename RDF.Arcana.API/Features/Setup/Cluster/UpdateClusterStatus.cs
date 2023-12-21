@@ -60,7 +60,7 @@ public class UpdateClusterStatus : ControllerBase
             }
 
             //Validate if the cluster is already used, if already used cannot archive
-            var canArchive = await _context.Clients.FirstOrDefaultAsync(client => client.Cluster == request.ClusterId,
+            var canArchive = await _context.Clients.FirstOrDefaultAsync(client => client.ClusterId == request.ClusterId,
                     cancellationToken);
 
             if (canArchive is not null)

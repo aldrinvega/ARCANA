@@ -38,7 +38,7 @@ public static class AllMappingExtension
                 StoreType = client.StoreType.StoreTypeName,
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
-                Cluster = client.Cluster,
+                Cluster = client.ClusterId,
                 Freezer = client.Freezer,
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,

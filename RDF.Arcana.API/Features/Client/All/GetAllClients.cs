@@ -294,7 +294,7 @@ public class GetAllClients : ControllerBase
                 var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
 
                 regularClients = regularClients
-                    .Where(x => userClusters.Contains(x.Cluster) && x.RegistrationStatus == request.RegistrationStatus);
+                    .Where(x => userClusters.Contains(x.ClusterId) && x.RegistrationStatus == request.RegistrationStatus);
             }
 
             //Get all the under review request for the Approver
@@ -365,7 +365,7 @@ public class GetAllClients : ControllerBase
                 StoreType = client.StoreType.StoreTypeName,
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
-                Cluster = client.Cluster,
+                Cluster = client.ClusterId,
                 Freezer = client.Freezer,
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,
