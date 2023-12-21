@@ -47,7 +47,7 @@ public class AddNewCluster : ControllerBase
 
         public async Task<Result> Handle(AddNewClusterCommand request, CancellationToken cancellationToken)
         {
-            var existingUserInCluster = await _context.Clusters.FirstOrDefaultAsync(user => user.ClusterType == request.Cluster, cancellationToken);
+            var existingUserInCluster = await _context.Clusters.FirstOrDefaultAsync(user => user.ClusterType == request.Cluster && user.IsActive, cancellationToken);
 
             if (existingUserInCluster != null)
             {

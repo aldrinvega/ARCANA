@@ -4,9 +4,9 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 
-namespace RDF.Arcana.API.Features.Setup.Discount;
+namespace RDF.Arcana.API.Features.Setup.Variable_Discount;
 
-[Route("api/Discount")]
+[Route("api/VariableDiscount")]
 [ApiController]
 public class AddNewVariableDiscount : ControllerBase
 {
@@ -78,7 +78,7 @@ public class AddNewVariableDiscount : ControllerBase
 
             if (overlapExists)
             {
-                return DiscountErrors.Overlap();
+                return VariableDiscountErrors.Overlap();
             }
 
             var discount = new Domain.VariableDiscounts

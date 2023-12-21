@@ -1,4 +1,4 @@
-﻿namespace RDF.Arcana.API.Features.Setup.Discount;
+﻿namespace RDF.Arcana.API.Features.Setup.Variable_Discount;
 
 public static class DiscountMappingExtension
 {
