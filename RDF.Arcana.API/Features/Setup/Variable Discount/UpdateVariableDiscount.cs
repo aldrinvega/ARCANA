@@ -3,9 +3,9 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Setup.Discount.Exception;
 
-namespace RDF.Arcana.API.Features.Setup.Discount;
+namespace RDF.Arcana.API.Features.Setup.Variable_Discount;
 
-[Route("api/Discount")]
+[Route("api/VariableDiscount")]
 [ApiController]
 public class UpdateVariableDiscount : ControllerBase
 {
@@ -57,7 +57,7 @@ public class UpdateVariableDiscount : ControllerBase
 
         public async Task<Result> Handle(UpdateDiscountCommand request, CancellationToken cancellationToken)
         {
-            var existingDiscount = await _context.Discounts.FindAsync(request.Id);
+            var existingDiscount = await _context.VariableDiscounts.FindAsync(request.Id);
 
             if (existingDiscount == null)
                 throw new DiscountNotFoundException();
@@ -80,24 +80,12 @@ public class UpdateVariableDiscount : ControllerBase
 
 
             if (overlapExists)
-                throw new DiscountOverlapsToTheExistingOneException();
+                return VariableDiscountErrors.Overlap();
 
-            if (
-                existingDiscount.LowerBound == request.LowerBound &&
-                existingDiscount.UpperBound == request.UpperBound &&
-                existingDiscount.CommissionRateLower == request.CommissionRateLower &&
-                existingDiscount.CommissionRateUpper == request.CommissionRateUpper &&
-                existingDiscount.CommissionRateUpper == request.CommissionRateUpper)
-            {
-                throw new System.Exception("No changes");
-            }
-
-            existingDiscount.LowerBound = request.LowerBound;
-            existingDiscount.UpperBound = request.UpperBound;
-            existingDiscount.CommissionRateLower = request.CommissionRateLower;
-            existingDiscount.CommissionRateUpper = request.CommissionRateUpper;
-            existingDiscount.ModifiedBy = request.ModifiedBy ?? "Admin";
-            existingDiscount.UpdateAt = DateTime.Now;
+            existingDiscount.MinimumAmount = request.LowerBound;
+            existingDiscount.MaximumAmount = request.UpperBound;
+            existingDiscount.MinimumPercentage = request.CommissionRateLower;
+            existingDiscount.MaximumPercentage = request.CommissionRateUpper;
 
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -48,6 +48,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ClientModeOfPayment> ClientModeOfPayments { get; set; }
     public virtual DbSet<Cluster> Clusters { get; set; }
     public virtual DbSet<CdoCluster> CdoClusters { get; set; }
+    public virtual DbSet<OtherExpenses> OtherExpenses { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,6 +76,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(u => u.AddedByUser)
             .WithOne()
             .HasForeignKey<Department>(u => u.AddedBy);
+        
+        modelBuilder.Entity<OtherExpenses>()
+            .HasOne(u => u.AddedByUser)
+            .WithOne()
+            .HasForeignKey<OtherExpenses>(u => u.AddedBy);
 
         modelBuilder.Entity<Discount>()
             .HasOne(u => u.AddedByUser)

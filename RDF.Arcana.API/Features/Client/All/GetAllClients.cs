@@ -257,6 +257,10 @@ public class GetAllClients : ControllerBase
                 .ThenInclude(uom => uom.Uom)
                 .Include(cd => cd.ClientDocuments)
                 .AsSingleQuery();*/
+                
+            var user = await _context.Users
+                    .Include(cluster => cluster.CdoCluster)
+                    .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -269,19 +273,30 @@ public class GetAllClients : ControllerBase
             // To Separate Under Review & Approved Request between CDO and Approver including Admin
             // (Request and Approval)
             //To get the Approved Request, Approval table need to access and the role need to be Approver
-            regularClients = request.RoleName switch
+            if (request.RoleName == Roles.Approver && (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                                                       request.RegistrationStatus.ToLower() !=
+                                                       Status.UnderReview.ToLower()))
             {
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.RegistrationStatus) && 
-                                    request.RegistrationStatus.ToLower() != Status.UnderReview.ToLower() =>
-                    regularClients.Where(clients => clients.Request.Approvals.Any(x => x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy && x.IsActive == true)),
-                Roles.Approver => regularClients.Where(clients =>
+                regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
+                    x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
+                    x.IsActive == true));
+            }
+                
+            else if (request.RoleName == Roles.Approver)
+            {
+                regularClients = regularClients.Where(clients =>
                     clients.Request.Status == request.RegistrationStatus &&
-                    clients.Request.CurrentApproverId == request.AccessBy),
-                Roles.Admin or Roles.Cdo => regularClients.Where(x => 
-                    x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus),
-                _ => regularClients
-            };
+                    clients.Request.CurrentApproverId == request.AccessBy);
+            }
             
+            else if (request.RoleName is Roles.Admin or Roles.Cdo)
+            {
+                var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
+
+                regularClients = regularClients
+                    .Where(x => userClusters.Contains(x.Cluster) && x.RegistrationStatus == request.RegistrationStatus);
+            }
+
             //Get all the under review request for the Approver
             //It will access the request table where status is Under Review
             //And CurrentApproverId is the Logged In user (Approver)

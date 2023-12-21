@@ -2,9 +2,9 @@
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
-namespace RDF.Arcana.API.Features.Setup.Discount;
+namespace RDF.Arcana.API.Features.Setup.Variable_Discount;
 
-[Route("api/Discount")]
+[Route("api/VariableDiscount")]
 [ApiController]
 
 public class DeleteVariableDiscount : ControllerBase
@@ -60,7 +60,7 @@ public class DeleteVariableDiscount : ControllerBase
 
             if (existingVariableDiscount is null)
             {
-                return DiscountErrors.NotFound();
+                return VariableDiscountErrors.NotFound();
             }
             _context.VariableDiscounts.Remove(existingVariableDiscount);
             await _context.SaveChangesAsync(cancellationToken);

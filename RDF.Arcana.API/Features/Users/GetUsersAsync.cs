@@ -19,7 +19,7 @@ public class GetUsersAsync : ControllerBase
     }
 
     [HttpGet("GetUser")]
-    public async Task<IActionResult> Get([FromQuery] GetUsersAsync.GetUserAsyncQuery query)
+    public async Task<IActionResult> Get([FromQuery] GetUserAsyncQuery query)
     {
         try
         {
@@ -57,6 +57,7 @@ public class GetUsersAsync : ControllerBase
     public class GetUserAsyncQuery : UserParams, IRequest<PagedList<GetUserAsyncQueryResult>>
     {
         public string Search { get; set; }
+        public string Role { get; set; }
         public bool? Status { get; set; }
     }
 
@@ -104,6 +105,11 @@ public class GetUsersAsync : ControllerBase
             if (request.Status != null)
             {
                 users = users.Where(x => x.IsActive == request.Status);
+            }
+
+            if (!string.IsNullOrEmpty(request.Role))
+            {
+                users = users.Where(role => role.UserRoles.UserRoleName == request.Role);
             }
 
             var result = users.Select(x => x.ToGetUserAsyncQueryResult());

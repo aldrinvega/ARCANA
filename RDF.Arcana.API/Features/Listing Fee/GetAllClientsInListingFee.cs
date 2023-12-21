@@ -87,7 +87,6 @@ public class GetAllClientsInListingFee : ControllerBase
             public string Uom { get; set; }
             public int Sku { get; set; }
             public decimal UnitCost { get; set; }
-            public int Quantity { get; set; }
         }
     }
 
@@ -128,7 +127,8 @@ public class GetAllClientsInListingFee : ControllerBase
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .Include(cd => cd.ClientDocuments);
+                .Include(cd => cd.ClientDocuments)
+                .Where(clients => clients.RegistrationStatus == Status.Approved);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
