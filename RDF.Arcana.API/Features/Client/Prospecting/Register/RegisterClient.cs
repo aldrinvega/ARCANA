@@ -60,7 +60,7 @@ public class RegisterClient : ControllerBase
         public string TinNumber { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public int RequestedBy { get; set; }
@@ -123,7 +123,7 @@ public class RegisterClient : ControllerBase
                 existingClient.RepresentativeName = request.AuthorizedRepresentative;
                 existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
                 existingClient.TinNumber = request.TinNumber;
-                existingClient.Cluster = request.Cluster;
+                existingClient.ClusterId = request.ClusterId;
                 existingClient.Longitude = request.Longitude;
                 existingClient.Latitude = request.Latitude;
                 existingClient.DateOfBirthDB = dateOfBirth;

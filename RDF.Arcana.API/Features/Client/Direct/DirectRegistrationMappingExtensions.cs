@@ -34,7 +34,7 @@ public static class DirectRegistrationMappingExtensions
                 },
             RepresentativeName = directRegistrationClients.Client.RepresentativeName,
             RepresentativePosition = directRegistrationClients.Client.RepresentativePosition,
-            Cluster = directRegistrationClients.Client.Cluster,
+            Cluster = directRegistrationClients.Client.ClusterId,
             StoreType = directRegistrationClients.Client.StoreType.StoreTypeName,
             Freezer = directRegistrationClients.Client.Freezer,
             CustomerType = directRegistrationClients.Client.CustomerType,

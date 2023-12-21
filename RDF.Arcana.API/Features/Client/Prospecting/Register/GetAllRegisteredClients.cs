@@ -68,7 +68,7 @@ public class GetAllRegisteredClients : ControllerBase
         public string RepresentativeName { get; set; }
         public string RepresentativePosition { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string CustomerType { get; set; }
         public int TermDays { get; set; }
@@ -165,7 +165,7 @@ public class GetAllRegisteredClients : ControllerBase
                         City = client.BusinessAddress.City,
                         Province = client.BusinessAddress.Province
                     },
-                    Cluster = client.Cluster,
+                    ClusterId = client.ClusterId,
                     Freezer = client.Freezer,
                     CustomerType = client.CustomerType,
                     TermDays = client.TermDays ?? 0,

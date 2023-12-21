@@ -204,7 +204,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     BusinessAddressId = businessAddress.Id,
                     RepresentativeName = request.AuthorizedRepresentative,
                     RepresentativePosition = request.AuthorizedRepresentativePosition,
-                    Cluster = request.Cluster,
+                    ClusterId = request.Cluster,
                     Freezer = request.Freezer,
                     CustomerType = request.TypeOfCustomer,
                     DirectDelivery = request.DirectDelivery,
