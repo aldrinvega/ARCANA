@@ -24,8 +24,8 @@ namespace RDF.Arcana.API.Features.Client.Direct
         [Required] public OwnersAddressCollection OwnersAddress { get; set; }
         [Required] public string EmailAddress { get; set; }
         [Required] public string PhoneNumber { get; set; }
-        [Required] public DateOnly DateOfBirth { get; set; }
-        [Required] public string TinNumber { get; set; }
+        [Required] public DateOnly DateOfBirth { get; set; } 
+        public string TinNumber { get; set; }
         [Required] public string BusinessName { get; set; }
         [Required] public int StoreTypeId { get; set; }
         public int AddedBy { get; set; }

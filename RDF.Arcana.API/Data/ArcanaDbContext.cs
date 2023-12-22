@@ -106,6 +106,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(u => u.AddedByUser)
             .WithOne()
             .HasForeignKey<ProductSubCategory>(u => u.AddedBy);
+        
+        modelBuilder.Entity<OtherExpenses>()
+            .HasOne(u => u.AddedByUser)
+            .WithMany()
+            .HasForeignKey(u => u.AddedBy);
 
         modelBuilder.Entity<ProductCategory>()
             .HasOne(u => u.AddedByUser)
