@@ -52,7 +52,7 @@ public class NotificationService : ControllerBase
              _context = context;
          }
          
-         public Task<Result> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
+         public async Task<Result> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
          {
              var pendingCount = 0;
              var approvedCount = 0;
@@ -63,6 +63,12 @@ public class NotificationService : ControllerBase
              var forFreebiesCount = 0;
              var forReleasingCount = 0;
              var releasedCount = 0;
+             
+             var user = await _context.Users
+                 .Include(cluster => cluster.CdoCluster)
+                 .FirstOrDefaultAsync(user => user.Id == request.AddedBy, cancellationToken);
+             
+             var userClusters = user?.CdoCluster?.Select(cluster => cluster.UserId);
              
              switch (request.Role)
              {
@@ -145,7 +151,7 @@ public class NotificationService : ControllerBase
                              ap.Status == Status.Rejected && ap.IsActive);
 
                      forFreebiesCount = _context.Clients
-                         .Where(x =>
+                         .Where(x => userClusters != null && (userClusters.Contains(x.AddedBy) && x.IsActive && x.RegistrationStatus == Status.Requested) &&
                              x.RegistrationStatus == Status.Requested &&
                              x.AddedBy == request.AddedBy &&
                              x.IsActive &&
@@ -154,21 +160,26 @@ public class NotificationService : ControllerBase
                          .Count(x => !x.FreebiesRequests.Any());
                      
                      forReleasingCount = _context.Clients
-                         .Where(client => client.IsActive &&
-                                          client.RegistrationStatus == Status.Requested)
+                         .Where(client => userClusters != null && (userClusters.Contains(client.AddedBy) &&
+                                                                   client.IsActive &&
+                                                                   client.RegistrationStatus == Status.Requested))
                          .Include(x => x.FreebiesRequests)
                          .Count(x => x.FreebiesRequests.Any(x => 
-                             x.Status == Status.ForReleasing && 
-                             x.RequestedBy == request.AddedBy));
+                             x.Status == Status.ForReleasing));
                      
                      releasedCount = _context.Clients
-                         .Where(x => 
-                             x.IsActive && 
-                             x.Origin == Origin.Prospecting &&
-                             x.RegistrationStatus == Status.PendingRegistration)
-                         .Include(x => x.FreebiesRequests)
-                         .Count(x => x.FreebiesRequests.Any(x => 
-                             x.Status == Status.Released && x.RequestedBy == request.AddedBy));
+                         .Count(x => userClusters != null &&
+                                     userClusters.Contains(x.AddedBy) &&
+                                     x.IsActive &&
+                                     x.Origin == Origin.Prospecting &&
+                                     x.RegistrationStatus == Status.PendingRegistration &&
+                                     x.FreebiesRequests.Any(fr => fr.Status == Status.Released));
+
+// The above code assumes the following:
+// - userClusters is a collection representing the clusters associated with the user
+// - IsActive, Origin, and RegistrationStatus are properties of the Client entity
+// - FreebiesRequests is a navigation property in the Client entity representing a collection of FreebiesRequest entities
+// - Status is a property of the FreebiesRequest entity
                      break;
              }
 
@@ -185,7 +196,7 @@ public class NotificationService : ControllerBase
                  RejectedListingFee = rejectedListingFeeCount
              };
 
-             return Task.FromResult<Result>(Result.Success(result));
+             return Result.Success(result);
          }
      }
 

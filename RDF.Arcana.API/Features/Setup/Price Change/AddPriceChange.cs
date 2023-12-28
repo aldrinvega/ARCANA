@@ -61,6 +61,16 @@ public class AddPriceChange : ControllerBase
             {
                 return ItemErrors.NotFound(request.ItemId);
             }
+
+            var existingPriceChange = await _context.ItemPriceChanges.FirstOrDefaultAsync(pc =>
+                pc.EffectivityDate == request.EffectivityDate && pc.ItemId == request.ItemId, cancellationToken);
+
+            if (existingPriceChange is not null)
+            {
+                existingPriceChange.Price = request.Price;
+                await _context.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
                 // Else add new price change
                 var newPriceChange = new ItemPriceChange
                 {

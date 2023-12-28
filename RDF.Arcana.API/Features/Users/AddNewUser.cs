@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Setup.Cluster;
 using RDF.Arcana.API.Features.Users.Exception;
 using RDF.Arcana.API.Features.Users.Exceptions;
 
@@ -62,6 +63,12 @@ public class AddNewUser : ControllerBase
         public int? UserRoleId { get; set; }
         public int? CompanyId { get; set; }
         public string ProfilePicture { get; set; }
+        
+        public ICollection<UserCluster> Clusters { get; set; }
+        public class UserCluster
+        {
+            public int ClusterId { get; set; }
+        }
 
 
         public class Handler : IRequestHandler<AddNewUserCommand, Result>
@@ -99,13 +106,14 @@ public class AddNewUser : ControllerBase
                 {
                     return UserErrors.UserAlreadyExist();
                 }
-
+                
                 var user = new User
                 {
                     FullIdNo = command.FullIdNo,
                     Fullname = command.Fullname,
                     Username = command.Username,
                     Password = BCrypt.Net.BCrypt.HashPassword(command.Password),
+                    AddedBy = command.AddedBy,
                     CompanyId = command.CompanyId,
                     LocationId = command.LocationId,
                     DepartmentId = command.DepartmentId,
@@ -116,6 +124,62 @@ public class AddNewUser : ControllerBase
 
                 await _context.Users.AddAsync(user, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
+
+                if (command.Clusters != null)
+                {
+                    //Validate if the clusters are existing
+                    foreach (var cluster in command.Clusters)
+                    {
+                        var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                            ct.Id == cluster.ClusterId && ct.IsActive, cancellationToken);
+
+                        if (existingCluster is null)
+                        {
+                            return ClusterErrors.NotFound();
+                        }
+                    }
+
+                    //Validate the users that will be tagged to the cluster is existing
+                    foreach (var cluster in command.Clusters)
+                    {
+                        var validateUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id,
+                            cancellationToken: cancellationToken);
+
+                        if (validateUser is null)
+                        {
+                            return UserErrors.NotFound();
+                        }
+                    }
+
+                    //Validate the users if already tagged to the cluster
+
+                    foreach (var cluster in command.Clusters)
+                    {
+                        var existingTaggedUser = await _context.CdoClusters.FirstOrDefaultAsync(
+                            ct => ct.ClusterId == cluster.ClusterId && ct.UserId == user.Id, cancellationToken);
+
+                        if (existingTaggedUser is not null)
+                        {
+                            return ClusterErrors.AlreadyTagged();
+                        }
+                    }
+
+                    //Add multiple cluster per user
+                    foreach (var cluster in command.Clusters)
+                    {
+                        var taggedUsers = new CdoCluster
+                        {
+                            ClusterId = cluster.ClusterId,
+                            UserId = user.Id
+                        };
+
+                        await _context.CdoClusters.AddAsync(taggedUsers, cancellationToken);
+                    }
+
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+
+                
                 return Result.Success();
             }
         }

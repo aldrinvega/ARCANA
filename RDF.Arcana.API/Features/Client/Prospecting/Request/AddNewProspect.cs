@@ -34,8 +34,8 @@ public class ValidationException : Exception
 
 public class AddNewProspectCommand : IRequest<Result>
 {
-    [Required] public string OwnersName { get; set; }
-    [Required] public string EmailAddress { get; set; }
+    public string OwnersName { get; set; }
+    public string EmailAddress { get; set; }
 
     public string HouseNumber { get; set; }
     public string StreetName { get; set; }

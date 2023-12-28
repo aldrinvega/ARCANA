@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Mapster;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RDF.Arcana.API.Domain;
 
@@ -49,6 +48,8 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Cluster> Clusters { get; set; }
     public virtual DbSet<CdoCluster> CdoClusters { get; set; }
     public virtual DbSet<OtherExpenses> OtherExpenses { get; set; }
+    
+    public virtual DbSet<Expenses> Expenses { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -226,6 +227,16 @@ public class ArcanaDbContext : DbContext
             .HasOne(x => x.RequestedByUser)
             .WithMany()
             .HasForeignKey(x => x.RequestedBy);
+        
+        modelBuilder.Entity<Expenses>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+        
+        modelBuilder.Entity<Expenses>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
 
         modelBuilder.Entity<ListingFee>()
             .HasOne(x => x.RequestedByUser)

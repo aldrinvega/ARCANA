@@ -28,6 +28,8 @@ public class AddNewListingFee : ControllerBase
     {
         try
         {
+            
+            
             var result = await _validator.ValidateAsync(command);
 
             if (!result.IsValid)
@@ -61,6 +63,7 @@ public class AddNewListingFee : ControllerBase
         public int ClientId { get; set; }
         public int RequestedBy { get; set; }
         public decimal Total { get; set; }
+        public decimal MerchandisingAllowance { get; set; }
         public ICollection<ListingFeeItem> ListingItems { get; set; }
 
         public class ListingFeeItem
@@ -109,7 +112,7 @@ public class AddNewListingFee : ControllerBase
                 
             if (!approvers.Any())
             {
-                return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
 
             var newRequest = new Request(
@@ -154,7 +157,7 @@ public class AddNewListingFee : ControllerBase
             {
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);
             }
-            
+
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

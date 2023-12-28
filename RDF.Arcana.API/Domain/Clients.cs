@@ -29,7 +29,7 @@ public class Clients : BaseEntity
     public string RepresentativeName { get; set; }
     public string RepresentativePosition { get; set; }
     public int? BusinessAddressId { get; set; }
-    public int ClusterId { get; set; }
+    public int? ClusterId { get; set; }
     public bool Freezer { get; set; }
     public string CustomerType { get; set; }
     public string Origin { get; set; }

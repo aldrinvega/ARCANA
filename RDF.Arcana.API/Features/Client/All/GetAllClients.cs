@@ -100,7 +100,7 @@ public class GetAllClients : ControllerBase
         public string StoreType { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int? Cluster { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool? DirectDelivery { get; set; }
@@ -227,36 +227,50 @@ public class GetAllClients : ControllerBase
         public async Task<PagedList<GetAllClientResult>> Handle(GetAllClientsQuery request,
             CancellationToken cancellationToken)
         {
-            var regularClients = _context.Clients.AsNoTracking();
-                /*.AsSplitQuery()
+            var regularClients = _context.Clients
+                .AsSplitQuery()
                 .Include(mop => mop.ClientModeOfPayment)
+                .AsSplitQuery()
                 .Include(abu => abu.AddedByUser)
+                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(user => user.Requestor)
+                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ah => ah.UpdateRequestTrails)
+                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
                 .ThenInclude(cap => cap.Approver)
+                .AsSplitQuery()
                 .Include(st => st.StoreType)
+                .AsSplitQuery()
                 .Include(fd => fd.FixedDiscounts)
+                .AsSplitQuery()
                 .Include(to => to.Term)
                 .ThenInclude(tt => tt.Terms)
+                .AsSplitQuery()
                 .Include(to => to.Term)
                 .ThenInclude(td => td.TermDays)
+                .AsSplitQuery()
                 .Include(ba => ba.BusinessAddress)
+                .AsSplitQuery()
                 .Include(oa => oa.OwnersAddress)
+                .AsSplitQuery()
                 .Include(bc => bc.BookingCoverages)
+                .AsSplitQuery()
                 .Include(fr => fr.FreebiesRequests)
                 .ThenInclude(fi => fi.FreebieItems)
                 .ThenInclude(item => item.Items)
                 .ThenInclude(uom => uom.Uom)
+                .AsSplitQuery()
                 .Include(lf => lf.ListingFees)
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
+                .AsSplitQuery()
                 .Include(cd => cd.ClientDocuments)
-                .AsSingleQuery();*/
+                .AsSingleQuery();
                 
             var user = await _context.Users
                     .Include(cluster => cluster.CdoCluster)
@@ -293,8 +307,14 @@ public class GetAllClients : ControllerBase
             {
                 var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
 
+                if (request.RegistrationStatus is Status.ForReleasing or Status.Released)
+                {
+                    regularClients = regularClients
+                        .Where(x => x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus);
+                }
+
                 regularClients = regularClients
-                    .Where(x => userClusters.Contains(x.ClusterId) && x.RegistrationStatus == request.RegistrationStatus);
+                    .Where(x => userClusters != null && (userClusters.Contains(x.ClusterId.Value)) && x.RegistrationStatus == request.RegistrationStatus);
             }
 
             //Get all the under review request for the Approver

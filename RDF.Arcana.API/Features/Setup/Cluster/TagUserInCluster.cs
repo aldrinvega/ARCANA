@@ -34,8 +34,8 @@ public class TagUserInCluster : ControllerBase
     public class TagUserInClusterCommand : IRequest<Result>
     {
         
-        public ICollection<UserCluster> Clusters { get; set; }
-        public class UserCluster
+        public ICollection<UserClusterToTagged> Clusters { get; set; }
+        public class UserClusterToTagged
         {
             public int ClusterId { get; set; }
             public int UserId { get; set; }

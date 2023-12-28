@@ -76,6 +76,13 @@ public class GetUsersAsync : ControllerBase
         public string LocationName { get; set; }
         public string RoleName { get; set; }
         public ICollection<string> Permission { get; set; }
+        public IEnumerable<CdoClusterCollection> Clusters { get; set; }
+
+        public class CdoClusterCollection
+        {
+            public int ClusterId { get; set; }
+            public string Cluster { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetUserAsyncQuery, PagedList<GetUserAsyncQueryResult>>
@@ -91,11 +98,13 @@ public class GetUsersAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<User> users = _context.Users
-                .Include(x => x.AddedByUser)
-                .Include(x => x.UserRoles)
-                .Include(x => x.Department)
-                .Include(x => x.Company)
-                .Include(x => x.Location);
+                .Include(a => a.AddedByUser)
+                .Include(u => u.UserRoles)
+                .Include(d => d.Department)
+                .Include(c => c.Company)
+                .Include(l => l.Location)
+                .Include(cluster => cluster.CdoCluster)
+                .ThenInclude(c => c.Cluster);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

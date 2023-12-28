@@ -19,20 +19,20 @@ using RDF.Arcana.API.Features.Setup.Mode_Of_Payment;
 namespace RDF.Arcana.API.Features.Client.Direct
 {
     public class DirectRegistrationCommand : IRequest<Result>
-    {
-        [Required] public string OwnersName { get; set; }
-        [Required] public OwnersAddressCollection OwnersAddress { get; set; }
-        [Required] public string EmailAddress { get; set; }
-        [Required] public string PhoneNumber { get; set; }
-        [Required] public DateOnly DateOfBirth { get; set; } 
+    { 
+        public string OwnersName { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; } 
+        public string EmailAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateOnly DateOfBirth { get; set; } 
         public string TinNumber { get; set; }
-        [Required] public string BusinessName { get; set; }
-        [Required] public int StoreTypeId { get; set; }
+        public string BusinessName { get; set; }
+        public int StoreTypeId { get; set; }
         public int AddedBy { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
@@ -204,7 +204,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     BusinessAddressId = businessAddress.Id,
                     RepresentativeName = request.AuthorizedRepresentative,
                     RepresentativePosition = request.AuthorizedRepresentativePosition,
-                    ClusterId = request.Cluster,
+                    ClusterId = request.ClusterId,
                     Freezer = request.Freezer,
                     CustomerType = request.TypeOfCustomer,
                     DirectDelivery = request.DirectDelivery,

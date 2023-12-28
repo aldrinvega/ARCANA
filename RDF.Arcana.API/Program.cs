@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using B2Net.Models;
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,7 +36,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("Smarter");
+var connectionString = builder.Configuration.GetConnectionString("LiveConnection");
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<ArcanaDbContext>(x =>

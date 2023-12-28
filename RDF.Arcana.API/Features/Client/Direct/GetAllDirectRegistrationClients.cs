@@ -75,7 +75,7 @@ public class GetAllDirectRegistrationClients : ControllerBase
         public BusinessAddressCollection BusinessAddress { get; set; }
         public string RepresentativeName { get; set; }
         public string RepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int? Cluster { get; set; }
         public bool Freezer { get; set; }
         public bool? DirectDelivery { get; set; }
         public string BookingCoverage { get; set; }

@@ -10,4 +10,5 @@ public class Modules
     public const string Prospect = "Prospect";
     public const string RegistrationApproval = "Registration Approval";
     public const string ListingFeeApproval = "Listing Fee Approval";
+    public const string OtherExpensesApproval = "Other Expenses Approval";
 }

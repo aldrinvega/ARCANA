@@ -68,7 +68,7 @@ public class GetAllRegisteredClients : ControllerBase
         public string RepresentativeName { get; set; }
         public string RepresentativePosition { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
-        public int ClusterId { get; set; }
+        public int? ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string CustomerType { get; set; }
         public int TermDays { get; set; }

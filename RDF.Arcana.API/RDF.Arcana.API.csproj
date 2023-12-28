@@ -48,6 +48,7 @@
 
 
     <ItemGroup>
+      <Folder Include="Common\Caching\" />
       <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
     </ItemGroup>
 
