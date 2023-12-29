@@ -10,6 +10,7 @@ public class Expenses : BaseEntity
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public int AddedBy { get; set; }
+    public string Status { get; set; }
     public int? ModifiedBy { get; set; }
     public int RequestId { get; set; }
     

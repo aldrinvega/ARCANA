@@ -53,7 +53,12 @@ public class NotificationService : ControllerBase
          }
          
          public async Task<Result> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
-         {
+         { 
+             // - userClusters is a collection representing the clusters associated with the user
+            // - IsActive, Origin, and RegistrationStatus are properties of the Client entity
+            // - FreebiesRequests is a navigation property in the Client entity representing a collection of FreebiesRequest entities
+            // - Status is a property of the FreebiesRequest entity
+
              var pendingCount = 0;
              var approvedCount = 0;
              var rejectedCount = 0;
@@ -76,21 +81,21 @@ public class NotificationService : ControllerBase
                      pendingCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
-                         .Count(x => x.Request.CurrentApproverId == request.AddedBy && x.Request.Status == Status.UnderReview && x.Request.Module == Modules.RegistrationApproval );
+                         .Count(x => x.Request.CurrentApproverId == request.AddedBy && x.Request.Status == Status.UnderReview && x.Request.Module == Modules.RegistrationApproval && x.IsActive);
 
                      approvedCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
                          .Where(x => x.Approvals != null)
                          .SelectMany(x => x.Request.Approvals)
-                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Approved && ap.Request.Module == Modules.RegistrationApproval);
+                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Approved && ap.Request.Module == Modules.RegistrationApproval && ap.IsActive);
                  
                      rejectedCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
                          .Where(x => x.Approvals != null && x.Request.Status != Status.UnderReview)
                          .SelectMany(x => x.Request.Approvals)
-                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Rejected && ap.Request.Module == Modules.RegistrationApproval);
+                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Rejected && ap.Request.Module == Modules.RegistrationApproval && ap.IsActive);
                      
                      pendingListingFeeCount = _context.ListingFees
                          .Include(x => x.Request)
@@ -120,11 +125,13 @@ public class NotificationService : ControllerBase
                      
                      pendingCount = _context.Clients
                          .Count(x => x.AddedBy == request.AddedBy && 
+                                      userClusters != null && (userClusters.Contains(x.ClusterId.Value)) &&
                                      x.RegistrationStatus == Status.UnderReview && 
-                                     x.IsActive );
+                                     x.IsActive);
 
                      approvedCount = _context.Clients
                          .Count(x => x.AddedBy == request.AddedBy && 
+                                     userClusters != null && (userClusters.Contains(x.ClusterId.Value)) &&
                                      x.RegistrationStatus == Status.Approved && 
                                      x.IsActive);
                  
@@ -132,6 +139,7 @@ public class NotificationService : ControllerBase
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
                          .Count(x => x.AddedBy == request.AddedBy && 
+                                     userClusters != null && (userClusters.Contains(x.ClusterId.Value)) &&
                                      x.Request.Status == Status.Rejected && 
                                      x.IsActive);
                  
@@ -174,12 +182,6 @@ public class NotificationService : ControllerBase
                                      x.Origin == Origin.Prospecting &&
                                      x.RegistrationStatus == Status.PendingRegistration &&
                                      x.FreebiesRequests.Any(fr => fr.Status == Status.Released));
-
-// The above code assumes the following:
-// - userClusters is a collection representing the clusters associated with the user
-// - IsActive, Origin, and RegistrationStatus are properties of the Client entity
-// - FreebiesRequests is a navigation property in the Client entity representing a collection of FreebiesRequest entities
-// - Status is a property of the FreebiesRequest entity
                      break;
              }
 

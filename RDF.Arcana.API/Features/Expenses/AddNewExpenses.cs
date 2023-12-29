@@ -97,6 +97,8 @@ public class AddNewExpenses : ControllerBase
             {
                 OtherExpensesId = request.OtherExpensesId,
                 Amount = request.Amount,
+                RequestId = newRequest.Id,
+                Status = Status.UnderReview,
                 AddedBy = request.AddedBy
             };
 

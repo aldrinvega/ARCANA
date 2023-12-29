@@ -23,6 +23,7 @@ public class Request : BaseEntity
     public virtual User CurrentApprover { get; set; }
     public virtual FreebieRequest FreebieRequest { get; set; }
     public virtual ListingFee ListingFee { get; set; }
+    public virtual Expenses Expenses { get; set; }
     public virtual Clients Clients { get; set; }
     public virtual ICollection<Approval> Approvals { get; set; }
     public virtual ICollection<UpdateRequestTrail> UpdateRequestTrails { get; set; }

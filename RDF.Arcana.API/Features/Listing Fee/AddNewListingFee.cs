@@ -63,7 +63,6 @@ public class AddNewListingFee : ControllerBase
         public int ClientId { get; set; }
         public int RequestedBy { get; set; }
         public decimal Total { get; set; }
-        public decimal MerchandisingAllowance { get; set; }
         public ICollection<ListingFeeItem> ListingItems { get; set; }
 
         public class ListingFeeItem

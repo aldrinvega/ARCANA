@@ -56,7 +56,7 @@ public class UpdateClientInformation : ControllerBase
         public BusinessAddressToUpdate BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
@@ -232,7 +232,7 @@ public class UpdateClientInformation : ControllerBase
             existingClient.BusinessAddress.Barangay = request.BusinessAddress.BarangayName;
             existingClient.RepresentativeName = request.AuthorizedRepresentative;
             existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
-            existingClient.ClusterId = request.Cluster;
+            existingClient.ClusterId = request.ClusterId;
             existingClient.Freezer = request.Freezer;
             existingClient.CustomerType = request.TypeOfCustomer;
             existingClient.DirectDelivery = request.DirectDelivery;
