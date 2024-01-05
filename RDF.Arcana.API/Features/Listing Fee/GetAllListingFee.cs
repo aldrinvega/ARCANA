@@ -191,7 +191,7 @@ public class GetAllListingFee : ControllerBase
                 ClientName = listingFee.Client.Fullname,
                 RegistrationStatus = listingFee.Client.RegistrationStatus,
                 BusinessName = listingFee.Client.BusinessName,
-                CreatedAt = listingFee.CratedAt.ToString("yyyy-MM-dd"),
+                CreatedAt = listingFee.CratedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 ListingFeeId = listingFee.Id,
                 RequestId = listingFee.RequestId,
                 Status = listingFee.Status,
