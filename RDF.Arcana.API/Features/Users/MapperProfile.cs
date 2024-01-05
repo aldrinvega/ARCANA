@@ -24,7 +24,7 @@ public static class MapperProfile
             Permission = user.UserRoles?.Permissions,
             Clusters = user.CdoCluster?.Select(cluster => new GetUsersAsync.GetUserAsyncQueryResult.CdoClusterCollection
             {
-                ClusterId = cluster.Id,
+                ClusterId = cluster.ClusterId,
                 Cluster = cluster.Cluster?.ClusterType
             }) 
         };

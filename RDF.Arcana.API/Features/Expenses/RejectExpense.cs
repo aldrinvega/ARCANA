@@ -17,7 +17,7 @@ public class RejectExpense : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPut("RejectExpenseRequest")]
+    [HttpPut("RejectExpenseRequest/{id:int}")]
     public async Task<IActionResult> Reject([FromRoute] int id, [FromBody] RejectExpenseCommand command)
     {
         try

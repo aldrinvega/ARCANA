@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Oracle.ManagedDataAccess.Client;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Helpers;
@@ -82,13 +83,22 @@ public class GetAllExpenses : ControllerBase
     {
         public int Id { get; set; }
         public int RequestId { get; set; }
-        public string ExpenseType { get; set; }
-        public decimal Amount { get; set; }
         public string RequestedBy { get; set; }
+        public int ClientId { get; set; }
+        public string OwnersName { get; set; }
+        public string BusinessName { get; set; }
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }
+        public IEnumerable<ExpensesRequestCollection> Expenses { get; set; }
+        public class ExpensesRequestCollection
+        {
+            public int Id { get; set; }
+            public string ExpenseType { get; set; }
+            public decimal Amount { get; set; }
+        }
         public IEnumerable<ExpensesApprovalHistory> ApprovalHistories { get; set; }
         public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
+        public IEnumerable<RequestApproversForExpenses> Approvers { get; set; }
         
         public class ExpensesApprovalHistory
         {
@@ -105,6 +115,11 @@ public class GetAllExpenses : ControllerBase
             public string Module { get; set; }
             public DateTime UpdatedAt { get; set; }
         }
+        public class RequestApproversForExpenses
+        {
+            public string Name { get; set; }
+            public int Level { get; set; }
+        }
     }
     
     public class Handler : IRequestHandler<GetAllExpensesQuery, PagedList<GetAllExpensesResult>>
@@ -120,6 +135,9 @@ public class GetAllExpenses : ControllerBase
         {
 
             IQueryable<Domain.Expenses> expenses = _context.Expenses
+                .AsNoTracking();
+                /*.Include(er => er.ExpensesRequests)
+                .ThenInclude(oe => oe.OtherExpense)
                 .AsSplitQuery()
                 .Include(rq => rq.AddedByUser)
                 .AsSplitQuery()
@@ -128,11 +146,11 @@ public class GetAllExpenses : ControllerBase
                 .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
-                .AsSingleQuery();
+                .AsSingleQuery();*/
             
             if (!string.IsNullOrEmpty(request.Search))
             {
-                expenses = expenses.Where(oe => oe.OtherExpenses.ExpenseType.Contains(request.Search));
+                expenses = expenses.Where(oe => oe.Client.BusinessName.Contains(request.Search));
             }
 
             expenses = request.RoleName switch
@@ -167,12 +185,19 @@ public class GetAllExpenses : ControllerBase
             var result = expenses.Select(oe => new GetAllExpensesResult
             {
                 Id = oe.Id,
-                ExpenseType = oe.OtherExpenses.ExpenseType,
                 RequestId = oe.RequestId,
-                Amount = oe.Amount,
+                ClientId = oe.Client.Id,
                 RequestedBy = oe.AddedByUser.Fullname,
+                BusinessName = oe.Client.BusinessName,
+                OwnersName = oe.Client.Fullname,
                 CreatedAt = oe.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 UpdatedAt = oe.UpdatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                Expenses = oe.ExpensesRequests.Select(er => new GetAllExpensesResult.ExpensesRequestCollection
+                {
+                    Id = er.Id,
+                    ExpenseType = er.OtherExpense.ExpenseType,
+                    Amount = er.Amount
+                }),
                 ApprovalHistories = oe.Request.Approvals == null
                     ? null
                     : oe.Request.Approvals.OrderByDescending(a => a.CreatedAt)
@@ -193,6 +218,11 @@ public class GetAllExpenses : ControllerBase
                         Module = uh.ModuleName,
                         UpdatedAt = uh.UpdatedAt
                     }),
+                Approvers = oe.Request.RequestApprovers.Select(x => new GetAllExpensesResult.RequestApproversForExpenses
+                {
+                    Name = x.Approver.Fullname,
+                    Level = x.Level
+                })
             });
 
             result = result.OrderBy(x => x.Id);

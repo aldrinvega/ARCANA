@@ -102,6 +102,7 @@ public class GetAllListingFee : ControllerBase
         public string CancellationReason { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
         public IEnumerable<ListingFeeApprovalHistory> ListingFeeApprovalHistories { get; set; }
+        public IEnumerable<RequestApproversForListingFee> Approvers { get; set; }
 
         public class ListingItem
         {
@@ -121,6 +122,12 @@ public class GetAllListingFee : ControllerBase
             public DateTime CreatedAt { get; set; }
             public string Status { get; set; }
             public string Reason { get; set; }
+        }
+        
+        public class RequestApproversForListingFee
+        {
+            public string Name { get; set; }
+            public int Level { get; set; }
         }
     }
 
@@ -209,7 +216,12 @@ public class GetAllListingFee : ControllerBase
                         Reason = a.Request.Approvals.FirstOrDefault().Reason,
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
-                    })
+                    }),
+                Approvers = listingFee.Request.RequestApprovers.Select(x => new ClientsWithListingFee.RequestApproversForListingFee
+                {
+                    Name = x.Approver.Fullname,
+                    Level = x.Level
+                })
             }).OrderBy(x => x.ClientId);
 
             return PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);

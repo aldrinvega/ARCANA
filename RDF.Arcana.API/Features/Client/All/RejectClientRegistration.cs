@@ -44,7 +44,7 @@ public class RejectClientRegistration : ControllerBase
         }
     }
 
-    public record RejectClientCommand : IRequest<Result>
+    public sealed record RejectClientCommand : IRequest<Result>
     {
         public int RequestId { get; set; }
         public string Reason { get; set; }

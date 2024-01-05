@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Setup.Cluster;
 using RDF.Arcana.API.Features.Setup.UserRoles;
 
@@ -130,11 +131,21 @@ public class UpdateUser : ControllerBase
             foreach (var cluster in request.Clusters)
             {
                 var existingTaggedUser = await _context.CdoClusters.FirstOrDefaultAsync(
-                    ct =>  ct.UserId == user.Id, cancellationToken);
+                    ct =>  ct.UserId == user.Id && ct.ClusterId == cluster.ClusterId, cancellationToken);
 
                 if (existingTaggedUser is not null)
                 {
                     existingTaggedUser.ClusterId = cluster.ClusterId;
+                }
+                else
+                {
+                    var userCluster = new CdoCluster
+                    {
+                        ClusterId = cluster.ClusterId,
+                        UserId = user.Id
+                    };
+                    
+                    await _context.CdoClusters.AddAsync(userCluster, cancellationToken);
                 }
             }
 

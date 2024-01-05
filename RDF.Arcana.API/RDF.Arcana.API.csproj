@@ -48,8 +48,16 @@
 
 
     <ItemGroup>
+      <Folder Include="Abstractions\Messaging\" />
       <Folder Include="Common\Caching\" />
       <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Compile Remove="Abstractions\Messaging\ICommandHandler.cs" />
+      <Compile Remove="Abstractions\Messaging\IQueryHandler.cs" />
+      <Compile Remove="Abstractions\Messaging\ICommand.cs" />
     </ItemGroup>
 
 </Project>

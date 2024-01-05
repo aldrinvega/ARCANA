@@ -65,4 +65,5 @@ public class Clients : BaseEntity
     public virtual Request Request { get; set; }
     public virtual Cluster Cluster { get; set; }
     public virtual ICollection<ClientModeOfPayment> ClientModeOfPayment { get; set; }
+    public virtual ICollection<Expenses> Expenses { get; set; }
 }

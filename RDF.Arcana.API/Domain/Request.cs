@@ -27,4 +27,5 @@ public class Request : BaseEntity
     public virtual Clients Clients { get; set; }
     public virtual ICollection<Approval> Approvals { get; set; }
     public virtual ICollection<UpdateRequestTrail> UpdateRequestTrails { get; set; }
+    public virtual ICollection<RequestApprovers> RequestApprovers { get; set; }
 }

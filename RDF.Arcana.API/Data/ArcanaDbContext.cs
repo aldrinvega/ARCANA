@@ -48,6 +48,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Cluster> Clusters { get; set; }
     public virtual DbSet<CdoCluster> CdoClusters { get; set; }
     public virtual DbSet<OtherExpenses> OtherExpenses { get; set; }
+    public virtual DbSet<ExpensesRequest> ExpensesRequests { get; set; }
     
     public virtual DbSet<Expenses> Expenses { get; set; }
     

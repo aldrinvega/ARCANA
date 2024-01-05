@@ -34,6 +34,7 @@ public class ApproveClientRegistration : ControllerBase
                 UserId = userId
             };
             var result = await _mediator.Send(command);
+            
             if (result.IsFailure)
             {
                 return BadRequest(result);
@@ -47,7 +48,7 @@ public class ApproveClientRegistration : ControllerBase
         }
     }
 
-    public class ApprovedClientRegistrationCommand : IRequest<Result>
+    public sealed record ApprovedClientRegistrationCommand : IRequest<Result>
     {
         public int RequestId { get; set; }
         public int UserId { get; set; }
@@ -110,6 +111,7 @@ public class ApproveClientRegistration : ControllerBase
             
             await _context.Approval.AddAsync(newApproval, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+            
             return Result.Success();
         }
     }

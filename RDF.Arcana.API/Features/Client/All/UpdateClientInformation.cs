@@ -42,7 +42,7 @@ public class UpdateClientInformation : ControllerBase
         }
     }
 
-    public class UpdateClientInformationCommand : IRequest<Result>
+    public sealed record UpdateClientInformationCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
@@ -143,11 +143,12 @@ public class UpdateClientInformation : ControllerBase
             var validateTermDay = await _context.TermDays
                 .FirstOrDefaultAsync(td => td.Id == request.TermDaysId, cancellationToken);
             
-            var approver = await _context.Approvers
-                .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1)
-                .FirstOrDefaultAsync(cancellationToken);
+            var approver = await _context.RequestApprovers
+                .Where(x => x.RequestId == existingClient.RequestId)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
 
-            if (approver is null)
+            if (!approver.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
@@ -245,7 +246,7 @@ public class UpdateClientInformation : ControllerBase
             existingClient.Latitude = request.Latitude;
             existingClient.Request.Status = Status.UnderReview;
             existingClient.RegistrationStatus = Status.UnderReview;
-            existingClient.Request.CurrentApproverId = approver.UserId;
+            existingClient.Request.CurrentApproverId = approver.First().ApproverId;
 
             if (request.FixedDiscount.DiscountPercentage.HasValue)
             {

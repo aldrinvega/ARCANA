@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
@@ -61,6 +60,18 @@ public class AddPriceChange : ControllerBase
             {
                 return ItemErrors.NotFound(request.ItemId);
             }
+            
+            // Check if the latest recorded price is the same
+            var latestPriceChange = await _context.ItemPriceChanges
+                .Where(pc => pc.ItemId == request.ItemId)
+                .OrderByDescending(pc => pc.EffectivityDate)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (latestPriceChange != null && latestPriceChange.Price == request.Price)
+            {
+                // Return an error result indicating that the new price is the same as the latest recorded price
+                return PriceChangeErrors.PriceAlreadyAdded();
+            }
 
             var existingPriceChange = await _context.ItemPriceChanges.FirstOrDefaultAsync(pc =>
                 pc.EffectivityDate == request.EffectivityDate && pc.ItemId == request.ItemId, cancellationToken);
@@ -71,6 +82,9 @@ public class AddPriceChange : ControllerBase
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
             }
+            
+            
+            
                 // Else add new price change
                 var newPriceChange = new ItemPriceChange
                 {

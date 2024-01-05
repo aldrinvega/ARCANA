@@ -4,8 +4,7 @@ namespace RDF.Arcana.API.Domain;
 
 public class Expenses : BaseEntity
 {
-    public int OtherExpensesId { get; set; }
-    public decimal Amount { get; set; }
+    public int ClientId { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
@@ -15,7 +14,8 @@ public class Expenses : BaseEntity
     public int RequestId { get; set; }
     
     public virtual Request Request { get;set; }
-    public virtual OtherExpenses OtherExpenses { get; set; }
     public virtual User AddedByUser { get; set; }
     public virtual User ModifiedByUser { get; set; }
+    public virtual Clients Client { get; set; }
+    public virtual ICollection<ExpensesRequest> ExpensesRequests { get; set; }
 }

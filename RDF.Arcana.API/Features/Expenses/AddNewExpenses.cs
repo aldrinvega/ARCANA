@@ -24,7 +24,6 @@ public class AddNewExpenses : ControllerBase
     {
         try
         {
-            
             if (User.Identity is ClaimsIdentity identity
                 && IdentityHelper.TryGetUserId(identity, out var userId))
             {
@@ -47,9 +46,16 @@ public class AddNewExpenses : ControllerBase
 
     public record AddNewExpensesCommand : IRequest<Result>
     {
-        public int OtherExpensesId { get; set; }
-        public decimal Amount { get; set; }
+        public int ClientId { get; set; }
+        public ICollection<ExpensesCollection> Expenses { get; set; }
+        public class ExpensesCollection
+        {
+            public int OtherExpenseId { get; set; }
+            
+            public decimal Amount { get; set; }
+        }
         public int AddedBy { get; set; }
+       
     }
     
     public class Handler : IRequestHandler<AddNewExpensesCommand, Result>
@@ -72,14 +78,14 @@ public class AddNewExpenses : ControllerBase
             {
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
-
+            
             var newRequest = new Request(
                 Modules.OtherExpensesApproval,
                 request.AddedBy,
                 approvers.First().UserId,
                 Status.UnderReview
             );
-                
+
             await _context.Requests.AddAsync(newRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -95,16 +101,29 @@ public class AddNewExpenses : ControllerBase
 
             var newExpenses = new Domain.Expenses
             {
-                OtherExpensesId = request.OtherExpensesId,
-                Amount = request.Amount,
+                ClientId = request.ClientId,
                 RequestId = newRequest.Id,
                 Status = Status.UnderReview,
                 AddedBy = request.AddedBy
             };
-
+                
             await _context.Expenses.AddAsync(newExpenses, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             
+
+            foreach (var expenses in request.Expenses)
+            {
+                var newExpensesRequest = new Domain.ExpensesRequest
+                {
+                    ExpensesId = newExpenses.Id,
+                    OtherExpenseId = expenses.OtherExpenseId,
+                    Amount = expenses.Amount
+                };
+
+                await _context.ExpensesRequests.AddAsync(newExpensesRequest, cancellationToken);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
     }

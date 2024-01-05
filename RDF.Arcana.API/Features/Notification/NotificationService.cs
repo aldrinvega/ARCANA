@@ -38,7 +38,6 @@ public class NotificationService : ControllerBase
         
         /// ListingFee  
         public int PendingListingFee { get; set; }
-
         public int ApprovedListingFee { get; set; }
         public int RejectedListingFee { get; set; }
     }

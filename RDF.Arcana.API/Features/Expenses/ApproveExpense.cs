@@ -18,7 +18,7 @@ public class ApproveExpense : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPut("ApproveExpense{id:int}")]
+    [HttpPut("ApproveExpense/{id:int}")]
     public async Task<IActionResult> Approve([FromRoute] int id)
     {
         try

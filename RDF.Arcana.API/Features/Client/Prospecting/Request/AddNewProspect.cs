@@ -91,6 +91,7 @@ public class Handler : IRequestHandler<AddNewProspectCommand, Result>
                 x => x.BusinessName == request.BusinessName
                      && x.Fullname == request.OwnersName
                      && x.StoreTypeId == request.StoreTypeId
+                     && x.RegistrationStatus != Status.Voided
                 , cancellationToken);
 
         if (existingProspectCustomer != null)

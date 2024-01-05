@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Ocsp;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Helpers;
@@ -72,7 +73,7 @@ public class GetAllClients : ControllerBase
         }
     }
 
-    public class GetAllClientsQuery : UserParams, IRequest<PagedList<GetAllClientResult>>
+    public class  GetAllClientsQuery : UserParams, IRequest<PagedList<GetAllClientResult>>
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
@@ -117,6 +118,7 @@ public class GetAllClients : ControllerBase
         public IEnumerable<ClientApprovalHistory> ClientApprovalHistories { get; set; }
         public IEnumerable<FreebiesCollection> Freebies { get; set; }
         public IEnumerable<ListingFeeCollection> ListingFees { get; set; }
+        public IEnumerable<RequestApproversForClients> Approvers { get; set; }
 
         public class ModeOfPayment
         {
@@ -213,6 +215,12 @@ public class GetAllClients : ControllerBase
             public string Uom { get; set; }
             public decimal? UnitCost { get; set; }
         }
+
+        public class RequestApproversForClients
+        {
+            public string Name { get; set; }
+            public int Level { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllClientsQuery, PagedList<GetAllClientResult>>
@@ -228,7 +236,7 @@ public class GetAllClients : ControllerBase
             CancellationToken cancellationToken)
         {
             var regularClients = _context.Clients
-                .AsSplitQuery()
+                /*.AsSplitQuery()
                 .Include(mop => mop.ClientModeOfPayment)
                 .AsSplitQuery()
                 .Include(abu => abu.AddedByUser)
@@ -270,7 +278,8 @@ public class GetAllClients : ControllerBase
                 .ThenInclude(uom => uom.Uom)
                 .AsSplitQuery()
                 .Include(cd => cd.ClientDocuments)
-                .AsSingleQuery();
+                .AsSingleQuery()*/
+                .AsNoTracking();
                 
             var user = await _context.Users
                     .Include(cluster => cluster.CdoCluster)
@@ -284,37 +293,38 @@ public class GetAllClients : ControllerBase
                     x.Fullname.Contains(request.Search)
                 );
             }
-            // To Separate Under Review & Approved Request between CDO and Approver including Admin
-            // (Request and Approval)
-            //To get the Approved Request, Approval table need to access and the role need to be Approver
-            if (request.RoleName == Roles.Approver && (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
-                                                       request.RegistrationStatus.ToLower() !=
-                                                       Status.UnderReview.ToLower()))
-            {
-                regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
-                    x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
-                    x.IsActive == true));
-            }
-                
-            else if (request.RoleName == Roles.Approver)
-            {
-                regularClients = regularClients.Where(clients =>
-                    clients.Request.Status == request.RegistrationStatus &&
-                    clients.Request.CurrentApproverId == request.AccessBy);
-            }
-            
-            else if (request.RoleName is Roles.Admin or Roles.Cdo)
-            {
-                var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
 
-                if (request.RegistrationStatus is Status.ForReleasing or Status.Released)
+            switch (request.RoleName)
+            {
+                // To Separate Under Review & Approved Request between CDO and Approver including Admin
+                // (Request and Approval)
+                //To get the Approved Request, Approval table need to access and the role need to be Approver
+                case Roles.Approver when (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                                          request.RegistrationStatus.ToLower() !=
+                                          Status.UnderReview.ToLower()):
+                    regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
+                        x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
+                        x.IsActive == true));
+                    break;
+                case Roles.Approver:
+                    regularClients = regularClients.Where(clients =>
+                        clients.Request.Status == request.RegistrationStatus &&
+                        clients.Request.CurrentApproverId == request.AccessBy);
+                    break;
+                case Roles.Admin or Roles.Cdo:
                 {
-                    regularClients = regularClients
-                        .Where(x => x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus);
-                }
+                    var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
 
-                regularClients = regularClients
-                    .Where(x => userClusters != null && (userClusters.Contains(x.ClusterId.Value)) && x.RegistrationStatus == request.RegistrationStatus);
+                    if (request.RegistrationStatus is Status.ForReleasing or Status.Released)
+                    {
+                        regularClients = regularClients
+                            .Where(x => x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus);
+                    }
+
+                    regularClients = regularClients
+                        .Where(x => userClusters != null && (userClusters.Contains(x.ClusterId.Value)) && x.RegistrationStatus == request.RegistrationStatus);
+                    break;
+                }
             }
 
             //Get all the under review request for the Approver
@@ -469,6 +479,11 @@ public class GetAllClients : ControllerBase
                         UnitCost = lfi.UnitCost,
                         Uom = lfi.Item.Uom.UomCode
                     })
+                }),
+                Approvers = client.Request.RequestApprovers.Select(x => new GetAllClientResult.RequestApproversForClients
+                {
+                    Name = x.Approver.Fullname,
+                    Level = x.Level
                 })
             });
 
