@@ -117,7 +117,7 @@ public class GetAllClientsInListingFee : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Clients> clientsListingFee = _context.Clients
-                /*.Include(mop => mop.ClientModeOfPayment)
+                .Include(mop => mop.ClientModeOfPayment)
                 .Include(abu => abu.AddedByUser)
                 .Include(rq => rq.Request)
                 .ThenInclude(user => user.Requestor)
@@ -141,7 +141,7 @@ public class GetAllClientsInListingFee : ControllerBase
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .Include(cd => cd.ClientDocuments)*/
+                .Include(cd => cd.ClientDocuments)
                 .Where(clients => clients.RegistrationStatus == Status.Approved)
                 .AsNoTracking();
 
