@@ -29,6 +29,13 @@ public class GetAllCluster : ControllerBase
                 && IdentityHelper.TryGetUserId(identity, out var userId))
             {
                 query.AccessBy = userId;
+                
+                var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (roleClaim != null)
+                {
+                    query.RoleName = roleClaim.Value;
+                }
             }
             var cluster = await _mediator.Send(query);
             
@@ -65,6 +72,8 @@ public class GetAllCluster : ControllerBase
         public string Search { get; set; }
         public bool? Status { get; set; }
         public int AccessBy { get; set; }
+        
+        public string RoleName { get; set; }
     }
 
     public class GetAllClusterResult
@@ -110,11 +119,17 @@ public class GetAllCluster : ControllerBase
                 cluster = cluster.Where(status => status.IsActive == request.Status);
             }
             
-            var user = await _context.Users.Include(user => user.CdoCluster).FirstOrDefaultAsync(x => x.Id == request.AccessBy, cancellationToken);
-            var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
             
-            cluster = cluster
-                .Where(x => userClusters != null && (userClusters.Contains(x.Id)));
+
+            if (request.RoleName != Roles.Admin)
+            {
+                var user = await _context.Users.Include(user => user.CdoCluster).FirstOrDefaultAsync(x => x.Id == request.AccessBy, cancellationToken);
+                var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
+                
+                cluster = cluster
+                    .Where(x => userClusters != null && (userClusters.Contains(x.Id)));
+            }
+            
 
             var result = cluster.Select(x => new GetAllClusterResult
             {

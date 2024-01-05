@@ -26,6 +26,8 @@ public class GetAllClientsByCluster : ControllerBase
                 && IdentityHelper.TryGetUserId(identity, out var userId))
             {
                 query.AccessBy = userId;
+                
+               
             }
             var clients = await _mediator.Send(query);
             
