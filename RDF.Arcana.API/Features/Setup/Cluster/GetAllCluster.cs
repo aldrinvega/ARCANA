@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 
@@ -22,6 +24,12 @@ public class GetAllCluster : ControllerBase
     {
         try
         {
+            
+            if (User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                query.AccessBy = userId;
+            }
             var cluster = await _mediator.Send(query);
             
             Response.AddPaginationHeader(
@@ -56,6 +64,7 @@ public class GetAllCluster : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public int AccessBy { get; set; }
     }
 
     public class GetAllClusterResult
@@ -100,6 +109,12 @@ public class GetAllCluster : ControllerBase
             {
                 cluster = cluster.Where(status => status.IsActive == request.Status);
             }
+            
+            var user = await _context.Users.Include(user => user.CdoCluster).FirstOrDefaultAsync(x => x.Id == request.AccessBy, cancellationToken);
+            var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
+            
+            cluster = cluster
+                .Where(x => userClusters != null && (userClusters.Contains(x.Id)));
 
             var result = cluster.Select(x => new GetAllClusterResult
             {
