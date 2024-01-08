@@ -86,6 +86,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
     {
         public int Id { get; set; }
         public string OwnersName { get; set; }
+        public string EmailAddress { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string BusinessName { get; set; }
@@ -454,6 +455,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 {
                     Id = directClients.Id,
                     OwnersName = directClients.Fullname,
+                    EmailAddress = directClients.EmailAddress,
                     OwnersAddress = new DirectRegisterResult.OwnersAddressCollection
                     {
                         HouseNumber = directClients.OwnersAddress.HouseNumber,

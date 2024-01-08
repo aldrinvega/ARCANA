@@ -10,12 +10,12 @@ public class GetAllListingValidator : AbstractValidator<GetAllListingFee.GetAllL
         RuleFor(x => x.ListingFeeStatus)
             .Must(BeAValidStatus)
             .WithMessage(
-                "Invalid value for ListingFeeStatus. Only 'Approved', 'Under review', and 'Rejected' are permitted.");
+                "Invalid value for ListingFeeStatus. Only 'Approved', 'Under review', 'Rejected' nad 'Voided' are permitted.");
     }
 
     private static bool BeAValidStatus(string status)
     {
-        return status is Status.Approved or Status.UnderReview or Status.Rejected;
+        return status is Status.Approved or Status.UnderReview or Status.Rejected or Status.Voided;
     }
 }
 

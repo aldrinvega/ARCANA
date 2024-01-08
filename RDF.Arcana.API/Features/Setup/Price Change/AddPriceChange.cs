@@ -78,6 +78,18 @@ public class AddPriceChange : ControllerBase
 
             if (existingPriceChange is not null)
             {
+                if (latestPriceChange != null && latestPriceChange.Price == existingPriceChange.Price)
+                {
+                    // Return an error result indicating that the new price is the same as the latest recorded price
+                    return PriceChangeErrors.PriceAlreadyAdded();
+                }
+
+                if (latestPriceChange != null && latestPriceChange.Price == request.Price)
+                {
+                    // Return an error result indicating that the new price is the same as the latest recorded price
+                    return PriceChangeErrors.PriceAlreadyAdded();
+                }
+                
                 existingPriceChange.Price = request.Price;
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();

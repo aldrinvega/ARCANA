@@ -21,7 +21,6 @@ public class RejectClientRegistration : ControllerBase
     [HttpPut("RejectClientRegistration/{id:int}")]
     public async Task<IActionResult> RejectClients([FromRoute] int id, [FromBody] RejectClientCommand command)
     {
-        command.RequestId = id;
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -29,6 +28,8 @@ public class RejectClientRegistration : ControllerBase
             {
                 command.AccessBy = userId;
             }
+            
+            command.RequestId = id;
 
             var result = await _mediator.Send(command);
             if (result.IsFailure)
@@ -74,6 +75,7 @@ public class RejectClientRegistration : ControllerBase
             
             var existingClientRequest = await _context.Requests
                 .Include(client => client.Clients)
+                .Where(rq => rq.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (existingClientRequest == null)

@@ -79,6 +79,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
         public bool? Status { get; set; }
         public string StoreType { get; set; }
         public string FreebieStatus { get; set; }
+        public string RegistrationStatus { get; set; }
         public string SortColumn { get; set; }
         public string SortOrder { get; set; }
         public int AddedBy { get; set; }
@@ -153,21 +154,37 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .Include(x => x.StoreType)
                 .Where(x => x.RegistrationStatus != Status.Approved &&
                             x.RegistrationStatus != Status.UnderReview &&
-                            x.RegistrationStatus != Status.Rejected &&
-                            x.RegistrationStatus != Status.Voided);
+                            x.RegistrationStatus != Status.Rejected);
 
             if (request.Role is not Roles.Admin)
             {
                 approvedProspect = approvedProspect.Where(x => x.AddedBy == request.AddedBy);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.RegistrationStatus) && request.RegistrationStatus == Status.Voided)
+            {
+
+                approvedProspect = GetClientByRegistrationStatus(request, approvedProspect);
+                
+                var voidedResults = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());
+                
+                
+
+                return await PagedList<GetAllApprovedProspectResult>.CreateAsync(voidedResults, request.PageNumber,
+                    request.PageSize);
+            }
+
             approvedProspect = GetFreebiesByStatus(request, approvedProspect);
+            
+            approvedProspect = GetClientByRegistrationStatus(request, approvedProspect);
 
             approvedProspect = GetClientByStoreType(request, approvedProspect);
 
             approvedProspect = SearchClientByFullname(request, approvedProspect);
 
             approvedProspect = FilterByStatus(request, approvedProspect);
+
+            
 
             approvedProspect = request.SortOrder?.ToLower() == "desc"
                 ? approvedProspect.OrderByDescending(GetSortProperty(request))
@@ -221,6 +238,18 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 approvedProspect =
                     approvedProspect.Where(x => x.StoreType.StoreTypeName.Contains(request.StoreType));
             }
+
+            return approvedProspect;
+        }
+        
+        private static IQueryable<Domain.Clients> GetClientByRegistrationStatus(GetAllApprovedProspectQuery request,
+            IQueryable<Domain.Clients> approvedProspect)
+        {
+            if (string.IsNullOrEmpty(request.RegistrationStatus)) return approvedProspect;
+            approvedProspect = request.RegistrationStatus == Status.Voided ? approvedProspect.Where(x => x.RegistrationStatus == Status.Voided) :
+                // Handle other registration statuses
+                approvedProspect.Where(x => x.RegistrationStatus == request.RegistrationStatus);
+            approvedProspect = approvedProspect.Where(x => x.Request == null);
 
             return approvedProspect;
         }

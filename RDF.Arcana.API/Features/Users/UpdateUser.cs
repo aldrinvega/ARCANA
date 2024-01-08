@@ -70,7 +70,9 @@ public class UpdateUser : ControllerBase
 
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+            var user = await _context.Users
+                .Include(user => user.CdoCluster)
+                .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
             /*var validateCompany =
                 await _context.Companies.FirstOrDefaultAsync(x => x.Id == request.CompanyId, cancellationToken);
             var validateDepartment =
@@ -126,8 +128,22 @@ public class UpdateUser : ControllerBase
               {
                   return UserErrors.NotFound();
               }
+
+
+              // Remove clusters that are not present in the request body
+              var existingClusters = user.CdoCluster.Select(x => x.ClusterId).ToList();
+              var clustersToRemove = existingClusters.Except(request.Clusters.Select(c => c.ClusterId)).ToList();
+
+              foreach (var clusterIdToRemove in clustersToRemove)
+              {
+                  var forRemove = user.CdoCluster.FirstOrDefault(x => x.ClusterId == clusterIdToRemove);
+                  if (forRemove != null)
+                  {
+                      user.CdoCluster.Remove(forRemove);
+                  }
+              }
               
-              //Validate the users if already tagged to the cluster
+            //Validate the users if already tagged to the cluster
             foreach (var cluster in request.Clusters)
             {
                 var existingTaggedUser = await _context.CdoClusters.FirstOrDefaultAsync(

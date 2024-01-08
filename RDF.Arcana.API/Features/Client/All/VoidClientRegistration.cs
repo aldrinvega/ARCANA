@@ -63,12 +63,7 @@ public class VoidClientRegistration : ControllerBase
             CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
-                .Include(ap => ap.Approvals)
-                .Where(at => at.Approvals.Any(x =>
-                    (x.ApprovalType == Status.DirectRegistrationApproval || 
-                    x.ApprovalType == Status.ForRegularApproval) &&
-                    x.IsApproved == false &&
-                    x.IsActive))
+                .Include(ap => ap.Request)
                 .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
 
             if (existingClient == null)
@@ -82,12 +77,7 @@ public class VoidClientRegistration : ControllerBase
             }
 
             existingClient.RegistrationStatus = Status.Voided;
-            foreach (var approval in existingClient.Approvals.Where(approval =>
-                         approval.ApprovalType == Status.DirectRegistrationApproval))
-            {
-                approval.IsActive = false;
-                approval.IsActive = false;
-            }
+            existingClient.Request.Status = Status.Voided;
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -98,7 +88,7 @@ public class VoidClientRegistration : ControllerBase
                 BusinessName = existingClient.BusinessName
             };
 
-            return Result.Success();
+            return Result.Success(result);
         }
     }
 }

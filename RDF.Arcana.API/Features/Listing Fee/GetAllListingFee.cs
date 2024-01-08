@@ -140,7 +140,7 @@ public class GetAllListingFee : ControllerBase
             _context = context;
         }
 
-        public Task<PagedList<ClientsWithListingFee>> Handle(GetAllListingFeeQuery request,
+        public async Task<PagedList<ClientsWithListingFee>> Handle(GetAllListingFeeQuery request,
             CancellationToken cancellationToken)
         {
             var listingFees = _context.ListingFees
@@ -154,6 +154,10 @@ public class GetAllListingFee : ControllerBase
                 .ThenInclude(x => x.Item)
                 .ThenInclude(x => x.Uom)
                 .AsSingleQuery();
+
+            var user = await _context.Users
+                .Include(cluster => cluster.CdoCluster)
+                .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -161,18 +165,76 @@ public class GetAllListingFee : ControllerBase
                     x.Client.BusinessName.Contains(request.Search) || x.Client.Fullname.Contains(request.Search));
             }
 
-            listingFees = request.RoleName switch
+            switch (request.RoleName)
             {
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
-                                     request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower() =>
-                    listingFees.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive)),
-                Roles.Approver => listingFees.Where(lf =>
-                    lf.Request.Status == request.ListingFeeStatus && 
-                    lf.Request.CurrentApproverId == request.AccessBy),
-                Roles.Admin or Roles.Cdo => listingFees.Where(x =>
-                    x.RequestedBy == request.AccessBy && x.Status == request.ListingFeeStatus),
-                _ => listingFees
+                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
+                                     request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
+                    listingFees = listingFees.Where(lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive));
+                    break;
+               case Roles.Approver:
+                   listingFees = listingFees.Where(lf =>
+                       lf.Request.Status == request.ListingFeeStatus &&
+                       lf.Request.CurrentApproverId == request.AccessBy);
+                   break;
+
+                case Roles.Admin or Roles.Cdo:
+                {
+                    var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
+
+                    /*if (request.ListingFeeStatus is Status.Voided)
+                    {
+                        listingFees = listingFees.Where(lf => lf.Status == request.ListingFeeStatus);
+                        
+                        var voidedResult = listingFees.Select(listingFee => new ClientsWithListingFee
+                        {
+                            ClientId = listingFee.ClientId,
+                            ClientName = listingFee.Client.Fullname,
+                            RegistrationStatus = listingFee.Client.RegistrationStatus,
+                            BusinessName = listingFee.Client.BusinessName,
+                            CreatedAt = listingFee.CratedAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                            ListingFeeId = listingFee.Id,
+                            RequestId = listingFee.RequestId,
+                            Status = listingFee.Status,
+                            RequestedBy = listingFee.RequestedByUser.Fullname,
+                            Total = listingFee.Total,
+                            ListingItems = listingFee.ListingFeeItems.Select(li =>
+                                new ClientsWithListingFee.ListingItem
+                                {
+                                    ItemId = li.ItemId,
+                                    ItemCode = li.Item.ItemCode,
+                                    ItemDescription = li.Item.ItemDescription,
+                                    Uom = li.Item.Uom.UomCode,
+                                    Sku = li.Sku,
+                                    UnitCost = li.UnitCost
+                                }).ToList(),
+                            ListingFeeApprovalHistories = listingFee.Request.Approvals
+                                .OrderByDescending(a => a.CreatedAt)
+                                .Select(a => new ClientsWithListingFee.ListingFeeApprovalHistory
+                                {
+                                    Module = a.Request.Module,
+                                    Approver = a.Approver.Fullname,
+                                    Level = a.Approver.Approver.FirstOrDefault().Level,
+                                    Reason = a.Request.Approvals.FirstOrDefault().Reason,
+                                    CreatedAt = a.CreatedAt,
+                                    Status = a.Status,
+                                }),
+                            Approvers = listingFee.Request.RequestApprovers.Select(x =>
+                                new ClientsWithListingFee.RequestApproversForListingFee
+                                {
+                                    Name = x.Approver.Fullname,
+                                    Level = x.Level
+                                })
+                        }).OrderBy(x => x.ClientId);
+                        
+                        return await PagedList<ClientsWithListingFee>.CreateAsync(voidedResult, request.PageNumber, request.PageSize);
+                    }*/
+
+                    listingFees = listingFees
+                        .Where(x => x.Client.ClusterId != null && userClusters != null && (userClusters.Contains(x.Client.ClusterId.Value)) && x.Status == request.ListingFeeStatus);
+                    break;
+                }
+                   
             };
 
             if (request.RoleName is Roles.Approver && request.ListingFeeStatus == Status.UnderReview)
@@ -224,7 +286,7 @@ public class GetAllListingFee : ControllerBase
                 })
             }).OrderBy(x => x.ClientId);
 
-            return PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);
+            return await PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿/*using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
@@ -48,12 +48,12 @@ public class VoidListingFee : ControllerBase
         }
     }
 
-    public class VoidListingFeeCommand : IRequest<Result<Unit>>
+    public class VoidListingFeeCommand : IRequest<Result>
     {
         public int ListingFeeId { get; set; }
         public int RejectedBy { get; set; }
     }
-    public class Handler : IRequestHandler<VoidListingFeeCommand, Result<Unit>>
+    public class Handler : IRequestHandler<VoidListingFeeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -62,39 +62,35 @@ public class VoidListingFee : ControllerBase
             _context = context;
         }
 
-        public async Task<Result<Unit>> Handle(VoidListingFeeCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(VoidListingFeeCommand request, CancellationToken cancellationToken)
         {
             var existingListingFee = await _context.ListingFees
-                .Include(x => x.Approvals)
-                .Where(approval => 
-                    approval.Approvals.IsActive &&
-                    approval.Approvals.IsApproved == false)
+                .Include(x => x.Request)
                 .FirstOrDefaultAsync(x => x.Id == request.ListingFeeId, cancellationToken);
 
            
             if (existingListingFee == null)
             {
-                return Result<Unit>.Failure(ListingFeeErrors.NotFound());
+                return ListingFeeErrors.NotFound();
             }
             
-            if (existingListingFee.Approvals.RequestedBy != request.RejectedBy)
+            if (existingListingFee.RequestedBy != request.RejectedBy)
             {
-                return Result<Unit>.Failure(ListingFeeErrors.Unauthorized());
+                return ListingFeeErrors.Unauthorized();
             }
 
             if (existingListingFee.Status == Status.Voided &&
                 !existingListingFee.IsActive)
             {
-                return Result<Unit>.Failure(ListingFeeErrors.AlreadyVoided());
+                return ListingFeeErrors.AlreadyVoided();
             }
 
             existingListingFee.Status = Status.Voided;
-            existingListingFee.IsActive = false;
-            existingListingFee.Approvals.IsActive = false;
-            existingListingFee.Approvals.IsApproved = false;
+            existingListingFee.Request.Status = Status.Voided;
+            
             await _context.SaveChangesAsync(cancellationToken);
             
-            return Result<Unit>.Success(Unit.Value, "Listing fee voided successfully");
+            return Result.Success();
         }
     }
-}*/
+}
