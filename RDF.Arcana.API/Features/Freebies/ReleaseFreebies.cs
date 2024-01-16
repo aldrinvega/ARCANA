@@ -121,6 +121,14 @@ public class ReleaseFreebies : ControllerBase
                 }, cancellationToken));
             };
 
+            var notification = new Domain.Notification
+            {
+                UserId = validateClientRequest.RequestedBy,
+                Status = Status.Released
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+
             await Task.WhenAll(uploadTasks);
             await _context.SaveChangesAsync(cancellationToken);
 

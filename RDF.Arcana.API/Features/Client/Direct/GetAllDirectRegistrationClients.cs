@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+/*using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
@@ -157,4 +157,4 @@ public class GetAllDirectRegistrationClients : ControllerBase
             }
         }
     }
-}
+}*/

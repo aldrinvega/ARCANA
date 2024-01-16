@@ -156,6 +156,22 @@ public class AddNewListingFee : ControllerBase
             {
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);
             }
+            
+            var notification = new Domain.Notification
+            {
+                UserId = request.RequestedBy,
+                Status = Status.PendingListingFee
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = approvers.First().UserId,
+                Status = Status.PendingListingFee 
+            };
+
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

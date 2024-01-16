@@ -18,6 +18,19 @@ public static class Status
     public const string ForRegularApproval = "For regular approval";
     public const string ForFreebieApproval = "For freebie approval";
     public const string PendingRegistration = "Pending registration";
+
+    public const string PendingClients = "Pending Clients";
+    public const string ApprovedClients = "Approved Clients";
+    public const string RejectedClients = "Rejected Clients";
+
+    public const string PendingListingFee = "Pending Listing Fee";
+    public const string ApprovedListingFee = "Approved Listing Fee";
+    public const string RejectedListingFee = "Rejected Listing Fee";
+    
+    public const string PendingExpenses = "Pending Expenses";
+    public const string ApprovedExpenses = "Approved Expenses";
+    public const string RejectedExpenses = "Rejected Expenses";
+
 }
 
 public static class Origin

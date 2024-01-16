@@ -3,6 +3,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Setup.Items.Exceptions;
+using RDF.Arcana.API.Features.Setup.Meat_Type;
 using RDF.Arcana.API.Features.Setup.Price_Change;
 
 namespace RDF.Arcana.API.Features.Setup.Items;
@@ -46,7 +47,13 @@ public class UpdateItem : ControllerBase
              var existingItem = 
                  await _context.Items
                      .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-             
+             var validateMeatType =
+                 await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
+
+             if (validateMeatType is null )
+             {
+                 return MeatTypeErrors.NotFound();
+             }
          
              if (existingItem.ItemCode != request.ItemCode)
              {

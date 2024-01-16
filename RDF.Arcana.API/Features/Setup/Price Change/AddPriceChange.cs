@@ -61,38 +61,23 @@ public class AddPriceChange : ControllerBase
                 return ItemErrors.NotFound(request.ItemId);
             }
             
-            // Check if the latest recorded price is the same
-            var latestPriceChange = await _context.ItemPriceChanges
-                .Where(pc => pc.ItemId == request.ItemId)
+            // Check if the latest recorded price change before the specified EffectivityDate has the same price
+            var previousPriceChange = await _context.ItemPriceChanges
+                .Where(pc => pc.ItemId == request.ItemId && pc.EffectivityDate < request.EffectivityDate)
                 .OrderByDescending(pc => pc.EffectivityDate)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (latestPriceChange != null && latestPriceChange.Price == request.Price)
+            // Check if the latest recorded price change after the specified EffectivityDate has the same price
+            var nextPriceChange = await _context.ItemPriceChanges
+                .Where(pc => pc.ItemId == request.ItemId && pc.EffectivityDate > request.EffectivityDate)
+                .OrderBy(pc => pc.EffectivityDate)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if ((previousPriceChange != null && previousPriceChange.Price == request.Price) ||
+                (nextPriceChange != null && nextPriceChange.Price == request.Price))
             {
-                // Return an error result indicating that the new price is the same as the latest recorded price
+                // Return an error result indicating that the new price is the same as the adjacent recorded price
                 return PriceChangeErrors.PriceAlreadyAdded();
-            }
-
-            var existingPriceChange = await _context.ItemPriceChanges.FirstOrDefaultAsync(pc =>
-                pc.EffectivityDate == request.EffectivityDate && pc.ItemId == request.ItemId, cancellationToken);
-
-            if (existingPriceChange is not null)
-            {
-                if (latestPriceChange != null && latestPriceChange.Price == existingPriceChange.Price)
-                {
-                    // Return an error result indicating that the new price is the same as the latest recorded price
-                    return PriceChangeErrors.PriceAlreadyAdded();
-                }
-
-                if (latestPriceChange != null && latestPriceChange.Price == request.Price)
-                {
-                    // Return an error result indicating that the new price is the same as the latest recorded price
-                    return PriceChangeErrors.PriceAlreadyAdded();
-                }
-                
-                existingPriceChange.Price = request.Price;
-                await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success();
             }
             
             

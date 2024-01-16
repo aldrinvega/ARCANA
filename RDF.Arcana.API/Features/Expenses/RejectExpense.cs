@@ -16,7 +16,7 @@ public class RejectExpense : ControllerBase
     {
         _mediator = mediator;
     }
-
+    
     [HttpPut("RejectExpenseRequest/{id:int}")]
     public async Task<IActionResult> Reject([FromRoute] int id, [FromBody] RejectExpenseCommand command)
     {
@@ -91,6 +91,22 @@ public class RejectExpense : ControllerBase
             
             existingExpense.Expenses.Status = Status.Rejected;
             existingExpense.Status = Status.Rejected;
+            
+            var notification = new Domain.Notification
+            {
+                UserId = existingExpense.RequestorId,
+                Status = Status.RejectedExpenses
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = existingExpense.CurrentApproverId,
+                Status = Status.RejectedExpenses
+            };
+                
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.Approval.AddAsync(newApproval, cancellationToken);
 

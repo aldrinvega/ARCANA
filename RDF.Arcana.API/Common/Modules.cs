@@ -5,6 +5,10 @@ public class Modules
     
     //Approval
     public const string Dashboard = "Dashboard";
+
+    public const string Registration = "Registration";
+    public const string OtherExpeneses = "Other Expeneses";
+    public const string ListingFee = "Listing Fee";
     
     public const string FreebiesApproval = "Freebie Approval";
     public const string Prospect = "Prospect";

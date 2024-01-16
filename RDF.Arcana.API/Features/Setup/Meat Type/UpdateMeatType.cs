@@ -42,7 +42,7 @@ public class UpdateMeatType : ControllerBase
             if (validateMeatTypeName is null)
             {
                 existingMeatType.MeatTypeName = request.MeatTypeName;
-                existingMeatType.ModifiedBy = request.ModifiedBy ?? "Admin";
+                existingMeatType.ModifiedBy = request.ModifiedBy ?? Roles.Admin;
                 existingMeatType.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync(cancellationToken);
@@ -51,7 +51,7 @@ public class UpdateMeatType : ControllerBase
             
             if (validateMeatTypeName.MeatTypeName == request.MeatTypeName && validateMeatTypeName.Id != request.MeatTypeId)
             {
-                throw new MeatTypeIsAlreadyExistException(request.MeatTypeName);
+                return MeatTypeErrors.AlreadyExist(request.MeatTypeName);
             }
             
             return Result.Success();

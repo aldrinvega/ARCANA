@@ -142,6 +142,23 @@ public class UpdateListingFeeInformation : ControllerBase
             
             await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
             
+            
+            var notificationForCurrentApprover = new Domain.Notification
+            {
+                UserId = approver.First().ApproverId,
+                Status = Status.PendingListingFee
+            };
+                
+            await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+            
+            var notification = new Domain.Notification
+            {
+                UserId = listingFee.RequestedBy,
+                Status = Status.PendingListingFee
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+            
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

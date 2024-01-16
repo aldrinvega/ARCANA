@@ -263,25 +263,38 @@ public class UpdateClientInformation : ControllerBase
             existingClient.VariableDiscount = request.VariableDiscount;
             existingClient.Longitude = request.Longitude;
             existingClient.Latitude = request.Latitude;
-            
-            if (existingClient.RegistrationStatus == Status.Approved)
+            existingClient.Request.Status = Status.UnderReview;
+            existingClient.RegistrationStatus = Status.UnderReview;
+            existingClient.Request.CurrentApproverId = approver.First().ApproverId;
+            foreach (var approval in existingClient.Request.Approvals)
             {
-                existingClient.Request.Status = Status.UnderReview;
-                existingClient.RegistrationStatus = Status.UnderReview;
-                existingClient.Request.CurrentApproverId = approver.First().ApproverId;
-                foreach (var approval in existingClient.Request.Approvals)
-                {
-                    approval.IsActive = false;
-                }
-
-                var newUpdateHistory = new UpdateRequestTrail(
-                    existingClient.RequestId,
-                    Modules.RegistrationApproval,
-                    DateTime.Now,
-                    request.UpdatedBy);
-
-                await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
+                approval.IsActive = false;
             }
+
+            var newUpdateHistory = new UpdateRequestTrail(
+                existingClient.RequestId,
+                Modules.RegistrationApproval,
+                DateTime.Now,
+                request.UpdatedBy);
+
+            await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
+            
+            var notificationForCurrentApprover = new Domain.Notification
+            {
+                UserId = approver.First().ApproverId,
+                Status = Status.ApprovedClients
+            };
+                
+            await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+                
+            var notification = new Domain.Notification
+            {
+                UserId = existingClient.AddedBy,
+                Status = Status.PendingClients
+            };
+            
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+            
 
             if (request.FixedDiscount.DiscountPercentage.HasValue)
             {
@@ -307,6 +320,7 @@ public class UpdateClientInformation : ControllerBase
                 existingClient.VariableDiscount = true;
                 existingClient.FixedDiscountId = null;
             }
+            
             
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

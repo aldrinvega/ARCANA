@@ -22,11 +22,8 @@ public static class MapperProfile
             LocationName = user.Location?.LocationName,
             RoleName = user.UserRoles?.UserRoleName,
             Permission = user.UserRoles?.Permissions,
-            Clusters = user.CdoCluster?.Select(cluster => new GetUsersAsync.GetUserAsyncQueryResult.CdoClusterCollection
-            {
-                ClusterId = cluster.ClusterId,
-                Cluster = cluster.Cluster?.ClusterType
-            }) 
+            ClusterId = user.Cluster?.Id,
+            Cluster = user.Cluster?.ClusterType
         };
     }
 }

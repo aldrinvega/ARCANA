@@ -104,10 +104,35 @@ public class ApproveExpense : ControllerBase
             {
                 expenses.Status = Status.Approved;
                 expenses.Expenses.Status = Status.Approved;
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = expenses.CurrentApproverId,
+                    Status = Status.ApprovedExpenses
+                };
+                
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+                
+                var notification = new Domain.Notification
+                {
+                    UserId = expenses.RequestorId,
+                    Status = Status.ApprovedExpenses
+                };
+                
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+                
             }
             else
             {
                 expenses.CurrentApproverId = nextApprover.ApproverId;
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = nextApprover.ApproverId,
+                    Status = Status.PendingExpenses
+                };
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+                
             }
             
             await _context.Approval.AddAsync(newApproval, cancellationToken);

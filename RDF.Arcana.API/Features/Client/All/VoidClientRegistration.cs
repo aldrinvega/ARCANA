@@ -5,7 +5,7 @@ using RDF.Arcana.API.Features.Client.Errors;
 
 namespace RDF.Arcana.API.Features.Client.All;
 
-[Route("api/Clients"), ApiController]
+[Route("api/Client"), ApiController]
 public class VoidClientRegistration : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -15,14 +15,14 @@ public class VoidClientRegistration : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPut("VoidClientRegistration/{clientId:int}")]
-    public async Task<IActionResult> VoidClient(int clientId)
+    [HttpPut("VoidClientRegistration/{Id:int}")]
+    public async Task<IActionResult> VoidClient(int id)
     {
         try
         {
             var command = new VoidClientCommand
             {
-                ClientId = clientId
+                ClientId = id
             };
 
             var result = await _mediator.Send(command);

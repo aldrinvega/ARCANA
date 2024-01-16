@@ -146,8 +146,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
             IQueryable<Domain.Clients> approvedProspect = _context.Clients
                 .Include(x => x.AddedByUser)
                 .Include(x => x.OwnersAddress)
-                .Include(x => x.Approvals)
-                .ThenInclude(x => x.FreebieRequest)
+                .Include(x => x.FreebiesRequests)
                 .ThenInclude(x => x.FreebieItems)
                 .ThenInclude(x => x.Items)
                 .ThenInclude(x => x.Uom)
@@ -168,8 +167,6 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 
                 var voidedResults = approvedProspect.Select(x => x.ToGetGetAllApprovedProspectResult());
                 
-                
-
                 return await PagedList<GetAllApprovedProspectResult>.CreateAsync(voidedResults, request.PageNumber,
                     request.PageSize);
             }
@@ -183,8 +180,6 @@ public class GetAllApprovedProspectAsync : ControllerBase
             approvedProspect = SearchClientByFullname(request, approvedProspect);
 
             approvedProspect = FilterByStatus(request, approvedProspect);
-
-            
 
             approvedProspect = request.SortOrder?.ToLower() == "desc"
                 ? approvedProspect.OrderByDescending(GetSortProperty(request))
@@ -246,7 +241,7 @@ public class GetAllApprovedProspectAsync : ControllerBase
             IQueryable<Domain.Clients> approvedProspect)
         {
             if (string.IsNullOrEmpty(request.RegistrationStatus)) return approvedProspect;
-            approvedProspect = request.RegistrationStatus == Status.Voided ? approvedProspect.Where(x => x.RegistrationStatus == Status.Voided) :
+            approvedProspect = request.RegistrationStatus == Status.Voided ? approvedProspect.Where(x => x.RegistrationStatus == Status.Voided && x.RequestId == null) :
                 // Handle other registration statuses
                 approvedProspect.Where(x => x.RegistrationStatus == request.RegistrationStatus);
             approvedProspect = approvedProspect.Where(x => x.Request == null);

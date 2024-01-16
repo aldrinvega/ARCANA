@@ -144,7 +144,10 @@ namespace RDF.Arcana.API.Features.Client.Direct
             var existingClient = await _context.Clients.FirstOrDefaultAsync(
                 x => x.Fullname == request.OwnersName &&
                      x.StoreType.Id == request.StoreTypeId &&
-                     x.BusinessName == request.BusinessName,
+                     x.BusinessName == request.BusinessName &&
+                     x.BusinessAddress.City == request.BusinessAddress.City &&
+                     x.BusinessAddress.StreetName == request.BusinessAddress.BarangayName &&
+                     x.RegistrationStatus != Status.Voided,
                 cancellationToken
             );
 
@@ -263,16 +266,6 @@ namespace RDF.Arcana.API.Features.Client.Direct
 
                 directClients.Terms = termsOptions.Id;
 
-                var approval = new Approvals
-                {
-                    ClientId = directClients.Id,
-                    ApprovalType = Status.DirectRegistrationApproval,
-                    RequestedBy = request.AddedBy,
-                    IsApproved = false,
-                    IsActive = true,
-                };
-                _context.Approvals.Add(approval);
-
 
                 if (request.Freebies != null)
                 {
@@ -313,23 +306,10 @@ namespace RDF.Arcana.API.Features.Client.Direct
                         }
                     }
                     
-                    //Create approval for Freebies
-                    var newApproval = new Approvals
-                    {
-                        ClientId = directClients.Id,
-                        ApprovalType = "For Freebie Approval",
-                        IsApproved = true,
-                        IsActive = true,
-                        RequestedBy = request.AddedBy,
-                        ApprovedBy = request.AddedBy
-                    };
-                    _context.Approvals.Add(newApproval);
-                    
                     //Add new FreebieRequest
                     var freebieRequest = new FreebieRequest
                     {
                         ClientId = directClients.Id,
-                        ApprovalsId = newApproval.Id,
                         Status = Status.ForReleasing,
                         IsDelivered = false,
                         RequestedBy = request.AddedBy
@@ -339,7 +319,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     //Add the freebie items
                     foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                              {
-                                 RequestId = freebieRequest.Id,
+                                 FreebieRequestId = freebieRequest.Id,
                                  ItemId = freebie.ItemId,
                                  Quantity = 1
                              }))
@@ -450,6 +430,23 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 }
                 
                 directClients.RequestId = newRequest.Id;
+
+                var notification = new Domain.Notification
+                {
+                    UserId = request.AddedBy,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = approvers.First().UserId,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+
 
                 var result = new DirectRegisterResult
                 {

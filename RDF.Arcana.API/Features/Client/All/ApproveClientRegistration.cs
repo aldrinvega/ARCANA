@@ -103,13 +103,48 @@ public class ApproveClientRegistration : ControllerBase
             {
                 requestedClient.Status = Status.Approved;
                 requestedClient.Clients.RegistrationStatus = Status.Approved;
+                
+                var notificationForCurrentApprover = new Domain.Notification
+                {
+                    UserId = requestedClient.CurrentApproverId,
+                    Status = Status.ApprovedClients
+                };
+                
+                await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+                
+                var notification = new Domain.Notification
+                {
+                    UserId = requestedClient.RequestorId,
+                    Status = Status.ApprovedClients
+                };
+                
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+                
             }
             else
             {
+                var notificationForCurrentApprover = new Domain.Notification
+                {
+                    UserId = requestedClient.CurrentApproverId,
+                    Status = Status.ApprovedClients
+                };
+                
+                await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+                
                 requestedClient.CurrentApproverId = nextApprover.ApproverId;
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = nextApprover.ApproverId,
+                    Status = Status.PendingClients
+                };
+                
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
             }
             
+            
             await _context.Approval.AddAsync(newApproval, cancellationToken);
+            
             await _context.SaveChangesAsync(cancellationToken);
             
             return Result.Success();

@@ -8,6 +8,8 @@ using RDF.Arcana.API.Data;
 
 namespace RDF.Arcana.API.Features.Client.All;
 
+[Route("äpi/Client"), ApiController]
+
 public class GetAllClientsByCluster : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -87,7 +89,7 @@ public class GetAllClientsByCluster : ControllerBase
         {
             IQueryable <Domain.Clients> clients = _context.Clients
                 .Include(x => x.AddedByUser)
-                .ThenInclude(x => x.CdoCluster);
+                .ThenInclude(x => x.Cluster);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -100,24 +102,20 @@ public class GetAllClientsByCluster : ControllerBase
             {
                 clients = clients.Where(x => x.IsActive);
             }
-
-            var user = await _context.Users.Include(user => user.CdoCluster).FirstOrDefaultAsync(x => x.Id == request.AccessBy, cancellationToken);
-            var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
             
-             clients = clients
-                .Where(x => userClusters != null && (userClusters.Contains(x.ClusterId.Value)) && x.RegistrationStatus == Status.Approved);
+            clients = clients.Where(x => x.RegistrationStatus == Status.Approved && x.AddedBy == request.AccessBy);
 
-             var result = clients.Select(c => new GetAllClientsByClusterResult
-             {
-                 Id = c.Id,
-                 BusinessName = c.BusinessName,
-                 OwnersName = c.Fullname
-             });
+            var result = clients.Select(c => new GetAllClientsByClusterResult
+            {
+                Id = c.Id,
+                BusinessName = c.BusinessName,
+                OwnersName = c.Fullname
+            });
 
-             return await PagedList<GetAllClientsByClusterResult>.CreateAsync(
-                 result, 
-                 request.PageNumber,
-                 request.PageSize);
+            return await PagedList<GetAllClientsByClusterResult>.CreateAsync(
+                result, 
+                request.PageNumber,
+                request.PageSize);
         }
     }
 }

@@ -57,7 +57,7 @@ public class GetUsersAsync : ControllerBase
     public class GetUserAsyncQuery : UserParams, IRequest<PagedList<GetUserAsyncQueryResult>>
     {
         public string Search { get; set; }
-        public string Role { get; set; }
+        public int UserRoleId { get; set; }
         public bool? Status { get; set; }
     }
 
@@ -76,13 +76,9 @@ public class GetUsersAsync : ControllerBase
         public string LocationName { get; set; }
         public string RoleName { get; set; }
         public ICollection<string> Permission { get; set; }
-        public IEnumerable<CdoClusterCollection> Clusters { get; set; }
-
-        public class CdoClusterCollection
-        {
-            public int ClusterId { get; set; }
-            public string Cluster { get; set; }
-        }
+        public int? ClusterId { get; set; }
+        public string Cluster { get; set; }
+        
     }
 
     public class Handler : IRequestHandler<GetUserAsyncQuery, PagedList<GetUserAsyncQueryResult>>
@@ -103,8 +99,7 @@ public class GetUsersAsync : ControllerBase
                 .Include(d => d.Department)
                 .Include(c => c.Company)
                 .Include(l => l.Location)
-                .Include(cluster => cluster.CdoCluster)
-                .ThenInclude(c => c.Cluster);
+                .Include(cluster => cluster.Cluster);
 
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -116,9 +111,9 @@ public class GetUsersAsync : ControllerBase
                 users = users.Where(x => x.IsActive == request.Status);
             }
 
-            if (!string.IsNullOrEmpty(request.Role))
+            if (request.UserRoleId != 0)
             {
-                users = users.Where(role => role.UserRoles.UserRoleName == request.Role);
+                users = users.Where(role => role.UserRolesId == request.UserRoleId);
             }
 
             var result = users.Select(x => x.ToGetUserAsyncQueryResult());

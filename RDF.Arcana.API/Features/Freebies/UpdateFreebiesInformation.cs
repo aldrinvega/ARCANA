@@ -105,10 +105,12 @@ public class UpdateFreebiesInformation : ControllerBase
             var clientFreebies = new List<UpdateFreebieInformationResult.Freebie>();
 
             var client = await _context.Clients
+                .Include(x => x.FreebiesRequests)
+                .ThenInclude(freebieRequest => freebieRequest.FreebieItems)
                 .Include(x => x.OwnersAddress)
                 .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
 
-            var approvals = await _context.Approvals
+            /*var approvals = await _context.Approvals
                 .Include(x => x.Client)
                 .Include(x => x.FreebieRequest) // adjusted this line
                 .ThenInclude(x => x.FreebieItems)
@@ -117,14 +119,14 @@ public class UpdateFreebiesInformation : ControllerBase
                     x => x.ClientId == request.ClientId &&
                          x.ApprovalType == Status.ForFreebieApproval &&
                          x.FreebieRequest.Any(x => x.Id == request.FreebieRequestId),
-                    cancellationToken);
+                    cancellationToken);*/
 
-            if (approvals is null)
+            if (client.FreebiesRequests is null)
             {
                 return FreebieErrors.NoFreebieApprovalFound();
             }
 
-            var freebieRequestToUpdate = approvals.FreebieRequest
+            var freebieRequestToUpdate = client.FreebiesRequests
                 .FirstOrDefault(fr => fr.Id == request.FreebieRequestId && !fr.IsDelivered);
 
             if (freebieRequestToUpdate == null)
@@ -180,7 +182,7 @@ public class UpdateFreebiesInformation : ControllerBase
                     freebieRequestToUpdate.FreebieItems.Add(
                         new FreebieItems
                         {
-                            RequestId = request.FreebieRequestId,
+                            FreebieRequestId = request.FreebieRequestId,
                             ItemId = requestFreebie.ItemId,
                             Quantity = requestFreebie.Quantity
                         });
@@ -205,8 +207,6 @@ public class UpdateFreebiesInformation : ControllerBase
                     });
                 }
             }
-
-            approvals.IsApproved = true;
 
             await _context.SaveChangesAsync(cancellationToken);
 

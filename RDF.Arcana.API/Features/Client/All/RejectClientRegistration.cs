@@ -111,6 +111,22 @@ public class RejectClientRegistration : ControllerBase
             
             existingClientRequest.Status = Status.Rejected;
             existingClientRequest.Clients.RegistrationStatus = Status.Rejected;
+            
+            var notification = new Domain.Notification
+            {
+                UserId = existingClientRequest.RequestorId,
+                Status = Status.RejectedClients
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = existingClientRequest.CurrentApproverId,
+                Status = Status.RejectedClients
+            };
+                
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 

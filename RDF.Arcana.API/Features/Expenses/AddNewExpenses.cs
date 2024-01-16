@@ -113,7 +113,7 @@ public class AddNewExpenses : ControllerBase
 
             foreach (var expenses in request.Expenses)
             {
-                var newExpensesRequest = new Domain.ExpensesRequest
+                var newExpensesRequest = new ExpensesRequest
                 {
                     ExpensesId = newExpenses.Id,
                     OtherExpenseId = expenses.OtherExpenseId,
@@ -122,6 +122,22 @@ public class AddNewExpenses : ControllerBase
 
                 await _context.ExpensesRequests.AddAsync(newExpensesRequest, cancellationToken);
             }
+            
+            var notification = new Domain.Notification
+            {
+                UserId = request.AddedBy,
+                Status = Status.PendingExpenses
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = approvers.First().UserId,
+                Status = Status.PendingExpenses
+            };
+            
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

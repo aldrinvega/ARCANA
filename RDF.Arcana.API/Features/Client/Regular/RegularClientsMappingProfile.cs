@@ -167,7 +167,7 @@ public static class RegularClientsMappingProfile
             StoreType = client.StoreType?.StoreTypeName,
             AuthorizedRepresentative = client.RepresentativeName,
             AuthorizedRepresentativePosition = client.RepresentativePosition,
-            Cluster = client.ClusterId,
+            ClusterId = client.ClusterId,
             Freezer = client.Freezer,
             TypeOfCustomer = client.CustomerType,
             DirectDelivery = client.DirectDelivery,

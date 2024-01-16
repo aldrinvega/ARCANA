@@ -89,6 +89,7 @@ public class GetAllExpenses : ControllerBase
         public string BusinessName { get; set; }
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }
+        public decimal TotalAmount { get; set; }
         public IEnumerable<ExpensesRequestCollection> Expenses { get; set; }
         public class ExpensesRequestCollection
         {
@@ -99,7 +100,6 @@ public class GetAllExpenses : ControllerBase
         public IEnumerable<ExpensesApprovalHistory> ApprovalHistories { get; set; }
         public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
         public IEnumerable<RequestApproversForExpenses> Approvers { get; set; }
-        
         public class ExpensesApprovalHistory
         {
             public string Module { get; set; }
@@ -109,7 +109,6 @@ public class GetAllExpenses : ControllerBase
             public int? Level { get; set; }
             public string Reason { get; set; }
         }
-        
         public class UpdateHistory
         {
             public string Module { get; set; }
@@ -149,7 +148,7 @@ public class GetAllExpenses : ControllerBase
                 .AsSingleQuery();*/
                 
             var user = await _context.Users
-                    .Include(cluster => cluster.CdoCluster)
+                    .Include(cluster => cluster.Cluster)
                     .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
@@ -157,22 +156,16 @@ public class GetAllExpenses : ControllerBase
                 expenses = expenses.Where(oe => oe.Client.BusinessName.Contains(request.Search));
             }
 
-            switch (request.RoleName)
+            expenses = request.RoleName switch
             {
-                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
-                                    request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower():
-                    expenses = expenses.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive));
-                    break;
-               case Roles.Approver:
-                   expenses = expenses.Where(lf =>
-                       lf.Request.Status == request.ExpenseStatus &&
-                       lf.Request.CurrentApproverId == request.AccessBy);
-                   break;
-                case Roles.Admin or Roles.Cdo:
-                {
-                    var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
-
+                Roles.Approver when !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
+                                    request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower() => expenses.Where(
+                    lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive)),
+                Roles.Approver => expenses.Where(lf =>
+                    lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy),
+                Roles.Cdo =>
+                    /*var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);*/
                     /*if (request.ExpenseStatus is  Status.Voided)
                     {
                         expenses = expenses.Where(x =>
@@ -226,13 +219,11 @@ public class GetAllExpenses : ControllerBase
                         voidedResults = voidedResults.OrderBy(x => x.Id);
 
                         return await PagedList<GetAllExpensesResult>.CreateAsync(voidedResults, request.PageNumber, request.PageSize);
-                        
-                    }*/
 
-                    expenses = expenses
-                        .Where(x => x.Client.ClusterId != null && userClusters != null && (userClusters.Contains(x.Client.ClusterId.Value)) && x.Status == request.ExpenseStatus);
-                    break;
-                }
+                    }*/
+                    expenses.Where(x => x.Client.ClusterId == user.Cluster.Id && x.Status == request.ExpenseStatus),
+                Roles.Admin => expenses.Where(x => x.Status == request.ExpenseStatus),
+                _ => expenses
             };
 
             if (request.RoleName is Roles.Approver && request.ExpenseStatus == Status.UnderReview)
@@ -266,6 +257,7 @@ public class GetAllExpenses : ControllerBase
                     ExpenseType = er.OtherExpense.ExpenseType,
                     Amount = er.Amount
                 }),
+                TotalAmount = oe.ExpensesRequests.Sum(er => er.Amount),
                 ApprovalHistories = oe.Request.Approvals == null
                     ? null
                     : oe.Request.Approvals.OrderByDescending(a => a.CreatedAt)

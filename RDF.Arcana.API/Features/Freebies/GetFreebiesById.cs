@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+/*using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
@@ -94,4 +94,4 @@ public class GetFreebiesById : ControllerBase
             return Result.Success(result);
         }
     }
-}
+}*/

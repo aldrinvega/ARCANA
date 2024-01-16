@@ -131,6 +131,22 @@ public class UpdateExpenseInformation : ControllerBase
             
             await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
             
+            var notification = new Domain.Notification
+            {
+                UserId = expenses.AddedBy,
+                Status = Status.PendingExpenses
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+            
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = approver.First().ApproverId,
+                Status = Status.PendingExpenses
+            };
+                
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+            
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

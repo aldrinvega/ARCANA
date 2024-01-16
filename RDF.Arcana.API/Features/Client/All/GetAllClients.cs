@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Helpers;
@@ -102,7 +101,8 @@ public class GetAllClients : ControllerBase
         public string StoreType { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int? Cluster { get; set; }
+        public int? ClusterId { get; set; }
+        public string ClusterName { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool? DirectDelivery { get; set; }
@@ -120,6 +120,7 @@ public class GetAllClients : ControllerBase
         public IEnumerable<FreebiesCollection> Freebies { get; set; }
         public IEnumerable<ListingFeeCollection> ListingFees { get; set; }
         public IEnumerable<RequestApproversForClients> Approvers { get; set; }
+        public IEnumerable<ExpensesRequest> Expenses { get; set; }
 
         public class ModeOfPayment
         {
@@ -135,7 +136,6 @@ public class GetAllClients : ControllerBase
             public string DocumentLink { get; set; }
             public string DocumentType { get; set; }
         }
-
         public class BusinessAddressCollection
         {
             public string HouseNumber { get; set; }
@@ -144,7 +144,6 @@ public class GetAllClients : ControllerBase
             public string City { get; set; }
             public string Province { get; set; }
         }
-
         public class OwnersAddressCollection
         {
             public string HouseNumber { get; set; }
@@ -153,7 +152,6 @@ public class GetAllClients : ControllerBase
             public string City { get; set; }
             public string Province { get; set; }
         }
-
         public class ClientTerms
         {
             public int TermId { get; set; }
@@ -171,13 +169,11 @@ public class GetAllClients : ControllerBase
             public int? Level { get; set; }
             public string Reason { get; set; }
         }
-        
         public class UpdateHistory
         {
             public string Module { get; set; }
             public DateTime UpdatedAt { get; set; }
         }
-
         public class FreebiesCollection
         {
             public int? TransactionNumber { get; set; }
@@ -187,7 +183,6 @@ public class GetAllClients : ControllerBase
             public int? FreebieRequestId { get; set; }
             public IEnumerable<Items> Freebies { get; set; }
         }
-            
         public class Items
         {
             public int? Id { get; set; }
@@ -196,7 +191,6 @@ public class GetAllClients : ControllerBase
             public string Uom { get; set; }
             public int? Quantity { get; set; }
         }
-
         public class ListingFeeCollection
         {
             public int Id { get; set; }
@@ -206,7 +200,6 @@ public class GetAllClients : ControllerBase
             public string ApprovalDate { get; set; }
             public IEnumerable<ListingItems> ListingItems { get; set; }
         }
-
         public class ListingItems
         {
             public int? Id { get; set; }
@@ -216,11 +209,22 @@ public class GetAllClients : ControllerBase
             public string Uom { get; set; }
             public decimal? UnitCost { get; set; }
         }
-
         public class RequestApproversForClients
         {
             public string Name { get; set; }
             public int Level { get; set; }
+        }
+        public class ClientExpensesCollection
+        {
+            public string ExpenseType { get; set; }
+            public decimal Amount { get; set; }
+        }
+        public class ExpensesRequest
+        {
+            public int Id { get; set; }
+            public int RequestId { get; set; }
+            public string Status { get; set; }
+            public IEnumerable<ClientExpensesCollection> Expenses { get; set; }
         }
     }
 
@@ -283,7 +287,7 @@ public class GetAllClients : ControllerBase
                 .AsNoTracking();
                 
             var user = await _context.Users
-                    .Include(cluster => cluster.CdoCluster)
+                    .Include(cluster => cluster.Cluster)
                     .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
@@ -312,17 +316,18 @@ public class GetAllClients : ControllerBase
                         clients.Request.Status == request.RegistrationStatus &&
                         clients.Request.CurrentApproverId == request.AccessBy);
                     break;
-                case Roles.Admin or Roles.Cdo:
+                case Roles.Cdo:
                 {
-                    var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
+                    /*var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);*/
 
                     if (request.RegistrationStatus is Status.ForReleasing or Status.Released or Status.Voided)
                     {
-                        regularClients = regularClients.Where(x => !x.Request.Approvals.Any());
                         
                         regularClients = regularClients
                             .Where(x => x.AddedBy == request.AccessBy &&
-                                        x.RegistrationStatus == request.RegistrationStatus);
+                                        x.RegistrationStatus == request.RegistrationStatus &&
+                                        x.ClusterId == user.Cluster.Id &&
+                                        x.RequestId != null);
 
                         //Get the result
 
@@ -367,7 +372,8 @@ public class GetAllClients : ControllerBase
                             StoreType = client.StoreType.StoreTypeName,
                             AuthorizedRepresentative = client.RepresentativeName,
                             AuthorizedRepresentativePosition = client.RepresentativePosition,
-                            Cluster = client.ClusterId,
+                            ClusterId = client.ClusterId,
+                            ClusterName = client.Cluster.ClusterType,
                             Freezer = client.Freezer,
                             TypeOfCustomer = client.CustomerType,
                             DirectDelivery = client.DirectDelivery,
@@ -464,15 +470,20 @@ public class GetAllClients : ControllerBase
 
                         voidedResults = voidedResults.OrderBy(r => r.Id);
                         
-                        
-                        
                         //Return the result
                         return await PagedList<GetAllClientResult>.CreateAsync(voidedResults, request.PageNumber, request.PageSize);
 
                     }
 
                     regularClients = regularClients
-                        .Where(x => userClusters != null && (userClusters.Contains(x.ClusterId.Value)) && x.RegistrationStatus == request.RegistrationStatus);
+                        .Where(x => x.ClusterId == user.Cluster.Id && x.RegistrationStatus == request.RegistrationStatus);
+                    break;
+                }
+
+                case Roles.Admin:
+                {
+                    regularClients = regularClients
+                        .Where(x =>  x.RegistrationStatus == request.RegistrationStatus);
                     break;
                 }
             }
@@ -480,7 +491,6 @@ public class GetAllClients : ControllerBase
             //Get all the under review request for the Approver
             //It will access the request table where status is Under Review
             //And CurrentApproverId is the Logged In user (Approver)
-
             if (request.RoleName is Roles.Approver && request.RegistrationStatus == Status.UnderReview)
             {
                 regularClients = regularClients.Where(x => x.Request.CurrentApproverId == request.AccessBy);
@@ -504,9 +514,7 @@ public class GetAllClients : ControllerBase
                 regularClients = regularClients.Where(x => x.IsActive == request.Status);
             }
             
-            
             //Get the result
-
             var result = regularClients.Select(client => new GetAllClientResult
             {
                 Id = client.Id,
@@ -546,11 +554,12 @@ public class GetAllClients : ControllerBase
                 StoreType = client.StoreType.StoreTypeName,
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
-                Cluster = client.ClusterId,
+                ClusterId = client.ClusterId,
                 Freezer = client.Freezer,
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,
                 BookingCoverage = client.BookingCoverages.BookingCoverage,
+                RegistrationStatus = client.RegistrationStatus,
                 Terms = client.Term != null
                     ? new GetAllClientResult.ClientTerms
                     {
@@ -610,7 +619,7 @@ public class GetAllClients : ControllerBase
                         Id = x.Id,
                         ItemCode = x.Items.ItemCode,
                         ItemDescription = x.Items.ItemDescription,
-                            Uom = x.Items.Uom.UomCode,
+                        Uom = x.Items.Uom.UomCode,
                         Quantity = x.Quantity
                     })
                 }),
@@ -635,7 +644,19 @@ public class GetAllClients : ControllerBase
                 {
                     Name = x.Approver.Fullname,
                     Level = x.Level
+                }),
+                Expenses = client.Expenses.Select(exp => new GetAllClientResult.ExpensesRequest
+                {
+                    Id = exp.Id,
+                    RequestId = exp.RequestId,
+                    Status = exp.Status,
+                    Expenses = exp.ExpensesRequests.Select(er => new GetAllClientResult.ClientExpensesCollection
+                    {
+                        ExpenseType = er.OtherExpense.ExpenseType,
+                        Amount = er.Amount
+                    })
                 })
+                
             });
 
             result = result.OrderBy(r => r.Id);

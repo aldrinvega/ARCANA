@@ -84,8 +84,6 @@ public class Handler : IRequestHandler<AddNewProspectCommand, Result>
 
     public async Task<Result> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
     {
-        
-
         var existingProspectCustomer =
             await _context.Clients.FirstOrDefaultAsync(
                 x => x.BusinessName == request.BusinessName
@@ -125,6 +123,14 @@ public class Handler : IRequestHandler<AddNewProspectCommand, Result>
         };
 
         await _context.Clients.AddAsync(prospectingClients, cancellationToken);
+
+        var notifications = new Domain.Notification
+        {
+            UserId = request.AddedBy,
+            Status = Status.NoFreebies
+        };
+        await _context.Notifications.AddAsync(notifications, cancellationToken);
+        
         await _context.SaveChangesAsync(cancellationToken);
         
         

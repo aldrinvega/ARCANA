@@ -123,7 +123,6 @@ public class GetAllRegisteredClients : ControllerBase
             IQueryable<Domain.Clients> registeredClientsQuery = _context.Clients
                 .Include(x => x.FreebiesRequests)
                 .Include(x => x.FixedDiscounts)
-                .Include(x => x.Approvals)
                 .Include(x => x.Term)
                 .Include(x => x.ClientDocuments)
                 .Include(x => x.StoreType)

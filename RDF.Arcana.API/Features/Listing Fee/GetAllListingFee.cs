@@ -156,7 +156,7 @@ public class GetAllListingFee : ControllerBase
                 .AsSingleQuery();
 
             var user = await _context.Users
-                .Include(cluster => cluster.CdoCluster)
+                .Include(cluster => cluster.Cluster)
                 .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
@@ -165,27 +165,19 @@ public class GetAllListingFee : ControllerBase
                     x.Client.BusinessName.Contains(request.Search) || x.Client.Fullname.Contains(request.Search));
             }
 
-            switch (request.RoleName)
+            listingFees = request.RoleName switch
             {
-                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
-                                     request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
-                    listingFees = listingFees.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive));
-                    break;
-               case Roles.Approver:
-                   listingFees = listingFees.Where(lf =>
-                       lf.Request.Status == request.ListingFeeStatus &&
-                       lf.Request.CurrentApproverId == request.AccessBy);
-                   break;
-
-                case Roles.Admin or Roles.Cdo:
-                {
-                    var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);
-
+                Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
+                                    request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower() =>
+                    listingFees.Where(lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive)),
+                Roles.Approver => listingFees.Where(lf =>
+                    lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy),
+                Roles.Cdo =>
                     /*if (request.ListingFeeStatus is Status.Voided)
                     {
                         listingFees = listingFees.Where(lf => lf.Status == request.ListingFeeStatus);
-                        
+
                         var voidedResult = listingFees.Select(listingFee => new ClientsWithListingFee
                         {
                             ClientId = listingFee.ClientId,
@@ -226,15 +218,13 @@ public class GetAllListingFee : ControllerBase
                                     Level = x.Level
                                 })
                         }).OrderBy(x => x.ClientId);
-                        
+
                         return await PagedList<ClientsWithListingFee>.CreateAsync(voidedResult, request.PageNumber, request.PageSize);
                     }*/
-
-                    listingFees = listingFees
-                        .Where(x => x.Client.ClusterId != null && userClusters != null && (userClusters.Contains(x.Client.ClusterId.Value)) && x.Status == request.ListingFeeStatus);
-                    break;
-                }
-                   
+                    listingFees.Where(
+                        x => x.Client.ClusterId == user.Cluster.Id && x.Status == request.ListingFeeStatus),
+                Roles.Admin => listingFees.Where(x => x.Status == request.ListingFeeStatus),
+                _ => listingFees
             };
 
             if (request.RoleName is Roles.Approver && request.ListingFeeStatus == Status.UnderReview)
