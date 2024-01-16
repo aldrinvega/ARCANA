@@ -5,6 +5,8 @@ using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Setup.Items.Exceptions;
 using RDF.Arcana.API.Features.Setup.Meat_Type;
 using RDF.Arcana.API.Features.Setup.Price_Change;
+using RDF.Arcana.API.Features.Setup.Product_Sub_Category;
+using RDF.Arcana.API.Features.Setup.UOM;
 
 namespace RDF.Arcana.API.Features.Setup.Items;
 
@@ -50,6 +52,20 @@ public class UpdateItem : ControllerBase
              var validateMeatType =
                  await _context.MeatTypes.FirstOrDefaultAsync(x => x.Id == request.MeatTypeId, cancellationToken);
 
+             var validateUom = await _context.Uoms.FirstOrDefaultAsync(x => x.Id == request.UomId, cancellationToken);
+             var validateProductSubCategoryId =
+                 await _context.ProductSubCategories.FirstOrDefaultAsync(x => x.Id == request.ProductSubCategoryId,
+                     cancellationToken);
+
+             if (validateUom is null)
+             {
+                 return UomErrors.NotFound();
+             }
+
+             if (validateProductSubCategoryId is null)
+             {
+                 return ProductSubCategoryErrors.NotFound();
+             }
              if (validateMeatType is null )
              {
                  return MeatTypeErrors.NotFound();
