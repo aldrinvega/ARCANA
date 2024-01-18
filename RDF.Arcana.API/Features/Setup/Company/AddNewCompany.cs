@@ -41,7 +41,7 @@ public class AddNewCompany : ControllerBase
     }
 
 
-    public class AddNewCompanyCommand : IRequest<Result>
+    public sealed record AddNewCompanyCommand : IRequest<Result>
     {
         public string CompanyName { get; set; }
         public int AddedBy { get; set; }

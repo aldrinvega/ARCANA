@@ -21,7 +21,6 @@ public class RejectClientRegistration : ControllerBase
     [HttpPut("RejectClientRegistration/{id:int}")]
     public async Task<IActionResult> RejectClients([FromRoute] int id, [FromBody] RejectClientCommand command)
     {
-        command.RequestId = id;
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -29,6 +28,8 @@ public class RejectClientRegistration : ControllerBase
             {
                 command.AccessBy = userId;
             }
+            
+            command.RequestId = id;
 
             var result = await _mediator.Send(command);
             if (result.IsFailure)
@@ -44,7 +45,7 @@ public class RejectClientRegistration : ControllerBase
         }
     }
 
-    public record RejectClientCommand : IRequest<Result>
+    public sealed record RejectClientCommand : IRequest<Result>
     {
         public int RequestId { get; set; }
         public string Reason { get; set; }
@@ -74,9 +75,7 @@ public class RejectClientRegistration : ControllerBase
             
             var existingClientRequest = await _context.Requests
                 .Include(client => client.Clients)
-                .ThenInclude(listingfee => listingfee.ListingFees)
-                .ThenInclude(rq => rq.Request)
-                .Where(client => client.Id == request.RequestId)
+                .Where(rq => rq.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (existingClientRequest == null)
@@ -98,30 +97,6 @@ public class RejectClientRegistration : ControllerBase
             {
                 return ClientErrors.AlreadyRejected(existingClientRequest.Status);
             }
-            
-            var underReviewListingFee = existingClientRequest.Clients?.ListingFees?
-              .Where(lf => lf.Status == Status.UnderReview)
-              .ToList();
-            
-            if (underReviewListingFee is not null)
-            {
-                foreach (var listingFee in underReviewListingFee)
-                {
-                    var newListingFeeApproval = new Approval(
-                        listingFee.RequestId,
-                        listingFee.Request.CurrentApproverId,
-                        Status.Rejected,
-                        request.Reason,
-                        true
-                    );
-                    
-                    listingFee.Status = Status.Rejected;
-                    listingFee.Request.Status = Status.Rejected;
-
-                    await _context.Approval.AddAsync(newListingFeeApproval, cancellationToken);
-                    await _context.SaveChangesAsync(cancellationToken);
-                }
-            }
 
             var newApproval = new Approval
             (
@@ -136,6 +111,22 @@ public class RejectClientRegistration : ControllerBase
             
             existingClientRequest.Status = Status.Rejected;
             existingClientRequest.Clients.RegistrationStatus = Status.Rejected;
+            
+            var notification = new Domain.Notification
+            {
+                UserId = existingClientRequest.RequestorId,
+                Status = Status.RejectedClients
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = existingClientRequest.CurrentApproverId,
+                Status = Status.RejectedClients
+            };
+                
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 

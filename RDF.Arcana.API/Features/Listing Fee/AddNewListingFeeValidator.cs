@@ -10,10 +10,11 @@ public class AddNewListingFeeValidator : AbstractValidator<AddNewListingFee.AddN
             .NotEmpty().WithMessage("ClientId must not be empty")
             .Must(x => true).WithMessage("ClientId must be a number");
 
-        RuleFor(x => x.Total)
+        /*RuleFor(x => x.Total)
+            .GreaterThanOrEqualTo(0).WithMessage("Total must be greater than or equal to 0")
             .NotEmpty().WithMessage("Total must not be empty")
-            .Must(x => true).WithMessage("Total must be a decimal number");
-
+            .Must(x => true).WithMessage("Total must be a decimal number");*/
+        
         RuleForEach(x => x.ListingItems)
             .ChildRules(items =>
             {
@@ -25,9 +26,11 @@ public class AddNewListingFeeValidator : AbstractValidator<AddNewListingFee.AddN
                     .NotEmpty().WithMessage("Sku must not be empty")
                     .Must(x => true).WithMessage("Sku must be a number");
 
-                items.RuleFor(i => i.UnitCost)
+                /*items.RuleFor(i => i.UnitCost)
+                    .GreaterThanOrEqualTo(0).WithMessage("UnitCost must be greater than or equal to 0")
                     .NotEmpty().WithMessage("UnitCost must not be empty")
-                    .Must(x => true).WithMessage("UnitCost must be a decimal number");
+                    .Must(x => true).WithMessage("UnitCost must be a decimal number");*/
+
             });
     }
 }

@@ -34,6 +34,7 @@ public class ApproveClientRegistration : ControllerBase
                 UserId = userId
             };
             var result = await _mediator.Send(command);
+            
             if (result.IsFailure)
             {
                 return BadRequest(result);
@@ -47,7 +48,7 @@ public class ApproveClientRegistration : ControllerBase
         }
     }
 
-    public class ApprovedClientRegistrationCommand : IRequest<Result>
+    public sealed record ApprovedClientRegistrationCommand : IRequest<Result>
     {
         public int RequestId { get; set; }
         public int UserId { get; set; }
@@ -66,19 +67,8 @@ public class ApproveClientRegistration : ControllerBase
         {
             var requestedClient = await _context.Requests
                 .Include(client => client.Clients)
-                .ThenInclude(listingfee => listingfee.ListingFees)
-                .ThenInclude(rq => rq.Request)
                 .Where(client => client.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
-            
-            
-            /*var existingClientRequest = await _context.Requests
-                .Include(client => client.Clients)
-                .ThenInclude(listingFee => listingFee.Request)
-                .Include(request => request.Clients)
-                .ThenInclude(clients => clients.ListingFees)
-                .FirstOrDefaultAsync(x =>
-                    x.Id == request.RequestId, cancellationToken);*/
 
             if (requestedClient?.Clients is null)
             {
@@ -88,10 +78,6 @@ public class ApproveClientRegistration : ControllerBase
             var registrationApprovers = await _context.RequestApprovers
                 .Where(rq => rq.RequestId == request.RequestId)
                 .ToListAsync(cancellationToken);
-
-            var underReviewListingFee = requestedClient.Clients?.ListingFees?
-                .Where(lf => lf.Status == Status.UnderReview)
-                .ToList();
             
             var currentApproverLevel = registrationApprovers
                 .FirstOrDefault(approver => approver.ApproverId == requestedClient.CurrentApproverId)?.Level;
@@ -100,44 +86,6 @@ public class ApproveClientRegistration : ControllerBase
             {
                 return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
-            
-            if (underReviewListingFee is not null)
-            {
-                foreach (var listingFee in underReviewListingFee)
-                {
-                    var listingFeeApprover = await _context.RequestApprovers
-                        .Where(rq => rq.RequestId == listingFee.RequestId)
-                        .ToListAsync(cancellationToken);
-                    
-                    var newListingFeeApproval = new Approval(
-                        listingFee.RequestId,
-                        listingFee.Request.CurrentApproverId,
-                        Status.Approved,
-                        null,
-                        true
-                    );
-                
-                    var nextApprovalLevelLevel = currentApproverLevel.Value + 1;
-                    var nextListingFeeApprover = listingFeeApprover
-                        .FirstOrDefault(approver => approver.Level == nextApprovalLevelLevel);
-
-                    if (nextListingFeeApprover == null)
-                    {
-                        listingFee.Status = Status.Approved;
-                        listingFee.Request.Status = Status.Approved;
-                        listingFee.ApprovalDate = DateTime.Now;
-                    }
-                    else
-                    {
-                        listingFee.Request.CurrentApproverId = nextListingFeeApprover.ApproverId;
-                    }
-                
-                    await _context.Approval.AddAsync(newListingFeeApproval, cancellationToken);
-                    await _context.SaveChangesAsync(cancellationToken);
-                
-                }
-            }
-            
             
             var newApproval = new Approval(
                 requestedClient.Id,
@@ -155,14 +103,50 @@ public class ApproveClientRegistration : ControllerBase
             {
                 requestedClient.Status = Status.Approved;
                 requestedClient.Clients.RegistrationStatus = Status.Approved;
+                
+                var notificationForCurrentApprover = new Domain.Notification
+                {
+                    UserId = requestedClient.CurrentApproverId,
+                    Status = Status.ApprovedClients
+                };
+                
+                await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+                
+                var notification = new Domain.Notification
+                {
+                    UserId = requestedClient.RequestorId,
+                    Status = Status.ApprovedClients
+                };
+                
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+                
             }
             else
             {
+                var notificationForCurrentApprover = new Domain.Notification
+                {
+                    UserId = requestedClient.CurrentApproverId,
+                    Status = Status.ApprovedClients
+                };
+                
+                await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+                
                 requestedClient.CurrentApproverId = nextApprover.ApproverId;
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = nextApprover.ApproverId,
+                    Status = Status.PendingClients
+                };
+                
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
             }
             
+            
             await _context.Approval.AddAsync(newApproval, cancellationToken);
+            
             await _context.SaveChangesAsync(cancellationToken);
+            
             return Result.Success();
         }
     }

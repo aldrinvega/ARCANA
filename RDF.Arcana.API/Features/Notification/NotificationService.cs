@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿/*using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
@@ -38,7 +38,6 @@ public class NotificationService : ControllerBase
         
         /// ListingFee  
         public int PendingListingFee { get; set; }
-
         public int ApprovedListingFee { get; set; }
         public int RejectedListingFee { get; set; }
     }
@@ -52,8 +51,13 @@ public class NotificationService : ControllerBase
              _context = context;
          }
          
-         public Task<Result> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
-         {
+         public async Task<Result> Handle(NotificationServiceQuery request, CancellationToken cancellationToken)
+         { 
+             // - userClusters is a collection representing the clusters associated with the user
+            // - IsActive, Origin, and RegistrationStatus are properties of the Client entity
+            // - FreebiesRequests is a navigation property in the Client entity representing a collection of FreebiesRequest entities
+            // - Status is a property of the FreebiesRequest entity
+
              var pendingCount = 0;
              var approvedCount = 0;
              var rejectedCount = 0;
@@ -64,27 +68,33 @@ public class NotificationService : ControllerBase
              var forReleasingCount = 0;
              var releasedCount = 0;
              
+             var user = await _context.Users
+                 .Include(cluster => cluster.CdoCluster)
+                 .FirstOrDefaultAsync(user => user.Id == request.AddedBy, cancellationToken);
+             
+             var userClusters = user?.CdoCluster?.Select(cluster => cluster.UserId);
+             
              switch (request.Role)
              {
                  case Roles.Approver:
                      pendingCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
-                         .Count(x => x.Request.CurrentApproverId == request.AddedBy && x.Request.Status == Status.UnderReview && x.Request.Module == Modules.RegistrationApproval );
+                         .Count(x => x.Request.CurrentApproverId == request.AddedBy && x.Request.Status == Status.UnderReview && x.Request.Module == Modules.RegistrationApproval && x.IsActive);
 
                      approvedCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
                          .Where(x => x.Approvals != null)
                          .SelectMany(x => x.Request.Approvals)
-                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Approved && ap.Request.Module == Modules.RegistrationApproval);
+                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Approved && ap.Request.Module == Modules.RegistrationApproval && ap.IsActive);
                  
                      rejectedCount = _context.Clients
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
-                         .Where(x => x.Approvals != null)
+                         .Where(x => x.Approvals != null && x.Request.Status != Status.UnderReview)
                          .SelectMany(x => x.Request.Approvals)
-                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Rejected && ap.Request.Module == Modules.RegistrationApproval);
+                         .Count(ap => ap.ApproverId == request.AddedBy && ap.Status == Status.Rejected && ap.Request.Module == Modules.RegistrationApproval && ap.IsActive);
                      
                      pendingListingFeeCount = _context.ListingFees
                          .Include(x => x.Request)
@@ -102,6 +112,7 @@ public class NotificationService : ControllerBase
                     rejectedListingFeeCount = _context.ListingFees
                         .Include(x => x.Request)
                         .ThenInclude(ap => ap.Approvals)
+                        .Where(x => x.Status == Status.Rejected)
                         .Where(x => x.Request.Approvals != null)
                         .SelectMany(x => x.Request.Approvals)
                         .Count(approval => approval.ApproverId == request.AddedBy
@@ -113,11 +124,13 @@ public class NotificationService : ControllerBase
                      
                      pendingCount = _context.Clients
                          .Count(x => x.AddedBy == request.AddedBy && 
+                                      userClusters != null && (userClusters.Contains(x.ClusterId.Value)) &&
                                      x.RegistrationStatus == Status.UnderReview && 
-                                     x.IsActive );
+                                     x.IsActive);
 
                      approvedCount = _context.Clients
                          .Count(x => x.AddedBy == request.AddedBy && 
+                                     userClusters != null && (userClusters.Contains(x.ClusterId.Value)) &&
                                      x.RegistrationStatus == Status.Approved && 
                                      x.IsActive);
                  
@@ -125,6 +138,7 @@ public class NotificationService : ControllerBase
                          .Include(x => x.Request)
                          .ThenInclude(ap => ap.Approvals)
                          .Count(x => x.AddedBy == request.AddedBy && 
+                                     userClusters != null && (userClusters.Contains(x.ClusterId.Value)) &&
                                      x.Request.Status == Status.Rejected && 
                                      x.IsActive);
                  
@@ -144,7 +158,7 @@ public class NotificationService : ControllerBase
                              ap.Status == Status.Rejected && ap.IsActive);
 
                      forFreebiesCount = _context.Clients
-                         .Where(x =>
+                         .Where(x => userClusters != null && (userClusters.Contains(x.AddedBy) && x.IsActive && x.RegistrationStatus == Status.Requested) &&
                              x.RegistrationStatus == Status.Requested &&
                              x.AddedBy == request.AddedBy &&
                              x.IsActive &&
@@ -153,21 +167,20 @@ public class NotificationService : ControllerBase
                          .Count(x => !x.FreebiesRequests.Any());
                      
                      forReleasingCount = _context.Clients
-                         .Where(client => client.IsActive &&
-                                          client.RegistrationStatus == Status.Requested)
+                         .Where(client => userClusters != null && (userClusters.Contains(client.AddedBy) &&
+                                                                   client.IsActive &&
+                                                                   client.RegistrationStatus == Status.Requested))
                          .Include(x => x.FreebiesRequests)
                          .Count(x => x.FreebiesRequests.Any(x => 
-                             x.Status == Status.ForReleasing && 
-                             x.RequestedBy == request.AddedBy));
+                             x.Status == Status.ForReleasing));
                      
                      releasedCount = _context.Clients
-                         .Where(x => 
-                             x.IsActive && 
-                             x.Origin == Origin.Prospecting &&
-                             x.RegistrationStatus == Status.PendingRegistration)
-                         .Include(x => x.FreebiesRequests)
-                         .Count(x => x.FreebiesRequests.Any(x => 
-                             x.Status == Status.Released && x.RequestedBy == request.AddedBy));
+                         .Count(x => userClusters != null &&
+                                     userClusters.Contains(x.AddedBy) &&
+                                     x.IsActive &&
+                                     x.Origin == Origin.Prospecting &&
+                                     x.RegistrationStatus == Status.PendingRegistration &&
+                                     x.FreebiesRequests.Any(fr => fr.Status == Status.Released));
                      break;
              }
 
@@ -184,7 +197,7 @@ public class NotificationService : ControllerBase
                  RejectedListingFee = rejectedListingFeeCount
              };
 
-             return Task.FromResult<Result>(Result.Success(result));
+             return Result.Success(result);
          }
      }
 
@@ -219,4 +232,4 @@ public class NotificationService : ControllerBase
             });
         }
     }
-}
+}*/

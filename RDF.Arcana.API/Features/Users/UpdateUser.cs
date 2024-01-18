@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Setup.Cluster;
 using RDF.Arcana.API.Features.Setup.UserRoles;
-using RDF.Arcana.API.Features.Setup.UserRoles.Exceptions;
-using RDF.Arcana.API.Features.Users.Exceptions;
 
 namespace RDF.Arcana.API.Features.Users;
 
@@ -51,6 +51,8 @@ public class UpdateUser : ControllerBase
         public int DepartmentId { get; set; }
         public int LocationId { get; set; }
         public int? UserRoleId { get; set; }
+        public int ClusterId { get; set; }
+
     }
 
     public class Handler : IRequestHandler<UpdateUserCommand, Result>
@@ -64,7 +66,9 @@ public class UpdateUser : ControllerBase
 
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+            var user = await _context.Users
+                .Include(user => user.Cluster)
+                .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
             /*var validateCompany =
                 await _context.Companies.FirstOrDefaultAsync(x => x.Id == request.CompanyId, cancellationToken);
             var validateDepartment =
@@ -101,7 +105,59 @@ public class UpdateUser : ControllerBase
             user.DepartmentId = request.DepartmentId;*/
             user.UserRolesId = request.UserRoleId;
             user.UpdatedAt = DateTime.Now;
+            
+            //Validate if the clusters are existing
 
+            var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
+
+            if (existingCluster is null)
+            {
+                return ClusterErrors.NotFound();
+            }
+              
+            // Validate if the user is tagged to any existing cluster
+            var existingTaggedUser = await _context.Clusters
+                .FirstOrDefaultAsync(ct => ct.UserId == user.Id, cancellationToken);
+
+            if (existingTaggedUser is not null && request.ClusterId != 0)
+            {
+                // If the user is tagged to an existing cluster, set the UserId to null
+                existingTaggedUser.UserId = null;
+
+                // Save changes to the database for the previous cluster
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            // Check if the new cluster is already in use
+            var alreadyUsed = await _context.Clusters
+                .AnyAsync(ct => (ct.UserId != null && ct.UserId != request.UserId) && ct.Id == request.ClusterId, cancellationToken);
+
+            if (alreadyUsed)
+            {
+                // If the requested cluster is already in use, return an error
+                return ClusterErrors.InUse();
+            }
+
+            // Update the user's cluster association with the new cluster
+            existingTaggedUser = await _context.Clusters
+                .FirstOrDefaultAsync(ct => ct.Id == request.ClusterId, cancellationToken);
+
+            if (existingTaggedUser is not null)
+            {
+                existingTaggedUser.UserId = user.Id;
+
+                // Save changes to the database for the new cluster
+                await _context.SaveChangesAsync(cancellationToken);
+
+                // Return success or other appropriate response
+            }
+            else
+            {
+                // Handle the case where the requested cluster is not found
+                return ClusterErrors.NotFound();
+            }
+            
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

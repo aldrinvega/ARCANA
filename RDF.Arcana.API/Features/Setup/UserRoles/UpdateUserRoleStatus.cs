@@ -63,15 +63,10 @@ public class UpdateUserRoleStatus : ControllerBase
 
             if (existingUserRole is null)
             {
-                throw new UserRoleNotFoundException();
+                return UserRoleErrors.NotFound();
             }
 
-            if (existingUserRole.IsActive && existingUserRole.Permissions.Count == 1)
-            {
-                throw new UserRoleDeactivationException();
-            }
-
-            if (existingUserRole.IsActive && existingUserRole.Users != null && existingUserRole.IsActive)
+            if (existingUserRole.IsActive && existingUserRole.Users.Count != 0)
             {
                 return UserRoleErrors.CannotArchive(existingUserRole.Users.FirstOrDefault()?.Fullname);
             }

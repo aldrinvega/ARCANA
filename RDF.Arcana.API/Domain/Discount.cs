@@ -6,15 +6,12 @@ namespace RDF.Arcana.API.Domain;
 
 public class Discount : BaseEntity
 {
-    public decimal LowerBound { get; set; }
-    public decimal UpperBound { get; set; }
-    public decimal CommissionRateLower { get; set; }
-    public decimal CommissionRateUpper { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdateAt { get; set; }
+    public string DiscountType { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdateAt { get; set; } = DateTime.Now;
     [ForeignKey("AddedByUser")]
     public int AddedBy { get; set; }
     public string ModifiedBy { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
     public virtual User AddedByUser { get; set; }
 }

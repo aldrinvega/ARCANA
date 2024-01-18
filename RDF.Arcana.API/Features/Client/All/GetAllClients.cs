@@ -72,7 +72,7 @@ public class GetAllClients : ControllerBase
         }
     }
 
-    public class GetAllClientsQuery : UserParams, IRequest<PagedList<GetAllClientResult>>
+    public class  GetAllClientsQuery : UserParams, IRequest<PagedList<GetAllClientResult>>
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
@@ -89,6 +89,7 @@ public class GetAllClients : ControllerBase
         public DateTime CreatedAt { get; set; }
         public int? RequestId { get; set; }
         public string OwnersName { get; set; }
+        public string RegistrationStatus { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string EmailAddress { get; set; }
@@ -100,7 +101,8 @@ public class GetAllClients : ControllerBase
         public string StoreType { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int? ClusterId { get; set; }
+        public string ClusterName { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool? DirectDelivery { get; set; }
@@ -117,6 +119,8 @@ public class GetAllClients : ControllerBase
         public IEnumerable<ClientApprovalHistory> ClientApprovalHistories { get; set; }
         public IEnumerable<FreebiesCollection> Freebies { get; set; }
         public IEnumerable<ListingFeeCollection> ListingFees { get; set; }
+        public IEnumerable<RequestApproversForClients> Approvers { get; set; }
+        public IEnumerable<ExpensesRequest> Expenses { get; set; }
 
         public class ModeOfPayment
         {
@@ -132,7 +136,6 @@ public class GetAllClients : ControllerBase
             public string DocumentLink { get; set; }
             public string DocumentType { get; set; }
         }
-
         public class BusinessAddressCollection
         {
             public string HouseNumber { get; set; }
@@ -141,7 +144,6 @@ public class GetAllClients : ControllerBase
             public string City { get; set; }
             public string Province { get; set; }
         }
-
         public class OwnersAddressCollection
         {
             public string HouseNumber { get; set; }
@@ -150,7 +152,6 @@ public class GetAllClients : ControllerBase
             public string City { get; set; }
             public string Province { get; set; }
         }
-
         public class ClientTerms
         {
             public int TermId { get; set; }
@@ -168,13 +169,11 @@ public class GetAllClients : ControllerBase
             public int? Level { get; set; }
             public string Reason { get; set; }
         }
-        
         public class UpdateHistory
         {
             public string Module { get; set; }
             public DateTime UpdatedAt { get; set; }
         }
-
         public class FreebiesCollection
         {
             public int? TransactionNumber { get; set; }
@@ -184,7 +183,6 @@ public class GetAllClients : ControllerBase
             public int? FreebieRequestId { get; set; }
             public IEnumerable<Items> Freebies { get; set; }
         }
-            
         public class Items
         {
             public int? Id { get; set; }
@@ -193,7 +191,6 @@ public class GetAllClients : ControllerBase
             public string Uom { get; set; }
             public int? Quantity { get; set; }
         }
-
         public class ListingFeeCollection
         {
             public int Id { get; set; }
@@ -203,7 +200,6 @@ public class GetAllClients : ControllerBase
             public string ApprovalDate { get; set; }
             public IEnumerable<ListingItems> ListingItems { get; set; }
         }
-
         public class ListingItems
         {
             public int? Id { get; set; }
@@ -212,6 +208,23 @@ public class GetAllClients : ControllerBase
             public string ItemDescription { get; set; }
             public string Uom { get; set; }
             public decimal? UnitCost { get; set; }
+        }
+        public class RequestApproversForClients
+        {
+            public string Name { get; set; }
+            public int Level { get; set; }
+        }
+        public class ClientExpensesCollection
+        {
+            public string ExpenseType { get; set; }
+            public decimal Amount { get; set; }
+        }
+        public class ExpensesRequest
+        {
+            public int Id { get; set; }
+            public int RequestId { get; set; }
+            public string Status { get; set; }
+            public IEnumerable<ClientExpensesCollection> Expenses { get; set; }
         }
     }
 
@@ -227,37 +240,56 @@ public class GetAllClients : ControllerBase
         public async Task<PagedList<GetAllClientResult>> Handle(GetAllClientsQuery request,
             CancellationToken cancellationToken)
         {
-            var regularClients = _context.Clients.AsNoTracking();
+            var regularClients = _context.Clients
                 /*.AsSplitQuery()
                 .Include(mop => mop.ClientModeOfPayment)
+                .AsSplitQuery()
                 .Include(abu => abu.AddedByUser)
+                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(user => user.Requestor)
+                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ah => ah.UpdateRequestTrails)
+                .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
                 .ThenInclude(cap => cap.Approver)
+                .AsSplitQuery()
                 .Include(st => st.StoreType)
+                .AsSplitQuery()
                 .Include(fd => fd.FixedDiscounts)
+                .AsSplitQuery()
                 .Include(to => to.Term)
                 .ThenInclude(tt => tt.Terms)
+                .AsSplitQuery()
                 .Include(to => to.Term)
                 .ThenInclude(td => td.TermDays)
+                .AsSplitQuery()
                 .Include(ba => ba.BusinessAddress)
+                .AsSplitQuery()
                 .Include(oa => oa.OwnersAddress)
+                .AsSplitQuery()
                 .Include(bc => bc.BookingCoverages)
+                .AsSplitQuery()
                 .Include(fr => fr.FreebiesRequests)
                 .ThenInclude(fi => fi.FreebieItems)
                 .ThenInclude(item => item.Items)
                 .ThenInclude(uom => uom.Uom)
+                .AsSplitQuery()
                 .Include(lf => lf.ListingFees)
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
+                .AsSplitQuery()
                 .Include(cd => cd.ClientDocuments)
-                .AsSingleQuery();*/
-
+                .AsSingleQuery()*/
+                .AsNoTracking();
+                
+            var user = await _context.Users
+                    .Include(cluster => cluster.Cluster)
+                    .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
+            
             if (!string.IsNullOrEmpty(request.Search))
             {
                 regularClients = regularClients.Where(x =>
@@ -266,26 +298,199 @@ public class GetAllClients : ControllerBase
                     x.Fullname.Contains(request.Search)
                 );
             }
-            // To Separate Under Review & Approved Request between CDO and Approver including Admin
-            // (Request and Approval)
-            //To get the Approved Request, Approval table need to access and the role need to be Approver
-            regularClients = request.RoleName switch
+
+            switch (request.RoleName)
             {
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.RegistrationStatus) && 
-                                    request.RegistrationStatus.ToLower() != Status.UnderReview.ToLower() =>
-                    regularClients.Where(clients => clients.Request.Approvals.Any(x => x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy && x.IsActive == true)),
-                Roles.Approver => regularClients.Where(clients =>
-                    clients.Request.Status == request.RegistrationStatus &&
-                    clients.Request.CurrentApproverId == request.AccessBy),
-                Roles.Admin or Roles.Cdo => regularClients.Where(x => 
-                    x.AddedBy == request.AccessBy && x.RegistrationStatus == request.RegistrationStatus),
-                _ => regularClients
-            };
-            
+                // To Separate Under Review & Approved Request between CDO and Approver including Admin
+                // (Request and Approval)
+                //To get the Approved Request, Approval table need to access and the role need to be Approver
+                case Roles.Approver when (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                                          request.RegistrationStatus.ToLower() !=
+                                          Status.UnderReview.ToLower()):
+                    regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
+                        x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
+                        x.IsActive == true));
+                    break;
+                case Roles.Approver:
+                    regularClients = regularClients.Where(clients =>
+                        clients.Request.Status == request.RegistrationStatus &&
+                        clients.Request.CurrentApproverId == request.AccessBy);
+                    break;
+                case Roles.Cdo:
+                {
+                    /*var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);*/
+
+                    if (request.RegistrationStatus is Status.ForReleasing or Status.Released or Status.Voided)
+                    {
+                        
+                        regularClients = regularClients
+                            .Where(x => x.AddedBy == request.AccessBy &&
+                                        x.RegistrationStatus == request.RegistrationStatus &&
+                                        x.ClusterId == user.Cluster.Id &&
+                                        x.RequestId != null);
+
+                        //Get the result
+
+                        var voidedResults = regularClients.Select(client => new GetAllClientResult
+                        {
+                            Id = client.Id,
+                            CreatedAt = client.CreatedAt,
+                            RequestId = client.RequestId,
+                            Origin = client.Origin,
+                            OwnersName = client.Fullname,
+                            RegistrationStatus = client.RegistrationStatus,
+                            OwnersAddress = client.OwnersAddress != null
+                                ? new GetAllClientResult.OwnersAddressCollection
+                                {
+                                    HouseNumber = client.OwnersAddress.HouseNumber,
+                                    StreetName = client.OwnersAddress.StreetName,
+                                    BarangayName = client.OwnersAddress.Barangay,
+                                    City = client.OwnersAddress.City,
+                                    Province = client.OwnersAddress.Province
+                                }
+                                : null,
+                            PhoneNumber = client.PhoneNumber,
+                            EmailAddress = client.EmailAddress,
+                            DateOfBirth = client.DateOfBirthDB,
+                            TinNumber = client.TinNumber,
+                            BusinessName = client.BusinessName,
+                            BusinessAddress = client.BusinessAddress != null
+                                ? new GetAllClientResult.BusinessAddressCollection
+                                {
+                                    HouseNumber = client.BusinessAddress.HouseNumber,
+                                    StreetName = client.BusinessAddress.StreetName,
+                                    BarangayName = client.BusinessAddress.Barangay,
+                                    City = client.BusinessAddress.City,
+                                    Province = client.BusinessAddress.Province
+                                }
+                                : null,
+                            ModeOfPayments = client.ClientModeOfPayment.Select(mop =>
+                                new GetAllClientResult.ModeOfPayment
+                                {
+                                    Id = mop.ModeOfPaymentId
+                                }),
+                            StoreType = client.StoreType.StoreTypeName,
+                            AuthorizedRepresentative = client.RepresentativeName,
+                            AuthorizedRepresentativePosition = client.RepresentativePosition,
+                            ClusterId = client.ClusterId,
+                            ClusterName = client.Cluster.ClusterType,
+                            Freezer = client.Freezer,
+                            TypeOfCustomer = client.CustomerType,
+                            DirectDelivery = client.DirectDelivery,
+                            BookingCoverage = client.BookingCoverages.BookingCoverage,
+                            Terms = client.Term != null
+                                ? new GetAllClientResult.ClientTerms
+                                {
+                                    TermId = client.Term.TermsId,
+                                    Term = client.Term.Terms.TermType,
+                                    CreditLimit = client.Term.CreditLimit,
+                                    TermDaysId = client.Term.TermDaysId,
+                                    TermDays = client.Term.TermDays.Days
+                                }
+                                : null,
+                            FixedDiscount = client.FixedDiscounts != null
+                                ? new GetAllClientResult.FixedDiscounts
+                                {
+
+                                    DiscountPercentage = client.FixedDiscounts.DiscountPercentage
+                                }
+                                : null,
+                            VariableDiscount = client.VariableDiscount,
+                            Longitude = client.Longitude,
+                            Latitude = client.Latitude,
+                            RequestedBy = client.AddedByUser.Fullname,
+                            Attachments = client.ClientDocuments.Select(cd =>
+                                new GetAllClientResult.Attachment
+                                {
+                                    DocumentId = cd.Id,
+                                    DocumentLink = cd.DocumentPath,
+                                    DocumentType = cd.DocumentType
+                                }),
+                            ClientApprovalHistories = client.Request.Approvals == null
+                                ? null
+                                : client.Request.Approvals.OrderByDescending(a => a.CreatedAt)
+                                    .Select(a => new GetAllClientResult.ClientApprovalHistory
+                                    {
+                                        Module = a.Request.Module,
+                                        Approver = a.Approver.Fullname,
+                                        CreatedAt = a.CreatedAt,
+                                        Status = a.Status,
+                                        Level = a.Approver.Approver.FirstOrDefault().Level,
+                                        Reason = a.Reason
+
+                                    }),
+                            UpdateHistories = client.Request.UpdateRequestTrails == null
+                                ? null
+                                : client.Request.UpdateRequestTrails.Select(uh => new GetAllClientResult.UpdateHistory
+                                {
+                                    Module = uh.ModuleName,
+                                    UpdatedAt = uh.UpdatedAt
+                                }),
+                            Freebies = client.FreebiesRequests
+                                .Where(fr => fr.Status == Status.Approved || fr.Status == Status.Released)
+                                .Select(x => new GetAllClientResult.FreebiesCollection
+                                {
+                                    TransactionNumber = x.Id,
+                                    FreebieRequestId = x.Id,
+                                    Status = x.Status,
+                                    ESignature = x.ESignaturePath,
+                                    Freebies = x.FreebieItems.Select(x => new GetAllClientResult.Items
+                                    {
+                                        Id = x.Id,
+                                        ItemCode = x.Items.ItemCode,
+                                        ItemDescription = x.Items.ItemDescription,
+                                        Uom = x.Items.Uom.UomCode,
+                                        Quantity = x.Quantity
+                                    })
+                                }),
+                            ListingFees = client.ListingFees.Select(lf => new GetAllClientResult.ListingFeeCollection
+                            {
+                                Id = lf.Id,
+                                RequestId = lf.RequestId,
+                                Total = lf.Total,
+                                Status = lf.Status,
+                                ApprovalDate = lf.ApprovalDate.ToString("MM/dd/yyyy HH:mm:ss"),
+                                ListingItems = lf.ListingFeeItems.Select(lfi => new GetAllClientResult.ListingItems
+                                {
+                                    Id = lfi.Id,
+                                    ItemCode = lfi.Item.ItemCode,
+                                    ItemDescription = lfi.Item.ItemDescription,
+                                    Sku = lfi.Sku,
+                                    UnitCost = lfi.UnitCost,
+                                    Uom = lfi.Item.Uom.UomCode
+                                })
+                            }),
+                            Approvers = client.Request.RequestApprovers.Select(x =>
+                                new GetAllClientResult.RequestApproversForClients
+                                {
+                                    Name = x.Approver.Fullname,
+                                    Level = x.Level
+                                })
+                        });
+
+                        voidedResults = voidedResults.OrderBy(r => r.Id);
+                        
+                        //Return the result
+                        return await PagedList<GetAllClientResult>.CreateAsync(voidedResults, request.PageNumber, request.PageSize);
+
+                    }
+
+                    regularClients = regularClients
+                        .Where(x => x.ClusterId == user.Cluster.Id && x.RegistrationStatus == request.RegistrationStatus);
+                    break;
+                }
+
+                case Roles.Admin:
+                {
+                    regularClients = regularClients
+                        .Where(x =>  x.RegistrationStatus == request.RegistrationStatus);
+                    break;
+                }
+            }
+
             //Get all the under review request for the Approver
             //It will access the request table where status is Under Review
             //And CurrentApproverId is the Logged In user (Approver)
-
             if (request.RoleName is Roles.Approver && request.RegistrationStatus == Status.UnderReview)
             {
                 regularClients = regularClients.Where(x => x.Request.CurrentApproverId == request.AccessBy);
@@ -310,7 +515,6 @@ public class GetAllClients : ControllerBase
             }
             
             //Get the result
-
             var result = regularClients.Select(client => new GetAllClientResult
             {
                 Id = client.Id,
@@ -350,11 +554,13 @@ public class GetAllClients : ControllerBase
                 StoreType = client.StoreType.StoreTypeName,
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
-                Cluster = client.Cluster,
+                ClusterId = client.ClusterId,
+                ClusterName = client.Cluster.ClusterType,
                 Freezer = client.Freezer,
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,
                 BookingCoverage = client.BookingCoverages.BookingCoverage,
+                RegistrationStatus = client.RegistrationStatus,
                 Terms = client.Term != null
                     ? new GetAllClientResult.ClientTerms
                     {
@@ -414,7 +620,7 @@ public class GetAllClients : ControllerBase
                         Id = x.Id,
                         ItemCode = x.Items.ItemCode,
                         ItemDescription = x.Items.ItemDescription,
-                            Uom = x.Items.Uom.UomCode,
+                        Uom = x.Items.Uom.UomCode,
                         Quantity = x.Quantity
                     })
                 }),
@@ -434,7 +640,24 @@ public class GetAllClients : ControllerBase
                         UnitCost = lfi.UnitCost,
                         Uom = lfi.Item.Uom.UomCode
                     })
+                }),
+                Approvers = client.Request.RequestApprovers.Select(x => new GetAllClientResult.RequestApproversForClients
+                {
+                    Name = x.Approver.Fullname,
+                    Level = x.Level
+                }),
+                Expenses = client.Expenses.Select(exp => new GetAllClientResult.ExpensesRequest
+                {
+                    Id = exp.Id,
+                    RequestId = exp.RequestId,
+                    Status = exp.Status,
+                    Expenses = exp.ExpensesRequests.Select(er => new GetAllClientResult.ClientExpensesCollection
+                    {
+                        ExpenseType = er.OtherExpense.ExpenseType,
+                        Amount = er.Amount
+                    })
                 })
+                
             });
 
             result = result.OrderBy(r => r.Id);

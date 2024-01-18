@@ -39,7 +39,7 @@ public class UpdateClientAttachment : ControllerBase
         }
     }
 
-    public class UpdateAttachmentsCommand : IRequest<Result>
+    public sealed record UpdateAttachmentsCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public List<ClientAttachments> Attachments { get; set; }

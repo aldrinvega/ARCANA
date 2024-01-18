@@ -8,13 +8,14 @@ public class FreebieRequest : BaseEntity
     [ForeignKey("Clients")] public int ClientId { get; set; }
 
     public Clients Clients { get; set; }
-    public int ApprovalsId { get; set; }
+    /*public int ApprovalsId { get; set; }*/
     public int? RequestId { get; set; }
 
-    public Approvals Approvals { get; set; }
+    /*public Approvals Approvals { get; set; }*/
 
     /*public string TransactionNumber { get; set; }*/
     public string Status { get; set; }
+    public bool IsActive { get; set; } = true;
     public bool IsDelivered { get; set; }
     public string PhotoProofPath { get; set; }
     public string ESignaturePath { get; set; }

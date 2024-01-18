@@ -1,51 +1,46 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Setup.Discount.Exception;
 
 namespace RDF.Arcana.API.Features.Setup.Discount;
 
-[Route("api/Discount")]
-[ApiController]
-public class UpdateVariableDiscountStatus : ControllerBase
+[Route("api/Discount"), ApiController]
+
+public class UpdateDiscountStatus : ControllerBase
 {
+
     private readonly IMediator _mediator;
 
-    public UpdateVariableDiscountStatus(IMediator mediator)
+    public UpdateDiscountStatus(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpPatch("UpdateVariableDiscountStatus/{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id)
+    [HttpPatch("UpdateDiscountStatus/{id:int}")]
+    public async Task<IActionResult> UpdateStatus(int id)
     {
         try
         {
             var command = new UpdateDiscountStatusCommand
             {
-                Id = id,
-                ModifiedBy = User.Identity?.Name
+                DiscountId = id
             };
-           var result = await _mediator.Send(command);
-           if (result.IsFailure)
-           {
-               return BadRequest(result);
-           }
-            return Ok(result);
+            var result = await _mediator.Send(command);
+
+            return result.IsFailure ? BadRequest(result) : Ok(result);
         }
         catch (System.Exception e)
         {
-            return BadRequest(e.Message);
+            Console.WriteLine(e);
+            throw;
         }
     }
 
     public class UpdateDiscountStatusCommand : IRequest<Result>
     {
-        public int Id { get; set; }
-        public bool Status { get; set; }
-        public string ModifiedBy { get; set; }
+        public int DiscountId { get; set; }
     }
-
+    
     public class Handler : IRequestHandler<UpdateDiscountStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
@@ -57,15 +52,16 @@ public class UpdateVariableDiscountStatus : ControllerBase
 
         public async Task<Result> Handle(UpdateDiscountStatusCommand request, CancellationToken cancellationToken)
         {
-            var existingDiscount =
-                await _context.VariableDiscounts.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var validateDiscount = await _context.Discounts.FirstOrDefaultAsync(dc => 
+                dc.Id == request.DiscountId,
+                cancellationToken);
 
-            if (existingDiscount is null)
+            if (validateDiscount is null)
             {
                 return DiscountErrors.NotFound();
             }
 
-            existingDiscount.IsActive = !existingDiscount.IsActive;
+            validateDiscount.IsActive = !validateDiscount.IsActive;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

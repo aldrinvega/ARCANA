@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Approved;
@@ -26,8 +27,13 @@ public class UpdateApprovedProspectStatus : ControllerBase
                 ClientId = id
             };
 
-            await _mediator.Send(command);
-            return Ok();
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
         catch (Exception e)
         {
@@ -35,12 +41,12 @@ public class UpdateApprovedProspectStatus : ControllerBase
         }
     }
 
-    public class UpdateApprovedProspectStatusCommand : IRequest<Unit>
+    public class UpdateApprovedProspectStatusCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
     }
 
-    public class Handler : IRequestHandler<UpdateApprovedProspectStatusCommand, Unit>
+    public class Handler : IRequestHandler<UpdateApprovedProspectStatusCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -49,25 +55,22 @@ public class UpdateApprovedProspectStatus : ControllerBase
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateApprovedProspectStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UpdateApprovedProspectStatusCommand request, CancellationToken cancellationToken)
         {
             var existingRequestedProspect =
-                await _context.Approvals
-                    .Include(x => x.Client)
+                await _context.Clients
                     .FirstOrDefaultAsync(
-                        x => x.ClientId == request.ClientId &&
-                             x.IsApproved == true
-                        , cancellationToken);
+                        x => x.Id == request.ClientId, cancellationToken);
 
             if (existingRequestedProspect is null)
             {
-                throw new ClientIsNotFound(request.ClientId);
+                return ClientErrors.NotFound();
             }
 
-            existingRequestedProspect.Client.IsActive = !existingRequestedProspect.Client.IsActive;
+            existingRequestedProspect.IsActive = !existingRequestedProspect.IsActive;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

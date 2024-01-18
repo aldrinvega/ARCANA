@@ -3,10 +3,11 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Setup.Discount;
 
-namespace RDF.Arcana.API.Features.Setup.Discount;
+namespace RDF.Arcana.API.Features.Setup.Variable_Discount;
 
-[Route("api/Discount")]
+[Route("api/VariableDiscount")]
 [ApiController]
 public class GetVariableDiscountsAsync : ControllerBase
 {
@@ -47,7 +48,7 @@ public class GetVariableDiscountsAsync : ControllerBase
             var successResult = Result.Success(result);
             return Ok(successResult);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             return BadRequest(e.Message);
         }

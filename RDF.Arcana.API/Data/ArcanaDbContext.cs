@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Mapster;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RDF.Arcana.API.Domain;
 
@@ -23,7 +22,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Discount> Discounts { get; set; }
     public virtual DbSet<TermDays> TermDays { get; set; }
     public virtual DbSet<Clients> Clients { get; set; }
-    public virtual DbSet<Approvals> Approvals { get; set; }
+    /*public virtual DbSet<Approvals> Approvals { get; set; }*/
     public virtual DbSet<ClientDocuments> ClientDocuments { get; set; }
     public virtual DbSet<FixedDiscounts> FixedDiscounts { get; set; }
     public virtual DbSet<VariableDiscounts> VariableDiscounts { get; set; }
@@ -47,7 +46,10 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ItemPriceChange> ItemPriceChanges { get; set; }
     public virtual DbSet<ClientModeOfPayment> ClientModeOfPayments { get; set; }
     public virtual DbSet<Cluster> Clusters { get; set; }
-    public virtual DbSet<CdoCluster> CdoClusters { get; set; }
+    public virtual DbSet<OtherExpenses> OtherExpenses { get; set; }
+    public virtual DbSet<ExpensesRequest> ExpensesRequests { get; set; }
+    public virtual DbSet<Expenses> Expenses { get; set; }
+    public virtual DbSet<Notification> Notifications { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,6 +77,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(u => u.AddedByUser)
             .WithOne()
             .HasForeignKey<Department>(u => u.AddedBy);
+        
+        modelBuilder.Entity<OtherExpenses>()
+            .HasOne(u => u.AddedByUser)
+            .WithOne()
+            .HasForeignKey<OtherExpenses>(u => u.AddedBy);
 
         modelBuilder.Entity<Discount>()
             .HasOne(u => u.AddedByUser)
@@ -100,6 +107,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(u => u.AddedByUser)
             .WithOne()
             .HasForeignKey<ProductSubCategory>(u => u.AddedBy);
+        
+        modelBuilder.Entity<OtherExpenses>()
+            .HasOne(u => u.AddedByUser)
+            .WithMany()
+            .HasForeignKey(u => u.AddedBy);
 
         modelBuilder.Entity<ProductCategory>()
             .HasOne(u => u.AddedByUser)
@@ -136,7 +148,7 @@ public class ArcanaDbContext : DbContext
             .WithOne(cd => cd.Clients)
             .HasForeignKey(cd => cd.ClientId);
 
-        modelBuilder.Entity<Clients>()
+        /*modelBuilder.Entity<Clients>()
             .HasMany(c => c.Approvals)
             .WithOne(a => a.Client)
             .HasForeignKey(a => a.ClientId);
@@ -144,7 +156,7 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(fr => fr.Approvals)
             .WithMany(a => a.FreebieRequest)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict);*/
 
         modelBuilder.Entity<StoreType>()
             .HasOne(x => x.AddedByUser)
@@ -206,7 +218,7 @@ public class ArcanaDbContext : DbContext
             .WithMany(x => x.FreebieRequests)
             .HasForeignKey(x => x.RequestedBy);
 
-        modelBuilder.Entity<Approvals>()
+        /*modelBuilder.Entity<Approvals>()
             .HasOne(x => x.ApproveByUser)
             .WithMany()
             .HasForeignKey(x => x.ApprovedBy);
@@ -214,7 +226,17 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<Approvals>()
             .HasOne(x => x.RequestedByUser)
             .WithMany()
-            .HasForeignKey(x => x.RequestedBy);
+            .HasForeignKey(x => x.RequestedBy);*/
+        
+        modelBuilder.Entity<Expenses>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+        
+        modelBuilder.Entity<Expenses>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
 
         modelBuilder.Entity<ListingFee>()
             .HasOne(x => x.RequestedByUser)
@@ -274,9 +296,9 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<TermOptions>()
             .Property(p => p.Id)
             .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<Approvals>()
+        /*modelBuilder.Entity<Approvals>()
             .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
+            .UseHiLo("arcana_hilo_sequence");*/
         modelBuilder.Entity<OwnersAddress>()
             .Property(p => p.Id)
             .UseHiLo("arcana_hilo_sequence");

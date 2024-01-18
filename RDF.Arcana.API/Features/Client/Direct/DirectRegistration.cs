@@ -19,20 +19,20 @@ using RDF.Arcana.API.Features.Setup.Mode_Of_Payment;
 namespace RDF.Arcana.API.Features.Client.Direct
 {
     public class DirectRegistrationCommand : IRequest<Result>
-    {
-        [Required] public string OwnersName { get; set; }
-        [Required] public OwnersAddressCollection OwnersAddress { get; set; }
-        [Required] public string EmailAddress { get; set; }
-        [Required] public string PhoneNumber { get; set; }
-        [Required] public DateOnly DateOfBirth { get; set; }
-        [Required] public string TinNumber { get; set; }
-        [Required] public string BusinessName { get; set; }
-        [Required] public int StoreTypeId { get; set; }
+    { 
+        public string OwnersName { get; set; }
+        public OwnersAddressCollection OwnersAddress { get; set; } 
+        public string EmailAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateOnly DateOfBirth { get; set; } 
+        public string TinNumber { get; set; }
+        public string BusinessName { get; set; }
+        public int StoreTypeId { get; set; }
         public int AddedBy { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
@@ -86,6 +86,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
     {
         public int Id { get; set; }
         public string OwnersName { get; set; }
+        public string EmailAddress { get; set; }
         public OwnersAddressCollection OwnersAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string BusinessName { get; set; }
@@ -143,7 +144,10 @@ namespace RDF.Arcana.API.Features.Client.Direct
             var existingClient = await _context.Clients.FirstOrDefaultAsync(
                 x => x.Fullname == request.OwnersName &&
                      x.StoreType.Id == request.StoreTypeId &&
-                     x.BusinessName == request.BusinessName,
+                     x.BusinessName == request.BusinessName &&
+                     x.BusinessAddress.City == request.BusinessAddress.City &&
+                     x.BusinessAddress.StreetName == request.BusinessAddress.BarangayName &&
+                     x.RegistrationStatus != Status.Voided,
                 cancellationToken
             );
 
@@ -204,7 +208,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     BusinessAddressId = businessAddress.Id,
                     RepresentativeName = request.AuthorizedRepresentative,
                     RepresentativePosition = request.AuthorizedRepresentativePosition,
-                    Cluster = request.Cluster,
+                    ClusterId = request.ClusterId,
                     Freezer = request.Freezer,
                     CustomerType = request.TypeOfCustomer,
                     DirectDelivery = request.DirectDelivery,
@@ -262,16 +266,6 @@ namespace RDF.Arcana.API.Features.Client.Direct
 
                 directClients.Terms = termsOptions.Id;
 
-                var approval = new Approvals
-                {
-                    ClientId = directClients.Id,
-                    ApprovalType = Status.DirectRegistrationApproval,
-                    RequestedBy = request.AddedBy,
-                    IsApproved = false,
-                    IsActive = true,
-                };
-                _context.Approvals.Add(approval);
-
 
                 if (request.Freebies != null)
                 {
@@ -312,23 +306,10 @@ namespace RDF.Arcana.API.Features.Client.Direct
                         }
                     }
                     
-                    //Create approval for Freebies
-                    var newApproval = new Approvals
-                    {
-                        ClientId = directClients.Id,
-                        ApprovalType = "For Freebie Approval",
-                        IsApproved = true,
-                        IsActive = true,
-                        RequestedBy = request.AddedBy,
-                        ApprovedBy = request.AddedBy
-                    };
-                    _context.Approvals.Add(newApproval);
-                    
                     //Add new FreebieRequest
                     var freebieRequest = new FreebieRequest
                     {
                         ClientId = directClients.Id,
-                        ApprovalsId = newApproval.Id,
                         Status = Status.ForReleasing,
                         IsDelivered = false,
                         RequestedBy = request.AddedBy
@@ -338,7 +319,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     //Add the freebie items
                     foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                              {
-                                 RequestId = freebieRequest.Id,
+                                 FreebieRequestId = freebieRequest.Id,
                                  ItemId = freebie.ItemId,
                                  Quantity = 1
                              }))
@@ -450,10 +431,28 @@ namespace RDF.Arcana.API.Features.Client.Direct
                 
                 directClients.RequestId = newRequest.Id;
 
+                var notification = new Domain.Notification
+                {
+                    UserId = request.AddedBy,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = approvers.First().UserId,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+
+
                 var result = new DirectRegisterResult
                 {
                     Id = directClients.Id,
                     OwnersName = directClients.Fullname,
+                    EmailAddress = directClients.EmailAddress,
                     OwnersAddress = new DirectRegisterResult.OwnersAddressCollection
                     {
                         HouseNumber = directClients.OwnersAddress.HouseNumber,

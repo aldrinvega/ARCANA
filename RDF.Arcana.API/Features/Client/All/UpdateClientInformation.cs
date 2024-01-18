@@ -42,7 +42,7 @@ public class UpdateClientInformation : ControllerBase
         }
     }
 
-    public class UpdateClientInformationCommand : IRequest<Result>
+    public sealed record UpdateClientInformationCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
@@ -56,7 +56,7 @@ public class UpdateClientInformation : ControllerBase
         public BusinessAddressToUpdate BusinessAddress { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
@@ -127,6 +127,8 @@ public class UpdateClientInformation : ControllerBase
                 .Include(clients => clients.ClientModeOfPayment)
                 .FirstOrDefaultAsync(client => client.Id == request.ClientId, cancellationToken);
 
+            
+            //Validate if the Client Business is already registered
             var validateBusinessName = await _context.Clients.Where(
                 client => client.BusinessName == request.BusinessName && 
                           client.StoreTypeId == request.StoreTypeId && 
@@ -134,20 +136,25 @@ public class UpdateClientInformation : ControllerBase
                           client.Id != request.ClientId
             ).FirstOrDefaultAsync(cancellationToken);
             
+            //Validate if the store type is existing
             var validateStoreType = await _context.StoreTypes
                 .FirstOrDefaultAsync(st => st.Id == request.StoreTypeId, cancellationToken);
 
+            //Validate if the term is existing
             var validateTerm = await _context.Terms
                 .FirstOrDefaultAsync(t => t.Id == request.TermsId, cancellationToken);
 
+            //Validate if the term days is existing
             var validateTermDay = await _context.TermDays
                 .FirstOrDefaultAsync(td => td.Id == request.TermDaysId, cancellationToken);
             
-            var approver = await _context.Approvers
-                .Where(x => x.ModuleName == Modules.RegistrationApproval && x.Level == 1)
-                .FirstOrDefaultAsync(cancellationToken);
+            //Get all the existing approver for the request
+            var approver = await _context.RequestApprovers
+                .Where(x => x.RequestId == existingClient.RequestId)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
 
-            if (approver is null)
+            if (!approver.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
@@ -176,8 +183,20 @@ public class UpdateClientInformation : ControllerBase
             {
                 return ClientErrors.NotFound();
             }
+            
+            var existingModeOfPayment = existingClient.ClientModeOfPayment.Select(x => x.ModeOfPaymentId).ToList();
+            var modeOfPaymentToRemove = existingModeOfPayment.Except(request.ModeOfPayments.Select(c => c.ModeOfPaymentId)).ToList();
 
-            // Assuming that each client has only one mode of payment
+            foreach (var modeOfPayment in modeOfPaymentToRemove)
+            {
+                var forRemove = existingClient.ClientModeOfPayment.FirstOrDefault(x => x.ModeOfPaymentId == modeOfPayment);
+                if (forRemove != null)
+                {
+                    existingClient.ClientModeOfPayment.Remove(forRemove);
+                }
+            }
+
+            // Add and validate multiple mop to the client
             foreach (var modeOfPayment in request.ModeOfPayments)
             {
                 var existingModePayment = await _context.ModeOfPayments.FirstOrDefaultAsync(x =>
@@ -196,6 +215,7 @@ public class UpdateClientInformation : ControllerBase
 
                 if (clientModeOfPayment != null)
                 {
+                    //If existing update it
                     clientModeOfPayment.ModeOfPaymentId = existingModePayment.Id;
                     _context.ClientModeOfPayments.Update(clientModeOfPayment);
                 }
@@ -232,7 +252,7 @@ public class UpdateClientInformation : ControllerBase
             existingClient.BusinessAddress.Barangay = request.BusinessAddress.BarangayName;
             existingClient.RepresentativeName = request.AuthorizedRepresentative;
             existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
-            existingClient.Cluster = request.Cluster;
+            existingClient.ClusterId = request.ClusterId;
             existingClient.Freezer = request.Freezer;
             existingClient.CustomerType = request.TypeOfCustomer;
             existingClient.DirectDelivery = request.DirectDelivery;
@@ -245,7 +265,36 @@ public class UpdateClientInformation : ControllerBase
             existingClient.Latitude = request.Latitude;
             existingClient.Request.Status = Status.UnderReview;
             existingClient.RegistrationStatus = Status.UnderReview;
-            existingClient.Request.CurrentApproverId = approver.UserId;
+            existingClient.Request.CurrentApproverId = approver.First().ApproverId;
+            foreach (var approval in existingClient.Request.Approvals)
+            {
+                approval.IsActive = false;
+            }
+
+            var newUpdateHistory = new UpdateRequestTrail(
+                existingClient.RequestId,
+                Modules.RegistrationApproval,
+                DateTime.Now,
+                request.UpdatedBy);
+
+            await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
+            
+            var notificationForCurrentApprover = new Domain.Notification
+            {
+                UserId = approver.First().ApproverId,
+                Status = Status.PendingClients
+            };
+                
+            await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+                
+            var notification = new Domain.Notification
+            {
+                UserId = existingClient.AddedBy,
+                Status = Status.PendingClients
+            };
+            
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+            
 
             if (request.FixedDiscount.DiscountPercentage.HasValue)
             {
@@ -256,7 +305,6 @@ public class UpdateClientInformation : ControllerBase
                 
                 var fixedDiscount = new FixedDiscounts
                 {
-                    /*ClientId = existingClient.Id,*/
                     DiscountPercentage = request.FixedDiscount.DiscountPercentage / 100
                 };
 
@@ -272,21 +320,8 @@ public class UpdateClientInformation : ControllerBase
                 existingClient.VariableDiscount = true;
                 existingClient.FixedDiscountId = null;
             }
-
-
-            foreach (var approval in existingClient.Request.Approvals)
-            {
-                approval.IsActive = false;
-            }
-
-            var newUpdateHistory = new UpdateRequestTrail(
-                existingClient.RequestId,
-                Modules.RegistrationApproval,
-                DateTime.Now,
-                request.UpdatedBy);
-
-            await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
-
+            
+            
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

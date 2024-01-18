@@ -1,4 +1,4 @@
-using System.Net;
+/*using System.Net;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
@@ -133,4 +133,4 @@ public class ReleasedDirectRegistrationRequest : ControllerBase
             return Result.Success();
         }
     }
-}
+}*/

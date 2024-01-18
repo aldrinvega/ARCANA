@@ -14,4 +14,6 @@ public class ListingFeeErrors
         new Error("ListingFee.Unauthorized", "You are not authorized to void this listing.");
     public static Error AlreadyRequested(string itemDescription) =>
         new Error("ListingFee.AlreadyRequested", $"{itemDescription} has already been requested.");
+    public static Error MerchandisingAllowanceNotValid() => new("ListingFee.MerchandisingAllowanceNotValid",
+        "Merchandising allowance should be greater than 0");
 }

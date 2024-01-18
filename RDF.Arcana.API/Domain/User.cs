@@ -12,8 +12,8 @@ public class User : BaseEntity
     public string Password { get; set; }
     public bool IsPasswordChanged { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; set; }
-    public bool IsActive { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public bool IsActive { get; set; } = true;
     public int? CompanyId { get; set; }
     public int? DepartmentId { get; set; }
     public int? LocationId { get; set; }
@@ -37,7 +37,7 @@ public class User : BaseEntity
     public virtual ICollection<Approval> Approvals { get; set; }
     public virtual ICollection<FreebieRequest> FreebieRequests { get; set; }
     public virtual ICollection<ListingFee> ListingFees { get; set; }
-    public virtual CdoCluster CdoCluster { get; set; }
+    public virtual Cluster Cluster { get; set; }
 }
 
 public class UserValidator : AbstractValidator<User>

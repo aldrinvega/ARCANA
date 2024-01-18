@@ -28,6 +28,8 @@ public class AddNewListingFee : ControllerBase
     {
         try
         {
+            
+            
             var result = await _validator.ValidateAsync(command);
 
             if (!result.IsValid)
@@ -103,13 +105,13 @@ public class AddNewListingFee : ControllerBase
             }
 
             var approvers = await _context.Approvers
-                .Where(x => x.ModuleName == Modules.RegistrationApproval)
+                .Where(x => x.ModuleName == Modules.ListingFeeApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
                 
             if (!approvers.Any())
             {
-                return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
 
             var newRequest = new Request(
@@ -155,6 +157,22 @@ public class AddNewListingFee : ControllerBase
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);
             }
             
+            var notification = new Domain.Notification
+            {
+                UserId = request.RequestedBy,
+                Status = Status.PendingListingFee
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = approvers.First().UserId,
+                Status = Status.PendingListingFee 
+            };
+
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

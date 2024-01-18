@@ -4,7 +4,7 @@ namespace RDF.Arcana.API.Features.Freebies;
 
 public static class FreebiesMappingExtension
 {
-    public static GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
+    /*public static GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
         ToGetRequestedFreebiesQueryResult(this Approvals freebies)
     {
         return new GetRequestedFreebies.GetRequestedFreebiesQueryResultCollection
@@ -136,5 +136,5 @@ public static class FreebiesMappingExtension
                     Status = a.Status,
                 })
         };
-    }
+    }*/
 }

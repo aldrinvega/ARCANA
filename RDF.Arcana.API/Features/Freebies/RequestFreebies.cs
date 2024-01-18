@@ -100,8 +100,6 @@ public class RequestFreebies : ControllerBase
 
     public class Handler : IRequestHandler<RequestFreebiesCommand, Result>
     {
-        /*private const string REJECTED = "Rejected";
-        private const string FOR_FREEBIE_APPROVAL = "For Freebie Approval";*/
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -171,25 +169,11 @@ public class RequestFreebies : ControllerBase
                 }
             }
 
-            // Create new approval for the freebie
-            var newApproval = new Approvals
-            {
-                ClientId = request.ClientId,
-                ApprovalType = Status.ForFreebieApproval,
-                IsApproved = isFirstRequest,
-                IsActive = true,
-                RequestedBy = request.AddedBy,
-                ApprovedBy = request.AddedBy
-            };
-            
-            await _context.Approvals.AddAsync(newApproval, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
             // Create new freebie request
             var freebieRequest = new FreebieRequest
             {
                 ClientId = request.ClientId,
-                ApprovalsId = newApproval.Id,
+                /*ApprovalsId = newApproval.Id,*/
                 Status = status,
                 IsDelivered = false,
                 RequestedBy = request.AddedBy
@@ -225,7 +209,7 @@ public class RequestFreebies : ControllerBase
             // Add the items requested
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {
-                         RequestId = freebieRequest.Id,
+                         FreebieRequestId = freebieRequest.Id,
                          ItemId = freebie.ItemId,
                          Quantity = 1
                      }))
@@ -262,6 +246,13 @@ public class RequestFreebies : ControllerBase
                 FreebieItems = clientFreebies,
             });
 
+            var notification = new Domain.Notification
+            {
+                UserId = request.AddedBy,
+                Status = Status.ForReleasing
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             //Return the result on the client info including the request.

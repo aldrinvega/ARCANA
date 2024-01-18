@@ -34,8 +34,8 @@ public class ValidationException : Exception
 
 public class AddNewProspectCommand : IRequest<Result>
 {
-    [Required] public string OwnersName { get; set; }
-    [Required] public string EmailAddress { get; set; }
+    public string OwnersName { get; set; }
+    public string EmailAddress { get; set; }
 
     public string HouseNumber { get; set; }
     public string StreetName { get; set; }
@@ -84,13 +84,12 @@ public class Handler : IRequestHandler<AddNewProspectCommand, Result>
 
     public async Task<Result> Handle(AddNewProspectCommand request, CancellationToken cancellationToken)
     {
-        
-
         var existingProspectCustomer =
             await _context.Clients.FirstOrDefaultAsync(
                 x => x.BusinessName == request.BusinessName
                      && x.Fullname == request.OwnersName
                      && x.StoreTypeId == request.StoreTypeId
+                     && x.RegistrationStatus != Status.Voided
                 , cancellationToken);
 
         if (existingProspectCustomer != null)
@@ -124,6 +123,14 @@ public class Handler : IRequestHandler<AddNewProspectCommand, Result>
         };
 
         await _context.Clients.AddAsync(prospectingClients, cancellationToken);
+
+        var notifications = new Domain.Notification
+        {
+            UserId = request.AddedBy,
+            Status = Status.NoFreebies
+        };
+        await _context.Notifications.AddAsync(notifications, cancellationToken);
+        
         await _context.SaveChangesAsync(cancellationToken);
         
         

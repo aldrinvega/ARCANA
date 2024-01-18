@@ -32,9 +32,9 @@ public class TagUserInCluster : ControllerBase
     }
 
     public class TagUserInClusterCommand : IRequest<Result>
-    {
+    { 
         public int ClusterId { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
     }
 
     public class Handler : IRequestHandler<TagUserInClusterCommand, Result>
@@ -48,38 +48,48 @@ public class TagUserInCluster : ControllerBase
 
         public async Task<Result> Handle(TagUserInClusterCommand request, CancellationToken cancellationToken)
         {
-            var existingCluster = await _context.Clusters.FirstOrDefaultAsync(cluster =>
-                cluster.Id == request.ClusterId, cancellationToken);
+            var existingCluster = await _context.Clusters
+                .FirstOrDefaultAsync(ct =>
+                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
 
             if (existingCluster is null)
             {
                 return ClusterErrors.NotFound();
             }
 
-            var validateUser = await _context.Users.FirstOrDefaultAsync(user => user.Id == request.UserId);
+
+            //Validate the users that will be tagged to the cluster is existing
+
+            var validateUser = await _context.Users.FirstOrDefaultAsync(user =>
+                    user.Id == request.UserId,
+                cancellationToken: cancellationToken);
 
             if (validateUser is null)
             {
                 return UserErrors.NotFound();
             }
 
-            var existingTaggedUser = await _context.CdoClusters.FirstOrDefaultAsync(
-                cluster => cluster.Id == request.ClusterId && cluster.UserId == request.UserId, cancellationToken);
+            //Validate the users if already tagged to the cluster
+            var existingTaggedUser = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                    ct.Id == request.ClusterId &&
+                    ct.UserId == request.UserId,
+                cancellationToken);
 
-            if (existingTaggedUser is not null )
+            if (existingTaggedUser is not null)
             {
-                return ClusterErrors.AlreadyExist();
+                return ClusterErrors.AlreadyTagged();
             }
 
-            var taggedUsers = new CdoCluster
+            //Add cluster per user
+
+            var taggedUsers = new Domain.Cluster
             {
-                ClusterId = request.ClusterId,
-                UserId = request.ClusterId
+                Id = request.ClusterId,
+                UserId = request.UserId
             };
 
-            await _context.CdoClusters.AddAsync(taggedUsers, cancellationToken);
+            await _context.Clusters.AddAsync(taggedUsers, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            
             return Result.Success();
         }
     }

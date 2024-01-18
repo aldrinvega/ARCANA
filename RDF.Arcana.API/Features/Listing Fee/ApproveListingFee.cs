@@ -96,7 +96,7 @@ public class ApproveListingFee : ControllerBase
             
             if (currentApproverLevel == null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
             
             var newApproval = new Approval(
@@ -116,10 +116,34 @@ public class ApproveListingFee : ControllerBase
                 listingFees.Status = Status.Approved;
                 listingFees.ListingFee.Status = Status.Approved;
                 listingFees.ListingFee.ApprovalDate = DateTime.Now;
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = listingFees.CurrentApproverId,
+                    Status = Status.ApprovedListingFee
+                };
+                
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+                
+                var notification = new Domain.Notification
+                {
+                    UserId = listingFees.RequestorId,
+                    Status = Status.ApprovedListingFee
+                };
+                
+                await _context.Notifications.AddAsync(notification, cancellationToken);
             }
             else
             {
                 listingFees.CurrentApproverId = nextApprover.ApproverId;
+                
+                var notificationForNextApprover = new Domain.Notification
+                {
+                    UserId = nextApprover.ApproverId,
+                    Status = Status.PendingListingFee
+                };
+                
+                await _context.Notifications.AddAsync(notificationForNextApprover, cancellationToken);
             }
             
             await _context.Approval.AddAsync(newApproval, cancellationToken);

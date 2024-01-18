@@ -1,4 +1,4 @@
-using RDF.Arcana.API.Common;
+/*using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Domain;
 
@@ -16,5 +16,5 @@ public class Approvals : BaseEntity
     public User ApproveByUser { get; set; }
     public User RequestedByUser { get; set; }
     public virtual ICollection<FreebieRequest> FreebieRequest { get; set; }
-    /*public virtual ICollection<ListingFee> ListingFee { get; set; }*/
-}
+    /*public virtual ICollection<ListingFee> ListingFee { get; set; }#1#
+}*/

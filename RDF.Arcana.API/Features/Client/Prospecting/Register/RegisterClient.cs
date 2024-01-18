@@ -60,7 +60,7 @@ public class RegisterClient : ControllerBase
         public string TinNumber { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int ClusterId { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public int RequestedBy { get; set; }
@@ -123,7 +123,7 @@ public class RegisterClient : ControllerBase
                 existingClient.RepresentativeName = request.AuthorizedRepresentative;
                 existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
                 existingClient.TinNumber = request.TinNumber;
-                existingClient.Cluster = request.Cluster;
+                existingClient.ClusterId = request.ClusterId;
                 existingClient.Longitude = request.Longitude;
                 existingClient.Latitude = request.Latitude;
                 existingClient.DateOfBirthDB = dateOfBirth;
@@ -139,6 +139,22 @@ public class RegisterClient : ControllerBase
                 {
                     _context.RequestApprovers.Add(newRequestApprover);
                 }
+                
+                var notification = new Domain.Notification
+                {
+                    UserId = request.RequestedBy,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = approvers.First().UserId,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
                 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();

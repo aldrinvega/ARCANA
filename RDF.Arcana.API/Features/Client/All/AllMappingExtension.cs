@@ -1,4 +1,6 @@
-﻿namespace RDF.Arcana.API.Features.Client.All;
+﻿using RDF.Arcana.API.Common;
+
+namespace RDF.Arcana.API.Features.Client.All;
 
 public static class AllMappingExtension
 {
@@ -8,9 +10,11 @@ public static class AllMappingExtension
         return new GetAllClients.GetAllClientResult
         {
             Id = client.Id,
-                RequestId = client.RequestId,
-                OwnersName = client.Fullname,
-                OwnersAddress = client.OwnersAddress != null
+            CreatedAt = client.CreatedAt,
+            RequestId = client.RequestId,
+            Origin = client.Origin,
+            OwnersName = client.Fullname,
+            OwnersAddress = client.OwnersAddress != null
                     ? new GetAllClients.GetAllClientResult.OwnersAddressCollection
                     {
                         HouseNumber = client.OwnersAddress.HouseNumber,
@@ -35,10 +39,14 @@ public static class AllMappingExtension
                         Province = client.BusinessAddress.Province
                     }
                     : null,
+                ModeOfPayments = client.ClientModeOfPayment.Select(mop => new GetAllClients.GetAllClientResult.ModeOfPayment
+                {
+                    Id = mop.ModeOfPaymentId
+                }),
                 StoreType = client.StoreType.StoreTypeName,
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
-                Cluster = client.Cluster,
+                ClusterId = client.ClusterId,
                 Freezer = client.Freezer,
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,
@@ -50,12 +58,13 @@ public static class AllMappingExtension
                         Term = client.Term.Terms.TermType,
                         CreditLimit = client.Term.CreditLimit,
                         TermDaysId = client.Term.TermDaysId,
-                        TermDays = client.Term.TermDays?.Days
+                        TermDays = client.Term.TermDays.Days
                     }
                     : null,
                 FixedDiscount = client.FixedDiscounts != null
                     ? new GetAllClients.GetAllClientResult.FixedDiscounts
                     {
+                        
                         DiscountPercentage = client.FixedDiscounts.DiscountPercentage
                     }
                     : null,
@@ -80,7 +89,53 @@ public static class AllMappingExtension
                         Status = a.Status,
                         Level = a.Approver.Approver.FirstOrDefault().Level,
                         Reason = a.Reason
+                        
+                    }),
+                UpdateHistories = client.Request.UpdateRequestTrails == null ? null :
+                    client.Request.UpdateRequestTrails.Select(uh => new GetAllClients.GetAllClientResult.UpdateHistory
+                    {
+                        Module = uh.ModuleName,
+                        UpdatedAt = uh.UpdatedAt
+                    }),
+                Freebies = client.FreebiesRequests
+                    .Where(fr => fr.Status == Status.Approved || fr.Status == Status.Released)
+                    .Select(x => new GetAllClients.GetAllClientResult.FreebiesCollection
+                {
+                    TransactionNumber = x.Id,
+                    FreebieRequestId = x.Id,
+                    Status = x.Status,
+                    ESignature = x.ESignaturePath,
+                    Freebies = x.FreebieItems.Select(x => new GetAllClients.GetAllClientResult.Items
+                    {
+                        Id = x.Id,
+                        ItemCode = x.Items.ItemCode,
+                        ItemDescription = x.Items.ItemDescription,
+                            Uom = x.Items.Uom.UomCode,
+                        Quantity = x.Quantity
                     })
+                }),
+                ListingFees = client.ListingFees.Select( lf => new GetAllClients.GetAllClientResult.ListingFeeCollection
+                {
+                    Id = lf.Id,
+                    RequestId = lf.RequestId,
+                    Total = lf.Total,
+                    Status = lf.Status,
+                    ApprovalDate = lf.ApprovalDate.ToString("MM/dd/yyyy HH:mm:ss"),
+                    ListingItems = lf.ListingFeeItems.Select(lfi => new GetAllClients.GetAllClientResult.ListingItems
+                    {
+                        Id = lfi.Id,
+                        ItemCode = lfi.Item.ItemCode,
+                        ItemDescription = lfi.Item.ItemDescription,
+                        Sku = lfi.Sku,
+                        UnitCost = lfi.UnitCost,
+                        Uom = lfi.Item.Uom.UomCode
+                    })
+                }),
+                Approvers = client.Request.RequestApprovers.Select(x => new GetAllClients.GetAllClientResult.RequestApproversForClients
+                {
+                    Name = x.Approver.Fullname,
+                    Level = x.Level
+                })
         };
     }
 }

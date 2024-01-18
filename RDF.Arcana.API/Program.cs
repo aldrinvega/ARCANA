@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using B2Net.Models;
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,13 +36,18 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("ETD");
+var connectionString = builder.Configuration.GetConnectionString("Production");
 
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
-    if (connectionString != null) x.UseSqlServer(connectionString).UseSnakeCaseNamingConvention();
-    
+    if (connectionString != null)
+    {
+        x.UseSqlServer(connectionString, options =>
+        {
+            options.EnableRetryOnFailure();
+        }).UseSnakeCaseNamingConvention();
+    }
+
 });
 
 builder.Services.AddControllers();

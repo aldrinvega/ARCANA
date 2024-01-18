@@ -2,7 +2,7 @@ using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Released;
 
-public static class ReleasedProspectMappingExtension
+/*public static class ReleasedProspectMappingExtension
 {
     public static GetAllReleasedProspectingRequest.GetAllReleasedProspectingRequestResult
         GetAllReleasedProspectingRequestResult(this Approvals approvals)
@@ -43,4 +43,4 @@ public static class ReleasedProspectMappingExtension
                 }).ToList()
         };
     }
-}
+}*/

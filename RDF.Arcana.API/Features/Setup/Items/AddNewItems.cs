@@ -43,6 +43,17 @@ public class AddNewItems : ControllerBase
 
         public async Task<Result> Handle(AddNewItemsCommand request, CancellationToken cancellationToken)
         {
+            
+            var currentDateTime = DateTime.Now;
+            var roundedDateTime = new DateTime(
+                currentDateTime.Year,
+                currentDateTime.Month,
+                currentDateTime.Day,
+                currentDateTime.Hour,
+                currentDateTime.Minute,
+                0 // Set seconds to zero
+            );
+            
             var existingItem = await _context.Items.FirstOrDefaultAsync(x => 
                     x.ItemCode == request.ItemCode, 
                 cancellationToken);
@@ -90,7 +101,7 @@ public class AddNewItems : ControllerBase
             var newPriceChange = new ItemPriceChange
             {
                 ItemId = items.Id,
-                EffectivityDate = DateTime.Now,
+                EffectivityDate = roundedDateTime,
                 AddedBy = request.AddedBy,
                 Price = request.Price
             };

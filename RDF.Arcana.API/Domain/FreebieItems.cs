@@ -6,7 +6,7 @@ namespace RDF.Arcana.API.Domain;
 public class FreebieItems : BaseEntity
 {
     [ForeignKey("FreebieRequest")]
-    public int RequestId { get; set; }
+    public int FreebieRequestId { get; set; }
     public FreebieRequest FreebieRequest { get; set; }
     [ForeignKey("Items")]
     public int ItemId { get; set; }
