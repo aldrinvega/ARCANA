@@ -169,20 +169,6 @@ public class RequestFreebies : ControllerBase
                 }
             }
 
-            /*// Create new approval for the freebie
-            var newApproval = new Approvals
-            {
-                ClientId = request.ClientId,
-                ApprovalType = Status.ForFreebieApproval,
-                IsApproved = isFirstRequest,
-                IsActive = true,
-                RequestedBy = request.AddedBy,
-                ApprovedBy = request.AddedBy
-            };
-            
-            await _context.Approvals.AddAsync(newApproval, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);*/
-
             // Create new freebie request
             var freebieRequest = new FreebieRequest
             {

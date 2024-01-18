@@ -555,6 +555,7 @@ public class GetAllClients : ControllerBase
                 AuthorizedRepresentative = client.RepresentativeName,
                 AuthorizedRepresentativePosition = client.RepresentativePosition,
                 ClusterId = client.ClusterId,
+                ClusterName = client.Cluster.ClusterType,
                 Freezer = client.Freezer,
                 TypeOfCustomer = client.CustomerType,
                 DirectDelivery = client.DirectDelivery,

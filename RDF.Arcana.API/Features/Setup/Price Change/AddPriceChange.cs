@@ -80,9 +80,19 @@ public class AddPriceChange : ControllerBase
                 return PriceChangeErrors.PriceAlreadyAdded();
             }
             
-            
-            
-                // Else add new price change
+            // Check if there's an existing price change with the same effectivity date
+            var existingPriceChange = await _context.ItemPriceChanges
+                .Where(pc => pc.ItemId == request.ItemId && pc.EffectivityDate == request.EffectivityDate)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (existingPriceChange != null)
+            {
+                // Update the existing price change instead of adding a new one
+                existingPriceChange.Price = request.Price;
+            }
+            else
+            {
+                // Add new price change
                 var newPriceChange = new ItemPriceChange
                 {
                     ItemId = request.ItemId,
@@ -90,6 +100,7 @@ public class AddPriceChange : ControllerBase
                     EffectivityDate = request.EffectivityDate
                 };
                 await _context.AddAsync(newPriceChange, cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

@@ -282,7 +282,7 @@ public class UpdateClientInformation : ControllerBase
             var notificationForCurrentApprover = new Domain.Notification
             {
                 UserId = approver.First().ApproverId,
-                Status = Status.ApprovedClients
+                Status = Status.PendingClients
             };
                 
             await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
