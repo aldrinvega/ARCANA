@@ -94,12 +94,13 @@ public class GetUsersAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<User> users = _context.Users
+                .Include(co => co.CdoCluster)
+                .ThenInclude(x => x.Cluster)
                 .Include(a => a.AddedByUser)
                 .Include(u => u.UserRoles)
                 .Include(d => d.Department)
                 .Include(c => c.Company)
-                .Include(l => l.Location)
-                .Include(cluster => cluster.Cluster);
+                .Include(l => l.Location);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

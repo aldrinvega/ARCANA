@@ -156,10 +156,9 @@ public class GetAllListingFee : ControllerBase
                 .AsSingleQuery();
 
             var user = await _context.Users
-                .Include(cluster => cluster.Cluster)
                 .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
-            
             if (!string.IsNullOrEmpty(request.Search))
+             
             {
                 listingFees = listingFees.Where(x =>
                     x.Client.BusinessName.Contains(request.Search) || x.Client.Fullname.Contains(request.Search));
@@ -222,7 +221,7 @@ public class GetAllListingFee : ControllerBase
                         return await PagedList<ClientsWithListingFee>.CreateAsync(voidedResult, request.PageNumber, request.PageSize);
                     }*/
                     listingFees.Where(
-                        x => x.Client.ClusterId == user.Cluster.Id && x.Status == request.ListingFeeStatus),
+                        x => x.Status == request.ListingFeeStatus),
                 Roles.Admin => listingFees.Where(x => x.Status == request.ListingFeeStatus),
                 _ => listingFees
             };

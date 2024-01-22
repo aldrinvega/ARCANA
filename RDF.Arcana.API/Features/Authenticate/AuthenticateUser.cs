@@ -72,7 +72,6 @@ public abstract class AuthenticateUser
         {
             var user = await _context.Users
                 .Include(x => x.UserRoles)
-                .Include(x => x.Cluster)
                 .SingleOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
 
             //Verify if the credentials is correct

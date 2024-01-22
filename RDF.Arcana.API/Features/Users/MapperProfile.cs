@@ -22,8 +22,8 @@ public static class MapperProfile
             LocationName = user.Location?.LocationName,
             RoleName = user.UserRoles?.UserRoleName,
             Permission = user.UserRoles?.Permissions,
-            ClusterId = user.Cluster?.Id,
-            Cluster = user.Cluster?.ClusterType
+            ClusterId = user.CdoCluster?.ClusterId,
+            Cluster = user.CdoCluster?.Cluster?.ClusterType
         };
     }
 }

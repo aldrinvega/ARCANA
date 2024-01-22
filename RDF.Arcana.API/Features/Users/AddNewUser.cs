@@ -59,7 +59,6 @@ public class AddNewUser : ControllerBase
         public int? DepartmentId { get; set; }
         public int? UserRoleId { get; set; }
         public int? CompanyId { get; set; }
-        public string ProfilePicture { get; set; }
         public int? ClusterId { get; set; }
 
 
@@ -117,10 +116,10 @@ public class AddNewUser : ControllerBase
                 await _context.Users.AddAsync(user, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                if (command.ClusterId is not null)
+                if (command.ClusterId != null)
                 {
                     // Validate if the cluster exists
-                    var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                    var existingCluster = await _context.CdoClusters.FirstOrDefaultAsync(ct =>
                         ct.Id == command.ClusterId && ct.IsActive, cancellationToken);
 
                     if (existingCluster is null)
@@ -128,63 +127,14 @@ public class AddNewUser : ControllerBase
                         return ClusterErrors.NotFound();
                     }
 
-                    // Check if the new cluster is already in use
-                    var alreadyUsed = await _context.Clusters
-                        .AnyAsync(ct => (ct.UserId != null && ct.UserId != user.Id) && ct.Id == command.ClusterId,
-                            cancellationToken);
-
-                    if (alreadyUsed)
+                    var cdoCluster = new CdoCluster
                     {
-                        // If the requested cluster is already in use, return an error
-                        return ClusterErrors.InUse();
-                    }
+                        ClusterId = (int)command.ClusterId,
+                        UserId = user.Id
+                    };
 
-                    // Validate the user that will be tagged to the cluster exists
-                    var validateUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id,
-                        cancellationToken: cancellationToken);
-
-                    if (validateUser is null)
-                    {
-                        return UserErrors.NotFound();
-                    }
-
-                    // Check if the cluster is already tagged with the user
-                    var existingTaggedUser = await _context.Clusters.FirstOrDefaultAsync(
-                        ct => ct.Id == command.ClusterId && ct.UserId == user.Id, cancellationToken);
-
-                    if (existingTaggedUser is not null)
-                    {
-                        return ClusterErrors.AlreadyTagged();
-                    }
-
-                    var cluster =
-                        await _context.Clusters.FirstOrDefaultAsync(x => x.Id == command.ClusterId, cancellationToken);
-
-                    if (cluster != null)
-                    {
-                        var validateUserStatus =
-                            await _context.Users.FirstOrDefaultAsync(x => x.Id == cluster.UserId, cancellationToken);
-
-                        if (validateUserStatus is null || validateUserStatus.IsActive == false)
-                        {
-                            // Update UserId only if it's null or the user is inactive
-                            cluster.UserId = user.Id;
-
-                            // If the user is inactive, update notifications
-                            if (validateUserStatus?.IsActive == false)
-                            {
-                                var notifications = await _context.Notifications.Where(x => x.UserId == cluster.UserId)
-                                    .ToListAsync(cancellationToken);
-
-                                foreach (var notification in notifications)
-                                {
-                                    notification.UserId = user.Id; 
-
-                                    await _context.Notifications.AddAsync(notification, cancellationToken);
-                                }
-                            }
-                        }
-                    }
+                    await _context.CdoClusters.AddAsync(cdoCluster, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
                 }
 
 

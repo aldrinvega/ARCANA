@@ -145,12 +145,9 @@ public class GetAllClientsInListingFee : ControllerBase
                 .Where(clients => clients.RegistrationStatus == Status.Approved)
                 .AsNoTracking();
             
-            var user = await _context.Users
-                .Include(cluster => cluster.Cluster)
-                .FirstOrDefaultAsync(user => user.Id == request.AddedBy, cancellationToken);
+            var user = await _context.CdoClusters
+                .FirstOrDefaultAsync(user => user.UserId == request.AddedBy, cancellationToken);
             
-            
-
             if (!string.IsNullOrEmpty(request.Search))
             {
                 clientsListingFee = clientsListingFee.Where(x =>
@@ -182,9 +179,8 @@ public class GetAllClientsInListingFee : ControllerBase
                     x.RegistrationStatus == Status.UnderReview ||
                     x.RegistrationStatus == Status.Requested);
             }
-            
-            clientsListingFee = clientsListingFee
-                .Where(x => x.ClusterId == user.Cluster.Id);
+
+            clientsListingFee = clientsListingFee.Where(x => x.ClusterId == user.ClusterId);
            
             var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());
 

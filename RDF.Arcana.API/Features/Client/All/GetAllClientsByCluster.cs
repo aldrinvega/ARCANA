@@ -88,8 +88,7 @@ public class GetAllClientsByCluster : ControllerBase
         public async Task<PagedList<GetAllClientsByClusterResult>> Handle(GetAllClientsByClusterQuery request, CancellationToken cancellationToken)
         {
             IQueryable <Domain.Clients> clients = _context.Clients
-                .Include(x => x.AddedByUser)
-                .ThenInclude(x => x.Cluster);
+                .Include(x => x.AddedByUser);
 
             if (!string.IsNullOrEmpty(request.Search))
             {

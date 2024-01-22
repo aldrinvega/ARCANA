@@ -51,6 +51,8 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Expenses> Expenses { get; set; }
     public virtual DbSet<Notification> Notifications { get; set; }
     
+    public virtual DbSet<CdoCluster> CdoClusters { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserRoles>()

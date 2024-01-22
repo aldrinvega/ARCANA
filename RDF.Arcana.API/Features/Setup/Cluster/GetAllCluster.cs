@@ -77,6 +77,8 @@ public class GetAllCluster : ControllerBase
         public string ModuleName { get; set; }
     }
 
+    
+
     public class GetAllClusterResult
     {
         public int Id { get; set; }
@@ -84,10 +86,15 @@ public class GetAllCluster : ControllerBase
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }
         public bool IsActive { get; set; }
-        public int? UserId { get; set; }
+        
+        public IEnumerable<UserCollectionForCluster> Users { get; set; }
+    }
+    
+    public class UserCollectionForCluster
+    {
+        public int UserId { get; set; }
         public string Fullname { get; set; }
         public string Role { get; set; }
-        
     }
 
     public class Handler : IRequestHandler<GetAllClusterAsync, PagedList<GetAllClusterResult>>
@@ -102,7 +109,8 @@ public class GetAllCluster : ControllerBase
         public async Task<PagedList<GetAllClusterResult>> Handle(GetAllClusterAsync request, CancellationToken cancellationToken)
         {
             IQueryable<Domain.Cluster> cluster = _context.Clusters
-                .Include(user => user.User)
+                .Include(cc => cc.CdoClusters)
+                .ThenInclude(user => user.User)
                 .ThenInclude(role => role.UserRoles);
 
             if (!string.IsNullOrEmpty(request.Search))
@@ -115,18 +123,16 @@ public class GetAllCluster : ControllerBase
                 cluster = cluster.Where(status => status.IsActive == request.Status);
             }
 
-            if (request.IsInUse != null)
-            {
-                    cluster = request.IsInUse == true ? 
-                    cluster.Where(cl => cl.UserId != null && cl.User.IsActive) : 
-                    cluster.Where(cl => cl.UserId == null || (cl.UserId != null && !cl.User.IsActive));
-            }
-
             if (!string.IsNullOrWhiteSpace(request.ModuleName) && 
                 request.ModuleName is Modules.Registration && 
                 request.RoleName != Roles.Admin)
             {
-                cluster = cluster.Where(x => x.UserId == request.AccessBy);
+                // Check if the user has a specific role that allows access to clusters based on UserId
+                if (request.RoleName == Roles.Admin)
+                {
+                    // Add conditions based on UserId if the user has the specified role
+                    cluster = cluster.Where(x => x.CdoClusters.Any(cdo => cdo.UserId == request.AccessBy));
+                }
             }
 
             if (request.RoleName == Roles.Admin)
@@ -138,9 +144,13 @@ public class GetAllCluster : ControllerBase
                     CreatedAt = x.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                     UpdatedAt = x.UpdatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                     IsActive = x.IsActive,
-                    UserId = x.UserId,
-                    Fullname = x.User.Fullname,
-                    Role = x.User.UserRoles.UserRoleName
+                    Users = x.CdoClusters.Select(x => new UserCollectionForCluster
+                    {
+                        UserId = x.UserId,
+                        Fullname = x.User.Fullname,
+                        Role = x.User.UserRoles.UserRoleName
+                    })
+                    
                 });
                 
                 return await PagedList<GetAllClusterResult>.CreateAsync(forAdmin, request.PageNumber, request.PageSize);
@@ -154,9 +164,13 @@ public class GetAllCluster : ControllerBase
                 CreatedAt = x.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 UpdatedAt = x.UpdatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 IsActive = x.IsActive,
-                UserId = x.UserId,
-                Fullname = x.User.Fullname,
-                Role = x.User.UserRoles.UserRoleName
+                Users = x.CdoClusters.Select(x => new UserCollectionForCluster
+                {
+                    UserId = x.UserId,
+                    Fullname = x.User.Fullname,
+                    Role = x.User.UserRoles.UserRoleName
+                })
+                    
             });
             
             return await PagedList<GetAllClusterResult>.CreateAsync(result, request.PageNumber, request.PageSize);

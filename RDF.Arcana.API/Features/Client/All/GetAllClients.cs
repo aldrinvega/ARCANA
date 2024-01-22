@@ -286,9 +286,9 @@ public class GetAllClients : ControllerBase
                 .AsSingleQuery()*/
                 .AsNoTracking();
                 
-            var user = await _context.Users
-                    .Include(cluster => cluster.Cluster)
-                    .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
+            var user = await _context.Clusters
+                .Include(x => x.CdoClusters)
+                    .FirstOrDefaultAsync(user => user.CdoClusters.Any(x => x.UserId == request.AccessBy), cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -318,7 +318,8 @@ public class GetAllClients : ControllerBase
                     break;
                 case Roles.Cdo:
                 {
-                    /*var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);*/
+                    
+                    var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
 
                     if (request.RegistrationStatus is Status.ForReleasing or Status.Released or Status.Voided)
                     {
@@ -326,7 +327,6 @@ public class GetAllClients : ControllerBase
                         regularClients = regularClients
                             .Where(x => x.AddedBy == request.AccessBy &&
                                         x.RegistrationStatus == request.RegistrationStatus &&
-                                        x.ClusterId == user.Cluster.Id &&
                                         x.RequestId != null);
 
                         //Get the result
@@ -476,7 +476,7 @@ public class GetAllClients : ControllerBase
                     }
 
                     regularClients = regularClients
-                        .Where(x => x.ClusterId == user.Cluster.Id && x.RegistrationStatus == request.RegistrationStatus);
+                        .Where(x => x.RegistrationStatus == request.RegistrationStatus && x.ClusterId == userClusters.ClusterId);
                     break;
                 }
 

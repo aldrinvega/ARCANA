@@ -34,7 +34,7 @@ public class TagUserInCluster : ControllerBase
     public class TagUserInClusterCommand : IRequest<Result>
     { 
         public int ClusterId { get; set; }
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class Handler : IRequestHandler<TagUserInClusterCommand, Result>
@@ -70,8 +70,9 @@ public class TagUserInCluster : ControllerBase
             }
 
             //Validate the users if already tagged to the cluster
-            var existingTaggedUser = await _context.Clusters.FirstOrDefaultAsync(ct =>
-                    ct.Id == request.ClusterId &&
+            var existingTaggedUser = await _context.CdoClusters
+                .FirstOrDefaultAsync(ct =>
+                    ct.ClusterId == request.ClusterId &&
                     ct.UserId == request.UserId,
                 cancellationToken);
 
@@ -82,13 +83,13 @@ public class TagUserInCluster : ControllerBase
 
             //Add cluster per user
 
-            var taggedUsers = new Domain.Cluster
+            var taggedUsers = new CdoCluster
             {
                 Id = request.ClusterId,
                 UserId = request.UserId
             };
 
-            await _context.Clusters.AddAsync(taggedUsers, cancellationToken);
+            await _context.CdoClusters.AddAsync(taggedUsers, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

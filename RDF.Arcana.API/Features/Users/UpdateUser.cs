@@ -47,9 +47,6 @@ public class UpdateUser : ControllerBase
         public string Fullname { get; set; }
         public string Username { get; set; }
         public string ModifiedBy { get; set; }
-        public int CompanyId { get; set; }
-        public int DepartmentId { get; set; }
-        public int LocationId { get; set; }
         public int? UserRoleId { get; set; }
         public int ClusterId { get; set; }
 
@@ -67,16 +64,19 @@ public class UpdateUser : ControllerBase
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _context.Users
-                .Include(user => user.Cluster)
+                .Include(x => x.CdoCluster)
                 .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
-            /*var validateCompany =
-                await _context.Companies.FirstOrDefaultAsync(x => x.Id == request.CompanyId, cancellationToken);
-            var validateDepartment =
-                await _context.Departments.FirstOrDefaultAsync(x => x.Id == request.DepartmentId, cancellationToken);
-            var validateLocation =
-                await _context.Locations.FirstOrDefaultAsync(x => x.Id == request.LocationId, cancellationToken);*/
             var validateUserRole =
                 await _context.UserRoles.FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
+            //Validate if the clusters are existing
+
+            var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
+
+            if (existingCluster is null)
+            {
+                return ClusterErrors.NotFound();
+            }
 
             if (user.Username != request.Username)
             {
@@ -87,77 +87,35 @@ public class UpdateUser : ControllerBase
                     return UserErrors.UserAlreadyExist();
                 }
             }
-
-            /*if (validateCompany is null)
-                throw new NoCompanyFoundException();
-            if (validateDepartment is null)
-                throw new NoDepartmentFoundException();
-            if (validateLocation is null)
-                throw new NoLocationFoundException();*/
+            
             if (validateUserRole is null)
                 UserRoleErrors.NotFound();
 
             user.FullIdNo = request.FullIdNo;
             user.Fullname = request.Fullname;
             user.Username = request.Username;
-            /*user.CompanyId = request.CompanyId;
-            user.LocationId = request.LocationId;
-            user.DepartmentId = request.DepartmentId;*/
             user.UserRolesId = request.UserRoleId;
             user.UpdatedAt = DateTime.Now;
-            
-            //Validate if the clusters are existing
 
-            var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
-                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
+            var cdoCluster =
+                await _context.CdoClusters.FirstOrDefaultAsync(
+                    cl => cl.ClusterId == request.ClusterId && cl.UserId == user.Id, cancellationToken);
 
-            if (existingCluster is null)
+            if (cdoCluster != null)
             {
-                return ClusterErrors.NotFound();
-            }
-              
-            // Validate if the user is tagged to any existing cluster
-            var existingTaggedUser = await _context.Clusters
-                .FirstOrDefaultAsync(ct => ct.UserId == user.Id, cancellationToken);
-
-            if (existingTaggedUser is not null && request.ClusterId != 0)
-            {
-                // If the user is tagged to an existing cluster, set the UserId to null
-                existingTaggedUser.UserId = null;
-
-                // Save changes to the database for the previous cluster
-                await _context.SaveChangesAsync(cancellationToken);
-            }
-
-            // Check if the new cluster is already in use
-            var alreadyUsed = await _context.Clusters
-                .AnyAsync(ct => (ct.UserId != null && ct.UserId != request.UserId) && ct.Id == request.ClusterId, cancellationToken);
-
-            if (alreadyUsed)
-            {
-                // If the requested cluster is already in use, return an error
-                return ClusterErrors.InUse();
-            }
-
-            // Update the user's cluster association with the new cluster
-            existingTaggedUser = await _context.Clusters
-                .FirstOrDefaultAsync(ct => ct.Id == request.ClusterId, cancellationToken);
-
-            if (existingTaggedUser is not null)
-            {
-                existingTaggedUser.UserId = user.Id;
-
-                // Save changes to the database for the new cluster
-                await _context.SaveChangesAsync(cancellationToken);
-
-                // Return success or other appropriate response
+                user.CdoCluster.UserId = user.Id;
             }
             else
             {
-                // Handle the case where the requested cluster is not found
-                return ClusterErrors.NotFound();
+                var newCdoCluster = new CdoCluster
+                {
+                    ClusterId = request.ClusterId,
+                    UserId = user.Id
+                };
+
+                await _context.CdoClusters.AddAsync(newCdoCluster, cancellationToken);
             }
-            
+
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
