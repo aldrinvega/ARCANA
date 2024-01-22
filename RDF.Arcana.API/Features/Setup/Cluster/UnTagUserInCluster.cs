@@ -58,8 +58,9 @@ public class UnTagUserInCluster : ControllerBase
 
         public async Task<Result> Handle(UntagUserInClusterCommand request, CancellationToken cancellationToken)
         {
-            var validateUserInCluster = await _context.Clusters.FirstOrDefaultAsync(cluster =>
-                cluster.Id == request.ClusterId && cluster.UserId == request.UserId, cancellationToken);
+            var validateUserInCluster = await _context.CdoClusters.FirstOrDefaultAsync(cluster =>
+                cluster.ClusterId == request.ClusterId && 
+                cluster.UserId == request.UserId, cancellationToken);
 
             if (validateUserInCluster is  null)
             {

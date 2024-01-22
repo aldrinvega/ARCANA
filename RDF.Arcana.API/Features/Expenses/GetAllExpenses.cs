@@ -147,9 +147,7 @@ public class GetAllExpenses : ControllerBase
                 .ThenInclude(ap => ap.Approvals)
                 .AsSingleQuery();*/
                 
-            var user = await _context.Users
-                    .Include(cluster => cluster.Cluster)
-                    .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
+                var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(cluster => cluster.UserId == request.AccessBy, cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -158,6 +156,7 @@ public class GetAllExpenses : ControllerBase
 
             expenses = request.RoleName switch
             {
+                
                 Roles.Approver when !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
                                     request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower() => expenses.Where(
                     lf => lf.Request.Approvals.Any(x =>
@@ -165,7 +164,7 @@ public class GetAllExpenses : ControllerBase
                 Roles.Approver => expenses.Where(lf =>
                     lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy),
                 Roles.Cdo =>
-                    /*var userClusters = user?.CdoCluster?.Select(cluster => cluster.ClusterId);*/
+                    
                     /*if (request.ExpenseStatus is  Status.Voided)
                     {
                         expenses = expenses.Where(x =>
@@ -221,7 +220,7 @@ public class GetAllExpenses : ControllerBase
                         return await PagedList<GetAllExpensesResult>.CreateAsync(voidedResults, request.PageNumber, request.PageSize);
 
                     }*/
-                    expenses.Where(x => x.Client.ClusterId == user.Cluster.Id && x.Status == request.ExpenseStatus),
+                    expenses.Where(x => x.Status == request.ExpenseStatus && x.Client.ClusterId ==  userClusters.ClusterId),
                 Roles.Admin => expenses.Where(x => x.Status == request.ExpenseStatus),
                 _ => expenses
             };
