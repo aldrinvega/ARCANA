@@ -117,36 +117,19 @@ public class GetAllClientsInListingFee : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Clients> clientsListingFee = _context.Clients
-                .Include(mop => mop.ClientModeOfPayment)
-                .Include(abu => abu.AddedByUser)
                 .Include(rq => rq.Request)
                 .ThenInclude(user => user.Requestor)
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
                 .ThenInclude(cap => cap.Approver)
-                .Include(st => st.StoreType)
-                .Include(fd => fd.FixedDiscounts)
-                .Include(to => to.Term)
-                .ThenInclude(tt => tt.Terms)
-                .Include(to => to.Term)
-                .ThenInclude(td => td.TermDays)
-                .Include(ba => ba.BusinessAddress)
-                .Include(oa => oa.OwnersAddress)
-                .Include(bc => bc.BookingCoverages)
-                .Include(fr => fr.FreebiesRequests)
-                .ThenInclude(fi => fi.FreebieItems)
-                .ThenInclude(item => item.Items)
-                .ThenInclude(uom => uom.Uom)
                 .Include(lf => lf.ListingFees)
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .Include(cd => cd.ClientDocuments)
                 .Where(clients => clients.RegistrationStatus == Status.Approved)
                 .AsNoTracking();
             
-            var user = await _context.CdoClusters
-                .FirstOrDefaultAsync(user => user.UserId == request.AddedBy, cancellationToken);
+           
             
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -180,8 +163,6 @@ public class GetAllClientsInListingFee : ControllerBase
                     x.RegistrationStatus == Status.Requested);
             }
 
-            clientsListingFee = clientsListingFee.Where(x => x.ClusterId == user.ClusterId);
-           
             var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());
 
             return await PagedList<GetAllClientsInListingFeeResult>.CreateAsync(result, request.PageNumber,

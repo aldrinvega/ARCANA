@@ -155,76 +155,48 @@ public class GetAllListingFee : ControllerBase
                 .ThenInclude(x => x.Uom)
                 .AsSingleQuery();
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(user => user.Id == request.AccessBy, cancellationToken);
+            var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
+
             if (!string.IsNullOrEmpty(request.Search))
-             
+
             {
                 listingFees = listingFees.Where(x =>
                     x.Client.BusinessName.Contains(request.Search) || x.Client.Fullname.Contains(request.Search));
             }
 
-            listingFees = request.RoleName switch
+            switch (request.RoleName)
             {
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
-                                    request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower() =>
-                    listingFees.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive)),
-                Roles.Approver => listingFees.Where(lf =>
-                    lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy),
-                Roles.Cdo =>
-                    /*if (request.ListingFeeStatus is Status.Voided)
+                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
+                             request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
+                    listingFees = listingFees.Where(lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive));
+                    break;
+
+                case Roles.Approver:
+                    listingFees = listingFees.Where(lf =>
+                        lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy);
+                    break;
+
+                case Roles.Cdo:
+
+                    if (userClusters is null)
                     {
-                        listingFees = listingFees.Where(lf => lf.Status == request.ListingFeeStatus);
+                        listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.ClusterId == userClusters.ClusterId);
+                        break;
+                    }
 
-                        var voidedResult = listingFees.Select(listingFee => new ClientsWithListingFee
-                        {
-                            ClientId = listingFee.ClientId,
-                            ClientName = listingFee.Client.Fullname,
-                            RegistrationStatus = listingFee.Client.RegistrationStatus,
-                            BusinessName = listingFee.Client.BusinessName,
-                            CreatedAt = listingFee.CratedAt.ToString("MM/dd/yyyy HH:mm:ss"),
-                            ListingFeeId = listingFee.Id,
-                            RequestId = listingFee.RequestId,
-                            Status = listingFee.Status,
-                            RequestedBy = listingFee.RequestedByUser.Fullname,
-                            Total = listingFee.Total,
-                            ListingItems = listingFee.ListingFeeItems.Select(li =>
-                                new ClientsWithListingFee.ListingItem
-                                {
-                                    ItemId = li.ItemId,
-                                    ItemCode = li.Item.ItemCode,
-                                    ItemDescription = li.Item.ItemDescription,
-                                    Uom = li.Item.Uom.UomCode,
-                                    Sku = li.Sku,
-                                    UnitCost = li.UnitCost
-                                }).ToList(),
-                            ListingFeeApprovalHistories = listingFee.Request.Approvals
-                                .OrderByDescending(a => a.CreatedAt)
-                                .Select(a => new ClientsWithListingFee.ListingFeeApprovalHistory
-                                {
-                                    Module = a.Request.Module,
-                                    Approver = a.Approver.Fullname,
-                                    Level = a.Approver.Approver.FirstOrDefault().Level,
-                                    Reason = a.Request.Approvals.FirstOrDefault().Reason,
-                                    CreatedAt = a.CreatedAt,
-                                    Status = a.Status,
-                                }),
-                            Approvers = listingFee.Request.RequestApprovers.Select(x =>
-                                new ClientsWithListingFee.RequestApproversForListingFee
-                                {
-                                    Name = x.Approver.Fullname,
-                                    Level = x.Level
-                                })
-                        }).OrderBy(x => x.ClientId);
+                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus);
+                    break;
 
-                        return await PagedList<ClientsWithListingFee>.CreateAsync(voidedResult, request.PageNumber, request.PageSize);
-                    }*/
-                    listingFees.Where(
-                        x => x.Status == request.ListingFeeStatus),
-                Roles.Admin => listingFees.Where(x => x.Status == request.ListingFeeStatus),
-                _ => listingFees
-            };
+                case Roles.Admin:
+                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus);
+                    break;
+
+                default:
+                    // No additional filtering for other roles
+                    break;
+            }
+           
 
             if (request.RoleName is Roles.Approver && request.ListingFeeStatus == Status.UnderReview)
             {

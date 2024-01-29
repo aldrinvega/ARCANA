@@ -135,95 +135,54 @@ public class GetAllExpenses : ControllerBase
 
             IQueryable<Domain.Expenses> expenses = _context.Expenses
                 .AsNoTracking();
-                /*.Include(er => er.ExpensesRequests)
-                .ThenInclude(oe => oe.OtherExpense)
-                .AsSplitQuery()
-                .Include(rq => rq.AddedByUser)
-                .AsSplitQuery()
-                .Include(rq => rq.Request)
-                .ThenInclude(uh => uh.UpdateRequestTrails)
-                .AsSplitQuery()
-                .Include(rq => rq.Request)
-                .ThenInclude(ap => ap.Approvals)
-                .AsSingleQuery();*/
-                
-                var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(cluster => cluster.UserId == request.AccessBy, cancellationToken);
-            
+            /*.Include(er => er.ExpensesRequests)
+            .ThenInclude(oe => oe.OtherExpense)
+            .AsSplitQuery()
+            .Include(rq => rq.AddedByUser)
+            .AsSplitQuery()
+            .Include(rq => rq.Request)
+            .ThenInclude(uh => uh.UpdateRequestTrails)
+            .AsSplitQuery()
+            .Include(rq => rq.Request)
+            .ThenInclude(ap => ap.Approvals)
+            .AsSingleQuery();*/
+
+            var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
+
+
+
             if (!string.IsNullOrEmpty(request.Search))
             {
                 expenses = expenses.Where(oe => oe.Client.BusinessName.Contains(request.Search));
             }
 
-            expenses = request.RoleName switch
+            switch (request.RoleName)
             {
-                
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
-                                    request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower() => expenses.Where(
-                    lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive)),
-                Roles.Approver => expenses.Where(lf =>
-                    lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy),
-                Roles.Cdo =>
-                    
-                    /*if (request.ExpenseStatus is  Status.Voided)
-                    {
-                        expenses = expenses.Where(x =>
-                            x.AddedBy == request.AccessBy && x.Status == request.ExpenseStatus);
+                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
+                             request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower():
+                    expenses = expenses.Where(lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive));
+                    break;
 
-                        var voidedResults = expenses.Select(oe => new GetAllExpensesResult
-                        {
-                            Id = oe.Id,
-                            RequestId = oe.RequestId,
-                            ClientId = oe.Client.Id,
-                            RequestedBy = oe.AddedByUser.Fullname,
-                            BusinessName = oe.Client.BusinessName,
-                            OwnersName = oe.Client.Fullname,
-                            CreatedAt = oe.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
-                            UpdatedAt = oe.UpdatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
-                            Expenses = oe.ExpensesRequests.Select(er =>
-                                new GetAllExpensesResult.ExpensesRequestCollection
-                                {
-                                    Id = er.Id,
-                                    ExpenseType = er.OtherExpense.ExpenseType,
-                                    Amount = er.Amount
-                                }),
-                            ApprovalHistories = oe.Request.Approvals == null
-                                ? null
-                                : oe.Request.Approvals.OrderByDescending(a => a.CreatedAt)
-                                    .Select(a => new GetAllExpensesResult.ExpensesApprovalHistory
-                                    {
-                                        Module = a.Request.Module,
-                                        Approver = a.Approver.Fullname,
-                                        CreatedAt = a.CreatedAt,
-                                        Status = a.Status,
-                                        Level = a.Approver.Approver.FirstOrDefault().Level,
-                                        Reason = a.Reason
+                case Roles.Approver:
+                    expenses = expenses.Where(lf =>
+                        lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy);
+                    break;
 
-                                    }),
-                            UpdateHistories = oe.Request.UpdateRequestTrails == null
-                                ? null
-                                : oe.Request.UpdateRequestTrails.Select(uh => new GetAllExpensesResult.UpdateHistory
-                                {
-                                    Module = uh.ModuleName,
-                                    UpdatedAt = uh.UpdatedAt
-                                }),
-                            Approvers = oe.Request.RequestApprovers.Select(x =>
-                                new GetAllExpensesResult.RequestApproversForExpenses
-                                {
-                                    Name = x.Approver.Fullname,
-                                    Level = x.Level
-                                })
-                        });
+                case Roles.Cdo:
+                    expenses = expenses.Where(x => x.Status == request.ExpenseStatus && x.Client.ClusterId == userClusters.ClusterId);
+                    break;
 
-                        voidedResults = voidedResults.OrderBy(x => x.Id);
+                case Roles.Admin:
+                    expenses = expenses.Where(x => x.Status == request.ExpenseStatus);
+                    break;
 
-                        return await PagedList<GetAllExpensesResult>.CreateAsync(voidedResults, request.PageNumber, request.PageSize);
+                default:
+                    // No additional filtering for other roles
+                    break;
+            }
 
-                    }*/
-                    expenses.Where(x => x.Status == request.ExpenseStatus && x.Client.ClusterId ==  userClusters.ClusterId),
-                Roles.Admin => expenses.Where(x => x.Status == request.ExpenseStatus),
-                _ => expenses
-            };
+
 
             if (request.RoleName is Roles.Approver && request.ExpenseStatus == Status.UnderReview)
             {
