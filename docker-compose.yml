@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  rdf.arcana.api:
+    image: ${DOCKER_REGISTRY-}rdfarcanaapi
+    build:
+      context: .
+      dockerfile: RDF.Arcana.API/Dockerfile

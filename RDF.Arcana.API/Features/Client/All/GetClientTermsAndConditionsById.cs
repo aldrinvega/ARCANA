@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MySqlX.XDevAPI;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Client.Errors;
+using static RDF.Arcana.API.Features.Client.All.GetAllClients;
 
 namespace RDF.Arcana.API.Features.Client.All
 {
@@ -53,6 +55,22 @@ namespace RDF.Arcana.API.Features.Client.All
             public int? CreditLimit { get; set; }
             public int? TermDays { get; set; }
             public int? TermDaysId { get; set; }
+            public bool? VariableDiscount { get; set; }
+            public bool Freezer { get; set; }
+            public string TypeOfCustomer { get; set; }
+            public bool? DirectDelivery { get; set; }
+            public string BookingCoverage { get; set; }
+            public FixedDiscounts FixedDiscount { get; set; }
+
+            public class ModeOfPatyments
+            {
+                public int Id { get; set; } 
+            }
+
+            public class FixedDiscounts
+            {
+                public decimal? DiscountPercentage { get; set; }
+            }
         }
 
         public class Handler : IRequestHandler<GetClientTermsAndConditionQuery, Result>
@@ -67,6 +85,8 @@ namespace RDF.Arcana.API.Features.Client.All
             public async Task<Result> Handle(GetClientTermsAndConditionQuery request, CancellationToken cancellationToken)
             {
                 var termsAndConditions = await _context.Clients
+                    .Include(x => x.BookingCoverages)
+                    .Include(x => x.FixedDiscounts)
                     .Include(x => x.Term)
                     .ThenInclude(x => x.Terms)
                     .Include(x => x.Term)
@@ -84,7 +104,18 @@ namespace RDF.Arcana.API.Features.Client.All
                     Term = termsAndConditions.Term.Terms.TermType,
                     CreditLimit = termsAndConditions.Term?.CreditLimit,
                     TermDays = termsAndConditions.Term.TermDays?.Days,
-                    TermDaysId = termsAndConditions.Term?.TermDaysId
+                    TermDaysId = termsAndConditions.Term?.TermDaysId,
+                    DirectDelivery = termsAndConditions.DirectDelivery,
+                    BookingCoverage = termsAndConditions.BookingCoverages.BookingCoverage,
+                    Freezer = termsAndConditions.Freezer,
+                    TypeOfCustomer =termsAndConditions.CustomerType,
+                    VariableDiscount = termsAndConditions.VariableDiscount,
+                    FixedDiscount = termsAndConditions.FixedDiscounts != null
+                    ? new ClientTermsAndCondition.FixedDiscounts
+                    {
+
+                        DiscountPercentage = termsAndConditions.FixedDiscounts.DiscountPercentage
+                    } : null
                 };
 
                 return Result.Success(termsAndCondition);

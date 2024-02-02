@@ -1,28 +1,40 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9DEEFD6D-968B-4732-B55C-CE42E8F7F90E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{BF9A369B-7FE6-4590-8067-7E0D70B07219}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDF.Arcana.API", "RDF.Arcana.API\RDF.Arcana.API.csproj", "{54135EEA-5B08-4227-B5FF-CADEC8784C1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDF.Arcana.API", "RDF.Arcana.API\RDF.Arcana.API.csproj", "{54135EEA-5B08-4227-B5FF-CADEC8784C1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E1E588D-A9CA-4BF6-ADAF-9B1A0B4A1349}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{74BA9BB5-964E-4DDF-88E6-67DDB824C609}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{54135EEA-5B08-4227-B5FF-CADEC8784C1B} = {9DEEFD6D-968B-4732-B55C-CE42E8F7F90E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{54135EEA-5B08-4227-B5FF-CADEC8784C1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54135EEA-5B08-4227-B5FF-CADEC8784C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54135EEA-5B08-4227-B5FF-CADEC8784C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54135EEA-5B08-4227-B5FF-CADEC8784C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74BA9BB5-964E-4DDF-88E6-67DDB824C609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74BA9BB5-964E-4DDF-88E6-67DDB824C609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74BA9BB5-964E-4DDF-88E6-67DDB824C609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74BA9BB5-964E-4DDF-88E6-67DDB824C609}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{54135EEA-5B08-4227-B5FF-CADEC8784C1B} = {9DEEFD6D-968B-4732-B55C-CE42E8F7F90E}
 	EndGlobalSection
 EndGlobal

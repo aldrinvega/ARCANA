@@ -168,36 +168,9 @@ public static class RegularClientsMappingProfile
             AuthorizedRepresentative = client.RepresentativeName,
             AuthorizedRepresentativePosition = client.RepresentativePosition,
             ClusterId = client.ClusterId,
-            Freezer = client.Freezer,
-            TypeOfCustomer = client.CustomerType,
-            DirectDelivery = client.DirectDelivery,
-            BookingCoverage = client.BookingCoverages?.BookingCoverage,
-            Terms = client.Term != null
-                ? new GetAllClients.GetAllClientResult.ClientTerms
-                {
-                    TermId = client.Term.TermsId,
-                    Term = client.Term.Terms.TermType,
-                    CreditLimit = client.Term.CreditLimit,
-                    TermDays = client.Term.TermDays?.Days
-                }
-                : null,
-            FixedDiscount = client.FixedDiscounts != null
-                ? new GetAllClients.GetAllClientResult.FixedDiscounts
-                {
-                    DiscountPercentage = client.FixedDiscounts.DiscountPercentage
-                }
-                : null,
-            VariableDiscount = client.VariableDiscount,
             Longitude = client.Longitude,
             Latitude = client.Latitude,
-            RequestedBy = client.AddedByUser.Fullname,
-            Attachments = client.ClientDocuments?.Select(cd =>
-                new GetAllClients.GetAllClientResult.Attachment
-                {
-                    DocumentId = cd.Id,
-                    DocumentLink = cd.DocumentPath,
-                    DocumentType = cd.DocumentType
-                })
+            RequestedBy = client.AddedByUser.Fullname
         };
     }
 

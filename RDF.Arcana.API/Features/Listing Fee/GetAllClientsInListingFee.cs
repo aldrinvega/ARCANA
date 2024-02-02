@@ -128,8 +128,8 @@ public class GetAllClientsInListingFee : ControllerBase
                 .ThenInclude(uom => uom.Uom)
                 .Where(clients => clients.RegistrationStatus == Status.Approved)
                 .AsNoTracking();
-            
-           
+
+            var user = await _context.CdoClusters.FirstOrDefaultAsync(c => c.UserId == request.AddedBy, cancellationToken);
             
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -163,7 +163,9 @@ public class GetAllClientsInListingFee : ControllerBase
                     x.RegistrationStatus == Status.Requested);
             }
 
-            var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());
+            var result = clientsListingFee
+                .Where(x => user != null && x.ClusterId == user.ClusterId)
+                .Select(x => x.ToGetAllClientsInListingFeeResult());
 
             return await PagedList<GetAllClientsInListingFeeResult>.CreateAsync(result, request.PageNumber,
                 request.PageSize);

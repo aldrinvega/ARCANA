@@ -50,9 +50,10 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ExpensesRequest> ExpensesRequests { get; set; }
     public virtual DbSet<Expenses> Expenses { get; set; }
     public virtual DbSet<Notification> Notifications { get; set; }
-    
     public virtual DbSet<CdoCluster> CdoClusters { get; set; }
-    
+    public virtual DbSet<PriceMode> PriceMode { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserRoles>()
@@ -388,5 +389,15 @@ public class ArcanaDbContext : DbContext
             new ModeOfPayment { Id = 1, Payment = "Cash", AddedBy = 1, IsActive = true},
             new ModeOfPayment { Id = 2, Payment = "Online/Check", AddedBy = 1, IsActive = true}
         );
+
+        modelBuilder.Entity<PriceMode>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<PriceMode>()
+           .HasOne(x => x.ModifiedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.ModifiedBy);
     }
 }
