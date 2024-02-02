@@ -8,6 +8,7 @@ namespace RDF.Arcana.API.Domain
         public string PriceModeDescription { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
+        public bool IsActive { get; set; } = true;
         public int AddedBy { get; set; }
         public int? ModifiedBy { get; set; }
 

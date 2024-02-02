@@ -6,6 +6,7 @@ using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Setup.Price_Mode
 {
+    [Route("api/price-mode"), ApiController]
     public class UpdatePriceMode : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -44,6 +45,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
         {
             public int Id { get; set; }
             public string PriceMode { get; set; }
+            public string PriceModeDescription { get; set; }
             public int ModifiedBy { get; set; }
         }
         public class Hadnler : IRequestHandler<UpdatePriceModeCommand, Result>
@@ -66,6 +68,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
 
                 existingPriceMode.PriceModeCode = request.PriceMode;
                 existingPriceMode.UpdatedAt = DateTime.Now;
+                existingPriceMode.PriceModeDescription = request.PriceModeDescription;
                 existingPriceMode.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);
