@@ -134,18 +134,9 @@ public class GetAllExpenses : ControllerBase
         {
 
             IQueryable<Domain.Expenses> expenses = _context.Expenses
-                .AsNoTracking();
-            /*.Include(er => er.ExpensesRequests)
+            .Include(er => er.ExpensesRequests)
             .ThenInclude(oe => oe.OtherExpense)
-            .AsSplitQuery()
-            .Include(rq => rq.AddedByUser)
-            .AsSplitQuery()
-            .Include(rq => rq.Request)
-            .ThenInclude(uh => uh.UpdateRequestTrails)
-            .AsSplitQuery()
-            .Include(rq => rq.Request)
-            .ThenInclude(ap => ap.Approvals)
-            .AsSingleQuery();*/
+            .Include(rq => rq.AddedByUser);
 
             var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
 
@@ -215,35 +206,8 @@ public class GetAllExpenses : ControllerBase
                     ExpenseType = er.OtherExpense.ExpenseType,
                     Amount = er.Amount
                 }),
-                TotalAmount = oe.ExpensesRequests.Sum(er => er.Amount),
-                ApprovalHistories = oe.Request.Approvals == null
-                    ? null
-                    : oe.Request.Approvals.OrderByDescending(a => a.CreatedAt)
-                        .Select(a => new GetAllExpensesResult.ExpensesApprovalHistory
-                        {
-                            Module = a.Request.Module,
-                            Approver = a.Approver.Fullname,
-                            CreatedAt = a.CreatedAt,
-                            Status = a.Status,
-                            Level = a.Approver.Approver.FirstOrDefault().Level,
-                            Reason = a.Reason
-
-                        }),
-                UpdateHistories = oe.Request.UpdateRequestTrails == null
-                    ? null
-                    : oe.Request.UpdateRequestTrails.Select(uh => new GetAllExpensesResult.UpdateHistory
-                    {
-                        Module = uh.ModuleName,
-                        UpdatedAt = uh.UpdatedAt
-                    }),
-                Approvers = oe.Request.RequestApprovers.Select(x => new GetAllExpensesResult.RequestApproversForExpenses
-                {
-                    Name = x.Approver.Fullname,
-                    Level = x.Level
-                })
+                TotalAmount = oe.ExpensesRequests.Sum(er => er.Amount)
             });
-
-            result = result.OrderBy(x => x.Id);
 
             return await PagedList<GetAllExpensesResult>.CreateAsync(result, request.PageNumber, request.PageSize);
 
