@@ -3,6 +3,7 @@ using MySqlX.XDevAPI;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Client.Errors;
+using RDF.Arcana.API.Features.Setup.Mode_Of_Payment;
 using static RDF.Arcana.API.Features.Client.All.GetAllClients;
 
 namespace RDF.Arcana.API.Features.Client.All
@@ -61,8 +62,9 @@ namespace RDF.Arcana.API.Features.Client.All
             public bool? DirectDelivery { get; set; }
             public string BookingCoverage { get; set; }
             public FixedDiscounts FixedDiscount { get; set; }
+            public IEnumerable<ModeOfPayments> ModeofPayments { get; set; }
 
-            public class ModeOfPatyments
+            public class ModeOfPayments
             {
                 public int Id { get; set; } 
             }
@@ -85,6 +87,7 @@ namespace RDF.Arcana.API.Features.Client.All
             public async Task<Result> Handle(GetClientTermsAndConditionQuery request, CancellationToken cancellationToken)
             {
                 var termsAndConditions = await _context.Clients
+                    .Include(x => x.ClientModeOfPayment)
                     .Include(x => x.BookingCoverages)
                     .Include(x => x.FixedDiscounts)
                     .Include(x => x.Term)
@@ -115,7 +118,11 @@ namespace RDF.Arcana.API.Features.Client.All
                     {
 
                         DiscountPercentage = termsAndConditions.FixedDiscounts.DiscountPercentage
-                    } : null
+                    } : null,
+                    ModeofPayments = termsAndConditions.ClientModeOfPayment.Select(mop => new ClientTermsAndCondition.ModeOfPayments
+                    {
+                        Id = mop.ModeOfPaymentId
+                    })
                 };
 
                 return Result.Success(termsAndCondition);

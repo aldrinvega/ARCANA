@@ -41,6 +41,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
         public class AddNewPriceModeCommand : IRequest<Result>
         {
             public string PriceMode { get; set; }
+            public string PriceModeDescription { get; set; }
             public int AddedBy { get; set; }
         }
 
@@ -66,6 +67,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
                 var priceMode = new PriceMode
                 {
                     PriceModeCode = request.PriceMode,
+                    PriceModeDescription = request.PriceModeDescription,
                     AddedBy = request.AddedBy
                 };
 
