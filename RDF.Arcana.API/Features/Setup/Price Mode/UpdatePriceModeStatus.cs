@@ -15,7 +15,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Update([FromRoute]int id)
         {
             try
             {
@@ -63,6 +63,8 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
                 }
 
                 priceMode.IsActive = !priceMode.IsActive;
+
+                await _context.SaveChangesAsync(cancellationToken);
 
                 return Result.Success();
             }

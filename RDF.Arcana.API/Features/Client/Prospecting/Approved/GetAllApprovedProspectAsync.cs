@@ -153,7 +153,8 @@ public class GetAllApprovedProspectAsync : ControllerBase
                 .Include(x => x.StoreType)
                 .Where(x => x.RegistrationStatus != Status.Approved &&
                             x.RegistrationStatus != Status.UnderReview &&
-                            x.RegistrationStatus != Status.Rejected);
+                            x.RegistrationStatus != Status.Rejected &&
+                            x.RegistrationStatus != Status.Voided);
 
             if (request.Role is not Roles.Admin)
             {

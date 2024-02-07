@@ -106,6 +106,8 @@ public class GetAllClients : ControllerBase
         public string AuthorizedRepresentativePosition { get; set; }
         public int? ClusterId { get; set; }
         public string ClusterName { get; set; }
+        public int? PriceModeId { get; set; }
+        public string PriceModeName { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string RequestedBy { get; set; }
@@ -143,6 +145,8 @@ public class GetAllClients : ControllerBase
             var regularClients = _context.Clients
                 .AsSplitQuery()
                 .Include(abu => abu.AddedByUser)
+                .AsSplitQuery()
+                .Include(pm => pm.PriceMode)
                 .AsSplitQuery()
                 .Include(st => st.StoreType)
                 .AsSplitQuery()
@@ -231,6 +235,8 @@ public class GetAllClients : ControllerBase
                                 AuthorizedRepresentativePosition = client.RepresentativePosition,
                                 ClusterId = client.ClusterId,
                                 ClusterName = client.Cluster.ClusterType,
+                                PriceModeId = client.PriceModeId,
+                                PriceModeName = client.PriceMode.PriceModeDescription ?? null,
                                 Longitude = client.Longitude,
                                 Latitude = client.Latitude,
                                 RequestedBy = client.AddedByUser.Fullname
@@ -331,10 +337,12 @@ public class GetAllClients : ControllerBase
                     AuthorizedRepresentativePosition = client.RepresentativePosition,
                     ClusterId = client.ClusterId,
                     ClusterName = client.Cluster.ClusterType,
+                    PriceModeId = client.PriceModeId,
+                    PriceModeName = client.PriceMode.PriceModeDescription ?? null,
                     RegistrationStatus = client.RegistrationStatus,
                     Longitude = client.Longitude,
                     Latitude = client.Latitude,
-                    RequestedBy = client.AddedByUser.Fullname,
+                    RequestedBy = client.AddedByUser.Fullname
                 });
 
                 personalInformation = personalInformation.OrderBy(r => r.Id);

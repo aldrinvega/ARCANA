@@ -52,6 +52,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Notification> Notifications { get; set; }
     public virtual DbSet<CdoCluster> CdoClusters { get; set; }
     public virtual DbSet<PriceMode> PriceMode { get; set; }
+    public virtual DbSet<PriceModeItems> PriceModeItems { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -399,5 +400,15 @@ public class ArcanaDbContext : DbContext
            .HasOne(x => x.ModifiedByUser)
            .WithMany()
            .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<PriceModeItems>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<PriceModeItems>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
     }
 }

@@ -36,7 +36,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation()
 
-var connectionString = builder.Configuration.GetConnectionString("Production");
+var connectionString = builder.Configuration.GetConnectionString("Testing");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {

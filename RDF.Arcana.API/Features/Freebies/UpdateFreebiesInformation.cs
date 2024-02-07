@@ -137,6 +137,7 @@ public class UpdateFreebiesInformation : ControllerBase
             var requestItemIds = request.Freebies.Select(f => f.ItemId).ToList();
             var existingItemIds = freebieRequestToUpdate.FreebieItems.Select(i => i.ItemId).ToList();
             var itemsToRemove = existingItemIds.Except(requestItemIds);
+
             foreach (var itemId in itemsToRemove)
             {
                 var itemToRemove = freebieRequestToUpdate.FreebieItems.First(i => i.ItemId == itemId);

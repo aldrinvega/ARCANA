@@ -61,6 +61,7 @@ public class RegisterClient : ControllerBase
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int ClusterId { get; set; }
+        public int PriceModeId { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public int RequestedBy { get; set; }
@@ -129,6 +130,7 @@ public class RegisterClient : ControllerBase
                 existingClient.DateOfBirthDB = dateOfBirth;
                 existingClient.RequestId = newRequest.Id;
                 existingClient.StoreTypeId = request.StoreTypeId;
+                existingClient.PriceModeId = request.PriceModeId;
                 
                 foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
                          {

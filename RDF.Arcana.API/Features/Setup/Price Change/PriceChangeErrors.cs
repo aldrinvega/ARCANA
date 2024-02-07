@@ -9,5 +9,5 @@ public class PriceChangeErrors
 
     public static Error NotFound() => new Error("PriceChange.NotFound", "Price change not found");
     
-    public static Error PriceAlreadyAdded() => new Error("PriceChange, PriceAlreadyAdded","The new price is the same as the latest recorded price.");
+    public static Error PriceAlreadyAdded(string item) => new Error("PriceChange, PriceAlreadyAdded",$"The new price for the item {item} is the same as the latest recorded price.");
 }

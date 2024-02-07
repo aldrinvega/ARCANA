@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Bcpg;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using System.Drawing.Text;
 
-namespace RDF.Arcana.API.Features.Setup.Price_Mode
+namespace RDF.Arcana.API.Features.Price_Mode
 {
     [Route("api/price-mode"), ApiController]
-    public class GetAllPriceMode :ControllerBase
+    public class GetAllPriceMode : ControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -19,60 +17,58 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
             _mediator = mediator;
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> GetAllStoreTypes([FromQuery] GetAllpriceModeQuery query)
+        [HttpGet("page")]
+        public async Task<IActionResult> Get([FromQuery]GetAllPriceModeQuery query)
         {
             try
             {
-                var pricemodes = await _mediator.Send(query);
+                var priceMode = await _mediator.Send(query);
 
                 Response.AddPaginationHeader(
-                    pricemodes.CurrentPage,
-                    pricemodes.PageSize,
-                    pricemodes.TotalCount,
-                    pricemodes.TotalPages,
-                    pricemodes.HasPreviousPage,
-                    pricemodes.HasNextPage
+                    priceMode.CurrentPage,
+                    priceMode.PageSize,
+                    priceMode.TotalCount,
+                    priceMode.TotalPages,
+                    priceMode.HasPreviousPage,
+                    priceMode.HasNextPage
                     );
-
-                var result = new
+                var results = new
                 {
-                    pricemodes,
-                    pricemodes.CurrentPage,
-                    pricemodes.PageSize,
-                    pricemodes.TotalCount,
-                    pricemodes.TotalPages,
-                    pricemodes.HasPreviousPage,
-                    pricemodes.HasNextPage
+
+                    priceMode,
+                    priceMode.CurrentPage,
+                    priceMode.PageSize,
+                    priceMode.TotalCount,
+                    priceMode.TotalPages,
+                    priceMode.HasPreviousPage,
+                    priceMode.HasNextPage
                 };
 
-                var successResult = Result.Success(result);
+                var successResult = Result.Success(results);
                 return Ok(successResult);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return Conflict(e.Message);
             }
         }
-
-        public class GetAllpriceModeQuery : UserParams, IRequest<PagedList<PriceModeResult>>
+        public class GetAllPriceModeQuery : UserParams, IRequest<PagedList<GetAllPriceModeResult>>
         {
             public string Search { get; set; }
             public bool? Status { get; set; }
         }
 
-        public class PriceModeResult
+        public class GetAllPriceModeResult
         {
             public int Id { get; set; }
             public string PriceModeCode { get; set; }
             public string PriceModeDescription { get; set; }
-            public bool IsActive { get; set; }
-            public string AddedBy { get; set; }
             public string CreatedAt { get; set; }
             public string UpdatedAt { get; set; }
+            public bool IsActive { get; set; }
         }
 
-        public class Handler : IRequestHandler<GetAllpriceModeQuery, PagedList<PriceModeResult>>
+        public class Handler : IRequestHandler<GetAllPriceModeQuery, PagedList<GetAllPriceModeResult>>
         {
             private readonly ArcanaDbContext _context;
 
@@ -81,35 +77,31 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
                 _context = context;
             }
 
-            public async Task<PagedList<PriceModeResult>> Handle(GetAllpriceModeQuery request, CancellationToken cancellationToken)
+            public async Task<PagedList<GetAllPriceModeResult>> Handle(GetAllPriceModeQuery request, CancellationToken cancellationToken)
             {
-                IQueryable<PriceMode> priceMode = _context.PriceMode
-                    .Include(ab => ab.AddedByUser);
+                IQueryable<PriceMode> priceMode = _context.PriceMode;
 
-                if(!string.IsNullOrEmpty(request.Search))
+                if (!string.IsNullOrWhiteSpace(request.Search))
                 {
-                    priceMode = priceMode.Where(p => p.PriceModeCode.Contains(request.Search) || p.PriceModeDescription.Contains(request.Search));
+                    priceMode = priceMode.Where(pm => pm.PriceModeCode.Contains(request.Search) || pm.PriceModeDescription.Contains(request.Search));
                 }
 
-                if(request.Status != null)
+                if(request.Status is not null)
                 {
-                    priceMode = priceMode.Where(pm => pm.IsActive == request.Status);
+                    priceMode = priceMode.Where(x => x.IsActive == request.Status);
                 }
 
-                var priceModeResult = priceMode.Select(pm => new PriceModeResult
+                var result = priceMode.Select(pm => new GetAllPriceModeResult
                 {
                     Id = pm.Id,
-
                     PriceModeCode = pm.PriceModeCode,
-                    IsActive = pm.IsActive,
                     PriceModeDescription = pm.PriceModeDescription,
-                    AddedBy = pm.AddedByUser.Fullname,
-                    CreatedAt = pm.CreatedAt.ToString("MM-dd-yyyy"),
-                    UpdatedAt = pm.UpdatedAt.ToString("MM-dd-yyyy")
+                    CreatedAt = pm.CreatedAt.ToString(),
+                    UpdatedAt = pm.UpdatedAt.ToString(),
+                    IsActive = pm.IsActive
                 });
 
-
-                return await PagedList<PriceModeResult>.CreateAsync(priceModeResult, request.PageNumber, request.PageSize);
+                return await PagedList<GetAllPriceModeResult>.CreateAsync(result, request.PageNumber, request.PageSize);
             }
         }
     }

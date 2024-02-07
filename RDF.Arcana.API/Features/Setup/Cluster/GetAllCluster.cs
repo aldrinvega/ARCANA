@@ -128,7 +128,7 @@ public class GetAllCluster : ControllerBase
                 request.RoleName != Roles.Admin)
             {
                 // Check if the user has a specific role that allows access to clusters based on UserId
-                if (request.RoleName == Roles.Admin)
+                if (request.RoleName == Roles.Cdo)
                 {
                     // Add conditions based on UserId if the user has the specified role
                     cluster = cluster.Where(x => x.CdoClusters.Any(cdo => cdo.UserId == request.AccessBy));

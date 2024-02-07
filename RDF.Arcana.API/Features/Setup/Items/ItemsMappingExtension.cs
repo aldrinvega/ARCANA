@@ -18,23 +18,23 @@ public static class ItemsMappingExtension
             ProductSubCategoryName = items.ProductSubCategory.ProductSubCategoryName,
             MeatType = items.MeatType?.MeatTypeName,
             IsActive = items.IsActive,
-            PriceChangeHistories = items.ItemPriceChange
-                .Where(pc => pc.EffectivityDate <= now)
-                .OrderByDescending(p => p.EffectivityDate)
-                .Select(pc => new GetItemsAsync.GetItemsAsyncResult.PriceChangeHistory
-                {
-                    Id = pc.Id,
-                    Price = pc.Price,
-                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy HH:mm:ss")
-                }),
-            FuturePriceChanges = items.ItemPriceChange
-                .Where(p => p.EffectivityDate > now)
-                .Select(pc => new GetItemsAsync.GetItemsAsyncResult.FuturePriceChange
-                {
-                    Id = pc.Id,
-                    Price = pc.Price,
-                    EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy HH:mm:ss")
-                }),
+            //PriceChangeHistories = items.ItemPriceChange
+            //    .Where(pc => pc.EffectivityDate <= now)
+            //    .OrderByDescending(p => p.EffectivityDate)
+            //    .Select(pc => new GetItemsAsync.GetItemsAsyncResult.PriceChangeHistory
+            //    {
+            //        Id = pc.Id,
+            //        Price = pc.Price,
+            //        EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy HH:mm:ss")
+            //    }),
+            //FuturePriceChanges = items.ItemPriceChange
+            //    .Where(p => p.EffectivityDate > now)
+            //    .Select(pc => new GetItemsAsync.GetItemsAsyncResult.FuturePriceChange
+            //    {
+            //        Id = pc.Id,
+            //        Price = pc.Price,
+            //        EffectivityDate = pc.EffectivityDate.ToString("MM/dd/yyyy HH:mm:ss")
+            //    }),
             AddedBy = items.AddedByUser.Fullname,
             ModifiedBy = items.ModifiedBy
         };

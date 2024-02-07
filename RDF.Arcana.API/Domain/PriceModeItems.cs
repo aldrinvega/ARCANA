@@ -2,18 +2,20 @@
 
 namespace RDF.Arcana.API.Domain
 {
-    public class PriceMode : BaseEntity
+    public class PriceModeItems : BaseEntity
     {
-        public string PriceModeCode  { get; set; }
-        public string PriceModeDescription { get; set; }
+        public int ItemId { get; set; }
+        public int PriceModeId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
-        public bool IsActive { get; set; } = true;
         public int AddedBy { get; set; }
         public int? ModifiedBy { get; set; }
+        public bool IsActive { get; set; } = true;
 
+        public virtual PriceMode PriceMode { get; set; }
+        public virtual Items Item { get; set; }
+        public virtual ICollection<ItemPriceChange> ItemPriceChanges { get; set; }
         public virtual User AddedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }
-        public virtual ICollection<Clients> Clients { get; set; }
     }
 }

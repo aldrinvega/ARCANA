@@ -16,8 +16,8 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
             _mediator = mediator;
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(UpdatePriceModeCommand command)
+        [HttpPut("{id}/information")]
+        public async Task<IActionResult> Update(UpdatePriceModeCommand command, [FromRoute] int  id)
         {
             try
             {
@@ -26,6 +26,8 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
                 {
                     command.ModifiedBy = userId;
                 }
+
+                command.Id = id;
 
                 var result = await _mediator.Send(command);
 

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using System.Net;
 using System.Security.Claims;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
@@ -33,6 +32,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int ClusterId { get; set; }
+        public int PriceModeId { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
@@ -209,6 +209,7 @@ namespace RDF.Arcana.API.Features.Client.Direct
                     RepresentativeName = request.AuthorizedRepresentative,
                     RepresentativePosition = request.AuthorizedRepresentativePosition,
                     ClusterId = request.ClusterId,
+                    PriceModeId = request.PriceModeId,
                     Freezer = request.Freezer,
                     CustomerType = request.TypeOfCustomer,
                     DirectDelivery = request.DirectDelivery,
