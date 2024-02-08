@@ -54,7 +54,8 @@ public class AddPriceChange : ControllerBase
 
         public async Task<Result> Handle(AddPriceChangeCommand request, CancellationToken cancellationToken)
         { 
-                var validateItem = await _context.PriceModeItems.FirstOrDefaultAsync(pmitem =>
+                var validateItem = await _context.PriceModeItems
+                .Include(x => x.Item).FirstOrDefaultAsync(pmitem =>
                 pmitem.Id == request.PriceModeItemId, cancellationToken);
 
                 if (validateItem is null)
@@ -64,13 +65,13 @@ public class AddPriceChange : ControllerBase
 
                 // Check if the latest recorded price change before the specified EffectivityDate has the same price
                 var previousPriceChange = await _context.ItemPriceChanges
-                    .Where(pc => pc.Id == request.PriceModeItemId && pc.EffectivityDate < request.EffectivityDate)
+                    .Where(pc => pc.PriceModeItemId == request.PriceModeItemId && pc.EffectivityDate < request.EffectivityDate)
                     .OrderByDescending(pc => pc.EffectivityDate)
                     .FirstOrDefaultAsync(cancellationToken);
 
                 // Check if the latest recorded price change after the specified EffectivityDate has the same price
                 var nextPriceChange = await _context.ItemPriceChanges
-                    .Where(pc => pc.Id == request.PriceModeItemId && pc.EffectivityDate > request.EffectivityDate)
+                    .Where(pc => pc.PriceModeItemId == request.PriceModeItemId && pc.EffectivityDate > request.EffectivityDate)
                     .OrderBy(pc => pc.EffectivityDate)
                     .FirstOrDefaultAsync(cancellationToken);
 
@@ -87,24 +88,25 @@ public class AddPriceChange : ControllerBase
                     .Where(pc => pc.PriceModeItemId == request.PriceModeItemId && pc.EffectivityDate == request.EffectivityDate)
                     .FirstOrDefaultAsync(cancellationToken);
 
-                if (existingPriceChange != null)
+            if (existingPriceChange != null)
+            {
+                // Update the existing price change instead of adding a new one
+                existingPriceChange.Price = request.Price;
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            else
+            {
+                // Add new price change
+                var newPriceChange = new ItemPriceChange
                 {
-                    // Update the existing price change instead of adding a new one
-                    existingPriceChange.Price = request.Price;
-                }
-                else
-                {
-                    // Add new price change
-                    var newPriceChange = new ItemPriceChange
-                    {
-                        Price = request.Price,
-                        PriceModeItemId = request.PriceModeItemId,
-                        EffectivityDate = request.EffectivityDate
-                    };
-                    await _context.AddAsync(newPriceChange, cancellationToken);
-                }
+                    Price = request.Price,
+                    PriceModeItemId = request.PriceModeItemId,
+                    EffectivityDate = request.EffectivityDate
+                };
+                await _context.AddAsync(newPriceChange, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
-            await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
     }
