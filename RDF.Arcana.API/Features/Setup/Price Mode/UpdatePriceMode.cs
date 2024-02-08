@@ -68,6 +68,16 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
                     return PriceModeErrors.NotFound();
                 }
 
+                if (await _context.PriceMode.AnyAsync(pm => pm.Id != request.Id && pm.PriceModeCode == request.PriceMode, cancellationToken))
+                {
+                    return PriceModeErrors.AlreadyExisit(request.PriceMode);
+                }
+
+                if (await _context.PriceMode.AnyAsync(pm => pm.Id != request.Id && pm.PriceModeDescription == request.PriceModeDescription, cancellationToken))
+                {
+                    return PriceModeErrors.AlreadyExisit(request.PriceModeDescription);
+                }
+
                 existingPriceMode.PriceModeCode = request.PriceMode;
                 existingPriceMode.UpdatedAt = DateTime.Now;
                 existingPriceMode.PriceModeDescription = request.PriceModeDescription;

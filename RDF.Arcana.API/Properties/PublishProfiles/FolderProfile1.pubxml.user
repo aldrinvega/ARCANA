@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\Users\avega\RiderProjects\ARCANA\RDF.Arcana.API\bin\Release\net7.0\publish\</_PublishTargetUrl>
-    <History>True|2024-02-04T06:56:24.1944256Z;True|2024-02-02T16:00:25.2615262+08:00;True|2024-02-02T10:25:41.0673911+08:00;True|2023-09-11T18:08:13.7138919+08:00;True|2023-09-11T17:48:08.3346362+08:00;True|2023-09-11T17:41:22.6778330+08:00;</History>
+    <History>True|2024-02-07T09:00:19.6253157Z;True|2024-02-07T16:49:44.3432924+08:00;True|2024-02-04T14:56:24.1944256+08:00;True|2024-02-02T16:00:25.2615262+08:00;True|2024-02-02T10:25:41.0673911+08:00;True|2023-09-11T18:08:13.7138919+08:00;True|2023-09-11T17:48:08.3346362+08:00;True|2023-09-11T17:41:22.6778330+08:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>
