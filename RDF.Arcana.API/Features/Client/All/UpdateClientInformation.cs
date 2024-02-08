@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
@@ -8,6 +9,8 @@ using RDF.Arcana.API.Features.Setup.Mode_Of_Payment;
 using RDF.Arcana.API.Features.Setup.Store_Type;
 using RDF.Arcana.API.Features.Setup.Term_Days;
 using RDF.Arcana.API.Features.Setup.Terms;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Client.All;
 [Route("api/Client"), ApiController]
@@ -26,7 +29,20 @@ public class UpdateClientInformation : ControllerBase
     {
         try
         {
+            if(User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (roleClaim != null)
+                {
+                    command.RoleName = roleClaim.Value;
+                }
+            }
+
             command.ClientId = id;
+
+
             var result = await _mediator.Send(command);
 
             if (result.IsFailure)
@@ -44,6 +60,8 @@ public class UpdateClientInformation : ControllerBase
 
     public sealed record UpdateClientInformationCommand : IRequest<Result>
     {
+        public string RoleName { get; set; }
+
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public OwnersAddressToUpdate OwnersAddress { get; set; }
@@ -64,6 +82,7 @@ public class UpdateClientInformation : ControllerBase
         public ICollection<ModeOfPayment> ModeOfPayments { get; set; }
         public int TermsId { get; set; }
         public int? CreditLimit { get; set; }
+        public int PriceModeId { get; set; }
         public int? TermDaysId { get; set; }
         public bool VariableDiscount { get; set; }
         public string Longitude { get; set; }
@@ -253,6 +272,7 @@ public class UpdateClientInformation : ControllerBase
             existingClient.RepresentativeName = request.AuthorizedRepresentative;
             existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
             existingClient.ClusterId = request.ClusterId;
+            existingClient.PriceModeId = request.PriceModeId;
             existingClient.Freezer = request.Freezer;
             existingClient.CustomerType = request.TypeOfCustomer;
             existingClient.DirectDelivery = request.DirectDelivery;
@@ -263,37 +283,43 @@ public class UpdateClientInformation : ControllerBase
             existingClient.VariableDiscount = request.VariableDiscount;
             existingClient.Longitude = request.Longitude;
             existingClient.Latitude = request.Latitude;
-            existingClient.Request.Status = Status.UnderReview;
-            existingClient.RegistrationStatus = Status.UnderReview;
-            existingClient.Request.CurrentApproverId = approver.First().ApproverId;
-            foreach (var approval in existingClient.Request.Approvals)
+            
+
+            if(request.RoleName == Roles.Cdo)
             {
-                approval.IsActive = false;
+                existingClient.Request.Status = Status.UnderReview;
+                existingClient.RegistrationStatus = Status.UnderReview;
+                existingClient.Request.CurrentApproverId = approver.First().ApproverId;
+
+                foreach (var approval in existingClient.Request.Approvals)
+                {
+                    approval.IsActive = false;
+                }
+
+                var newUpdateHistory = new UpdateRequestTrail(
+                    existingClient.RequestId,
+                    Modules.RegistrationApproval,
+                    DateTime.Now,
+                    request.UpdatedBy);
+
+                await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
+
+                var notificationForCurrentApprover = new Domain.Notification
+                {
+                    UserId = approver.First().ApproverId,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+
+                var notification = new Domain.Notification
+                {
+                    UserId = existingClient.AddedBy,
+                    Status = Status.PendingClients
+                };
+
+                await _context.Notifications.AddAsync(notification, cancellationToken);
             }
-
-            var newUpdateHistory = new UpdateRequestTrail(
-                existingClient.RequestId,
-                Modules.RegistrationApproval,
-                DateTime.Now,
-                request.UpdatedBy);
-
-            await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
-            
-            var notificationForCurrentApprover = new Domain.Notification
-            {
-                UserId = approver.First().ApproverId,
-                Status = Status.PendingClients
-            };
-                
-            await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
-                
-            var notification = new Domain.Notification
-            {
-                UserId = existingClient.AddedBy,
-                Status = Status.PendingClients
-            };
-            
-            await _context.Notifications.AddAsync(notification, cancellationToken);
             
 
             if (request.FixedDiscount.DiscountPercentage.HasValue)

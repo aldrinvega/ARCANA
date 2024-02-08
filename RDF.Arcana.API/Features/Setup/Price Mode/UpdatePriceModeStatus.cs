@@ -55,11 +55,18 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
 
             public async Task<Result> Handle(UpdatePriceModeStatusCommand request, CancellationToken cancellationToken)
             {
-                var priceMode = await _context.PriceMode.FirstOrDefaultAsync(pm => pm.Id == request.Id, cancellationToken);
+                var priceMode = await _context.PriceMode
+                    .Include(cl => cl.Clients)
+                    .FirstOrDefaultAsync(pm => pm.Id == request.Id, cancellationToken);
 
                 if(priceMode is null)
                 {
                     return PriceModeErrors.NotFound();
+                }
+
+                if(priceMode.Clients.Any(cl => cl.PriceModeId == request.Id))
+                {
+                    return PriceModeErrors.InUse();
                 }
 
                 priceMode.IsActive = !priceMode.IsActive;

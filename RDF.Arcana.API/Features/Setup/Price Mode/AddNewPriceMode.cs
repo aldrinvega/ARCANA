@@ -56,13 +56,25 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
 
             public async Task<Result> Handle(AddNewPriceModeCommand request, CancellationToken cancellationToken)
             {
-                var existingPriceMode = await _context.PriceMode
+                var existingPriceModeCode = await _context.PriceMode
                      .FirstOrDefaultAsync(pm => pm.PriceModeCode == request.PriceMode);
 
-                if (existingPriceMode != null)
+                var existingPriceModeDescrption = await _context.PriceMode.FirstOrDefaultAsync(pm => 
+                pm.PriceModeDescription == 
+                request.PriceModeDescription, 
+                cancellationToken);
+
+
+                if (existingPriceModeCode != null)
                 {
-                    return PriceModeErrors.AlreadyExisit(request.PriceMode);
+                    return PriceModeErrors.CodeAlreadyExisit(request.PriceMode);
                 }
+
+                if (existingPriceModeDescrption != null)
+                {
+                    return PriceModeErrors.DescriptionAlreadyExisit(request.PriceModeDescription);
+                }
+
 
                 var priceMode = new PriceMode
                 {

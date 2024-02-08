@@ -50,6 +50,7 @@ namespace RDF.Arcana.API.Features.Price_Mode
             public async Task<Result> Handle(DeletePriceModeItemCommand request, CancellationToken cancellationToken)
             {
                 var priceModeItem = await _context.PriceModeItems
+                    .Include(pc => pc.ItemPriceChanges)
                     .FirstOrDefaultAsync(pi => 
                     pi.Id == request.PriceModeItemId, 
                     cancellationToken: cancellationToken);
@@ -58,6 +59,9 @@ namespace RDF.Arcana.API.Features.Price_Mode
                 {
                     return PriceModeItemsErrors.NotFound();
                 }
+
+                // Remove ItemPriceChanges from context
+                _context.ItemPriceChanges.RemoveRange(priceModeItem.ItemPriceChanges);
 
                 _context.Remove(priceModeItem);
                 await _context.SaveChangesAsync(cancellationToken);

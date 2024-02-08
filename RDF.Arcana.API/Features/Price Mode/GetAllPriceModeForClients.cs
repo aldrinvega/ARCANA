@@ -58,7 +58,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
 
             public async Task<Result> Handle(GetAllPriceModeQuery request, CancellationToken cancellationToken)
             {
-                var priceMode = await _context.PriceMode.ToListAsync(cancellationToken);
+                var priceMode = await _context.PriceMode.Where(x => x.IsActive).ToListAsync(cancellationToken);
 
                 var priceModeResult = priceMode.Select(pm => new PriceModeResult
                 {

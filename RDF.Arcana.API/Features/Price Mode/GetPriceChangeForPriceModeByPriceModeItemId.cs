@@ -38,7 +38,6 @@ namespace RDF.Arcana.API.Features.Price_Mode
         public class PriceChandesResult
         {
             public int Id { get; set; }
-            public int PriceModeItemId { get; set; }
             public int ItemId { get; set; }
             public IEnumerable<PriceChangeHistory> PriceChangeHistories { get; set; }
             public IEnumerable<FuturePriceChange> FuturePriceChanges { get; set; }
@@ -89,6 +88,7 @@ namespace RDF.Arcana.API.Features.Price_Mode
                             }),
                     FuturePriceChanges = priceChanges.ItemPriceChanges
                             .Where(p => p.EffectivityDate > now)
+                            .OrderBy(p => p.EffectivityDate)
                             .Select(pc => new PriceChandesResult.FuturePriceChange
                             {
                                 Id = pc.Id,

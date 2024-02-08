@@ -97,7 +97,8 @@ namespace RDF.Arcana.API.Features.Price_Mode
                     .Include(i => i.Item)
                     .ThenInclude(x => x.MeatType)
                     .Include(i => i.Item)
-                    .ThenInclude(x => x.ProductSubCategory);
+                    .ThenInclude(x => x.ProductSubCategory)
+                    .Where(x => x.PriceMode.IsActive);
 
                 if (!string.IsNullOrWhiteSpace(request.Search))
                 {

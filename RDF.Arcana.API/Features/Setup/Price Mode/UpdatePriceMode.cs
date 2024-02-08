@@ -46,7 +46,6 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
         public class UpdatePriceModeCommand : IRequest<Result>
         {
             public int Id { get; set; }
-            public string PriceMode { get; set; }
             public string PriceModeDescription { get; set; }
             public int ModifiedBy { get; set; }
         }
@@ -68,17 +67,11 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
                     return PriceModeErrors.NotFound();
                 }
 
-                if (await _context.PriceMode.AnyAsync(pm => pm.Id != request.Id && pm.PriceModeCode == request.PriceMode, cancellationToken))
-                {
-                    return PriceModeErrors.AlreadyExisit(request.PriceMode);
-                }
-
                 if (await _context.PriceMode.AnyAsync(pm => pm.Id != request.Id && pm.PriceModeDescription == request.PriceModeDescription, cancellationToken))
                 {
-                    return PriceModeErrors.AlreadyExisit(request.PriceModeDescription);
+                    return PriceModeErrors.DescriptionAlreadyExisit(request.PriceModeDescription);
                 }
 
-                existingPriceMode.PriceModeCode = request.PriceMode;
                 existingPriceMode.UpdatedAt = DateTime.Now;
                 existingPriceMode.PriceModeDescription = request.PriceModeDescription;
                 existingPriceMode.ModifiedBy = request.ModifiedBy;
