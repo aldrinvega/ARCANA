@@ -149,11 +149,12 @@ public class UpdateClientInformation : ControllerBase
             
             //Validate if the Client Business is already registered
             var validateBusinessName = await _context.Clients.Where(
-                client => client.BusinessName == request.BusinessName && 
-                          client.StoreTypeId == request.StoreTypeId && 
-                          client.Fullname == request.OwnersName &&
-                          client.Id != request.ClientId
-            ).FirstOrDefaultAsync(cancellationToken);
+                client => client.Fullname == request.OwnersName &&
+                     client.StoreType.Id == request.StoreTypeId &&
+                     client.BusinessName == request.BusinessName &&
+                     client.BusinessAddress.City == request.BusinessAddress.City &&
+                     client.BusinessAddress.StreetName == request.BusinessAddress.BarangayName &&
+                     client.RegistrationStatus != Status.Voided).FirstOrDefaultAsync(cancellationToken);
             
             //Validate if the store type is existing
             var validateStoreType = await _context.StoreTypes

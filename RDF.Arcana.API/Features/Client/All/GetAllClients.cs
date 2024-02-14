@@ -111,7 +111,8 @@ public class GetAllClients : ControllerBase
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string RequestedBy { get; set; }
-      
+        public string Terms { get; set; }
+
         public class BusinessAddressCollection
         {
             public string HouseNumber { get; set; }
@@ -144,6 +145,9 @@ public class GetAllClients : ControllerBase
         {
             var regularClients = _context.Clients
                 .AsSplitQuery()
+                .Include(t => t.Term)
+                .ThenInclude(t => t.Terms)
+                .AsSplitQuery()
                 .Include(abu => abu.AddedByUser)
                 .AsSplitQuery()
                 .Include(pm => pm.PriceMode)
@@ -156,6 +160,7 @@ public class GetAllClients : ControllerBase
                 .AsSplitQuery()
                 .Include(oa => oa.OwnersAddress)
                 .AsSingleQuery();
+
             if (!string.IsNullOrEmpty(request.Search))
             {
                 regularClients = regularClients.Where(x =>
@@ -170,14 +175,15 @@ public class GetAllClients : ControllerBase
                 // To Separate Under Review & Approved Request between CDO and Approver including Admin
                 // (Request and Approval)
                 //To get the Approved Request, Approval table need to access and the role need to be Approver
-                case Roles.Approver when (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                case var roleName when roleName.Contains(Roles.Approver) && 
+                (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
                                           request.RegistrationStatus.ToLower() !=
                                           Status.UnderReview.ToLower()):
                     regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
                         x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
                         x.IsActive == true));
                     break;
-                case Roles.Approver:
+                case var roleName when roleName.Contains(Roles.Approver):
                     regularClients = regularClients.Where(clients =>
                         clients.Request.Status == request.RegistrationStatus &&
                         clients.Request.CurrentApproverId == request.AccessBy);
@@ -239,7 +245,8 @@ public class GetAllClients : ControllerBase
                                 PriceModeName = client.PriceMode.PriceModeDescription ?? null,
                                 Longitude = client.Longitude,
                                 Latitude = client.Latitude,
-                                RequestedBy = client.AddedByUser.Fullname
+                                RequestedBy = client.AddedByUser.Fullname,
+                                Terms = client.Term.Terms.TermType
                             });
 
                             voidedResults = voidedResults.OrderBy(r => r.Id);
@@ -248,11 +255,11 @@ public class GetAllClients : ControllerBase
                             return await PagedList<GetAllClientResult>.CreateAsync(voidedResults, request.PageNumber, request.PageSize);
 
                         }
-
+                        
                         if (userClusters is null)
                         {
                             regularClients = regularClients
-                        .Where(x => x.RegistrationStatus == request.RegistrationStatus);
+                            .Where(x => x.RegistrationStatus == request.RegistrationStatus && x.RequestId != null);
                             break;
                         }
 
@@ -265,7 +272,8 @@ public class GetAllClients : ControllerBase
                 case Roles.Admin:
                 {
                     regularClients = regularClients
-                        .Where(x =>  x.RegistrationStatus == request.RegistrationStatus);
+                        .Where(x =>  x.RegistrationStatus == request.RegistrationStatus &&
+                                            x.RequestId != null);
                     break;
                 }
 
@@ -276,7 +284,7 @@ public class GetAllClients : ControllerBase
             //Get all the under review request for the Approver
             //It will access the request table where status is Under Review
             //And CurrentApproverId is the Logged In user (Approver)
-            if (request.RoleName is Roles.Approver && request.RegistrationStatus == Status.UnderReview)
+            if (request.RoleName.Contains(Roles.Approver) && request.RegistrationStatus == Status.UnderReview)
             {
                 regularClients = regularClients.Where(x => x.Request.CurrentApproverId == request.AccessBy);
             }
@@ -342,7 +350,8 @@ public class GetAllClients : ControllerBase
                     RegistrationStatus = client.RegistrationStatus,
                     Longitude = client.Longitude,
                     Latitude = client.Latitude,
-                    RequestedBy = client.AddedByUser.Fullname
+                    RequestedBy = client.AddedByUser.Fullname,
+                    Terms = client.Term.Terms.TermType
                 });
 
                 personalInformation = personalInformation.OrderBy(r => r.Id);

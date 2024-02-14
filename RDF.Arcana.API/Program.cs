@@ -34,9 +34,9 @@ builder.Services.AddControllers(
     }
 ).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 //
-// builder.Services.AddControllers().AddFluentValidation()
+// builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
-var connectionString = builder.Configuration.GetConnectionString("Production");
+var connectionString = builder.Configuration.GetConnectionString("Testing");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
@@ -49,6 +49,9 @@ builder.Services.AddDbContext<ArcanaDbContext>(x =>
     }
 
 });
+
+//builder.Services.AddDbContext<ArcanaDbContext>(
+//    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -128,14 +131,19 @@ builder.Services.AddCarter();
 
 var app = builder.Build();
 
+
+//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+//your other scoped code
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.ApplyMigrations();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
-app.UseSwagger();
-app.UseSwaggerUI();
 
 app.MapCarter();
 app.UseAuthentication();
@@ -144,3 +152,5 @@ app.UseCors(clientPermission);
 // app.UseAuthorization();
 app.MapControllers();
 app.Run();
+//await app.RunAsync();
+

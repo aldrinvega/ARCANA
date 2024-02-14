@@ -48,7 +48,7 @@ public class UpdateUser : ControllerBase
         public string Username { get; set; }
         public string ModifiedBy { get; set; }
         public int? UserRoleId { get; set; }
-        public int ClusterId { get; set; }
+        public int? ClusterId { get; set; }
 
     }
 
@@ -70,13 +70,7 @@ public class UpdateUser : ControllerBase
                 await _context.UserRoles.FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
             //Validate if the clusters are existing
 
-            var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
-                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
-
-            if (existingCluster is null)
-            {
-                return ClusterErrors.NotFound();
-            }
+            
 
             if (user.Username != request.Username)
             {
@@ -97,23 +91,34 @@ public class UpdateUser : ControllerBase
             user.UserRolesId = request.UserRoleId;
             user.UpdatedAt = DateTime.Now;
 
-            var cdoCluster =
+            if(request.ClusterId != null)
+            {
+                var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
+
+                if (existingCluster is null)
+                {
+                    return ClusterErrors.NotFound();
+                }
+
+                var cdoCluster =
                 await _context.CdoClusters.FirstOrDefaultAsync(
                     cl => cl.ClusterId == request.ClusterId && cl.UserId == user.Id, cancellationToken);
 
-            if (cdoCluster != null)
-            {
-                user.CdoCluster.UserId = user.Id;
-            }
-            else
-            {
-                var newCdoCluster = new CdoCluster
+                if (cdoCluster != null)
                 {
-                    ClusterId = request.ClusterId,
-                    UserId = user.Id
-                };
+                    user.CdoCluster.UserId = user.Id;
+                }
+                else
+                {
+                    var newCdoCluster = new CdoCluster
+                    {
+                        ClusterId = request.ClusterId.Value,
+                        UserId = user.Id
+                    };
 
-                await _context.CdoClusters.AddAsync(newCdoCluster, cancellationToken);
+                    await _context.CdoClusters.AddAsync(newCdoCluster, cancellationToken);
+                }
             }
 
             await _context.SaveChangesAsync(cancellationToken);

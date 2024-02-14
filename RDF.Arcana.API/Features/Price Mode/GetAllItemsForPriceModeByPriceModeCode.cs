@@ -102,8 +102,13 @@ namespace RDF.Arcana.API.Features.Price_Mode
 
                 if (!string.IsNullOrWhiteSpace(request.Search))
                 {
-                    priceModeItems = priceModeItems.Where(pmi => pmi.Item.ItemCode.Contains(request.Search) || 
-                                                                 pmi.Item.ItemDescription.Contains(request.Search));
+                    priceModeItems = priceModeItems.Where(pmi => 
+                    pmi.Item.ItemCode.Contains(request.Search) ||   
+                    pmi.Item.ItemDescription.Contains(request.Search) ||
+                    pmi.Item.Uom.UomDescription.Contains(request.Search) ||
+                    pmi.Item.Uom.UomCode.Contains(request.Search) ||
+                    pmi.PriceMode.PriceModeCode.Contains(request.Search) ||
+                    pmi.PriceMode.PriceModeDescription.Contains(request.Search));
                 }
 
                 if(request.Status is not null)

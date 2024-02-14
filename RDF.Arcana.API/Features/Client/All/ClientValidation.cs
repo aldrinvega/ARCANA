@@ -34,6 +34,9 @@ public class ClientValidation : ControllerBase
         public int ClientId { get; set; }
         public string BusinessName { get; set; }
         public string Fullname { get; set; }
+        public int StoreTypeId { get; set; }
+        public string Municipality { get; set; }
+        public string BarangayName { get; set; }
     }
     public class Handler : IRequestHandler<ClientValidationCommand, Result>
     {
@@ -47,10 +50,14 @@ public class ClientValidation : ControllerBase
         public async Task<Result> Handle(ClientValidationCommand request, CancellationToken cancellationToken)
         {
             var existingBusiness = await _context.Clients
-                .Where(x => 
+                .Where(x =>
                     /*(request.ClientId == 0 || x.Id != request.ClientId) &&*/
                     x.Fullname == request.Fullname &&
-                    x.BusinessName == request.BusinessName)
+                     x.StoreType.Id == request.StoreTypeId &&
+                     x.BusinessName == request.BusinessName &&
+                     x.BusinessAddress.City == request.Municipality &&
+                     x.BusinessAddress.StreetName == request.BarangayName &&
+                     x.RegistrationStatus != Status.Voided)
                 .FirstOrDefaultAsync(cancellationToken);
 
             return existingBusiness != null 

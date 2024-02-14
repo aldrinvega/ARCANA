@@ -149,13 +149,14 @@ public class GetAllExpenses : ControllerBase
 
             switch (request.RoleName)
             {
-                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
+                case var roleName when roleName.Contains(Roles.Approver) && 
+                !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
                              request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower():
                     expenses = expenses.Where(lf => lf.Request.Approvals.Any(x =>
                         x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive));
                     break;
 
-                case Roles.Approver:
+                case var roleName when roleName.Contains(Roles.Approver):
                     expenses = expenses.Where(lf =>
                         lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy);
                     break;
@@ -175,7 +176,7 @@ public class GetAllExpenses : ControllerBase
 
 
 
-            if (request.RoleName is Roles.Approver && request.ExpenseStatus == Status.UnderReview)
+            if (request.RoleName.Contains(Roles.Approver) && request.ExpenseStatus == Status.UnderReview)
             {
                 expenses = expenses.Where(x => x.Request.CurrentApproverId == request.AccessBy);
             }

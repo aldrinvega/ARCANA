@@ -6,3 +6,19 @@ services:
     build:
       context: .
       dockerfile: RDF.Arcana.API/Dockerfile
+    ports:
+    - "5000:5000"
+    - "5001:5001"
+
+  arcana.database: 
+     image: mcr.microsoft.com/mssql/server:2022-latest
+     container_name: arcana.database
+     environment:
+         - ACCEPT_EULA=Y
+         - MSSQL_SA_PASSWORD=ALdrin004!
+         - DB_NAME=rdf_arcana
+         - DB_SA_PASSWORD=Aldrin004! 
+     volumes:
+        - ./.containers/rdf-arcana-db:/var/lib/sqlserver/data
+     ports:
+        - "4232:4232"

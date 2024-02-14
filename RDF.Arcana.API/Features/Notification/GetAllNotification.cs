@@ -24,6 +24,13 @@ public class GetAllNotification : ControllerBase
             && IdentityHelper.TryGetUserId(identity, out var userId))
         {
             query.UserId = userId;
+
+            var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+            if (roleClaim != null)
+            {
+                query.RoleName = roleClaim.Value;
+            }
         }
 
         var result = await _mediator.Send(query);
@@ -38,6 +45,7 @@ public class GetAllNotification : ControllerBase
     public class GetAllNotificationQuery : IRequest<Result>
     {
         public int UserId { get; set; }
+        public string RoleName { get; set; }
     }
 
     public class GetAllNotificationResult
@@ -175,6 +183,28 @@ public class GetAllNotification : ControllerBase
                 ApprovedExpenses = approvedExpenses,
                 RejectedExpenses = rejectedExpenses
             };
+
+            if(request.RoleName == Roles.Admin)
+            {
+                var adminNotification = new GetAllNotificationResult
+                {
+                    ForFreebies = 0,
+                    ForReleasing = 0,
+                    Released = 0,
+                    PendingClient = 0,
+                    ApprovedClient = 0,
+                    RejectedClient = 0,
+                    PendingListingFee = 0,
+                    ApprovedListingFee = 0,
+                    RejectedListingFee = 0,
+                    PendingExpenses = 0,
+                    ApprovedExpenses = 0,
+                    RejectedExpenses = 0
+                };
+
+                return Result.Success(adminNotification);
+
+            }
 
             return Result.Success(notification);
         }

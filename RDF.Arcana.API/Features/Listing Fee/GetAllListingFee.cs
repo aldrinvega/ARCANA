@@ -166,13 +166,14 @@ public class GetAllListingFee : ControllerBase
 
             switch (request.RoleName)
             {
-                case Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
-                             request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
+                case var roleName when roleName.Contains(Roles.Approver) &&
+                      !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
+                      request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
                     listingFees = listingFees.Where(lf => lf.Request.Approvals.Any(x =>
                         x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive));
                     break;
 
-                case Roles.Approver:
+                case var roleName when roleName.Contains(Roles.Approver):
                     listingFees = listingFees.Where(lf =>
                         lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy);
                     break;
@@ -198,7 +199,7 @@ public class GetAllListingFee : ControllerBase
             }
            
 
-            if (request.RoleName is Roles.Approver && request.ListingFeeStatus == Status.UnderReview)
+            if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.UnderReview)
             {
                 listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy);
             }

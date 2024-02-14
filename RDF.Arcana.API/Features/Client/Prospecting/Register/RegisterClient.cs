@@ -131,6 +131,7 @@ public class RegisterClient : ControllerBase
                 existingClient.RequestId = newRequest.Id;
                 existingClient.StoreTypeId = request.StoreTypeId;
                 existingClient.PriceModeId = request.PriceModeId;
+                //existingClient.RegistrationStatus = Status.UnderReview;
                 
                 foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
                          {

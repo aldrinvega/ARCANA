@@ -35,7 +35,7 @@ public class AddNewVariableDiscount : ControllerBase
             }
             return Ok(result);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             return BadRequest(e.Message);
         }
@@ -69,7 +69,7 @@ public class AddNewVariableDiscount : ControllerBase
                          (request.MaximumAmount >= x.MinimumAmount && request.MaximumAmount <= x.MaximumAmount) ||
                          (request.MinimumAmount <= x.MinimumAmount && request.MaximumAmount >= x.MaximumAmount) ||
                          (request.MinimumAmount >= x.MinimumAmount && request.MaximumAmount <= x.MaximumAmount)) ||
-                        ((commissionRateLower >= x.MinimumPercentage && commissionRateLower <= x.MaximumPercentage) ||
+                        ((commissionRateLower >= x.MinimumPercentage && commissionRateLower <= x.MaximumPercentage) |
                          (commissionRateUpper >= x.MinimumPercentage && commissionRateUpper <= x.MaximumPercentage) ||
                          (commissionRateLower <= x.MinimumPercentage && commissionRateUpper >= x.MaximumPercentage) ||
                          (commissionRateLower >= x.MinimumPercentage && commissionRateUpper <= x.MaximumPercentage)) && 

@@ -74,6 +74,8 @@ public class UpdateClientAttachment : ControllerBase
                 .Include(client => client.Clients)
                 .Where(cd => cd.ClientId == request.ClientId)
                 .ToListAsync(cancellationToken);
+
+            var client = await _context.Clients.FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
             
             var uploadTasks = new List<Task>();
 
@@ -97,7 +99,7 @@ public class UpdateClientAttachment : ControllerBase
                                 {
                                     File = new FileDescription(newAttachment.Attachment.FileName, stream),
                                     PublicId =
-                                        $"{HttpUtility.UrlEncode(clientAttachments.First().Clients.BusinessName)}/{newAttachment.Attachment.FileName}"
+                                        $"{HttpUtility.UrlEncode(client.BusinessName)}/{newAttachment.Attachment.FileName}"
                                 };
 
                                 var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
