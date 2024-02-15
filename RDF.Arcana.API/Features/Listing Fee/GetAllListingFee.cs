@@ -192,12 +192,7 @@ public class GetAllListingFee : ControllerBase
                 case Roles.Admin:
                     listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus);
                     break;
-
-                default:
-                    // No additional filtering for other roles
-                    break;
             }
-           
 
             if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.UnderReview)
             {

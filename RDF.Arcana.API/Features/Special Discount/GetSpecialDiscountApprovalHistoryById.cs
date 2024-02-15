@@ -2,50 +2,52 @@
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Client.Errors;
-using static RDF.Arcana.API.Features.Expenses.GetAllExpenses;
+using static RDF.Arcana.API.Features.Client.All.GetClientApprovalHistory;
 
-namespace RDF.Arcana.API.Features.Client.All;
+namespace RDF.Arcana.API.Features.Special_Discount;
 
-[Route("api/client")]
-public class GetClientApprovalHistory : ControllerBase
+[Route("api/special-discount"), ApiController]
+
+public class GetSpecialDiscountApprovalHistoryById : ControllerBase
 {
+
     private readonly IMediator _mediator;
 
-    public GetClientApprovalHistory(IMediator mediator)
+    public GetSpecialDiscountApprovalHistoryById(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("{id}/approval-history")]
+    [HttpGet("approval-history/{id}")]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
         try
         {
-            var query = new GetCLientApprovalHistoryQuery
+            var command = new GetSpecialDiscountApprovalHistoryByIdCommand
             {
                 Id = id
             };
 
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(command);
 
             if (result.IsFailure)
             {
                 return BadRequest(result);
             }
-            return Ok(result);
 
-        }catch (Exception ex)
+            return Ok(result);
+        }catch(Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
 
-    public class GetCLientApprovalHistoryQuery : IRequest<Result>
+    public class GetSpecialDiscountApprovalHistoryByIdCommand : IRequest<Result>
     {
-        public int Id { get; set; }
+        public int Id  { get; set; }
     }
 
-    public class ClientApprovalHistoryResult
+    public class SpecialDiscountApprovalHistoryResult
     {
         public IEnumerable<ClientApprovalhistory> ApprovalHistories { get; set; }
         public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
@@ -71,7 +73,7 @@ public class GetClientApprovalHistory : ControllerBase
         }
     }
 
-    public class Handler : IRequestHandler<GetCLientApprovalHistoryQuery, Result>
+    public class Handler : IRequestHandler<GetSpecialDiscountApprovalHistoryByIdCommand, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -80,32 +82,32 @@ public class GetClientApprovalHistory : ControllerBase
             _context = context;
         }
 
-        public async Task<Result> Handle(GetCLientApprovalHistoryQuery request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetSpecialDiscountApprovalHistoryByIdCommand request, CancellationToken cancellationToken)
         {
-            var clientApproval = await _context
-                 .Clients
-                 .Include(r => r.Request)
-                 .ThenInclude(up => up.UpdateRequestTrails)
-                 .Include(r => r.Request)
-                 .ThenInclude(x => x.Approvals)
-                 .ThenInclude(x => x.Approver)
-                 .ThenInclude(x => x.Approver)
-                 .Include(x => x.Request)
-                 .ThenInclude(x => x.RequestApprovers)
-                 .ThenInclude(x => x.Approver)
-                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var specialDiscount = await _context
+                .SpecialDiscounts
+                .Include(r => r.Request)
+                .ThenInclude(up => up.UpdateRequestTrails)
+                .Include(r => r.Request)
+                .ThenInclude(x => x.Approvals)
+                .ThenInclude(x => x.Approver)
+                .ThenInclude(x => x.Approver)
+                .Include(x => x.Request)
+                .ThenInclude(x => x.RequestApprovers)
+                .ThenInclude(x => x.Approver)
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
-            if(clientApproval is null)
+            if (specialDiscount is null)
             {
-                return ClientErrors.NotFound();
+                return SpecialDiscountErrors.NotFound();
             }
 
-            var result = new ClientApprovalHistoryResult
+            var result = new SpecialDiscountApprovalHistoryResult
             {
-                ApprovalHistories = clientApproval.Request.Approvals == null
+                ApprovalHistories = specialDiscount.Request.Approvals == null
                 ? null
-                : clientApproval.Request.Approvals.OrderByDescending(a => a.CreatedAt)
-                    .Select(a => new ClientApprovalHistoryResult.ClientApprovalhistory
+                : specialDiscount.Request.Approvals.OrderByDescending(a => a.CreatedAt)
+                    .Select(a => new SpecialDiscountApprovalHistoryResult.ClientApprovalhistory
                     {
                         Module = a.Request.Module,
                         Approver = a.Approver.Fullname,
@@ -115,12 +117,12 @@ public class GetClientApprovalHistory : ControllerBase
                         Reason = a.Reason
 
                     }),
-                UpdateHistories = clientApproval.Request.UpdateRequestTrails?.Select(uh => new ClientApprovalHistoryResult.UpdateHistory
+                UpdateHistories = specialDiscount.Request.UpdateRequestTrails?.Select(uh => new SpecialDiscountApprovalHistoryResult.UpdateHistory
                 {
                     Module = uh.ModuleName,
                     UpdatedAt = uh.UpdatedAt
                 }),
-                Approvers = clientApproval.Request.RequestApprovers.Select(x => new ClientApprovalHistoryResult.RequestApproversForClient
+                Approvers = specialDiscount.Request.RequestApprovers.Select(x => new SpecialDiscountApprovalHistoryResult.RequestApproversForClient
                 {
                     Name = x.Approver.Fullname,
                     Level = x.Level
@@ -128,6 +130,7 @@ public class GetClientApprovalHistory : ControllerBase
             };
 
             return Result.Success(result);
+
         }
     }
 }

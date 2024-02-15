@@ -30,7 +30,7 @@ public class SpecialDiscount : BaseEntity
         get;
         set;
     }
-    public int ModifiedBy
+    public int? ModifiedBy
     {
         get;
         set;
@@ -51,6 +51,11 @@ public class SpecialDiscount : BaseEntity
     {
         get;
         set;
+    }
+    public string Status
+    {
+        get;
+         set;
     }
 
     public virtual Clients Client

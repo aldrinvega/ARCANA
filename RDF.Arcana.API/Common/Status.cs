@@ -31,6 +31,10 @@ public static class Status
     public const string ApprovedExpenses = "Approved Expenses";
     public const string RejectedExpenses = "Rejected Expenses";
 
+    public const string PendingSPDiscount = "Pending Sp. Discount";
+    public const string ApprovedSpDiscount = "Approved Sp. Discount";
+    public const string RejectedSpDiscount = "Rejected Sp. Discount";
+
 }
 
 public static class Origin

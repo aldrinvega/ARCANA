@@ -79,11 +79,25 @@ public class RequestSpecialDiscount : ControllerBase
             var discount = request.Discount / 100;
 
             var client = await _context.Clients
-                .FirstOrDefaultAsync(cl => cl.Id == request.ClientId, cancellationToken);
+                .FirstOrDefaultAsync(cl => 
+                cl.Id == request.ClientId && 
+                cl.RegistrationStatus == Status.Approved, 
+                cancellationToken);
 
             if (client == null)
             {
                 return ClientErrors.NotFound();
+            }
+
+            var withPendinRequest = await _context.SpecialDiscounts
+                .AnyAsync(x => 
+                x.ClientId == request.ClientId && 
+                x.Status == Status.UnderReview, 
+                cancellationToken);
+
+            if (withPendinRequest)
+            {
+                return SpecialDiscountErrors.PendingRequest(client.BusinessName);
             }
 
             var approvers = await _context.Approvers
@@ -126,6 +140,23 @@ public class RequestSpecialDiscount : ControllerBase
             };
 
             await _context.SpecialDiscounts.AddAsync(requestSpecialDiscount, cancellationToken);
+
+            var notification = new Domain.Notification
+            {
+                UserId = request.AddedBy,
+                Status = Status.PendingSPDiscount
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = approvers.First().UserId,
+                Status = Status.PendingSPDiscount
+            };
+
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

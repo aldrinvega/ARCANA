@@ -14,7 +14,7 @@ namespace RDF.Arcana.API.Features.Price_Mode
             _mediator = mediator;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             try

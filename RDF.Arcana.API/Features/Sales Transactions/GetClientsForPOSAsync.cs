@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RDF.Arcana.API.Features.Sales_Transactions;
 
@@ -19,6 +22,11 @@ public class GetClientsForPOSAsync : ControllerBase
     {
         try
         {
+            if (User.Identity is ClaimsIdentity identity
+               && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                query.AccessBy = userId;
+            }
             var result = await _mediator.Send(query);
             if (result.IsFailure)
             {
@@ -36,6 +44,7 @@ public class GetClientsForPOSAsync : ControllerBase
     public record GetClientsForPOSAsyncQuery : IRequest<Result>
     {
         public string Search { get; set; }
+        public int AccessBy { get; set; }
     }
 
     public class GetClientsForPOSAsyncResult
@@ -57,8 +66,11 @@ public class GetClientsForPOSAsync : ControllerBase
 
         public async Task<Result> Handle(GetClientsForPOSAsyncQuery request, CancellationToken cancellationToken)
         {
+            var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
+
             var clients = await _context.Clients
                 .Where(x => x.RegistrationStatus == Status.Approved)
+                .Where(x => x.ClusterId == userClusters.ClusterId)
                 .Select(cl => new GetClientsForPOSAsyncResult
             {
                 ClientId = cl.Id,

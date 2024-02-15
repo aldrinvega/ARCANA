@@ -12,5 +12,5 @@ public class Modules
     public const string RegistrationApproval = "Registration Approval";
     public const string ListingFeeApproval = "Listing Fee Approval";
     public const string OtherExpensesApproval = "Other Expenses Approval";
-    public const string SpecialDiscountApproval = "Special Discount Approval";
+    public const string SpecialDiscountApproval = "Sp. Discount Approval";
 }
