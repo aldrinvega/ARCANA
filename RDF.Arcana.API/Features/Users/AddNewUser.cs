@@ -60,6 +60,7 @@ public class AddNewUser : ControllerBase
         public int? UserRoleId { get; set; }
         public int? CompanyId { get; set; }
         public int? ClusterId { get; set; }
+        public string MobileNumber { get; set; }
 
 
         public class Handler : IRequestHandler<AddNewUserCommand, Result>
@@ -111,6 +112,7 @@ public class AddNewUser : ControllerBase
                     UserRolesId = command.UserRoleId,
                     IsActive = true,
                     ProfilePicture = URL.ProfilePicture,
+                    MobileNumber = command.MobileNumber
                 };
 
                 await _context.Users.AddAsync(user, cancellationToken);

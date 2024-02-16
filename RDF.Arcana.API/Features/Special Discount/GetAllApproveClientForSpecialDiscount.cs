@@ -1,24 +1,26 @@
-﻿using System.Security.Claims;
-using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Mvc;
-using RDF.Arcana.API.Common;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common.Helpers;
+using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+using System.Security.Claims;
+using static RDF.Arcana.API.Features.Sales_Transactions.GetClientsForPOSAsync;
 
-namespace RDF.Arcana.API.Features.Sales_Transactions;
+namespace RDF.Arcana.API.Features.Special_Discount;
+
 
 [Route("api/clients"), ApiController]
-public class GetClientsForPOSAsync : ControllerBase
+public class GetAllApproveClientForSpecialDiscount : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public GetClientsForPOSAsync(IMediator mediator)
+    public GetAllApproveClientForSpecialDiscount(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpGet("pos")]
-    public async Task<IActionResult> Get([FromQuery]GetClientsForPOSAsyncQuery query)
+    [HttpGet("special-discount")]
+    public async Task<IActionResult> Get([FromQuery] GetAllApproveClientForSpecialDiscountQuery query)
     {
         try
         {
@@ -42,28 +44,27 @@ public class GetClientsForPOSAsync : ControllerBase
 
             return Ok(result);
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
 
-    public record GetClientsForPOSAsyncQuery : IRequest<Result>
+    public record GetAllApproveClientForSpecialDiscountQuery : IRequest<Result>
     {
         public string Search { get; set; }
         public int AccessBy { get; set; }
         public string RoleName { get; set; }
     }
 
-    public class GetClientsForPOSAsyncResult
+    public class GetAllApproveClientForSpecialDiscountResult
     {
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public string BusinessName { get; set; }
-        public int? PriceModeId { get; set; }
     }
 
-    public class Handler : IRequestHandler<GetClientsForPOSAsyncQuery, Result>
+    public class Handler : IRequestHandler<GetAllApproveClientForSpecialDiscountQuery, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -72,22 +73,21 @@ public class GetClientsForPOSAsync : ControllerBase
             _context = context;
         }
 
-        public async Task<Result> Handle(GetClientsForPOSAsyncQuery request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetAllApproveClientForSpecialDiscountQuery request, CancellationToken cancellationToken)
         {
             var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
 
-            List<GetClientsForPOSAsyncResult> clients = new();
+            List<GetAllApproveClientForSpecialDiscountResult> clients = new();
 
             if (userClusters != null)
             {
                 clients = await _context.Clients
                     .Where(x => x.RegistrationStatus == Status.Approved && x.ClusterId == userClusters.ClusterId)
-                    .Select(cl => new GetClientsForPOSAsyncResult
+                    .Select(cl => new GetAllApproveClientForSpecialDiscountResult
                     {
                         ClientId = cl.Id,
                         BusinessName = cl.BusinessName,
-                        OwnersName = cl.Fullname,
-                        PriceModeId = cl.PriceModeId
+                        OwnersName = cl.Fullname
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 
@@ -98,18 +98,16 @@ public class GetClientsForPOSAsync : ControllerBase
                         cl.BusinessName.Contains(request.Search)).ToList();
                 }
             }
-
 
             if (request.RoleName.Contains(Roles.Admin))
-            { 
+            {
                 clients = await _context.Clients
                     .Where(x => x.RegistrationStatus == Status.Approved)
-                    .Select(cl => new GetClientsForPOSAsyncResult
+                    .Select(cl => new GetAllApproveClientForSpecialDiscountResult
                     {
                         ClientId = cl.Id,
                         BusinessName = cl.BusinessName,
-                        OwnersName = cl.Fullname,
-                        PriceModeId = cl.PriceModeId
+                        OwnersName = cl.Fullname
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 
@@ -120,12 +118,9 @@ public class GetClientsForPOSAsync : ControllerBase
                         cl.BusinessName.Contains(request.Search)).ToList();
                 }
             }
-
-            
-
             return Result.Success(clients);
-
 
         }
     }
 }
+

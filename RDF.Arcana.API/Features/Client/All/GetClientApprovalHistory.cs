@@ -2,7 +2,6 @@
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Client.Errors;
-using static RDF.Arcana.API.Features.Expenses.GetAllExpenses;
 
 namespace RDF.Arcana.API.Features.Client.All;
 

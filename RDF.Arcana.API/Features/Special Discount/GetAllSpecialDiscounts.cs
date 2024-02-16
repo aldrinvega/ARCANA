@@ -81,9 +81,12 @@ public class GetAllSpecialDiscounts : ControllerBase
         public int ClientId { get; set; }
         public int RequestId { get; set; }
         public string ClientName { get; set; }
+        public string BusinessName { get; set; }
         public decimal Discount { get; set; }
+        public bool IsOneTime { get; set; }
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }
+        public string RequestedBy { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAllSpecialDiscountQuery, PagedList<SpecialDiscountResult>>
@@ -95,7 +98,8 @@ public class GetAllSpecialDiscounts : ControllerBase
         {
             IQueryable<SpecialDiscount> specialDiscounts = _context.SpecialDiscounts
                 .Include(r => r.Request)
-                .Include(cl => cl.Client);
+                .Include(cl => cl.Client)
+                .Include(ad => ad.AddedByUser);
             
             if (!string.IsNullOrEmpty(request.Search))
             {
@@ -130,15 +134,18 @@ public class GetAllSpecialDiscounts : ControllerBase
 
                             //Get the result
 
-                            var voidedResults = specialDiscounts.Select(client => new SpecialDiscountResult
+                            var voidedResults = specialDiscounts.Select(sp => new SpecialDiscountResult
                             {
-                                Id = client.Id,
-                                ClientId = client.ClientId,
-                                ClientName = client.Client.Fullname,
-                                Discount = client.Discount,
-                                RequestId = client.RequestId,
-                                UpdatedAt = client.UpdatedAt.ToString("MM/dd/yyyy"),
-                                CreatedAt = client.CreatedAt.ToString("MM/dd/yyyy")
+                                Id = sp.Id,
+                                ClientId = sp.ClientId,
+                                ClientName = sp.Client.Fullname,
+                                BusinessName = sp.Client.BusinessName,
+                                RequestedBy = sp.AddedByUser.Fullname,
+                                Discount = sp.Discount,
+                                IsOneTime = sp.IsOneTime,
+                                RequestId = sp.RequestId,
+                                UpdatedAt = sp.UpdatedAt.ToString("MM/dd/yyyy"),
+                                CreatedAt = sp.CreatedAt.ToString("MM/dd/yyyy")
                             });
 
                             voidedResults = voidedResults.OrderBy(r => r.Id);
@@ -179,15 +186,18 @@ public class GetAllSpecialDiscounts : ControllerBase
                 specialDiscounts = specialDiscounts.Where(x => x.IsActive == request.Status);
             }
             
-            var result = specialDiscounts.Select(client => new SpecialDiscountResult
+            var result = specialDiscounts.Select(sp => new SpecialDiscountResult
             {
-                Id = client.Id,
-                ClientId = client.ClientId,
-                ClientName = client.Client.Fullname,
-                Discount = client.Discount,
-                RequestId = client.RequestId,
-                UpdatedAt = client.UpdatedAt.ToString("MM/dd/yyyy"),
-                CreatedAt = client.CreatedAt.ToString("MM/dd/yyyy")
+                Id = sp.Id,
+                ClientId = sp.ClientId,
+                ClientName = sp.Client.Fullname,
+                BusinessName = sp.Client.BusinessName,
+                RequestedBy = sp.AddedByUser.Fullname,
+                Discount = sp.Discount,
+                IsOneTime = sp.IsOneTime,
+                RequestId = sp.RequestId,
+                UpdatedAt = sp.UpdatedAt.ToString("MM/dd/yyyy"),
+                CreatedAt = sp.CreatedAt.ToString("MM/dd/yyyy")
             });
             
             //Return the result

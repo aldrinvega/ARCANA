@@ -5,7 +5,7 @@ using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Special_Discount;
-[Route("api/special-dsicount"), ApiController]
+[Route("api/special-discount"), ApiController]
 
 public class RejectSpecialDiscount : ControllerBase
 {
@@ -74,7 +74,7 @@ public class RejectSpecialDiscount : ControllerBase
             }
 
             var approvers = await _context.Approvers
-                .Where(module => module.ModuleName == Modules.RegistrationApproval)
+                .Where(module => module.ModuleName == Modules.SpecialDiscountApproval)
                 .ToListAsync(cancellationToken);
 
             var currentApproverLevel = approvers
@@ -82,7 +82,7 @@ public class RejectSpecialDiscount : ControllerBase
 
             if (currentApproverLevel == null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
+                return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
             }
 
             var newApproval = new Approval(

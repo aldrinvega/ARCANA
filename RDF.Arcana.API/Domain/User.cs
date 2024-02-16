@@ -18,8 +18,9 @@ public class User : BaseEntity
     public int? DepartmentId { get; set; }
     public int? LocationId { get; set; }
     public int? UserRolesId { get; set; }
-    
-    
+    public string MobileNumber { get; set; }
+
+
 
     [ForeignKey("AddedByUser")] public int? AddedBy { get; set; }
 

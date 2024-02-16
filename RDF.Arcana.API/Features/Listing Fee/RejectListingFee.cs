@@ -80,7 +80,7 @@ public class RejectListingFee : ControllerBase
             
             if (currentApproverLevel == null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
 
             var newApproval = new Approval(

@@ -112,6 +112,8 @@ public class GetAllClients : ControllerBase
         public string Latitude { get; set; }
         public string RequestedBy { get; set; }
         public string Terms { get; set; }
+        public string CurrentApprover { get; set; }
+        public string CurrentApproverPhoneNumber { get; set; }
 
         public class BusinessAddressCollection
         {
@@ -159,6 +161,10 @@ public class GetAllClients : ControllerBase
                 .Include(ba => ba.BusinessAddress)
                 .AsSplitQuery()
                 .Include(oa => oa.OwnersAddress)
+                .AsSplitQuery()
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.CurrentApprover)
+                .AsSplitQuery()
                 .AsSingleQuery();
 
             if (!string.IsNullOrEmpty(request.Search))
@@ -246,7 +252,9 @@ public class GetAllClients : ControllerBase
                                 Longitude = client.Longitude,
                                 Latitude = client.Latitude,
                                 RequestedBy = client.AddedByUser.Fullname,
-                                Terms = client.Term.Terms.TermType
+                                Terms = client.Term.Terms.TermType,
+                                CurrentApprover = client.Request.CurrentApprover.Fullname,
+                                CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber
                             });
 
                             voidedResults = voidedResults.OrderBy(r => r.Id);
@@ -351,7 +359,9 @@ public class GetAllClients : ControllerBase
                     Longitude = client.Longitude,
                     Latitude = client.Latitude,
                     RequestedBy = client.AddedByUser.Fullname,
-                    Terms = client.Term.Terms.TermType
+                    Terms = client.Term.Terms.TermType,
+                    CurrentApprover = client.Request.CurrentApprover.Fullname,
+                    CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber
                 });
 
                 personalInformation = personalInformation.OrderBy(r => r.Id);

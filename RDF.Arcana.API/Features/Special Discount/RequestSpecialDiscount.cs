@@ -46,22 +46,9 @@ public class RequestSpecialDiscount : ControllerBase
 
     public class RequestSpecialDiscountCommand : IRequest<Result>
     {
-        public int ClientId
-        {
-            get;
-            set;
-        }
-        public decimal Discount
-        {
-            get;
-            set;
-        }
-        public bool IsOnetime
-        {
-            get;
-            set;
-        }
-
+        public int ClientId { get; set; }
+        public decimal Discount { get; set; }
+        public bool IsOnetime { get; set; }
         public int AddedBy { get; set; } 
     }
 
@@ -137,6 +124,7 @@ public class RequestSpecialDiscount : ControllerBase
                 Discount = discount,
                 RequestId = newRequest.Id,
                 IsOneTime = request.IsOnetime,
+                Status = Status.UnderReview
             };
 
             await _context.SpecialDiscounts.AddAsync(requestSpecialDiscount, cancellationToken);
