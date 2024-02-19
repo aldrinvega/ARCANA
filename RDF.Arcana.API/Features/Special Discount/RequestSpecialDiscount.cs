@@ -63,7 +63,7 @@ public class RequestSpecialDiscount : ControllerBase
 
         public async Task<Result> Handle(RequestSpecialDiscountCommand request, CancellationToken cancellationToken)
         {
-            var discount = request.Discount / 100;
+            var discount = decimal.Round(request.Discount / 100, 4);
 
             var client = await _context.Clients
                 .FirstOrDefaultAsync(cl => 

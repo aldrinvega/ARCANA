@@ -266,7 +266,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(x => x.Request)
             .WithMany(x => x.UpdateRequestTrails)
             .HasForeignKey(x => x.RequestId);
-        
+
+        modelBuilder.Entity<SpecialDiscount>()
+            .Property(d => d.Discount)
+            .HasColumnType("decimal(18,4)");
+
         modelBuilder.Entity<ListingFee>()
             .Property(p => p.Total)
             .HasColumnType("decimal(8,2)");

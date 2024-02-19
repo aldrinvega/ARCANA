@@ -28,6 +28,13 @@ public class UpdateSpecialDiscountRequest : ControllerBase
                 && IdentityHelper.TryGetUserId(identity, out var userId))
             {
                 command.ModifiedBy = userId;
+
+                var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (roleClaim != null)
+                {
+                    command.RoleName = roleClaim.Value;
+                }
             }
             command.SpDiscountId = id;
 
@@ -49,8 +56,11 @@ public class UpdateSpecialDiscountRequest : ControllerBase
     public class UpdateSpecialDiscountRequestCommand : IRequest<Result>
     {
         public int SpDiscountId { get; set; }
+        public int ClientId { get; set; }
+        public bool IsOneTime { get; set; }
         public int ModifiedBy { get; set; }
         public decimal Discount { get; set; }
+        public string RoleName { get; set; }
     }
 
     public class Handler : IRequestHandler<UpdateSpecialDiscountRequestCommand, Result>
@@ -61,33 +71,41 @@ public class UpdateSpecialDiscountRequest : ControllerBase
         {
             _context = context;
         }
-
+             
         public async Task<Result> Handle(UpdateSpecialDiscountRequestCommand request, CancellationToken cancellationToken)
         {
 
-            var discount = request.Discount / 100;
+            var discount = decimal.Round(request.Discount / 100, 4);
             var specialDiscount = await _context.SpecialDiscounts
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
-                .FirstOrDefaultAsync(sp => sp.Id == request.SpDiscountId);
+                .FirstOrDefaultAsync(sp => sp.Id == request.SpDiscountId, cancellationToken);
 
             if (specialDiscount == null)
             {
                 return SpecialDiscountErrors.NotFound();
             }
+
             //Get all the existing approver for the request
             var approver = await _context.RequestApprovers
                 .Where(x => x.RequestId == specialDiscount.RequestId)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
 
-            specialDiscount.Discount = discount;
-            specialDiscount.UpdatedAt = DateTime.Now;
-            specialDiscount.ModifiedBy = request.ModifiedBy;
+            if (request.RoleName == Roles.Cdo)
+            {
+                var haveUnderReviewRequest = await _context.SpecialDiscounts
+                .Include(x => x.Client)
+                .FirstOrDefaultAsync(x => x.ClientId == request.ClientId && x.Id != request.SpDiscountId && x.Status == Status.UnderReview);
 
-            specialDiscount.Request.Status = Status.UnderReview;
-            specialDiscount.Status = Status.UnderReview;
-            specialDiscount.Request.CurrentApproverId = approver.First().ApproverId;
+                if (haveUnderReviewRequest != null)
+                {
+                    return SpecialDiscountErrors.PendingRequest(haveUnderReviewRequest.Client.Fullname);
+                }
+
+                specialDiscount.Request.Status = Status.UnderReview;
+                specialDiscount.Status = Status.UnderReview;
+                specialDiscount.Request.CurrentApproverId = approver.First().ApproverId;
 
                 foreach (var approval in specialDiscount.Request.Approvals)
                 {
@@ -110,14 +128,23 @@ public class UpdateSpecialDiscountRequest : ControllerBase
 
                 await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
 
-            var notification = new Domain.Notification
-            {
-                UserId = specialDiscount.AddedBy,
-                Status = Status.PendingClients
-            };
+                var notification = new Domain.Notification
+                {
+                    UserId = specialDiscount.AddedBy,
+                    Status = Status.PendingClients
+                };
 
-            await _context.Notifications.AddAsync(notification, cancellationToken);
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+            }
+
+            specialDiscount.Discount = discount;
+            specialDiscount.UpdatedAt = DateTime.Now;
+            specialDiscount.ModifiedBy = request.ModifiedBy;
+            specialDiscount.IsOneTime = request.IsOneTime;
+            specialDiscount.ClientId = request.ClientId;
+
             await _context.SaveChangesAsync(cancellationToken);
+
             return Result.Success();
         }
     }

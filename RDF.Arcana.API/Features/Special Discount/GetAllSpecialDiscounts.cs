@@ -84,8 +84,8 @@ public class GetAllSpecialDiscounts : ControllerBase
         public string BusinessName { get; set; }
         public decimal Discount { get; set; }
         public bool IsOneTime { get; set; }
-        public string CreatedAt { get; set; }
-        public string UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public string RequestedBy { get; set; }
     }
     
@@ -144,8 +144,8 @@ public class GetAllSpecialDiscounts : ControllerBase
                                 Discount = sp.Discount,
                                 IsOneTime = sp.IsOneTime,
                                 RequestId = sp.RequestId,
-                                UpdatedAt = sp.UpdatedAt.ToString("MM/dd/yyyy"),
-                                CreatedAt = sp.CreatedAt.ToString("MM/dd/yyyy")
+                                UpdatedAt = sp.UpdatedAt,
+                                CreatedAt = sp.CreatedAt
                             });
 
                             voidedResults = voidedResults.OrderBy(r => r.Id);
@@ -196,8 +196,8 @@ public class GetAllSpecialDiscounts : ControllerBase
                 Discount = sp.Discount,
                 IsOneTime = sp.IsOneTime,
                 RequestId = sp.RequestId,
-                UpdatedAt = sp.UpdatedAt.ToString("MM/dd/yyyy"),
-                CreatedAt = sp.CreatedAt.ToString("MM/dd/yyyy")
+                UpdatedAt = sp.UpdatedAt,
+                CreatedAt = sp.CreatedAt
             });
             
             //Return the result
