@@ -170,33 +170,33 @@ public class GetAllListingFee : ControllerBase
                       !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
                       request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
                     listingFees = listingFees.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive));
+                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive) && lf.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 case var roleName when roleName.Contains(Roles.Approver):
                     listingFees = listingFees.Where(lf =>
-                        lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy);
+                        lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy && lf.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 case Roles.Cdo:
 
                     if (userClusters is null)
                     {
-                        listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.ClusterId == userClusters.ClusterId);
+                        listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.ClusterId == userClusters.ClusterId && x.Client.RegistrationStatus != Status.UnderReview);
                         break;
                     }
 
-                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus);
+                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 case Roles.Admin:
-                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus);
+                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.RegistrationStatus != Status.UnderReview);
                     break;
             }
 
             if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.UnderReview)
             {
-                listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy);
+                listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus != Status.UnderReview);
             }
 
             if (request.Status != null)

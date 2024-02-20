@@ -10,7 +10,7 @@ namespace RDF.Arcana.API.Features.Setup.Price_Mode
 
         public static Error NotFound() => new("PriceMode.NotFound", "Price mode not found");
 
-        public static Error InUse() => new("PriceMode.InUse", "Price mode is in use, cannot archive");
+        public static Error InUse() => new("PriceMode.InUse", "Price mode is in use");
 
 
     }

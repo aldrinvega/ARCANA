@@ -71,6 +71,7 @@ public class VoidSpecialDiscount : ControllerBase
 
             specialDiscount.Request.Status = Status.Voided;
             specialDiscount.Status = Status.Voided;
+            specialDiscount.IsActive = false;
 
             await _context.SaveChangesAsync(cancellationToken);
 

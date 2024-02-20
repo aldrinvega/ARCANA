@@ -49,6 +49,7 @@ public class UpdateUser : ControllerBase
         public string ModifiedBy { get; set; }
         public int? UserRoleId { get; set; }
         public int? ClusterId { get; set; }
+        public string MobileNumber { get; set; }
 
     }
 
@@ -90,6 +91,7 @@ public class UpdateUser : ControllerBase
             user.Username = request.Username;
             user.UserRolesId = request.UserRoleId;
             user.UpdatedAt = DateTime.Now;
+            user.MobileNumber = request.MobileNumber;
 
             if(request.ClusterId != null)
             {

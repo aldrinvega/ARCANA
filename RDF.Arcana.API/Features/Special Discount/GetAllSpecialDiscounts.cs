@@ -110,10 +110,12 @@ public class GetAllSpecialDiscounts : ControllerBase
             switch (request.RoleName)
             {
                 case var roleName when roleName.Contains(Roles.Approver) &&
-                                       !string.IsNullOrWhiteSpace(request.SpDiscountStatus) &&
-                                       !string.Equals(request.SpDiscountStatus, Status.UnderReview, StringComparison.CurrentCultureIgnoreCase):
-                    specialDiscounts = specialDiscounts.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.SpDiscountStatus && x.ApproverId == request.AddedBy && x.IsActive));
+                (!string.IsNullOrWhiteSpace(request.SpDiscountStatus) &&
+                                          request.SpDiscountStatus.ToLower() !=
+                                          Status.UnderReview.ToLower()):
+                    specialDiscounts = specialDiscounts.Where(sp => sp.Request.Approvals.Any(x =>
+                        x.Status == request.SpDiscountStatus && x.ApproverId == request.AddedBy &&
+                        x.IsActive == true));
                     break;
 
                 case var roleName when roleName.Contains(Roles.Approver):
@@ -125,7 +127,7 @@ public class GetAllSpecialDiscounts : ControllerBase
 
                     var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AddedBy, cancellationToken);
 
-                        if (request.SpDiscountStatus is Status.ForReleasing or Status.Released or Status.Voided)
+                        if (request.SpDiscountStatus is Status.Voided)
                         {
 
                             specialDiscounts = specialDiscounts

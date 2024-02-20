@@ -70,6 +70,12 @@ public class GetAllNotification : ControllerBase
         public int PendingExpenses { get; set; }
         public int ApprovedExpenses { get; set; }
         public int RejectedExpenses { get; set; }
+
+        //SpecialDiscount
+
+        public int PendingSpDisocunt { get; set; }
+        public int ApprovedSpDisocunt { get; set; }
+        public int RejectedSpDisocunt { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAllNotificationQuery, Result>
@@ -95,6 +101,9 @@ public class GetAllNotification : ControllerBase
             var pendingExpenses = 0;
             var approvedExpenses = 0;
             var rejectedExpenses = 0;
+            var pendingSpDiscount = 0;
+            var approvedSpDisocunt = 0;
+            var rejectedSpDiscount = 0;
             
             forFreebies = await _context.Notifications
                 .Where(x => x.Status == Status.NoFreebies)
@@ -167,6 +176,25 @@ public class GetAllNotification : ControllerBase
                 .Where(x => x.UserId == request.UserId)
                 .Where(x => x.IsRead == false)
                 .CountAsync(cancellationToken);
+
+            pendingSpDiscount = await _context.Notifications
+                .Where(x => x.Status == Status.PendingSPDiscount)
+                .Where(x => x.UserId == request.UserId)
+                .Where(x => x.IsRead == false)
+                .CountAsync(cancellationToken);
+
+            rejectedExpenses = await _context.Notifications
+                .Where(x => x.Status == Status.ApprovedSpDiscount)
+                .Where(x => x.UserId == request.UserId)
+                .Where(x => x.IsRead == false)
+                .CountAsync(cancellationToken);
+
+            rejectedExpenses = await _context.Notifications
+                .Where(x => x.Status == Status.RejectedSpDiscount)
+                .Where(x => x.UserId == request.UserId)
+                .Where(x => x.IsRead == false)
+                .CountAsync(cancellationToken);
+
 
             var notification = new GetAllNotificationResult
             {

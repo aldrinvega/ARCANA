@@ -111,6 +111,7 @@ public class GetAllClients : ControllerBase
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public string RequestedBy { get; set; }
+        public string RequestorMobileNumber { get; set; }
         public string Terms { get; set; }
         public string CurrentApprover { get; set; }
         public string CurrentApproverPhoneNumber { get; set; }
@@ -184,7 +185,8 @@ public class GetAllClients : ControllerBase
                 case var roleName when roleName.Contains(Roles.Approver) && 
                 (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
                                           request.RegistrationStatus.ToLower() !=
-                                          Status.UnderReview.ToLower()):
+                                          Status.UnderReview.ToLower() || request.RegistrationStatus.ToLower() !=
+                                          Status.Voided.ToLower() ):
                     regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
                         x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
                         x.IsActive == true));
@@ -252,6 +254,7 @@ public class GetAllClients : ControllerBase
                                 Longitude = client.Longitude,
                                 Latitude = client.Latitude,
                                 RequestedBy = client.AddedByUser.Fullname,
+                                RequestorMobileNumber = client.AddedByUser.MobileNumber,
                                 Terms = client.Term.Terms.TermType,
                                 CurrentApprover = client.Request.CurrentApprover.Fullname,
                                 CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber
@@ -359,6 +362,7 @@ public class GetAllClients : ControllerBase
                     Longitude = client.Longitude,
                     Latitude = client.Latitude,
                     RequestedBy = client.AddedByUser.Fullname,
+                    RequestorMobileNumber = client.AddedByUser.MobileNumber,
                     Terms = client.Term.Terms.TermType,
                     CurrentApprover = client.Request.CurrentApprover.Fullname,
                     CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber

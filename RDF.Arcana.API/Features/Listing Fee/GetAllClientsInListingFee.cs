@@ -126,7 +126,7 @@ public class GetAllClientsInListingFee : ControllerBase
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .Where(clients => clients.RegistrationStatus == Status.Approved)
+                //.Where(clients => clients.RegistrationStatus == Status.Approved)
                 .AsNoTracking();
 
             var user = await _context.CdoClusters.FirstOrDefaultAsync(c => c.UserId == request.AddedBy, cancellationToken);

@@ -78,6 +78,7 @@ public class VoidClientRegistration : ControllerBase
 
             existingClient.RegistrationStatus = Status.Voided;
             existingClient.Request.Status = Status.Voided;
+            existingClient.IsActive = false;
 
             await _context.SaveChangesAsync(cancellationToken);
 
