@@ -185,23 +185,37 @@ public class RequestFreebies : ControllerBase
 
             if (isFirstRequest == false)
             {
-                var approver = await _context.Approvers
-                    .Where(x => x.ModuleName == Modules.FreebiesApproval && x.Level == 1)
-                    .FirstOrDefaultAsync(cancellationToken);
+                var approvers = await _context.Approvers
+                 .Include(user => user.User)
+                 .Where(x => x.ModuleName == Modules.FreebiesApproval)
+                 .OrderBy(x => x.Level)
+                 .ToListAsync(cancellationToken);
 
-                if (approver is null)
+                if (!approvers.Any())
                 {
                     return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
                 }
+
                 var newRequest = new Request(
                     Modules.FreebiesApproval,
                     request.AddedBy,
-                    approver.UserId,
+                    approvers.First().UserId,
+                    approvers.FirstOrDefault(x => x.Level == 2).UserId,
                     Status.UnderReview
                 );
 
                 await _context.Requests.AddAsync(newRequest, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
+
+                foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
+                {
+                    ApproverId = approver.UserId,
+                    RequestId = newRequest.Id,
+                    Level = approver.Level,
+                }))
+                {
+                    await _context.RequestApprovers.AddAsync(newRequestApprover);
+                }
                 freebieRequest.RequestId = newRequest.Id;
             }
 

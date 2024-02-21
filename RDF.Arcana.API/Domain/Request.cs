@@ -5,22 +5,30 @@ namespace RDF.Arcana.API.Domain;
 
 public class Request : BaseEntity
 {
-    public Request(string module, int requestorId, int currentApproverId, string status)
+    public Request(
+        string module, 
+        int requestorId, 
+        int currentApproverId, 
+        int? nextApproverId,
+        string status)
     {
         Module = module;
         RequestorId = requestorId;
         CurrentApproverId = currentApproverId;
+        NextApproverId = nextApproverId;
         Status = status;
     }
     public string Module { get; set; }
     public int RequestorId { get; set; }
     public int CurrentApproverId { get; set; }
+    public int? NextApproverId { get; set; }
     public string Status { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
     public virtual User Requestor { get; set; }
     public virtual User CurrentApprover { get; set; }
+    public virtual User NextApprover { get; set; }
     public virtual FreebieRequest FreebieRequest { get; set; }
     public virtual ListingFee ListingFee { get; set; }
     public virtual Expenses Expenses { get; set; }

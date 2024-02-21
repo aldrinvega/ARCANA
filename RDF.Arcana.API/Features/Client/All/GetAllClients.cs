@@ -115,6 +115,8 @@ public class GetAllClients : ControllerBase
         public string Terms { get; set; }
         public string CurrentApprover { get; set; }
         public string CurrentApproverPhoneNumber { get; set; }
+        public string NextApprover { get; set; }
+        public string NextApproverPhoneNumber { get; set; }
 
         public class BusinessAddressCollection
         {
@@ -365,7 +367,9 @@ public class GetAllClients : ControllerBase
                     RequestorMobileNumber = client.AddedByUser.MobileNumber,
                     Terms = client.Term.Terms.TermType,
                     CurrentApprover = client.Request.CurrentApprover.Fullname,
-                    CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber
+                    CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber,
+                    NextApprover = client.Request.NextApprover.Fullname,
+                    NextApproverPhoneNumber = client.Request.NextApprover.MobileNumber
                 });
 
                 personalInformation = personalInformation.OrderBy(r => r.Id);

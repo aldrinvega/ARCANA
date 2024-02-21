@@ -110,7 +110,8 @@ public class RegisterClient : ControllerBase
                 (
                     Modules.RegistrationApproval, 
                     request.RequestedBy, 
-                    approvers.First().UserId, 
+                    approvers.First().UserId,
+                    approvers.FirstOrDefault(x => x.Level == 2).UserId,
                     Status.UnderReview
                 );
 

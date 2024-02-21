@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
@@ -49,7 +51,14 @@ public class RequestSpecialDiscount : ControllerBase
         public int ClientId { get; set; }
         public decimal Discount { get; set; }
         public bool IsOnetime { get; set; }
-        public int AddedBy { get; set; } 
+        public int AddedBy { get; set; }
+    }
+    public class RequestSpecialDiscountResult
+    {
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
+        public string Approver { get; set; }
+        public string ApproverMobileNumber { get; set; }
     }
 
     public class Handler : IRequestHandler<RequestSpecialDiscountCommand, Result>
@@ -63,6 +72,8 @@ public class RequestSpecialDiscount : ControllerBase
 
         public async Task<Result> Handle(RequestSpecialDiscountCommand request, CancellationToken cancellationToken)
         {
+            var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.AddedBy, cancellationToken);
+
             var discount = decimal.Round(request.Discount / 100, 4);
 
             var client = await _context.Clients
@@ -88,6 +99,7 @@ public class RequestSpecialDiscount : ControllerBase
             }
 
             var approvers = await _context.Approvers
+                .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.SpecialDiscountApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
@@ -101,6 +113,7 @@ public class RequestSpecialDiscount : ControllerBase
                 Modules.SpecialDiscountApproval,
                 request.AddedBy,
                 approvers.First().UserId,
+                approvers.FirstOrDefault(x => x.Level == 2).UserId,
                 Status.UnderReview
             );
 
@@ -147,7 +160,15 @@ public class RequestSpecialDiscount : ControllerBase
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
+            var result = new RequestSpecialDiscountResult
+            {
+                Requestor = requestor.Fullname,
+                RequestorMobileNumber = requestor.MobileNumber,
+                Approver = approvers.First().User.Fullname,
+                ApproverMobileNumber = approvers.First().User.MobileNumber
+            };
+
+            return Result.Success(result);
         }
     }
 }

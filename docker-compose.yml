@@ -28,6 +28,11 @@ services:
      networks:
        - rdf.arcana.api
      volumes:
-        - ./.containers/rdf-arcana-db:/var/lib/sqlserver/data
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secrets:/var/opt/mssql/secrets
+      - arcana-volume:/var/lib/mysql
      ports:
         - "5003:1433"
+volumes:
+  arcana-volume:

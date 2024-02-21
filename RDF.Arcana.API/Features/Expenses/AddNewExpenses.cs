@@ -57,6 +57,14 @@ public class AddNewExpenses : ControllerBase
         public int AddedBy { get; set; }
        
     }
+
+    public class AddNewExpensesResult
+    {
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
+        public string Approver { get; set; }
+        public string ApproverMobileNumber { get; set; }
+    }
     
     public class Handler : IRequestHandler<AddNewExpensesCommand, Result>
     {
@@ -69,7 +77,10 @@ public class AddNewExpenses : ControllerBase
 
         public async Task<Result> Handle(AddNewExpensesCommand request, CancellationToken cancellationToken)
         {
+            var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.AddedBy, cancellationToken);
+
             var approvers = await _context.Approvers
+                .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.OtherExpensesApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
@@ -83,6 +94,7 @@ public class AddNewExpenses : ControllerBase
                 Modules.OtherExpensesApproval,
                 request.AddedBy,
                 approvers.First().UserId,
+                approvers.FirstOrDefault(x => x.Level == 2).UserId,
                 Status.UnderReview
             );
 
@@ -140,7 +152,15 @@ public class AddNewExpenses : ControllerBase
             await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+
+            var result = new AddNewExpensesResult
+            {
+                Requestor = requestor.Fullname,
+                RequestorMobileNumber = requestor.MobileNumber,
+                Approver = approvers.First().User.Fullname,
+                ApproverMobileNumber = approvers.First().User.MobileNumber
+            };
+            return Result.Success(result);
         }
     }
 }

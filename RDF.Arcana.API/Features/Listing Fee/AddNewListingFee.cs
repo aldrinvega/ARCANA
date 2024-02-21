@@ -73,6 +73,14 @@ public class AddNewListingFee : ControllerBase
         }
     }
 
+    public class AddNewListingFeeFeeResult
+    {
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
+        public string Approver { get; set; }
+        public string ApproverMobileNumber { get; set; }
+    }
+
     public class Handler : IRequestHandler<AddNewListingFeeCommand, Result>
     {
         private readonly ArcanaDbContext _context;
@@ -84,6 +92,9 @@ public class AddNewListingFee : ControllerBase
 
         public async Task<Result> Handle(AddNewListingFeeCommand request, CancellationToken cancellationToken)
         {
+
+            var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.RequestedBy, cancellationToken);
+
             if (!await _context.Clients.AnyAsync(client => client.Id == request.ClientId, cancellationToken))
             {
                 return ClientErrors.NotFound();
@@ -105,6 +116,7 @@ public class AddNewListingFee : ControllerBase
             }
 
             var approvers = await _context.Approvers
+                .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.ListingFeeApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
@@ -118,6 +130,7 @@ public class AddNewListingFee : ControllerBase
                 Modules.ListingFeeApproval,
                 request.RequestedBy,
                 approvers.First().UserId,
+                approvers.FirstOrDefault(x => x.Level == 2).UserId,
                 Status.UnderReview
             );
                 
@@ -174,7 +187,16 @@ public class AddNewListingFee : ControllerBase
             await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+
+            var result = new AddNewListingFeeFeeResult
+            {
+                Requestor = requestor.Fullname,
+                RequestorMobileNumber = requestor.MobileNumber,
+                Approver = approvers.First().User.Fullname,
+                ApproverMobileNumber = approvers.First().User.MobileNumber
+            };
+
+            return Result.Success(result);
         }
     }
 }

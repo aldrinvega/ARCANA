@@ -420,6 +420,7 @@ public class Handler : IRequestHandler<DirectRegistrationCommand, Result>
                 Modules.RegistrationApproval,
                 request.AddedBy,
                 approvers.First().UserId,
+                approvers.FirstOrDefault(x => x.Level == 2).UserId,
                 Status.UnderReview
             );
             
