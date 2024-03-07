@@ -5,6 +5,7 @@ using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
+using RDF.Arcana.API.Features.Listing_Fee.Errors;
 using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Client.All;
@@ -103,11 +104,19 @@ public class ApproveClientRegistration : ControllerBase
             var nextLevel = currentApproverLevel.Value + 1;
             var nextApprover = registrationApprovers
                 .FirstOrDefault(approver => approver.Level == nextLevel);
+
+            var suceedingApprover = registrationApprovers.FirstOrDefault(ap => ap.Level ==  nextLevel + 1);
+
+            if(suceedingApprover == null )
+            {
+                requestedClient.NextApproverId = null;
+            }
             
             if (nextApprover == null)
             {
                 requestedClient.Status = Status.Approved;
                 requestedClient.Clients.RegistrationStatus = Status.Approved;
+                requestedClient.NextApproverId = null;
                 
                 var notificationForCurrentApprover = new Domain.Notification
                 {
@@ -152,12 +161,17 @@ public class ApproveClientRegistration : ControllerBase
             #endregion
 
             #region Listing Fee Approvals
-            if(requestedClient.Clients.ListingFees != null)
+            if(requestedClient.Clients.ListingFees.Count > 0 && request.ListingFeeRequestId is not null)
             {
                 var listingFees = await _context.Requests
                 .Include(listing => listing.ListingFee)
-                .Where(lf => lf.Id == request.ListingFeeRequestId)
+                .Where(lf => lf.Id == request.ListingFeeRequestId && lf.ListingFee.ClientId == requestedClient.Clients.Id)
                 .FirstOrDefaultAsync(cancellationToken);
+
+                if(listingFees is null)
+                {
+                    return ListingFeeErrors.NotFound();
+                }
 
                 var approvers = await _context.RequestApprovers
                     .Where(module => module.RequestId == request.ListingFeeRequestId)

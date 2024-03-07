@@ -94,7 +94,7 @@ public class AddNewExpenses : ControllerBase
                 Modules.OtherExpensesApproval,
                 request.AddedBy,
                 approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2).UserId,
+                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
                 Status.UnderReview
             );
 

@@ -89,10 +89,18 @@ public class ApproveSpecialDiscountRequest : ControllerBase
             var nextApprover = specialDiscountApprovers
                 .FirstOrDefault(approver => approver.Level == nextLevel);
 
+            var suceedingApprover = specialDiscountApprovers.FirstOrDefault(ap => ap.Level == nextLevel + 1);
+
+            if (suceedingApprover == null)
+            {
+                requestedSpDiscount.NextApproverId = null;
+            }
+
             if (nextApprover == null)
             {
                 requestedSpDiscount.Status = Status.Approved;
                 requestedSpDiscount.SpecialDiscount.Status = Status.Approved;
+                requestedSpDiscount.NextApproverId = null;
 
                 var notificationForCurrentApprover = new Domain.Notification
                 {

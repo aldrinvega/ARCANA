@@ -15,6 +15,7 @@ public static class MapperProfile
             Username = user.Username,
             Password = user.Password,
             AddedBy = user.AddedByUser?.Fullname,
+            MobileNumber = user.MobileNumber,
             CreatedAt = user.CreatedAt,
             IsActive = user.IsActive,
             CompanyName = user.Company?.CompanyName,

@@ -86,7 +86,12 @@ public class GetAllSpecialDiscounts : ControllerBase
         public bool IsOneTime { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string RequestedBy { get; set; }
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
+        public string CurrentApprover { get; set; }
+        public string CurrentApproverPhoneNumber { get; set; }
+        public string NextApprover { get; set; }
+        public string NextApproverPhoneNumber { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAllSpecialDiscountQuery, PagedList<SpecialDiscountResult>>
@@ -142,7 +147,7 @@ public class GetAllSpecialDiscounts : ControllerBase
                                 ClientId = sp.ClientId,
                                 ClientName = sp.Client.Fullname,
                                 BusinessName = sp.Client.BusinessName,
-                                RequestedBy = sp.AddedByUser.Fullname,
+                                Requestor = sp.AddedByUser.Fullname,
                                 Discount = sp.Discount,
                                 IsOneTime = sp.IsOneTime,
                                 RequestId = sp.RequestId,
@@ -194,7 +199,12 @@ public class GetAllSpecialDiscounts : ControllerBase
                 ClientId = sp.ClientId,
                 ClientName = sp.Client.Fullname,
                 BusinessName = sp.Client.BusinessName,
-                RequestedBy = sp.AddedByUser.Fullname,
+                Requestor = sp.AddedByUser.Fullname,
+                RequestorMobileNumber = sp.Request.Requestor.MobileNumber,
+                CurrentApprover = sp.Request.CurrentApprover.Fullname,
+                CurrentApproverPhoneNumber = sp.Request.CurrentApprover.MobileNumber,
+                NextApprover =  sp.Request.NextApprover.Fullname,
+                NextApproverPhoneNumber = sp.Request.NextApprover.MobileNumber,
                 Discount = sp.Discount,
                 IsOneTime = sp.IsOneTime,
                 RequestId = sp.RequestId,

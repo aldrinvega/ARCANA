@@ -8,6 +8,7 @@ public static class Status
     public const string Released = "Released";
     public const string ApproverApproval = "Approver Approval";
     public const string UnderReview = "Under review";
+    public const string Pending = "Pending";
     public const string Approved = "Approved";
     public const string Rejected = "Rejected";
     public const string Requested = "Requested";

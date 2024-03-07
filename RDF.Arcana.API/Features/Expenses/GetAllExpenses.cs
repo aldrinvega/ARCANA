@@ -83,7 +83,6 @@ public class GetAllExpenses : ControllerBase
     {
         public int Id { get; set; }
         public int RequestId { get; set; }
-        public string RequestedBy { get; set; }
         public int ClientId { get; set; }
         public string OwnersName { get; set; }
         public string BusinessName { get; set; }
@@ -99,7 +98,12 @@ public class GetAllExpenses : ControllerBase
         }
         public IEnumerable<ExpensesApprovalHistory> ApprovalHistories { get; set; }
         public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
-        public IEnumerable<RequestApproversForExpenses> Approvers { get; set; }
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
+        public string CurrentApprover { get; set; }
+        public string CurrentApproverPhoneNumber { get; set; }
+        public string NextApprover { get; set; }
+        public string NextApproverPhoneNumber { get; set; }
         public class ExpensesApprovalHistory
         {
             public string Module { get; set; }
@@ -113,11 +117,6 @@ public class GetAllExpenses : ControllerBase
         {
             public string Module { get; set; }
             public DateTime UpdatedAt { get; set; }
-        }
-        public class RequestApproversForExpenses
-        {
-            public string Name { get; set; }
-            public int Level { get; set; }
         }
     }
     
@@ -136,6 +135,7 @@ public class GetAllExpenses : ControllerBase
             IQueryable<Domain.Expenses> expenses = _context.Expenses
             .Include(er => er.ExpensesRequests)
             .ThenInclude(oe => oe.OtherExpense)
+            .Include(rq => rq.Request)
             .Include(rq => rq.AddedByUser);
 
             var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
@@ -196,7 +196,6 @@ public class GetAllExpenses : ControllerBase
                 Id = oe.Id,
                 RequestId = oe.RequestId,
                 ClientId = oe.Client.Id,
-                RequestedBy = oe.AddedByUser.Fullname,
                 BusinessName = oe.Client.BusinessName,
                 OwnersName = oe.Client.Fullname,
                 CreatedAt = oe.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
@@ -207,7 +206,13 @@ public class GetAllExpenses : ControllerBase
                     ExpenseType = er.OtherExpense.ExpenseType,
                     Amount = er.Amount
                 }),
-                TotalAmount = oe.ExpensesRequests.Sum(er => er.Amount)
+                TotalAmount = oe.ExpensesRequests.Sum(er => er.Amount),
+                Requestor = oe.AddedByUser.Fullname,
+                RequestorMobileNumber = oe.AddedByUser.MobileNumber,
+                CurrentApprover = oe.Request.CurrentApprover.Fullname,
+                CurrentApproverPhoneNumber = oe.Request.CurrentApprover.MobileNumber,
+                NextApprover = oe.Request.NextApprover.Fullname,
+                NextApproverPhoneNumber = oe.Request.NextApprover.MobileNumber
             });
 
             return await PagedList<GetAllExpensesResult>.CreateAsync(result, request.PageNumber, request.PageSize);

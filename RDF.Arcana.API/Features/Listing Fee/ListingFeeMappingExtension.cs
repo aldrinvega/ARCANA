@@ -15,7 +15,7 @@ public static class ListingFeeMappingExtension
             ListingFeeId = listingFee.Id,
             RequestId = listingFee.RequestId,
             Status = listingFee.Status,
-            RequestedBy = listingFee.RequestedByUser.Fullname,
+            Requestor = listingFee.RequestedByUser.Fullname,
             Total = listingFee.Total,
             /*CancellationReason = listingFee.Approvals.Reason,*/
             ListingItems = listingFee.ListingFeeItems.Select(li =>

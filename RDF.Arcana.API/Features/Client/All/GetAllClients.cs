@@ -110,7 +110,7 @@ public class GetAllClients : ControllerBase
         public string PriceModeName { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
-        public string RequestedBy { get; set; }
+        public string Requestor { get; set; }
         public string RequestorMobileNumber { get; set; }
         public string Terms { get; set; }
         public string CurrentApprover { get; set; }
@@ -184,11 +184,10 @@ public class GetAllClients : ControllerBase
                 // To Separate Under Review & Approved Request between CDO and Approver including Admin
                 // (Request and Approval)
                 //To get the Approved Request, Approval table need to access and the role need to be Approver
-                case var roleName when roleName.Contains(Roles.Approver) && 
-                (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
-                                          request.RegistrationStatus.ToLower() !=
-                                          Status.UnderReview.ToLower() || request.RegistrationStatus.ToLower() !=
-                                          Status.Voided.ToLower() ):
+                case var roleName when roleName.Contains(Roles.Approver) &&
+                      (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
+                      request.RegistrationStatus.ToLower() != Status.UnderReview.ToLower() &&
+                      request.RegistrationStatus.ToLower() != Status.Voided.ToLower()):
                     regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
                         x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
                         x.IsActive == true));
@@ -255,7 +254,7 @@ public class GetAllClients : ControllerBase
                                 PriceModeName = client.PriceMode.PriceModeDescription ?? null,
                                 Longitude = client.Longitude,
                                 Latitude = client.Latitude,
-                                RequestedBy = client.AddedByUser.Fullname,
+                                Requestor = client.AddedByUser.Fullname,
                                 RequestorMobileNumber = client.AddedByUser.MobileNumber,
                                 Terms = client.Term.Terms.TermType,
                                 CurrentApprover = client.Request.CurrentApprover.Fullname,
@@ -363,7 +362,7 @@ public class GetAllClients : ControllerBase
                     RegistrationStatus = client.RegistrationStatus,
                     Longitude = client.Longitude,
                     Latitude = client.Latitude,
-                    RequestedBy = client.AddedByUser.Fullname,
+                    Requestor = client.AddedByUser.Fullname,
                     RequestorMobileNumber = client.AddedByUser.MobileNumber,
                     Terms = client.Term.Terms.TermType,
                     CurrentApprover = client.Request.CurrentApprover.Fullname,

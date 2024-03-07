@@ -123,11 +123,11 @@ public class GetAllNotification : ControllerBase
                 .Where(x => x.IsRead == false)
                 .CountAsync(cancellationToken);
                     
-            pendingClient = await _context.Notifications
-                .Where(x => x.Status == Status.PendingClients)
-                .Where(x => x.UserId == request.UserId)
-                .Where(x => x.IsRead == false)
-                .CountAsync(cancellationToken);
+            //pendingClient = await _context.Notifications
+            //    .Where(x => x.Status == Status.PendingClients)
+            //    .Where(x => x.UserId == request.UserId)
+            //    .Where(x => x.IsRead == false)
+            //    .CountAsync(cancellationToken);
                 
             approvedClient = await _context.Notifications
                 .Where(x => x.Status == Status.ApprovedClients)
@@ -141,11 +141,11 @@ public class GetAllNotification : ControllerBase
                 .Where(x => x.IsRead == false)
                 .CountAsync(cancellationToken);
                     
-            pendingListingFee = await _context.Notifications
-                .Where(x => x.Status == Status.PendingListingFee)
-                .Where(x => x.UserId == request.UserId)
-                .Where(x => x.IsRead == false)
-                .CountAsync(cancellationToken);
+            //pendingListingFee = await _context.Notifications
+            //    .Where(x => x.Status == Status.PendingListingFee)
+            //    .Where(x => x.UserId == request.UserId)
+            //    .Where(x => x.IsRead == false)
+            //    .CountAsync(cancellationToken);
                 
             approvedListingFee = await _context.Notifications
                 .Where(x => x.Status == Status.ApprovedListingFee)
@@ -159,11 +159,11 @@ public class GetAllNotification : ControllerBase
                 .Where(x => x.IsRead == false)
                 .CountAsync(cancellationToken);
                     
-            pendingExpenses = await _context.Notifications
-                .Where(x => x.Status == Status.PendingExpenses)
-                .Where(x => x.UserId == request.UserId)
-                .Where(x => x.IsRead == false)
-                .CountAsync(cancellationToken);
+            //pendingExpenses = await _context.Notifications
+            //    .Where(x => x.Status == Status.PendingExpenses)
+            //    .Where(x => x.UserId == request.UserId)
+            //    .Where(x => x.IsRead == false)
+            //    .CountAsync(cancellationToken);
                 
             approvedExpenses = await _context.Notifications
                 .Where(x => x.Status == Status.ApprovedExpenses)
@@ -177,11 +177,11 @@ public class GetAllNotification : ControllerBase
                 .Where(x => x.IsRead == false)
                 .CountAsync(cancellationToken);
 
-            pendingSpDiscount = await _context.Notifications
-                .Where(x => x.Status == Status.PendingSPDiscount)
-                .Where(x => x.UserId == request.UserId)
-                .Where(x => x.IsRead == false)
-                .CountAsync(cancellationToken);
+            //pendingSpDiscount = await _context.Notifications
+            //    .Where(x => x.Status == Status.PendingSPDiscount)
+            //    .Where(x => x.UserId == request.UserId)
+            //    .Where(x => x.IsRead == false)
+            //    .CountAsync(cancellationToken);
 
             rejectedExpenses = await _context.Notifications
                 .Where(x => x.Status == Status.ApprovedSpDiscount)
@@ -194,6 +194,65 @@ public class GetAllNotification : ControllerBase
                 .Where(x => x.UserId == request.UserId)
                 .Where(x => x.IsRead == false)
                 .CountAsync(cancellationToken);
+
+            var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.UserId, cancellationToken);
+
+
+            if (request.RoleName.Contains(Roles.Approver))
+            {
+                pendingClient = await _context.Requests
+               .Where(x => x.Status == Status.UnderReview)
+               .Where(x => x.CurrentApproverId == request.UserId && x.Clients.ClusterId == userClusters.ClusterId)
+               .CountAsync(cancellationToken);
+
+                pendingListingFee = await _context.Requests
+                .Include(x => x.Clients)
+                .Where(x => x.Status == Status.UnderReview)
+                .Where(x => x.CurrentApproverId == request.UserId && x.Clients.ClusterId == userClusters.ClusterId)
+                .CountAsync(cancellationToken);
+
+                pendingExpenses = await _context.Requests
+                .Include(x => x.Clients)
+                .Where(x => x.Status == Status.UnderReview)
+                .Where(x => x.CurrentApproverId == request.UserId && x.Clients.ClusterId == userClusters.ClusterId)
+                .CountAsync(cancellationToken);
+
+                pendingSpDiscount = await _context.Requests
+                .Include(x => x.Clients)
+                .Where(x => x.Status == Status.UnderReview)
+                .Where(x => x.CurrentApproverId == request.UserId && x.Clients.ClusterId == userClusters.ClusterId)
+                .CountAsync(cancellationToken);
+
+            }
+
+            if (request.RoleName.Contains(Roles.Cdo))
+            {
+                pendingClient = await _context.Requests
+               .Where(x => x.Status == Status.UnderReview)
+               .Where(x => x.Module == Modules.RegistrationApproval)
+               .Where(x => x.RequestorId == request.UserId)
+               .CountAsync(cancellationToken);
+
+                pendingListingFee = await _context.Requests
+                .Where(x => x.Status == Status.UnderReview)
+                .Where(x => x.Module == Modules.ListingFeeApproval)
+                .Where(x => x.RequestorId == request.UserId)
+                .CountAsync(cancellationToken);
+
+                pendingExpenses = await _context.Requests
+                .Where(x => x.Status == Status.UnderReview)
+                .Where(x => x.Module == Modules.OtherExpensesApproval)
+                .Where(x => x.RequestorId == request.UserId)
+                .CountAsync(cancellationToken);
+
+                pendingSpDiscount = await _context.Requests
+                .Where(x => x.Status == Status.UnderReview)
+                .Where(x => x.Module == Modules.SpecialDiscountApproval)
+                .Where(x => x.RequestorId == request.UserId)
+                .CountAsync(cancellationToken);
+
+            }
+
 
 
             var notification = new GetAllNotificationResult

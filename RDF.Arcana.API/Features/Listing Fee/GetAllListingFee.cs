@@ -96,13 +96,18 @@ public class GetAllListingFee : ControllerBase
         public int ListingFeeId { get; set; }
         public int RequestId { get; set; }
         public string Status { get; set; }
-        public string RequestedBy { get; set; }
         public decimal Total { get; set; }
         public string CreatedAt { get; set; }
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
         public string CancellationReason { get; set; }
+        public string CurrentApprover { get; set; }
+        public string CurrentApproverNumber { get; set; }
+        public string NextApprover { get; set; }
+        public string NextApproverMobileNumber { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
         public IEnumerable<ListingFeeApprovalHistory> ListingFeeApprovalHistories { get; set; }
-        public IEnumerable<RequestApproversForListingFee> Approvers { get; set; }
+        //public IEnumerable<RequestApproversForListingFee> Approvers { get; set; }
 
         public class ListingItem
         {
@@ -148,6 +153,10 @@ public class GetAllListingFee : ControllerBase
                 .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.CurrentApprover)
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.NextApprover)
                 .Include(x => x.RequestedByUser)
                 .AsSplitQuery()
                 .Include(x => x.ListingFeeItems)
@@ -214,7 +223,6 @@ public class GetAllListingFee : ControllerBase
                 ListingFeeId = listingFee.Id,
                 RequestId = listingFee.RequestId,
                 Status = listingFee.Status,
-                RequestedBy = listingFee.RequestedByUser.Fullname,
                 Total = listingFee.Total,
                 ListingItems = listingFee.ListingFeeItems.Select(li =>
                     new ClientsWithListingFee.ListingItem
@@ -236,11 +244,17 @@ public class GetAllListingFee : ControllerBase
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
                     }),
-                Approvers = listingFee.Request.RequestApprovers.Select(x => new ClientsWithListingFee.RequestApproversForListingFee
-                {
-                    Name = x.Approver.Fullname,
-                    Level = x.Level
-                })
+                Requestor = listingFee.Request.Requestor.Fullname,
+                RequestorMobileNumber = listingFee.Request.Requestor.MobileNumber,
+                CurrentApprover = listingFee.Request.CurrentApprover.Fullname,
+                CurrentApproverNumber = listingFee.Request.CurrentApprover.MobileNumber,
+                NextApprover = listingFee.Request.NextApprover.Fullname,
+                NextApproverMobileNumber = listingFee.Request.NextApprover.MobileNumber
+                //Approvers = listingFee.Request.RequestApprovers.Select(x => new ClientsWithListingFee.RequestApproversForListingFee
+                //{
+                //    Name = x.Approver.Fullname,
+                //    Level = x.Level
+                //})
             }).OrderBy(x => x.ClientId);
 
             return await PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);

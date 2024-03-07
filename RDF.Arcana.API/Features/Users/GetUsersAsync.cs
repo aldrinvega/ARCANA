@@ -78,7 +78,7 @@ public class GetUsersAsync : ControllerBase
         public ICollection<string> Permission { get; set; }
         public int? ClusterId { get; set; }
         public string Cluster { get; set; }
-        
+        public string MobileNumber { get; set; }
     }
 
     public class Handler : IRequestHandler<GetUserAsyncQuery, PagedList<GetUserAsyncQueryResult>>

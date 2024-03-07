@@ -36,7 +36,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
-var connectionString = builder.Configuration.GetConnectionString("Testing");
+var connectionString = builder.Configuration.GetConnectionString("SQLSERVERDOCKER");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
@@ -140,7 +140,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.ApplyMigrations();
+    //app.ApplyMigrations();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

@@ -420,7 +420,7 @@ public class Handler : IRequestHandler<DirectRegistrationCommand, Result>
                 Modules.RegistrationApproval,
                 request.AddedBy,
                 approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2).UserId,
+                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
                 Status.UnderReview
             );
             
@@ -490,36 +490,36 @@ public class Handler : IRequestHandler<DirectRegistrationCommand, Result>
 [ApiController]
 public class DirectRegistration : ControllerBase
 {
-private readonly IMediator _mediator;
+    private readonly IMediator _mediator;
 
-public DirectRegistration(IMediator mediator)
-{
-    _mediator = mediator;
-}
-
-[HttpPost("DirectRegistration")]
-public async Task<IActionResult> DirectClientRegistration([FromBody] DirectRegistrationCommand command)
-{
-    try
+    public DirectRegistration(IMediator mediator)
     {
-        if (User.Identity is ClaimsIdentity identity
-            && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
-        {
-            command.AddedBy = userId;
-        }
-
-        var result = await _mediator.Send(command);
-
-        if (result.IsFailure)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
+        _mediator = mediator;
     }
-    catch (Exception ex)
+
+    [HttpPost("DirectRegistration")]
+    public async Task<IActionResult> DirectClientRegistration([FromBody] DirectRegistrationCommand command)
     {
-        return BadRequest(ex.Message);
+        try
+        {
+            if (User.Identity is ClaimsIdentity identity
+                && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
+            {
+                command.AddedBy = userId;
+            }
+
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
-}
 }

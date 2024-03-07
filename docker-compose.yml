@@ -5,7 +5,7 @@ networks:
 
 services:
   rdf.arcana.api:
-    image: ${DOCKER_REGISTRY-}rdfarcanaapi
+    image: rdf.arcana.api
     build:
       context: .
       dockerfile: RDF.Arcana.API/Dockerfile

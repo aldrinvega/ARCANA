@@ -5,6 +5,7 @@ using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Requests_Approval;
+using static RDF.Arcana.API.Features.Listing_Fee.GetAllClientsInListingFee.GetAllClientsInListingFeeResult;
 
 namespace RDF.Arcana.API.Features.Expenses;
 [Route("api/Expenses"), ApiController]
@@ -99,11 +100,20 @@ public class ApproveExpense : ControllerBase
             var nextLevel = currentApproverLevel.Value + 1;
             var nextApprover = approvers
                 .FirstOrDefault(approver => approver.Level == nextLevel);
-            
+
+            var suceedingApprover = approvers.FirstOrDefault(ap => ap.Level == nextLevel + 1);
+
+            if (suceedingApprover == null)
+            {
+                expenses.NextApproverId = null;
+            }
+
+
             if (nextApprover == null)
             {
                 expenses.Status = Status.Approved;
                 expenses.Expenses.Status = Status.Approved;
+                expenses.NextApproverId = null;
                 
                 var notificationForApprover = new Domain.Notification
                 {

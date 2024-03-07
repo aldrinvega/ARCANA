@@ -170,7 +170,7 @@ public static class RegularClientsMappingProfile
             ClusterId = client.ClusterId,
             Longitude = client.Longitude,
             Latitude = client.Latitude,
-            RequestedBy = client.AddedByUser.Fullname
+            Requestor = client.AddedByUser.Fullname
         };
     }
 

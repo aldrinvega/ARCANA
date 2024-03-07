@@ -69,8 +69,11 @@ public class ReadNotification : ControllerBase
 
             foreach (var notification in unreadNotification)
             {
-                notification.IsRead = true;
-                await _context.SaveChangesAsync(cancellationToken);
+                if(!notification.Status.Contains(Status.Pending))
+                {
+                    notification.IsRead = true;
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
             }
             
             return Result.Success();

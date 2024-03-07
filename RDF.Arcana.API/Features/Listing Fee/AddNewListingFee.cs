@@ -130,7 +130,7 @@ public class AddNewListingFee : ControllerBase
                 Modules.ListingFeeApproval,
                 request.RequestedBy,
                 approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2).UserId,
+                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
                 Status.UnderReview
             );
                 

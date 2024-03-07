@@ -113,7 +113,7 @@ public class RequestSpecialDiscount : ControllerBase
                 Modules.SpecialDiscountApproval,
                 request.AddedBy,
                 approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2).UserId,
+                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
                 Status.UnderReview
             );
 

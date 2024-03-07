@@ -110,12 +110,20 @@ public class ApproveListingFee : ControllerBase
             var nextLevel = currentApproverLevel.Value + 1;
             var nextApprover = approvers
                 .FirstOrDefault(approver => approver.Level == nextLevel);
-            
+
+            var suceedingApprover = approvers.FirstOrDefault(ap => ap.Level == nextLevel + 1);
+
+            if (suceedingApprover == null)
+            {
+                listingFees.NextApproverId = null;
+            }
+
             if (nextApprover == null)
             {
                 listingFees.Status = Status.Approved;
                 listingFees.ListingFee.Status = Status.Approved;
                 listingFees.ListingFee.ApprovalDate = DateTime.Now;
+                listingFees.NextApproverId = null;
                 
                 var notificationForApprover = new Domain.Notification
                 {
