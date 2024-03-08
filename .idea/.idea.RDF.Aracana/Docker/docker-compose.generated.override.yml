@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.4"
+services:
+  rdf.arcana.api:
+    build:
+      context: "C:\\Users\\avega\\Source\\Repos\\aldrinvega\\ARCANA"
+      dockerfile: "RDF.Arcana.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/RDF.Arcana.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "rdfarcanaapi:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\avega\\.nuget\\packages:/root/.nuget/packages"
+    - "C:\\Users\\avega\\source\\repos\\aldrinvega\\ARCANA\\RDF.Arcana.API:/app:rw"
+    - "C:\\Users\\avega\\Source\\Repos\\aldrinvega\\ARCANA:/src:rw"
+    working_dir: "/app"

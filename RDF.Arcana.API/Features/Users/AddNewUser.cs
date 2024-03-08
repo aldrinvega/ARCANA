@@ -1,14 +1,12 @@
 ﻿using System.Security.Claims;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
+using CloudinaryDotNet; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Users.Exception;
-using RDF.Arcana.API.Features.Users.Exceptions;
+using RDF.Arcana.API.Features.Setup.Cluster;
 
 namespace RDF.Arcana.API.Features.Users;
 
@@ -42,7 +40,7 @@ public class AddNewUser : ControllerBase
                 return BadRequest(result);
             }
            
-            return Ok( result);
+            return Ok(result);
         }
         catch (System.Exception e)
         {
@@ -61,7 +59,8 @@ public class AddNewUser : ControllerBase
         public int? DepartmentId { get; set; }
         public int? UserRoleId { get; set; }
         public int? CompanyId { get; set; }
-        public string ProfilePicture { get; set; }
+        public int? ClusterId { get; set; }
+        public string MobileNumber { get; set; }
 
 
         public class Handler : IRequestHandler<AddNewUserCommand, Result>
@@ -99,23 +98,50 @@ public class AddNewUser : ControllerBase
                 {
                     return UserErrors.UserAlreadyExist();
                 }
-
+                
                 var user = new User
                 {
                     FullIdNo = command.FullIdNo,
                     Fullname = command.Fullname,
                     Username = command.Username,
                     Password = BCrypt.Net.BCrypt.HashPassword(command.Password),
+                    AddedBy = command.AddedBy,
                     CompanyId = command.CompanyId,
                     LocationId = command.LocationId,
                     DepartmentId = command.DepartmentId,
                     UserRolesId = command.UserRoleId,
                     IsActive = true,
                     ProfilePicture = URL.ProfilePicture,
+                    MobileNumber = command.MobileNumber
                 };
 
                 await _context.Users.AddAsync(user, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
+
+                if (command.ClusterId != null)
+                {
+                    // Validate if the cluster exists
+                    var existingCluster = await _context.CdoClusters.FirstOrDefaultAsync(ct =>
+                        ct.Id == command.ClusterId && ct.IsActive, cancellationToken);
+
+                    if (existingCluster is null)
+                    {
+                        return ClusterErrors.NotFound();
+                    }
+
+                    var cdoCluster = new CdoCluster
+                    {
+                        ClusterId = (int)command.ClusterId,
+                        UserId = user.Id
+                    };
+
+                    await _context.CdoClusters.AddAsync(cdoCluster, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+
+
+                await _context.SaveChangesAsync(cancellationToken);
+                
                 return Result.Success();
             }
         }

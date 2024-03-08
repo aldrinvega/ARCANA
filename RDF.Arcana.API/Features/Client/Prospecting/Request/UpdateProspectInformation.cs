@@ -2,7 +2,6 @@
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Client.Errors;
-using RDF.Arcana.API.Features.Clients.Prospecting.Exception;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting.Request;
 
@@ -66,13 +65,11 @@ public class UpdateProspectInformation : ControllerBase
         public async Task<Result> Handle(UpdateProspectRequestCommand request, CancellationToken cancellationToken)
         {
             var existingClient =
-                await _context.Approvals
-                    .Include(x => x.Client)
-                    .ThenInclude(x => x.OwnersAddress)
+                await _context.Clients
+                    .Include(x => x.OwnersAddress)
                     .FirstOrDefaultAsync(
-                        x => x.ClientId == request.ClientId
-                             && x.IsActive == true
-                             && x.ApprovalType == Status.ApproverApproval,
+                        x => x.Id == request.ClientId
+                             && x.IsActive == true,
                         cancellationToken);
 
             if (existingClient is null)
@@ -80,18 +77,30 @@ public class UpdateProspectInformation : ControllerBase
                 return ClientErrors.NotFound();
             }
             
-            existingClient.Client.Fullname = request.OwnersName;
-            existingClient.Client.PhoneNumber = request.PhoneNumber;
-            existingClient.Client.BusinessName = request.BusinessName;
-            existingClient.IsApproved = true;
-            existingClient.Client.RegistrationStatus = Status.Approved;
-            existingClient.Client.StoreTypeId = request.StoreTypeId;
+            //Validate if the Client Business is already registered
+            var validateBusinessName = await _context.Clients.Where(
+                client => client.BusinessName == request.BusinessName && 
+                          client.StoreTypeId == request.StoreTypeId && 
+                          client.Fullname == request.OwnersName &&
+                          client.Id != request.ClientId
+            ).FirstOrDefaultAsync(cancellationToken);
 
-            existingClient.Client.OwnersAddress.HouseNumber = request.HouseNumber;
-            existingClient.Client.OwnersAddress.StreetName = request.StreetName;
-            existingClient.Client.OwnersAddress.Barangay = request.BarangayName;
-            existingClient.Client.OwnersAddress.City = request.City;
-            existingClient.Client.OwnersAddress.Province = request.Province;
+            if (validateBusinessName is not null) 
+            {
+                return ClientErrors.BusinessAlreadyExist(request.BusinessName);
+            }
+            
+            existingClient.Fullname = request.OwnersName;
+            existingClient.PhoneNumber = request.PhoneNumber;
+            existingClient.BusinessName = request.BusinessName;
+            existingClient.RegistrationStatus = Status.Requested;
+            existingClient.StoreTypeId = request.StoreTypeId;
+
+            existingClient.OwnersAddress.HouseNumber = request.HouseNumber;
+            existingClient.OwnersAddress.StreetName = request.StreetName;
+            existingClient.OwnersAddress.Barangay = request.BarangayName;
+            existingClient.OwnersAddress.City = request.City;
+            existingClient.OwnersAddress.Province = request.Province;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

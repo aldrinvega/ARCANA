@@ -46,6 +46,13 @@ public class UpdateCluster : ControllerBase
         public async Task<Result> Handle(UpdateClusterCommand request, CancellationToken cancellationToken)
         {
             var existingCluster = await _context.Clusters.FirstOrDefaultAsync(x => x.Id == request.ClusterId, cancellationToken);
+            
+            var existingClusterWithSameType = await _context.Clusters.FirstOrDefaultAsync(user => user.ClusterType == request.Cluster, cancellationToken);
+
+            if (existingClusterWithSameType != null)
+            {
+                return ClusterErrors.AlreadyExist();
+            }
 
             if ( existingCluster is null)
             {

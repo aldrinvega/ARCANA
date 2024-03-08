@@ -54,6 +54,7 @@ public class GetItemsAsync : ControllerBase
 
     public class GetItemsAsyncQuery : UserParams, IRequest<PagedList<GetItemsAsyncResult>>
     {
+        public int? PriceModeId { get; set; }
         public string Search { get; set; }
         public bool? Status { get; set; }
     }
@@ -104,10 +105,10 @@ public class GetItemsAsync : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Items> items = _context.Items
+                .Include(x => x.PriceModeItems)
                 .Include(x => x.AddedByUser)
                 .Include(x => x.Uom)
                 .Include(x => x.MeatType)
-                .Include(x => x.ItemPriceChange)
                 .Include(x => x.ProductSubCategory)
                 .ThenInclude(x => x.ProductCategory);
 
@@ -115,6 +116,15 @@ public class GetItemsAsync : ControllerBase
             {
                 items = items
                     .Where(i => i.ItemCode.Contains(request.Search) || i.ItemDescription.Contains(request.Search));
+            }
+
+            if(request.PriceModeId is not null)
+            {
+                    var itemIdsInPriceMode = _context.PriceModeItems
+                        .Where(pmi => pmi.PriceModeId == request.PriceModeId)
+                        .Select(pmi => pmi.ItemId);
+
+                    items = items.Where(i => !itemIdsInPriceMode.Contains(i.Id));
             }
 
             if (request.Status != null)

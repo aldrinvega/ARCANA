@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using B2Net.Models;
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,16 +34,24 @@ builder.Services.AddControllers(
     }
 ).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 //
-// builder.Services.AddControllers().AddFluentValidation()
+// builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
-var connectionString = builder.Configuration.GetConnectionString("Smarter");
+var connectionString = builder.Configuration.GetConnectionString("SQLSERVERDOCKER");
 
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
-    if (connectionString != null) x.UseSqlServer(connectionString).UseSnakeCaseNamingConvention();
-    
+    if (connectionString != null)
+    {
+        x.UseSqlServer(connectionString, options =>
+        {
+            options.EnableRetryOnFailure();
+        }).UseSnakeCaseNamingConvention();
+    }
+
 });
+
+//builder.Services.AddDbContext<ArcanaDbContext>(
+//    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -124,14 +131,19 @@ builder.Services.AddCarter();
 
 var app = builder.Build();
 
+
+//AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+//your other scoped code
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    //app.ApplyMigrations();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
-app.UseSwagger();
-app.UseSwaggerUI();
 
 app.MapCarter();
 app.UseAuthentication();
@@ -140,3 +152,5 @@ app.UseCors(clientPermission);
 // app.UseAuthorization();
 app.MapControllers();
 app.Run();
+//await app.RunAsync();
+

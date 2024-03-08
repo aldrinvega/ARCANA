@@ -21,7 +21,6 @@ public class RejectClientRegistration : ControllerBase
     [HttpPut("RejectClientRegistration/{id:int}")]
     public async Task<IActionResult> RejectClients([FromRoute] int id, [FromBody] RejectClientCommand command)
     {
-        command.RequestId = id;
         try
         {
             if (User.Identity is ClaimsIdentity identity
@@ -29,6 +28,8 @@ public class RejectClientRegistration : ControllerBase
             {
                 command.AccessBy = userId;
             }
+            
+            command.RequestId = id;
 
             var result = await _mediator.Send(command);
             if (result.IsFailure)
@@ -44,7 +45,7 @@ public class RejectClientRegistration : ControllerBase
         }
     }
 
-    public record RejectClientCommand : IRequest<Result>
+    public sealed record RejectClientCommand : IRequest<Result>
     {
         public int RequestId { get; set; }
         public string Reason { get; set; }
@@ -74,6 +75,7 @@ public class RejectClientRegistration : ControllerBase
             
             var existingClientRequest = await _context.Requests
                 .Include(client => client.Clients)
+                .Where(rq => rq.Id == request.RequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (existingClientRequest == null)
@@ -109,6 +111,22 @@ public class RejectClientRegistration : ControllerBase
             
             existingClientRequest.Status = Status.Rejected;
             existingClientRequest.Clients.RegistrationStatus = Status.Rejected;
+            
+            var notification = new Domain.Notification
+            {
+                UserId = existingClientRequest.RequestorId,
+                Status = Status.RejectedClients
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = existingClientRequest.CurrentApproverId,
+                Status = Status.RejectedClients
+            };
+                
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 

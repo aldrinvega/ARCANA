@@ -61,88 +61,130 @@ public class RegisterClient : ControllerBase
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int ClusterId { get; set; }
+        public int PriceModeId { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public int RequestedBy { get; set; }
+    }
 
-        public class Handler : IRequestHandler<RegisterClientCommand, Result>
+    public class RegisterClientResult
+    {
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
+        public string Terms { get; set; }
+        public string CurrentApprover { get; set; }
+        public string CurrentApproverPhoneNumber { get; set; }
+        public string NextApprover { get; set; }
+        public string NextApproverPhoneNumber { get; set; }
+    }
+
+    public class Handler : IRequestHandler<RegisterClientCommand, Result>
+    {
+        private readonly ArcanaDbContext _context;
+
+        public Handler(ArcanaDbContext context)
         {
-            private readonly ArcanaDbContext _context;
+            _context = context;
+        }
 
-            public Handler(ArcanaDbContext context)
+        public async Task<Result> Handle(RegisterClientCommand request, CancellationToken cancellationToken)
+        {
+            var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.RequestedBy, cancellationToken);
+
+            var existingClient = await _context.Clients
+                .Where(x => x.RegistrationStatus == "Pending registration")
+                .FirstOrDefaultAsync(client => client.Id == request.ClientId, cancellationToken);
+
+            if (existingClient == null)
             {
-                _context = context;
+                return ClientErrors.NotFound();
             }
 
-            public async Task<Result> Handle(RegisterClientCommand request, CancellationToken cancellationToken)
+            var businessAddress = new BusinessAddress
             {
-                var existingClient = await _context.Clients
-                    .Where(x => x.RegistrationStatus == "Pending registration")
-                    .FirstOrDefaultAsync(client => client.Id == request.ClientId, cancellationToken);
+                HouseNumber = request.HouseNumber,
+                StreetName = request.StreetName,
+                Barangay = request.BarangayName,
+                City = request.City,
+                Province = request.Province
+            };
 
-                if (existingClient == null)
-                {
-                    return ClientErrors.NotFound();
-                }
 
-                var businessAddress = new BusinessAddress
-                {
-                    HouseNumber = request.HouseNumber,
-                    StreetName = request.StreetName,
-                    Barangay = request.BarangayName,
-                    City = request.City,
-                    Province = request.Province
-                };
-                
-                
-                var approvers = await _context.Approvers
-                    .Where(x => x.ModuleName == Modules.RegistrationApproval)
-                    .OrderBy(x => x.Level)
-                    .ToListAsync(cancellationToken);
+            var approvers = await _context.Approvers
+                .Include(x => x.User)
+                .Where(x => x.ModuleName == Modules.RegistrationApproval)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
 
-                if (!approvers.Any())
-                {
-                    return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
-                }
-
-                var newRequest = new Domain.Request
-                (
-                    Modules.RegistrationApproval, 
-                    request.RequestedBy, 
-                    approvers.First().UserId, 
-                    Status.UnderReview
-                );
-
-                await _context.Requests.AddAsync(newRequest, cancellationToken);
-                await _context.BusinessAddress.AddAsync(businessAddress, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                var dateOfBirth = DateOnly.FromDateTime(request.BirthDate);
-
-                existingClient.BusinessAddressId = businessAddress.Id;
-                existingClient.RepresentativeName = request.AuthorizedRepresentative;
-                existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
-                existingClient.TinNumber = request.TinNumber;
-                existingClient.ClusterId = request.ClusterId;
-                existingClient.Longitude = request.Longitude;
-                existingClient.Latitude = request.Latitude;
-                existingClient.DateOfBirthDB = dateOfBirth;
-                existingClient.RequestId = newRequest.Id;
-                existingClient.StoreTypeId = request.StoreTypeId;
-                
-                foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
-                         {
-                             ApproverId = approver.UserId,
-                             RequestId = newRequest.Id,
-                             Level = approver.Level,
-                         }))
-                {
-                    _context.RequestApprovers.Add(newRequestApprover);
-                }
-                
-                await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success();
+            if (!approvers.Any())
+            {
+                return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
+
+            var newRequest = new Domain.Request
+            (
+                Modules.RegistrationApproval,
+                request.RequestedBy,
+                approvers.First().UserId,
+                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
+                Status.UnderReview
+            );
+
+            await _context.Requests.AddAsync(newRequest, cancellationToken);
+            await _context.BusinessAddress.AddAsync(businessAddress, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var dateOfBirth = DateOnly.FromDateTime(request.BirthDate);
+
+            existingClient.BusinessAddressId = businessAddress.Id;
+            existingClient.RepresentativeName = request.AuthorizedRepresentative;
+            existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
+            existingClient.TinNumber = request.TinNumber;
+            existingClient.ClusterId = request.ClusterId;
+            existingClient.Longitude = request.Longitude;
+            existingClient.Latitude = request.Latitude;
+            existingClient.DateOfBirthDB = dateOfBirth;
+            existingClient.RequestId = newRequest.Id;
+            existingClient.StoreTypeId = request.StoreTypeId;
+            existingClient.PriceModeId = request.PriceModeId;
+            existingClient.RegistrationStatus = Status.UnderReview;
+
+            foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
+            {
+                ApproverId = approver.UserId,
+                RequestId = newRequest.Id,
+                Level = approver.Level,
+            }))
+            {
+                _context.RequestApprovers.Add(newRequestApprover);
+            }
+
+            var notification = new Domain.Notification
+            {
+                UserId = request.RequestedBy,
+                Status = Status.PendingClients
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = approvers.First().UserId,
+                Status = Status.PendingClients
+            };
+
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var result = new RegisterClientResult
+            {
+                Requestor = requestor.Fullname,
+                RequestorMobileNumber = requestor.MobileNumber,
+                CurrentApprover = approvers.First()?.User.Fullname,
+                CurrentApproverPhoneNumber = approvers.First()?.User.MobileNumber
+            };
+            return Result.Success(result);
         }
     }
 }

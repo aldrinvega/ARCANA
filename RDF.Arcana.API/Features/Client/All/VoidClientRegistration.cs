@@ -5,7 +5,7 @@ using RDF.Arcana.API.Features.Client.Errors;
 
 namespace RDF.Arcana.API.Features.Client.All;
 
-[Route("api/Clients"), ApiController]
+[Route("api/Client"), ApiController]
 public class VoidClientRegistration : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -15,14 +15,14 @@ public class VoidClientRegistration : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPut("VoidClientRegistration/{clientId:int}")]
-    public async Task<IActionResult> VoidClient(int clientId)
+    [HttpPut("VoidClientRegistration/{Id:int}")]
+    public async Task<IActionResult> VoidClient(int id)
     {
         try
         {
             var command = new VoidClientCommand
             {
-                ClientId = clientId
+                ClientId = id
             };
 
             var result = await _mediator.Send(command);
@@ -63,12 +63,7 @@ public class VoidClientRegistration : ControllerBase
             CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
-                .Include(ap => ap.Approvals)
-                .Where(at => at.Approvals.Any(x =>
-                    (x.ApprovalType == Status.DirectRegistrationApproval || 
-                    x.ApprovalType == Status.ForRegularApproval) &&
-                    x.IsApproved == false &&
-                    x.IsActive))
+                .Include(ap => ap.Request)
                 .FirstOrDefaultAsync(x => x.Id == request.ClientId, cancellationToken);
 
             if (existingClient == null)
@@ -82,12 +77,8 @@ public class VoidClientRegistration : ControllerBase
             }
 
             existingClient.RegistrationStatus = Status.Voided;
-            foreach (var approval in existingClient.Approvals.Where(approval =>
-                         approval.ApprovalType == Status.DirectRegistrationApproval))
-            {
-                approval.IsActive = false;
-                approval.IsActive = false;
-            }
+            existingClient.Request.Status = Status.Voided;
+            existingClient.IsActive = false;
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -98,7 +89,7 @@ public class VoidClientRegistration : ControllerBase
                 BusinessName = existingClient.BusinessName
             };
 
-            return Result.Success();
+            return Result.Success(result);
         }
     }
 }

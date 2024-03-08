@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using RDF.Arcana.API.Common;
+﻿using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Domain;
 

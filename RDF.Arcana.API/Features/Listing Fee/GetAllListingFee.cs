@@ -96,12 +96,18 @@ public class GetAllListingFee : ControllerBase
         public int ListingFeeId { get; set; }
         public int RequestId { get; set; }
         public string Status { get; set; }
-        public string RequestedBy { get; set; }
         public decimal Total { get; set; }
         public string CreatedAt { get; set; }
+        public string Requestor { get; set; }
+        public string RequestorMobileNumber { get; set; }
         public string CancellationReason { get; set; }
+        public string CurrentApprover { get; set; }
+        public string CurrentApproverNumber { get; set; }
+        public string NextApprover { get; set; }
+        public string NextApproverMobileNumber { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
         public IEnumerable<ListingFeeApprovalHistory> ListingFeeApprovalHistories { get; set; }
+        //public IEnumerable<RequestApproversForListingFee> Approvers { get; set; }
 
         public class ListingItem
         {
@@ -122,6 +128,12 @@ public class GetAllListingFee : ControllerBase
             public string Status { get; set; }
             public string Reason { get; set; }
         }
+        
+        public class RequestApproversForListingFee
+        {
+            public string Name { get; set; }
+            public int Level { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetAllListingFeeQuery, PagedList<ClientsWithListingFee>>
@@ -133,7 +145,7 @@ public class GetAllListingFee : ControllerBase
             _context = context;
         }
 
-        public Task<PagedList<ClientsWithListingFee>> Handle(GetAllListingFeeQuery request,
+        public async Task<PagedList<ClientsWithListingFee>> Handle(GetAllListingFeeQuery request,
             CancellationToken cancellationToken)
         {
             var listingFees = _context.ListingFees
@@ -141,36 +153,59 @@ public class GetAllListingFee : ControllerBase
                 .AsSplitQuery()
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.CurrentApprover)
+                .Include(rq => rq.Request)
+                .ThenInclude(ap => ap.NextApprover)
                 .Include(x => x.RequestedByUser)
                 .AsSplitQuery()
                 .Include(x => x.ListingFeeItems)
                 .ThenInclude(x => x.Item)
                 .ThenInclude(x => x.Uom)
                 .AsSingleQuery();
-            
+
+            var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
+
             if (!string.IsNullOrEmpty(request.Search))
+
             {
                 listingFees = listingFees.Where(x =>
                     x.Client.BusinessName.Contains(request.Search) || x.Client.Fullname.Contains(request.Search));
             }
 
-            listingFees = request.RoleName switch
+            switch (request.RoleName)
             {
-                Roles.Approver when !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
-                                     request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower() =>
-                    listingFees.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive)),
-                Roles.Approver => listingFees.Where(lf =>
-                    lf.Request.Status == request.ListingFeeStatus && 
-                    lf.Request.CurrentApproverId == request.AccessBy),
-                Roles.Admin or Roles.Cdo => listingFees.Where(x =>
-                    x.RequestedBy == request.AccessBy && x.Status == request.ListingFeeStatus),
-                _ => listingFees
-            };
+                case var roleName when roleName.Contains(Roles.Approver) &&
+                      !string.IsNullOrWhiteSpace(request.ListingFeeStatus) &&
+                      request.ListingFeeStatus.ToLower() != Status.UnderReview.ToLower():
+                    listingFees = listingFees.Where(lf => lf.Request.Approvals.Any(x =>
+                        x.Status == request.ListingFeeStatus && x.ApproverId == request.AccessBy && x.IsActive) && lf.Client.RegistrationStatus != Status.UnderReview);
+                    break;
 
-            if (request.RoleName is Roles.Approver && request.ListingFeeStatus == Status.UnderReview)
+                case var roleName when roleName.Contains(Roles.Approver):
+                    listingFees = listingFees.Where(lf =>
+                        lf.Request.Status == request.ListingFeeStatus && lf.Request.CurrentApproverId == request.AccessBy && lf.Client.RegistrationStatus != Status.UnderReview);
+                    break;
+
+                case Roles.Cdo:
+
+                    if (userClusters is null)
+                    {
+                        listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.ClusterId == userClusters.ClusterId && x.Client.RegistrationStatus != Status.UnderReview);
+                        break;
+                    }
+
+                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.RegistrationStatus != Status.UnderReview);
+                    break;
+
+                case Roles.Admin:
+                    listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.RegistrationStatus != Status.UnderReview);
+                    break;
+            }
+
+            if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.UnderReview)
             {
-                listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy);
+                listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus != Status.UnderReview);
             }
 
             if (request.Status != null)
@@ -184,11 +219,10 @@ public class GetAllListingFee : ControllerBase
                 ClientName = listingFee.Client.Fullname,
                 RegistrationStatus = listingFee.Client.RegistrationStatus,
                 BusinessName = listingFee.Client.BusinessName,
-                CreatedAt = listingFee.CratedAt.ToString("yyyy-MM-dd"),
+                CreatedAt = listingFee.CratedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 ListingFeeId = listingFee.Id,
                 RequestId = listingFee.RequestId,
                 Status = listingFee.Status,
-                RequestedBy = listingFee.RequestedByUser.Fullname,
                 Total = listingFee.Total,
                 ListingItems = listingFee.ListingFeeItems.Select(li =>
                     new ClientsWithListingFee.ListingItem
@@ -209,10 +243,21 @@ public class GetAllListingFee : ControllerBase
                         Reason = a.Request.Approvals.FirstOrDefault().Reason,
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
-                    })
+                    }),
+                Requestor = listingFee.Request.Requestor.Fullname,
+                RequestorMobileNumber = listingFee.Request.Requestor.MobileNumber,
+                CurrentApprover = listingFee.Request.CurrentApprover.Fullname,
+                CurrentApproverNumber = listingFee.Request.CurrentApprover.MobileNumber,
+                NextApprover = listingFee.Request.NextApprover.Fullname,
+                NextApproverMobileNumber = listingFee.Request.NextApprover.MobileNumber
+                //Approvers = listingFee.Request.RequestApprovers.Select(x => new ClientsWithListingFee.RequestApproversForListingFee
+                //{
+                //    Name = x.Approver.Fullname,
+                //    Level = x.Level
+                //})
             }).OrderBy(x => x.ClientId);
 
-            return PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);
+            return await PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
     }
 }

@@ -75,7 +75,7 @@ public class GetAllRegularClients : ControllerBase
         public string StoreType { get; set; }
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
-        public int Cluster { get; set; }
+        public int? Cluster { get; set; }
         public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool? DirectDelivery { get; set; }

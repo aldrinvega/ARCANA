@@ -68,7 +68,7 @@ public class GetAllRegisteredClients : ControllerBase
         public string RepresentativeName { get; set; }
         public string RepresentativePosition { get; set; }
         public BusinessAddressCollection BusinessAddress { get; set; }
-        public int ClusterId { get; set; }
+        public int? ClusterId { get; set; }
         public bool Freezer { get; set; }
         public string CustomerType { get; set; }
         public int TermDays { get; set; }
@@ -123,7 +123,6 @@ public class GetAllRegisteredClients : ControllerBase
             IQueryable<Domain.Clients> registeredClientsQuery = _context.Clients
                 .Include(x => x.FreebiesRequests)
                 .Include(x => x.FixedDiscounts)
-                .Include(x => x.Approvals)
                 .Include(x => x.Term)
                 .Include(x => x.ClientDocuments)
                 .Include(x => x.StoreType)

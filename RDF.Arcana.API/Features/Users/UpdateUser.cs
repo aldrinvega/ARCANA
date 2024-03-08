@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Setup.Cluster;
 using RDF.Arcana.API.Features.Setup.UserRoles;
-using RDF.Arcana.API.Features.Setup.UserRoles.Exceptions;
-using RDF.Arcana.API.Features.Users.Exceptions;
 
 namespace RDF.Arcana.API.Features.Users;
 
@@ -47,10 +47,10 @@ public class UpdateUser : ControllerBase
         public string Fullname { get; set; }
         public string Username { get; set; }
         public string ModifiedBy { get; set; }
-        public int CompanyId { get; set; }
-        public int DepartmentId { get; set; }
-        public int LocationId { get; set; }
         public int? UserRoleId { get; set; }
+        public int? ClusterId { get; set; }
+        public string MobileNumber { get; set; }
+
     }
 
     public class Handler : IRequestHandler<UpdateUserCommand, Result>
@@ -64,15 +64,14 @@ public class UpdateUser : ControllerBase
 
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
-            /*var validateCompany =
-                await _context.Companies.FirstOrDefaultAsync(x => x.Id == request.CompanyId, cancellationToken);
-            var validateDepartment =
-                await _context.Departments.FirstOrDefaultAsync(x => x.Id == request.DepartmentId, cancellationToken);
-            var validateLocation =
-                await _context.Locations.FirstOrDefaultAsync(x => x.Id == request.LocationId, cancellationToken);*/
+            var user = await _context.Users
+                .Include(x => x.CdoCluster)
+                .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
             var validateUserRole =
                 await _context.UserRoles.FirstOrDefaultAsync(x => x.Id == request.UserRoleId, cancellationToken);
+            //Validate if the clusters are existing
+
+            
 
             if (user.Username != request.Username)
             {
@@ -83,24 +82,46 @@ public class UpdateUser : ControllerBase
                     return UserErrors.UserAlreadyExist();
                 }
             }
-
-            /*if (validateCompany is null)
-                throw new NoCompanyFoundException();
-            if (validateDepartment is null)
-                throw new NoDepartmentFoundException();
-            if (validateLocation is null)
-                throw new NoLocationFoundException();*/
+            
             if (validateUserRole is null)
                 UserRoleErrors.NotFound();
 
             user.FullIdNo = request.FullIdNo;
             user.Fullname = request.Fullname;
             user.Username = request.Username;
-            /*user.CompanyId = request.CompanyId;
-            user.LocationId = request.LocationId;
-            user.DepartmentId = request.DepartmentId;*/
             user.UserRolesId = request.UserRoleId;
             user.UpdatedAt = DateTime.Now;
+            user.MobileNumber = request.MobileNumber;
+
+            if(request.ClusterId != null)
+            {
+                var existingCluster = await _context.Clusters.FirstOrDefaultAsync(ct =>
+                ct.Id == request.ClusterId && ct.IsActive, cancellationToken);
+
+                if (existingCluster is null)
+                {
+                    return ClusterErrors.NotFound();
+                }
+
+                var cdoCluster =
+                await _context.CdoClusters.FirstOrDefaultAsync(
+                    cl => cl.ClusterId == request.ClusterId && cl.UserId == user.Id, cancellationToken);
+
+                if (cdoCluster != null)
+                {
+                    user.CdoCluster.UserId = user.Id;
+                }
+                else
+                {
+                    var newCdoCluster = new CdoCluster
+                    {
+                        ClusterId = request.ClusterId.Value,
+                        UserId = user.Id
+                    };
+
+                    await _context.CdoClusters.AddAsync(newCdoCluster, cancellationToken);
+                }
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

@@ -80,7 +80,7 @@ public class RejectListingFee : ControllerBase
             
             if (currentApproverLevel == null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
 
             var newApproval = new Approval(
@@ -93,6 +93,22 @@ public class RejectListingFee : ControllerBase
             
             existingApprovalsForListingFee.ListingFee.Status = Status.Rejected;
             existingApprovalsForListingFee.Status = Status.Rejected;
+            
+            var notification = new Domain.Notification
+            {
+                UserId = existingApprovalsForListingFee.RequestorId,
+                Status = Status.RejectedListingFee
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
+                
+            var notificationForApprover = new Domain.Notification
+            {
+                UserId = existingApprovalsForListingFee.CurrentApproverId,
+                Status = Status.RejectedListingFee
+            };
+                
+            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.Approval.AddAsync(newApproval, cancellationToken);
 

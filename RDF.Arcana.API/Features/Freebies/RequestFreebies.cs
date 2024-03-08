@@ -100,8 +100,6 @@ public class RequestFreebies : ControllerBase
 
     public class Handler : IRequestHandler<RequestFreebiesCommand, Result>
     {
-        /*private const string REJECTED = "Rejected";
-        private const string FOR_FREEBIE_APPROVAL = "For Freebie Approval";*/
         private readonly ArcanaDbContext _context;
 
         public Handler(ArcanaDbContext context)
@@ -171,25 +169,11 @@ public class RequestFreebies : ControllerBase
                 }
             }
 
-            // Create new approval for the freebie
-            var newApproval = new Approvals
-            {
-                ClientId = request.ClientId,
-                ApprovalType = Status.ForFreebieApproval,
-                IsApproved = isFirstRequest,
-                IsActive = true,
-                RequestedBy = request.AddedBy,
-                ApprovedBy = request.AddedBy
-            };
-            
-            await _context.Approvals.AddAsync(newApproval, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
             // Create new freebie request
             var freebieRequest = new FreebieRequest
             {
                 ClientId = request.ClientId,
-                ApprovalsId = newApproval.Id,
+                /*ApprovalsId = newApproval.Id,*/
                 Status = status,
                 IsDelivered = false,
                 RequestedBy = request.AddedBy
@@ -201,23 +185,37 @@ public class RequestFreebies : ControllerBase
 
             if (isFirstRequest == false)
             {
-                var approver = await _context.Approvers
-                    .Where(x => x.ModuleName == Modules.FreebiesApproval && x.Level == 1)
-                    .FirstOrDefaultAsync(cancellationToken);
+                var approvers = await _context.Approvers
+                 .Include(user => user.User)
+                 .Where(x => x.ModuleName == Modules.FreebiesApproval)
+                 .OrderBy(x => x.Level)
+                 .ToListAsync(cancellationToken);
 
-                if (approver is null)
+                if (!approvers.Any())
                 {
                     return ApprovalErrors.NoApproversFound(Modules.FreebiesApproval);
                 }
+
                 var newRequest = new Request(
                     Modules.FreebiesApproval,
                     request.AddedBy,
-                    approver.UserId,
+                    approvers.First().UserId,
+                    approvers.FirstOrDefault(x => x.Level == 2).UserId,
                     Status.UnderReview
                 );
 
                 await _context.Requests.AddAsync(newRequest, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
+
+                foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
+                {
+                    ApproverId = approver.UserId,
+                    RequestId = newRequest.Id,
+                    Level = approver.Level,
+                }))
+                {
+                    await _context.RequestApprovers.AddAsync(newRequestApprover);
+                }
                 freebieRequest.RequestId = newRequest.Id;
             }
 
@@ -225,7 +223,7 @@ public class RequestFreebies : ControllerBase
             // Add the items requested
             foreach (var freebieItem in request.Freebies.Select(freebie => new FreebieItems
                      {
-                         RequestId = freebieRequest.Id,
+                         FreebieRequestId = freebieRequest.Id,
                          ItemId = freebie.ItemId,
                          Quantity = 1
                      }))
@@ -262,6 +260,13 @@ public class RequestFreebies : ControllerBase
                 FreebieItems = clientFreebies,
             });
 
+            var notification = new Domain.Notification
+            {
+                UserId = request.AddedBy,
+                Status = Status.ForReleasing
+            };
+
+            await _context.Notifications.AddAsync(notification, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             //Return the result on the client info including the request.

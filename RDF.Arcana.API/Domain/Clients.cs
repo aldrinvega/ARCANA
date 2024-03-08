@@ -29,7 +29,8 @@ public class Clients : BaseEntity
     public string RepresentativeName { get; set; }
     public string RepresentativePosition { get; set; }
     public int? BusinessAddressId { get; set; }
-    public int ClusterId { get; set; }
+    public int? ClusterId { get; set; }
+    public int? PriceModeId { get; set; }
     public bool Freezer { get; set; }
     public string CustomerType { get; set; }
     public string Origin { get; set; }
@@ -53,7 +54,7 @@ public class Clients : BaseEntity
     public virtual User ModifiedByUser { get; set; }
     public virtual User AddedByUser { get; set; }
     public virtual List<ClientDocuments> ClientDocuments { get; set; }
-    public virtual List<Approvals> Approvals { get; set; }
+    /*public virtual List<Approvals> Approvals { get; set; }*/
     public virtual List<ListingFee> ListingFees { get; set; }
     public virtual List<FreebieRequest> FreebiesRequests { get; set; }
     public virtual FixedDiscounts FixedDiscounts { get; set; }
@@ -65,4 +66,7 @@ public class Clients : BaseEntity
     public virtual Request Request { get; set; }
     public virtual Cluster Cluster { get; set; }
     public virtual ICollection<ClientModeOfPayment> ClientModeOfPayment { get; set; }
+    public virtual ICollection<Expenses> Expenses { get; set; }
+
+    public virtual PriceMode PriceMode { get; set; }
 }

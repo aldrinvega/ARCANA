@@ -12,7 +12,7 @@ namespace RDF.Arcana.API.Features.Authenticate;
 
 public abstract class AuthenticateUser
 {
-    public class AuthenticateUserQuery : IRequest<Result>
+    public sealed record AuthenticateUserQuery : IRequest<Result>
     {
         public AuthenticateUserQuery(string username)
         {
@@ -35,10 +35,7 @@ public abstract class AuthenticateUser
             RoleName = user.UserRoles?.UserRoleName;
             Permission = user.UserRoles?.Permissions;
             IsPasswordChanged = user.IsPasswordChanged;
-            Clusters = user.CdoCluster.Select( c => new Cluster
-            {
-                ClusterId = c.ClusterId
-            });
+            ProfilePicture = user.ProfilePicture;
         }
 
         public int Id { get; set; }
@@ -54,13 +51,7 @@ public abstract class AuthenticateUser
         public string Token { get; set; }
 
         public bool IsPasswordChanged { get; set; }
-        
-        public IEnumerable<Cluster> Clusters { get; set; }
-        
-        public class Cluster
-        {
-            public int ClusterId { get; set; }
-        }
+        public string ProfilePicture { get; set; }
     }
 
     public class Handler : IRequestHandler<AuthenticateUserQuery, Result>
@@ -81,7 +72,6 @@ public abstract class AuthenticateUser
         {
             var user = await _context.Users
                 .Include(x => x.UserRoles)
-                .Include(x => x.CdoCluster)
                 .SingleOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
 
             //Verify if the credentials is correct

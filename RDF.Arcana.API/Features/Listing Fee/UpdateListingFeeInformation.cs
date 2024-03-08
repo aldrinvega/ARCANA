@@ -78,11 +78,12 @@ public class UpdateListingFeeInformation : ControllerBase
                 .ThenInclude(x => x.Approvals)
                 .FirstOrDefaultAsync(cancellationToken);
             
-            var approver = await _context.Approvers
-                .Where(x => x.ModuleName == Modules.ListingFeeApproval && x.Level == 1)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (approver is null)
+             var approver = await _context.RequestApprovers
+                .Where(x => x.RequestId == listingFee.RequestId)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
+                
+            if (!approver.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
@@ -124,7 +125,7 @@ public class UpdateListingFeeInformation : ControllerBase
                 }
             }
             listingFee.Request.Status = Status.UnderReview;
-            listingFee.Request.CurrentApproverId = approver.UserId;
+            listingFee.Request.CurrentApproverId = approver.First().ApproverId;
             listingFee.Status = Status.UnderReview;
             listingFee.Total = command.Total;
             
@@ -140,6 +141,23 @@ public class UpdateListingFeeInformation : ControllerBase
                 listingFee.RequestedBy);
             
             await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
+            
+            
+            var notificationForCurrentApprover = new Domain.Notification
+            {
+                UserId = approver.First().ApproverId,
+                Status = Status.PendingListingFee
+            };
+                
+            await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
+            
+            var notification = new Domain.Notification
+            {
+                UserId = listingFee.RequestedBy,
+                Status = Status.PendingListingFee
+            };
+                
+            await _context.Notifications.AddAsync(notification, cancellationToken);
             
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

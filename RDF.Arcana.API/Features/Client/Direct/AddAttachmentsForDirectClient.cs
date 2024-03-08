@@ -25,7 +25,6 @@ public class AddAttachmentsForDirectClient : ControllerBase
     public async Task<IActionResult> AddRequirementForRegularClients([FromForm]AddAttachmentsForRegularClientCommand command,
         [FromRoute] int id)
     {
-       
         try
         {
             command.ClientId = id;

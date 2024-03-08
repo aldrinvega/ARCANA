@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Client.Regular;
@@ -24,6 +26,13 @@ public class GetAllClientsInListingFee : ControllerBase
     {
         try
         {
+
+            if (User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                query.AddedBy = userId;
+            }
+
             var regularClient = await _mediator.Send(query);
 
             Response.AddPaginationHeader(
@@ -63,6 +72,7 @@ public class GetAllClientsInListingFee : ControllerBase
         public bool? IncludeRejected { get; set; }
         public string StoreType { get; set; }
         public string Origin { get; set; }
+        public int AddedBy { get; set; }
     }
 
     public class GetAllClientsInListingFeeResult
@@ -78,6 +88,7 @@ public class GetAllClientsInListingFee : ControllerBase
             public int RequestId { get; set; }
             public IEnumerable<ListingItem> ListingItems { get; set; }
         }
+
         public class ListingItem
         {
             public int Id { get; set; }
@@ -88,9 +99,12 @@ public class GetAllClientsInListingFee : ControllerBase
             public int Sku { get; set; }
             public decimal UnitCost { get; set; }
         }
+
+
     }
 
-    public class Handler : IRequestHandler<GetAllClientsInListingFeeQuery, PagedList<GetAllClientsInListingFeeResult>>
+    public class Handler : IRequestHandler<GetAllClientsInListingFeeQuery,
+        PagedList<GetAllClientsInListingFeeResult>>
     {
         private readonly ArcanaDbContext _context;
 
@@ -103,33 +117,20 @@ public class GetAllClientsInListingFee : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<Domain.Clients> clientsListingFee = _context.Clients
-                .Include(mop => mop.ClientModeOfPayment)
-                .Include(abu => abu.AddedByUser)
                 .Include(rq => rq.Request)
                 .ThenInclude(user => user.Requestor)
                 .Include(rq => rq.Request)
                 .ThenInclude(ap => ap.Approvals)
                 .ThenInclude(cap => cap.Approver)
-                .Include(st => st.StoreType)
-                .Include(fd => fd.FixedDiscounts)
-                .Include(to => to.Term)
-                .ThenInclude(tt => tt.Terms)
-                .Include(to => to.Term)
-                .ThenInclude(td => td.TermDays)
-                .Include(ba => ba.BusinessAddress)
-                .Include(oa => oa.OwnersAddress)
-                .Include(bc => bc.BookingCoverages)
-                .Include(fr => fr.FreebiesRequests)
-                .ThenInclude(fi => fi.FreebieItems)
-                .ThenInclude(item => item.Items)
-                .ThenInclude(uom => uom.Uom)
                 .Include(lf => lf.ListingFees)
                 .ThenInclude(li => li.ListingFeeItems)
                 .ThenInclude(item => item.Item)
                 .ThenInclude(uom => uom.Uom)
-                .Include(cd => cd.ClientDocuments)
-                .Where(clients => clients.RegistrationStatus == Status.Approved);
+                //.Where(clients => clients.RegistrationStatus == Status.Approved)
+                .AsNoTracking();
 
+            var user = await _context.CdoClusters.FirstOrDefaultAsync(c => c.UserId == request.AddedBy, cancellationToken);
+            
             if (!string.IsNullOrEmpty(request.Search))
             {
                 clientsListingFee = clientsListingFee.Where(x =>
@@ -162,7 +163,9 @@ public class GetAllClientsInListingFee : ControllerBase
                     x.RegistrationStatus == Status.Requested);
             }
 
-            var result = clientsListingFee.Select(x => x.ToGetAllClientsInListingFeeResult());
+            var result = clientsListingFee
+                .Where(x => user != null && x.ClusterId == user.ClusterId)
+                .Select(x => x.ToGetAllClientsInListingFeeResult());
 
             return await PagedList<GetAllClientsInListingFeeResult>.CreateAsync(result, request.PageNumber,
                 request.PageSize);

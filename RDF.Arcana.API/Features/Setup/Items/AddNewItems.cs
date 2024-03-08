@@ -29,7 +29,6 @@ public class AddNewItems : ControllerBase
         public int UomId { get; set; }
         public int ProductSubCategoryId { get; set; }
         public int MeatTypeId { get; set; }
-        public decimal Price { get; set; }
     }
     
     public class Handler : IRequestHandler<AddNewItemsCommand, Result>
@@ -43,6 +42,9 @@ public class AddNewItems : ControllerBase
 
         public async Task<Result> Handle(AddNewItemsCommand request, CancellationToken cancellationToken)
         {
+            
+            
+            
             var existingItem = await _context.Items.FirstOrDefaultAsync(x => 
                     x.ItemCode == request.ItemCode, 
                 cancellationToken);
@@ -85,17 +87,6 @@ public class AddNewItems : ControllerBase
             };
 
             await _context.Items.AddAsync(items, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            var newPriceChange = new ItemPriceChange
-            {
-                ItemId = items.Id,
-                EffectivityDate = DateTime.Now,
-                AddedBy = request.AddedBy,
-                Price = request.Price
-            };
-
-            await _context.ItemPriceChanges.AddAsync(newPriceChange, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             
             return Result.Success();

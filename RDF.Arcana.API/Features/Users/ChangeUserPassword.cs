@@ -41,7 +41,7 @@ public class ChangeUserPassword : ControllerBase
         public int UserId { get; set; }
         public string OldPassword { get; set; }
         public string ModifiedBy { get; set; }
-        public string Password { get; set; }
+        public string NewPassword { get; set; }
     }
 
     public class Handler : IRequestHandler<ChangeUserPasswordCommand, Result>
@@ -68,7 +68,7 @@ public class ChangeUserPassword : ControllerBase
                 return UserErrors.OldPasswordIncorrect();
             }
 
-            user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
             user.IsPasswordChanged = true;
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

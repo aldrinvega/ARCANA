@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 
@@ -22,6 +24,18 @@ public class GetAllCluster : ControllerBase
     {
         try
         {
+            if (User.Identity is ClaimsIdentity identity
+                && IdentityHelper.TryGetUserId(identity, out var userId))
+            {
+                query.AccessBy = userId;
+                
+                var roleClaim = identity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (roleClaim != null)
+                {
+                    query.RoleName = roleClaim.Value;
+                }
+            }
             var cluster = await _mediator.Send(query);
             
             Response.AddPaginationHeader(
@@ -56,7 +70,14 @@ public class GetAllCluster : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public int AccessBy { get; set; }
+        public string RoleName { get; set; }
+        public bool? IsInUse { get; set; }
+        public int? UserId { get; set; }
+        public string ModuleName { get; set; }
     }
+
+    
 
     public class GetAllClusterResult
     {
@@ -65,14 +86,15 @@ public class GetAllCluster : ControllerBase
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<UsersCollection> Users { get; set; }
-
-        public class UsersCollection
-        {
-            public int UserId { get; set; }
-            public string Fullname { get; set; }
-            public string Role { get; set; }
-        }
+        
+        public IEnumerable<UserCollectionForCluster> Users { get; set; }
+    }
+    
+    public class UserCollectionForCluster
+    {
+        public int UserId { get; set; }
+        public string Fullname { get; set; }
+        public string Role { get; set; }
     }
 
     public class Handler : IRequestHandler<GetAllClusterAsync, PagedList<GetAllClusterResult>>
@@ -87,7 +109,7 @@ public class GetAllCluster : ControllerBase
         public async Task<PagedList<GetAllClusterResult>> Handle(GetAllClusterAsync request, CancellationToken cancellationToken)
         {
             IQueryable<Domain.Cluster> cluster = _context.Clusters
-                .Include(cluster => cluster.CdoClusters)
+                .Include(cc => cc.CdoClusters)
                 .ThenInclude(user => user.User)
                 .ThenInclude(role => role.UserRoles);
 
@@ -101,6 +123,40 @@ public class GetAllCluster : ControllerBase
                 cluster = cluster.Where(status => status.IsActive == request.Status);
             }
 
+            if (!string.IsNullOrWhiteSpace(request.ModuleName) && 
+                request.ModuleName is Modules.Registration && 
+                request.RoleName != Roles.Admin)
+            {
+                // Check if the user has a specific role that allows access to clusters based on UserId
+                if (request.RoleName == Roles.Cdo)
+                {
+                    // Add conditions based on UserId if the user has the specified role
+                    cluster = cluster.Where(x => x.CdoClusters.Any(cdo => cdo.UserId == request.AccessBy));
+                }
+            }
+
+            if (request.RoleName == Roles.Admin)
+            {
+                var forAdmin = cluster.Select(x => new GetAllClusterResult
+                {
+                    Id = x.Id,
+                    Cluster = x.ClusterType,
+                    CreatedAt = x.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                    UpdatedAt = x.UpdatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
+                    IsActive = x.IsActive,
+                    Users = x.CdoClusters.Select(x => new UserCollectionForCluster
+                    {
+                        UserId = x.UserId,
+                        Fullname = x.User.Fullname,
+                        Role = x.User.UserRoles.UserRoleName
+                    })
+                    
+                });
+                
+                return await PagedList<GetAllClusterResult>.CreateAsync(forAdmin, request.PageNumber, request.PageSize);
+            }
+            
+
             var result = cluster.Select(x => new GetAllClusterResult
             {
                 Id = x.Id,
@@ -108,15 +164,15 @@ public class GetAllCluster : ControllerBase
                 CreatedAt = x.CreatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 UpdatedAt = x.UpdatedAt.ToString("MM/dd/yyyy HH:mm:ss"),
                 IsActive = x.IsActive,
-                Users = x.CdoClusters.Select(x => new GetAllClusterResult.UsersCollection
+                Users = x.CdoClusters.Select(x => new UserCollectionForCluster
                 {
                     UserId = x.UserId,
                     Fullname = x.User.Fullname,
                     Role = x.User.UserRoles.UserRoleName
-                }).ToList()
+                })
+                    
             });
-
-
+            
             return await PagedList<GetAllClusterResult>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
     }

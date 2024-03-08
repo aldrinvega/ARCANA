@@ -1,14 +1,10 @@
-﻿using RDF.Arcana.API.Common;
-using RDF.Arcana.API.Domain;
-using RDF.Arcana.API.Features.Client.Prospecting.Approved;
-using RDF.Arcana.API.Features.Client.Prospecting.Rejected;
-using RDF.Arcana.API.Features.Client.Prospecting.Request;
+﻿using RDF.Arcana.API.Features.Client.Prospecting.Approved;
 
 namespace RDF.Arcana.API.Features.Client.Prospecting;
 
 public static class ProspectingMappingProfiles
 {
-    public static GetAllRequestedProspectAsync.GetAllRequestedProspectResult
+    /*public static GetAllRequestedProspectAsync.GetAllRequestedProspectResult
         ToGetAllRequestedProspectResult(this Approvals requestedClient)
     {
         return new GetAllRequestedProspectAsync.GetAllRequestedProspectResult
@@ -31,12 +27,11 @@ public static class ProspectingMappingProfiles
             StoreType = requestedClient.Client.StoreType.StoreTypeName,
             IsActive = requestedClient.IsActive
         };
-    }
+    }*/
 
     public static GetAllApprovedProspectAsync.GetAllApprovedProspectResult
         ToGetGetAllApprovedProspectResult(this Domain.Clients approvedClient)
     {
-        var freebies = approvedClient.Approvals.SelectMany(a => a.FreebieRequest).ToList();
 
         return new GetAllApprovedProspectAsync.GetAllApprovedProspectResult
         {
@@ -58,8 +53,8 @@ public static class ProspectingMappingProfiles
             StoreType = approvedClient.StoreType.StoreTypeName,
             IsActive = approvedClient.IsActive,
             RegistrationStatus = approvedClient.RegistrationStatus,
-            Freebies = freebies.Any()
-                ? freebies.Select(fr => new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.Freebie
+            Freebies = approvedClient.FreebiesRequests.Any()
+                ? approvedClient.FreebiesRequests.Select(fr => new GetAllApprovedProspectAsync.GetAllApprovedProspectResult.Freebie
                 {
                     FreebieRequestId = fr.Id,
                     Status = fr.Status,
@@ -80,7 +75,7 @@ public static class ProspectingMappingProfiles
         };
     }
 
-    public static GetAllRejectProspectAsync.GetAllRejectProspectResult
+    /*public static GetAllRejectProspectAsync.GetAllRejectProspectResult
         ToGetGetAllRejectProspectResult(this Approvals rejectClient)
     {
         return new GetAllRejectProspectAsync.GetAllRejectProspectResult
@@ -104,5 +99,5 @@ public static class ProspectingMappingProfiles
             StoreType = rejectClient.Client.StoreType.StoreTypeName,
             Reason = rejectClient.Reason
         };
-    }
+    }*/
 }

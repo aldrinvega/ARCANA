@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Mapster;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RDF.Arcana.API.Domain;
 
@@ -23,7 +22,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Discount> Discounts { get; set; }
     public virtual DbSet<TermDays> TermDays { get; set; }
     public virtual DbSet<Clients> Clients { get; set; }
-    public virtual DbSet<Approvals> Approvals { get; set; }
+    /*public virtual DbSet<Approvals> Approvals { get; set; }*/
     public virtual DbSet<ClientDocuments> ClientDocuments { get; set; }
     public virtual DbSet<FixedDiscounts> FixedDiscounts { get; set; }
     public virtual DbSet<VariableDiscounts> VariableDiscounts { get; set; }
@@ -47,9 +46,15 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ItemPriceChange> ItemPriceChanges { get; set; }
     public virtual DbSet<ClientModeOfPayment> ClientModeOfPayments { get; set; }
     public virtual DbSet<Cluster> Clusters { get; set; }
-    public virtual DbSet<CdoCluster> CdoClusters { get; set; }
     public virtual DbSet<OtherExpenses> OtherExpenses { get; set; }
-    
+    public virtual DbSet<ExpensesRequest> ExpensesRequests { get; set; }
+    public virtual DbSet<Expenses> Expenses { get; set; }
+    public virtual DbSet<Notification> Notifications { get; set; }
+    public virtual DbSet<CdoCluster> CdoClusters { get; set; }
+    public virtual DbSet<PriceMode> PriceMode { get; set; }
+    public virtual DbSet<PriceModeItems> PriceModeItems { get; set; }
+    public virtual DbSet<SpecialDiscount> SpecialDiscounts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserRoles>()
@@ -106,6 +111,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(u => u.AddedByUser)
             .WithOne()
             .HasForeignKey<ProductSubCategory>(u => u.AddedBy);
+        
+        modelBuilder.Entity<OtherExpenses>()
+            .HasOne(u => u.AddedByUser)
+            .WithMany()
+            .HasForeignKey(u => u.AddedBy);
 
         modelBuilder.Entity<ProductCategory>()
             .HasOne(u => u.AddedByUser)
@@ -142,7 +152,7 @@ public class ArcanaDbContext : DbContext
             .WithOne(cd => cd.Clients)
             .HasForeignKey(cd => cd.ClientId);
 
-        modelBuilder.Entity<Clients>()
+        /*modelBuilder.Entity<Clients>()
             .HasMany(c => c.Approvals)
             .WithOne(a => a.Client)
             .HasForeignKey(a => a.ClientId);
@@ -150,7 +160,7 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<FreebieRequest>()
             .HasOne(fr => fr.Approvals)
             .WithMany(a => a.FreebieRequest)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict);*/
 
         modelBuilder.Entity<StoreType>()
             .HasOne(x => x.AddedByUser)
@@ -212,7 +222,7 @@ public class ArcanaDbContext : DbContext
             .WithMany(x => x.FreebieRequests)
             .HasForeignKey(x => x.RequestedBy);
 
-        modelBuilder.Entity<Approvals>()
+        /*modelBuilder.Entity<Approvals>()
             .HasOne(x => x.ApproveByUser)
             .WithMany()
             .HasForeignKey(x => x.ApprovedBy);
@@ -220,7 +230,17 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<Approvals>()
             .HasOne(x => x.RequestedByUser)
             .WithMany()
-            .HasForeignKey(x => x.RequestedBy);
+            .HasForeignKey(x => x.RequestedBy);*/
+        
+        modelBuilder.Entity<Expenses>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+        
+        modelBuilder.Entity<Expenses>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
 
         modelBuilder.Entity<ListingFee>()
             .HasOne(x => x.RequestedByUser)
@@ -246,7 +266,11 @@ public class ArcanaDbContext : DbContext
             .HasOne(x => x.Request)
             .WithMany(x => x.UpdateRequestTrails)
             .HasForeignKey(x => x.RequestId);
-        
+
+        modelBuilder.Entity<SpecialDiscount>()
+            .Property(d => d.Discount)
+            .HasColumnType("decimal(18,4)");
+
         modelBuilder.Entity<ListingFee>()
             .Property(p => p.Total)
             .HasColumnType("decimal(8,2)");
@@ -271,27 +295,15 @@ public class ArcanaDbContext : DbContext
             .Property(p => p.MaximumPercentage)
             .HasColumnType("decimal(8,2)");
 
-        modelBuilder.Entity<Clients>()
+        modelBuilder.Entity<Clients>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<FreebieRequest>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<TermOptions>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
+        /*modelBuilder.Entity<Approvals>()
             .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<FreebieRequest>()
-            .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<TermOptions>()
-            .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<Approvals>()
-            .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<OwnersAddress>()
-            .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<BusinessAddress>()
-            .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
-        modelBuilder.Entity<FixedDiscounts>()
-            .Property(p => p.Id)
-            .UseHiLo("arcana_hilo_sequence");
+            .UseHiLo("arcana_hilo_sequence");*/
+        modelBuilder.Entity<OwnersAddress>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<BusinessAddress>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<FixedDiscounts>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
 
 
         modelBuilder.Entity<User>().HasData(
@@ -370,5 +382,35 @@ public class ArcanaDbContext : DbContext
             new ModeOfPayment { Id = 1, Payment = "Cash", AddedBy = 1, IsActive = true},
             new ModeOfPayment { Id = 2, Payment = "Online/Check", AddedBy = 1, IsActive = true}
         );
+
+        modelBuilder.Entity<PriceMode>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<PriceMode>()
+           .HasOne(x => x.ModifiedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<PriceModeItems>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<PriceModeItems>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<SpecialDiscount>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<SpecialDiscount>()
+           .HasOne(x => x.ModifiedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.ModifiedBy);
     }
 }

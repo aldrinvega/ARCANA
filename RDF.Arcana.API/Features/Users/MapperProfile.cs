@@ -15,13 +15,16 @@ public static class MapperProfile
             Username = user.Username,
             Password = user.Password,
             AddedBy = user.AddedByUser?.Fullname,
+            MobileNumber = user.MobileNumber,
             CreatedAt = user.CreatedAt,
             IsActive = user.IsActive,
             CompanyName = user.Company?.CompanyName,
             DepartmentName = user.Department?.DepartmentName,
             LocationName = user.Location?.LocationName,
             RoleName = user.UserRoles?.UserRoleName,
-            Permission = user.UserRoles?.Permissions
+            Permission = user.UserRoles?.Permissions,
+            ClusterId = user.CdoCluster?.ClusterId,
+            Cluster = user.CdoCluster?.Cluster?.ClusterType
         };
     }
 }

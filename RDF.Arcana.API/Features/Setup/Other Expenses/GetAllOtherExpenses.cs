@@ -91,7 +91,7 @@ public class GetAllOtherExpenses : ControllerBase
                 otherExpenses = otherExpenses.Where(oe => oe.ExpenseType.Contains(request.Search));
             }
 
-            if (request.Search != null)
+            if (request.Status != null)
             {
                 otherExpenses = otherExpenses.Where(oe => oe.IsActive == request.Status);
             }

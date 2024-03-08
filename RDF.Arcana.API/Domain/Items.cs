@@ -21,5 +21,5 @@ public class Items : BaseEntity
     public Uom Uom { get; set; }
     public MeatType MeatType { get; set; }
     public virtual User AddedByUser { get; set; }
-    public virtual ICollection<ItemPriceChange> ItemPriceChange { get; set; }
+    public virtual ICollection<PriceModeItems> PriceModeItems { get; set; }
 }

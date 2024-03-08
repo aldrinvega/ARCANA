@@ -44,7 +44,7 @@ public class AddNewProductCategory : ControllerBase
 
             if (existingProductCategory is not null)
             {
-                throw new ProductCategoryAlreadyExistException();
+                return ProductCategoryErrors.AlreadyExist(request.ProductCategoryName);
             }
 
             var productCategory = new ProductCategory

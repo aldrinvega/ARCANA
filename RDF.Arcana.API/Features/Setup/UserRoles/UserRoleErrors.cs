@@ -14,4 +14,7 @@ public class UserRoleErrors
         $"User Role cannot be archived because it is currently associated with the user '{name}'");
 
     public static Error NotFound() => new Error("UserRole.NotFound", "No user role found");
+
+    public static Error WithPermission() => new("userRole.WithPermission"
+        , "Cannot deactivate UserRole because there are permissions associated with it.");
 }

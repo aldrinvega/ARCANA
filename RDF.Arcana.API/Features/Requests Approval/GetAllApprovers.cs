@@ -51,7 +51,7 @@ public class GetAllApprovers : ControllerBase
         {
             var approvers = await _context.Users
                 .Include(ur => ur.UserRoles)
-                .Where(rn => rn.UserRoles.UserRoleName == Roles.Approver)
+                .Where(rn => rn.UserRoles.UserRoleName.Contains(Roles.Approver))
                 .ToListAsync(cancellationToken);
 
             var result = approvers.Select(x => new GetAllApproversResult

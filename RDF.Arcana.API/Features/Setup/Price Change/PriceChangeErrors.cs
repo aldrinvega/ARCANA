@@ -8,4 +8,6 @@ public class PriceChangeErrors
         $"Price change for {effectivityDate:MM/dd/yyyy} is already added");
 
     public static Error NotFound() => new Error("PriceChange.NotFound", "Price change not found");
+    
+    public static Error PriceAlreadyAdded(string item) => new Error("PriceChange, PriceAlreadyAdded",$"The new price for the item {item} is the same as the latest recorded price.");
 }

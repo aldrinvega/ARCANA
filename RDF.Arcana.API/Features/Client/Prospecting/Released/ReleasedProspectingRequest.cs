@@ -69,77 +69,69 @@ public class ReleasedProspectingRequest : ControllerBase
 
         public async Task<Result> Handle(ReleasedProspectingRequestCommand request, CancellationToken cancellationToken)
         {
-            var validateClientRequest = await _context.Approvals
-                .Include(x => x.FreebieRequest)
-                .Include(x => x.Client)
+            var validateClientRequest = await _context.FreebieRequests
+                .Include(x => x.Clients)
                 .FirstOrDefaultAsync(x =>
-                    x.FreebieRequest.Any(x => x.Id == request.FreebieRequestId) &&
-                    x.ApprovalType == "For Freebie Approval" &&
-                    x.FreebieRequest.Any(x => x.IsDelivered == false) &&
-                    x.IsActive == true &&
-                    x.IsApproved == true, cancellationToken);
+                    x.Id == request.FreebieRequestId && 
+                    x.IsDelivered == false &&
+                    x.Status == Status.ForReleasing, cancellationToken);
 
             if (validateClientRequest is null)
             {
                 return ClientErrors.NotFound();
             }
-
-            var uploadTasks = new List<Task>();
-
-            foreach (var freebieRequest in validateClientRequest.FreebieRequest)
+            
+            
+            if (request.PhotoProof.Length > 0 || request.ESignature.Length > 0)
             {
-                if (request.PhotoProof.Length > 0 || request.ESignature.Length > 0)
+                await using var stream = request.PhotoProof.OpenReadStream();
+                await using var esignatureStream = request.ESignature.OpenReadStream();
+
+                var photoProofParams = new ImageUploadParams
                 {
-                    uploadTasks.Add(Task.Run(async () =>
-                    {
-                        await using var stream = request.PhotoProof.OpenReadStream();
-                        await using var esignatureStream = request.ESignature.OpenReadStream();
-
-                        var photoProofParams = new ImageUploadParams
-                        {
-                            File = new FileDescription(request.PhotoProof.FileName, stream),
-                            PublicId =
-                                $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.PhotoProof.FileName}"
-                        };
-
-                        var eSignaturePhotoParams = new ImageUploadParams
-                        {
-                            File = new FileDescription(request.ESignature.FileName, esignatureStream),
-                            PublicId =
-                                $"{WebUtility.UrlEncode(validateClientRequest.Client.BusinessName)}/{request.ESignature.FileName}"
-                        };
-
-
-                        var photoproofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
-                        var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
-
-                        if (photoproofUploadResult.Error != null)
-                        {
-                            throw new Exception(photoproofUploadResult.Error.Message);
-                        }
-
-                        if (eSignatureUploadResult.Error != null)
-                        {
-                            throw new Exception(eSignatureUploadResult.Error.Message);
-                        }
-
-
-                        freebieRequest.Status = "Released";
-                        freebieRequest.IsDelivered = true;
-                        freebieRequest.PhotoProofPath = photoproofUploadResult.SecureUrl.ToString();
-                        freebieRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
-                    }, cancellationToken));
+                    File = new FileDescription(request.PhotoProof.FileName, stream),
+                    PublicId =
+                        $"{WebUtility.UrlEncode(validateClientRequest.Clients.BusinessName)}/{request.PhotoProof.FileName}"
                 };
 
-                await Task.WhenAll(uploadTasks);
+                var eSignaturePhotoParams = new ImageUploadParams
+                {
+                    File = new FileDescription(request.ESignature.FileName, esignatureStream),
+                    PublicId =
+                        $"{WebUtility.UrlEncode(validateClientRequest.Clients.BusinessName)}/{request.ESignature.FileName}"
+                };
 
-                validateClientRequest.Client.RegistrationStatus = "Pending registration";
-                await _context.SaveChangesAsync(cancellationToken);
-                // If you want to update only a specific FreebieRequest, you should fetch it before updating
-                // Example: 
-                // var specificFreebieRequest = validateClientRequest.FreebieRequests.FirstOrDefault(x => x.SomeId == someConditions);
-                // if (specificFreebieRequest != null){ /* update specificFreebieRequest */ }
+
+                var photoProofUploadResult = await _cloudinary.UploadAsync(photoProofParams);
+                var eSignatureUploadResult = await _cloudinary.UploadAsync(eSignaturePhotoParams);
+
+                if (photoProofUploadResult.Error != null)
+                {
+                    throw new Exception(photoProofUploadResult.Error.Message);
+                }
+
+                if (eSignatureUploadResult.Error != null)
+                {
+                    throw new Exception(eSignatureUploadResult.Error.Message);
+                }
+
+
+                validateClientRequest.Status = Status.Released;
+                validateClientRequest.IsDelivered = true;
+                validateClientRequest.PhotoProofPath = photoProofUploadResult.SecureUrl.ToString();
+                validateClientRequest.ESignaturePath = eSignatureUploadResult.SecureUrl.ToString();
+
+                var notification = new Domain.Notification
+                {
+                    UserId = validateClientRequest.RequestedBy,
+                    Status = Status.Released
+                };
+
+                await _context.Notifications.AddAsync(notification, cancellationToken);
             }
+
+            validateClientRequest.Clients.RegistrationStatus = Status.PendingRegistration;
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }
