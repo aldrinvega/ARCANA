@@ -28,7 +28,9 @@ public class ApproveClientRegistration : ControllerBase
         try
         {
             if (User.Identity is not ClaimsIdentity identity || !IdentityHelper.TryGetUserId(identity, out var userId))
+            {
                 return Unauthorized();
+            }
 
             var command = new ApprovedClientRegistrationCommand
             {

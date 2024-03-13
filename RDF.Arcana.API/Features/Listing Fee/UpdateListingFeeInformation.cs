@@ -76,6 +76,8 @@ public class UpdateListingFeeInformation : ControllerBase
                 .Where(lf => lf.ClientId == command.ClientId && lf.Id == command.ListingFeeId)
                 .Include(x => x.Request)
                 .ThenInclude(x => x.Approvals)
+                .Include(x => x.Request)
+                .ThenInclude(x => x.UpdateRequestTrails)
                 .FirstOrDefaultAsync(cancellationToken);
             
              var approver = await _context.RequestApprovers
@@ -106,6 +108,8 @@ public class UpdateListingFeeInformation : ControllerBase
             // Check if there are no listing fee items left, and delete the request if true
             if (!listingFee.ListingFeeItems.Any())
             {
+                // Remove update trails
+                _context.UpdateRequestTrails.RemoveRange(listingFee.Request.UpdateRequestTrails);
 
                 // Remove the listing fee entity
                 _context.ListingFees.Remove(listingFee);
