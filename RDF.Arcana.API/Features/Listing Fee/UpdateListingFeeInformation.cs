@@ -103,6 +103,22 @@ public class UpdateListingFeeInformation : ControllerBase
                 listingFee.ListingFeeItems.Remove(forRemove);
             }
 
+            // Check if there are no listing fee items left, and delete the request if true
+            if (!listingFee.ListingFeeItems.Any())
+            {
+
+                // Remove the listing fee entity
+                _context.ListingFees.Remove(listingFee);
+
+                // Remove associated approvals
+                _context.Approval.RemoveRange(listingFee.Request.Approvals);
+
+                _context.Requests.Remove(listingFee.Request);
+
+                await _context.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
+
             foreach (var item in command.ListingItems)
             {
                 var listingFeeItemToAdd = listingFee.ListingFeeItems.FirstOrDefault(x => x.ItemId == item.ItemId);

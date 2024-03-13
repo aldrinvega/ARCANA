@@ -5,6 +5,7 @@ using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
+using RDF.Arcana.API.Features.Expenses;
 using RDF.Arcana.API.Features.Listing_Fee.Errors;
 using RDF.Arcana.API.Features.Requests_Approval;
 
@@ -22,7 +23,7 @@ public class ApproveClientRegistration : ControllerBase
     }
 
     [HttpPut("ApproveClientRegistration/{id:int}")]
-    public async Task<IActionResult> ApproveForRegularRegistration([FromRoute] int id, [FromQuery] int ListingFeeRequestId)
+    public async Task<IActionResult> ApproveForRegularRegistration([FromRoute] int id, [FromQuery] int ListingFeeRequestId, [FromQuery] int OtherExpensesId)
     {
         try
         {
@@ -33,6 +34,7 @@ public class ApproveClientRegistration : ControllerBase
             {
                 RegistrationRequestId = id,
                 ListingFeeRequestId = ListingFeeRequestId,
+                OtherExpensesId = OtherExpensesId,
                 UserId = userId
             };
             var result = await _mediator.Send(command);
@@ -54,6 +56,7 @@ public class ApproveClientRegistration : ControllerBase
     {
         public int? ListingFeeRequestId { get; set; }
         public int RegistrationRequestId { get; set; }
+        public int? OtherExpensesId { get; set; }
         public int UserId { get; set; }
     }
 
@@ -73,12 +76,18 @@ public class ApproveClientRegistration : ControllerBase
             var requestedClient = await _context.Requests
                 .Include(client => client.Clients)
                 .ThenInclude(lf => lf.ListingFees)
+                .Include(client => client.Clients)
                 .Where(client => client.Id == request.RegistrationRequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (requestedClient?.Clients is null)
             {
                 return ClientErrors.NotFound();
+            }
+
+            if(requestedClient.CurrentApproverId != request.UserId)
+            {
+                return ApprovalErrors.NotAllowed(Modules.RegistrationApproval);
             }
 
             #region Registration Approvers
@@ -173,81 +182,129 @@ public class ApproveClientRegistration : ControllerBase
             #region Listing Fee Approvals
 
             //Approval of listing fee
-            if(requestedClient.Clients.ListingFees.Count > 0 && request.ListingFeeRequestId is not null)
+            if (requestedClient.Clients.ListingFees.Count > 0 && request.ListingFeeRequestId != 0)
             {
                 var listingFees = await _context.Requests
                 .Include(listing => listing.ListingFee)
                 .Where(lf => lf.Id == request.ListingFeeRequestId && lf.ListingFee.ClientId == requestedClient.Clients.Id)
                 .FirstOrDefaultAsync(cancellationToken);
 
-                if(listingFees is null)
+                if (listingFees is null)
                 {
                     return ListingFeeErrors.NotFound();
                 }
 
                 var approvers = await _context.RequestApprovers
-                    .Where(module => module.RequestId == request.ListingFeeRequestId)
+                    .Where(module => module.RequestId == request.OtherExpensesId)
                     .ToListAsync(cancellationToken);
                 var currentListingFeeApproverLevel = approvers
                     .FirstOrDefault(approver =>
                         approver.ApproverId == listingFees.CurrentApproverId)?.Level;
 
-                if (currentApproverLevel == null)
+                if (approvers == null)
                 {
-                    return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
+                    return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
                 }
-
-                var newListingFeeApproval = new Approval(
-                    listingFees.Id,
-                    listingFees.CurrentApproverId,
-                    Status.Approved,
-                    null,
-                    true
-                );
-
-                var nextLisitngFeeLevel = currentApproverLevel.Value + 1;
-                var nextListingFeeApprover = approvers
-                    .FirstOrDefault(approver => approver.Level == nextLevel);
-
-                if (nextApprover == null)
+                // Iterate over each approver
+                foreach (var approver in approvers)
                 {
-                    listingFees.Status = Status.Approved;
-                    listingFees.ListingFee.Status = Status.Approved;
-                    listingFees.ListingFee.ApprovalDate = DateTime.Now;
+                    // Set the current approver
+                    listingFees.CurrentApproverId = approver.ApproverId;
 
+                    // Add notification for the approver
                     var notificationForApprover = new Domain.Notification
                     {
-                        UserId = listingFees.CurrentApproverId,
+                        UserId = approver.ApproverId,
                         Status = Status.ApprovedListingFee
                     };
-
                     await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
-                    var notification = new Domain.Notification
-                    {
-                        UserId = listingFees.RequestorId,
-                        Status = Status.ApprovedListingFee
-                    };
+                    // Create a new approval entry
+                    var newListingFeeApproval = new Approval(
+                        listingFees.Id,
+                        approver.ApproverId,
+                        Status.Approved,
+                        null,
+                        true
+                    );
+                    await _context.Approval.AddAsync(newListingFeeApproval, cancellationToken);
 
-                    await _context.Notifications.AddAsync(notification, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
                 }
-                else
+
+                listingFees.Status = Status.Approved;
+                listingFees.ListingFee.Status = Status.Approved;
+
+                var notification = new Domain.Notification
                 {
-                    listingFees.CurrentApproverId = nextApprover.ApproverId;
+                    UserId = listingFees.RequestorId,
+                    Status = Status.ApprovedListingFee
+                };
 
-                    var notificationForNextApprover = new Domain.Notification
-                    {
-                        UserId = nextApprover.ApproverId,
-                        Status = Status.PendingListingFee
-                    };
-
-                    await _context.Notifications.AddAsync(notificationForNextApprover, cancellationToken);
-                }
-
-                await _context.Approval.AddAsync(newApproval, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
+                await _context.Notifications.AddAsync(notification, cancellationToken);
             }
             #endregion
+
+            if (requestedClient.Clients.Expenses != null && request.OtherExpensesId != 0)
+            {
+                var expenses = await _context.Requests
+                .Include(expenses => expenses.Expenses)
+                .Where(ex => ex.Id == request.OtherExpensesId && ex.Expenses.ClientId == requestedClient.Clients.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+                if (expenses is null)
+                {
+                    return ExpensesErrors.NotFound();
+                }
+
+                var approvers = await _context.RequestApprovers
+                    .Where(module => module.RequestId == request.OtherExpensesId)
+                    .ToListAsync(cancellationToken);
+                var currentExpensesApproverLevel = approvers
+                    .FirstOrDefault(approver =>
+                        approver.ApproverId == expenses.CurrentApproverId)?.Level;
+
+                if (approvers == null)
+                {
+                    return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
+                }
+                // Iterate over each approver
+                foreach (var approver in approvers)
+                {
+                    // Set the current approver
+                    expenses.CurrentApproverId = approver.ApproverId;
+
+                    // Add notification for the approver
+                    var notificationForApprover = new Domain.Notification
+                    {
+                        UserId = approver.ApproverId,
+                        Status = Status.PendingExpenses
+                    };
+                    await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+
+                    // Create a new approval entry
+                    var newExpensesApproval = new Approval(
+                        expenses.Id,
+                        approver.ApproverId,
+                        Status.Approved,
+                        null,
+                        true
+                    );
+                    await _context.Approval.AddAsync(newExpensesApproval, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+
+                expenses.Status = Status.Approved;
+                expenses.Expenses.Status = Status.Approved;
+
+                var notification = new Domain.Notification
+                {
+                    UserId = expenses.RequestorId,
+                    Status = Status.ApprovedExpenses
+                };
+
+                await _context.Notifications.AddAsync(notification, cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
             

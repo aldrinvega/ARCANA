@@ -108,7 +108,7 @@ public class GetClientTermsAndConditionsById : ControllerBase
                 TermDaysId = termsAndConditions.Term?.TermDaysId,
                 DirectDelivery = termsAndConditions.DirectDelivery,
                 BookingCoverage = termsAndConditions.BookingCoverages.BookingCoverage,
-                Freezer = termsAndConditions.Freezer?.AsseteTag,
+                Freezer = termsAndConditions.Freezer?.AssetTag,
                 TypeOfCustomer =termsAndConditions.CustomerType,
                 VariableDiscount = termsAndConditions.VariableDiscount,
                 FixedDiscount = termsAndConditions.FixedDiscounts != null

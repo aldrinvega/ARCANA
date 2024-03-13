@@ -177,7 +177,7 @@ public class UpdateClientInformation : ControllerBase
             //Validate if the Freezer Asset Tag is already exisit
             var freezer = await _context.Freezers
                 .FirstOrDefaultAsync(fr => 
-                fr.AsseteTag == request.Freezer,
+                fr.AssetTag == request.Freezer,
                 cancellationToken);
 
             if (request.Freezer is null)
@@ -188,7 +188,7 @@ public class UpdateClientInformation : ControllerBase
             {
                 var newFreezer = new Freezer
                 {
-                    AsseteTag = request.Freezer
+                    AssetTag = request.Freezer
                 };
 
                 _context.Freezers.Add(newFreezer);
@@ -199,7 +199,7 @@ public class UpdateClientInformation : ControllerBase
             {
                var alreadyUsedFreezer =  await _context.Clients
                     .FirstOrDefaultAsync(x => 
-                    x.Freezer.AsseteTag == request.Freezer && 
+                    x.Freezer.AssetTag == request.Freezer && 
                     x.Id != request.ClientId, 
                     cancellationToken);
 
