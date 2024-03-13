@@ -59,6 +59,7 @@
 
 
     <ItemGroup>
+		
       <Compile Remove="Abstractions\Messaging\ICommandHandler.cs" />
       <Compile Remove="Abstractions\Messaging\IQueryHandler.cs" />
       <Compile Remove="Abstractions\Messaging\ICommand.cs" />

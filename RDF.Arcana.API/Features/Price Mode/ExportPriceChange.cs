@@ -59,20 +59,29 @@ public class ExportPriceChange : ControllerBase
         public async Task<Result> Handle(ExportPriceChangeQuery request, CancellationToken cancellationToken)
         {
 
+            // Retrieve price changes for items associated with a particular price mode
             var priceChanges = await _context.PriceModeItems
-                            .Include(x => x.ItemPriceChanges)
-                            .Include(i => i.Item)
-                            .Select(priceChanges => new
-                            {
-                                priceChanges.Id,
-                                priceChanges.Item.ItemCode,
-                                priceChanges.Item.ItemDescription,
-                                CurrentPrice = priceChanges.ItemPriceChanges
-                .Where(pc => pc.EffectivityDate <= request.EffectivityDate)
-                .OrderByDescending(pc => pc.EffectivityDate)
-                .Select(pc => pc.Price)
-                .FirstOrDefault()
-                            }).ToListAsync();
+                .Include(x => x.ItemPriceChanges)
+                .Include(i => i.Item)
+                .Include(pm => pm.PriceMode) 
+                .Select(priceChanges => new
+                {
+                    // Select required properties
+                    priceChanges.Id,
+                    priceChanges.Item.ItemCode,
+                    priceChanges.Item.ItemDescription,
+                    priceChanges.PriceMode.PriceModeDescription,
+                    // Calculate current price based on the most recent price change that is effective on or before the provided date
+                    CurrentPrice = priceChanges.ItemPriceChanges
+                        .Where(pc => pc.EffectivityDate <= request.EffectivityDate)
+                        .OrderByDescending(pc => pc.EffectivityDate)
+                        // Select the price from the first (most recent) price change
+                        .Select(pc => pc.Price)
+                        // Retrieve the first price from the sequence, or a default value if the sequence is empty
+                        .FirstOrDefault()
+                })
+                // Execute the query asynchronously and return the results as a list
+                .ToListAsync();
 
             using (var workbook = new XLWorkbook())
             {
@@ -83,6 +92,7 @@ public class ExportPriceChange : ControllerBase
                 "Id", 
                 "Item Code",
                 "Item Description",
+                "Price Mode",
                 "Current Price"
             };
 
@@ -106,7 +116,8 @@ public class ExportPriceChange : ControllerBase
                     row.Cell(1).Value = priceChanges[index - 1].Id;
                     row.Cell(2).Value = priceChanges[index - 1].ItemCode;
                     row.Cell(3).Value = priceChanges[index - 1].ItemDescription;
-                    row.Cell(4).Value = priceChanges[index - 1].CurrentPrice;
+                    row.Cell(4).Value = priceChanges[index - 1].PriceModeDescription;
+                    row.Cell(5).Value = priceChanges[index - 1].CurrentPrice;
                 }
 
                 worksheet.Columns().AdjustToContents();
