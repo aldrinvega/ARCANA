@@ -51,7 +51,7 @@ public class AddNewExpenses : ControllerBase
         public class ExpensesCollection
         {
             public int OtherExpenseId { get; set; }
-            
+            public string Remarks { get; set; }
             public decimal Amount { get; set; }
         }
         public int AddedBy { get; set; }
@@ -129,6 +129,7 @@ public class AddNewExpenses : ControllerBase
                 {
                     ExpensesId = newExpenses.Id,
                     OtherExpenseId = expenses.OtherExpenseId,
+                    Remarks = expenses.Remarks,
                     Amount = expenses.Amount
                 };
 

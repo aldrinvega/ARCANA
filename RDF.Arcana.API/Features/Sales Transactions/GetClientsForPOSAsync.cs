@@ -61,6 +61,9 @@ public class GetClientsForPOSAsync : ControllerBase
         public string OwnersName { get; set; }
         public string BusinessName { get; set; }
         public int? PriceModeId { get; set; }
+        public decimal? DiscountPercentage { get; set; }
+        public bool? VariableDiscount { get; set; }
+        public decimal? SpecialDiscount { get; set; }
     }
 
     public class Handler : IRequestHandler<GetClientsForPOSAsyncQuery, Result>
@@ -81,13 +84,18 @@ public class GetClientsForPOSAsync : ControllerBase
             if (userClusters != null)
             {
                 clients = await _context.Clients
+                    .Include(fd => fd.FixedDiscounts)
+                    .Include(sp => sp.SpecialDiscounts)
                     .Where(x => x.RegistrationStatus == Status.Approved && x.ClusterId == userClusters.ClusterId)
                     .Select(cl => new GetClientsForPOSAsyncResult
                     {
                         ClientId = cl.Id,
                         BusinessName = cl.BusinessName,
                         OwnersName = cl.Fullname,
-                        PriceModeId = cl.PriceModeId
+                        PriceModeId = cl.PriceModeId,
+                        VariableDiscount = cl.VariableDiscount,
+                        DiscountPercentage = cl.FixedDiscounts.DiscountPercentage,
+                        SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 
@@ -109,7 +117,10 @@ public class GetClientsForPOSAsync : ControllerBase
                         ClientId = cl.Id,
                         BusinessName = cl.BusinessName,
                         OwnersName = cl.Fullname,
-                        PriceModeId = cl.PriceModeId
+                        PriceModeId = cl.PriceModeId,
+                        VariableDiscount = cl.VariableDiscount,
+                        DiscountPercentage = cl.FixedDiscounts.DiscountPercentage,
+                        SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 
@@ -120,8 +131,6 @@ public class GetClientsForPOSAsync : ControllerBase
                         cl.BusinessName.Contains(request.Search)).ToList();
                 }
             }
-
-            
 
             return Result.Success(clients);
 

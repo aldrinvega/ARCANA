@@ -54,6 +54,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<PriceMode> PriceMode { get; set; }
     public virtual DbSet<PriceModeItems> PriceModeItems { get; set; }
     public virtual DbSet<SpecialDiscount> SpecialDiscounts { get; set; }
+    public virtual DbSet<Freezer> Freezers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -304,6 +305,7 @@ public class ArcanaDbContext : DbContext
         modelBuilder.Entity<OwnersAddress>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
         modelBuilder.Entity<BusinessAddress>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
         modelBuilder.Entity<FixedDiscounts>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
+        modelBuilder.Entity<Freezer>().Property(p => p.Id).UseHiLo("arcana_hilo_sequence");
 
 
         modelBuilder.Entity<User>().HasData(

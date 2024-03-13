@@ -49,7 +49,6 @@ public class AddTermsAndCondition : ControllerBase
     public record AddTermsAndConditionsCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
-        public bool Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
         public int BookingCoverageId { get; set; }
@@ -60,6 +59,7 @@ public class AddTermsAndCondition : ControllerBase
         public Dicount FixedDiscount { get; set; }
         public bool VariableDiscount { get; set; }
         public int AddedBy { get; set; }
+        public string Freezer { get; set; }
 
         public class Dicount
         {
@@ -87,10 +87,24 @@ public class AddTermsAndCondition : ControllerBase
             );
 
             if (existingClient == null) throw new ClientIsNotFound(request.ClientId);
+
+            if(request.Freezer != null)
+            {
+                var freezer = new Freezer
+                {
+                    AsseteTag = request.Freezer
+                };
+
+                await _context.Freezers.AddAsync(freezer, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                existingClient.FreezerId = freezer.Id;
+            }
+
             existingClient.CustomerType = request.TypeOfCustomer;
-            existingClient.Freezer = request.Freezer;
             existingClient.DirectDelivery = request.DirectDelivery;
             existingClient.BookingCoverageId = request.BookingCoverageId;
+
 
             var limit = request.CreditLimit;
 
