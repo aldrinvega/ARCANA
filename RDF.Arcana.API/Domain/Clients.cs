@@ -31,7 +31,7 @@ public class Clients : BaseEntity
     public int? BusinessAddressId { get; set; }
     public int? ClusterId { get; set; }
     public int? PriceModeId { get; set; }
-    public bool Freezer { get; set; }
+    public int? FreezerId { get; set; }
     public string CustomerType { get; set; }
     public string Origin { get; set; }
     public int? TermDays { get; set; }
@@ -67,6 +67,7 @@ public class Clients : BaseEntity
     public virtual Cluster Cluster { get; set; }
     public virtual ICollection<ClientModeOfPayment> ClientModeOfPayment { get; set; }
     public virtual ICollection<Expenses> Expenses { get; set; }
-
+    public virtual ICollection<SpecialDiscount> SpecialDiscounts { get; set; }
     public virtual PriceMode PriceMode { get; set; }
+    public virtual Freezer Freezer { get; set; }
 }

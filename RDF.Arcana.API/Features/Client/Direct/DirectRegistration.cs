@@ -33,7 +33,7 @@ public class DirectRegistrationCommand : IRequest<Result>
     public string AuthorizedRepresentativePosition { get; set; }
     public int ClusterId { get; set; }
     public int PriceModeId { get; set; }
-    public bool Freezer { get; set; }
+    public string Freezer { get; set; }
     public string TypeOfCustomer { get; set; }
     public bool DirectDelivery { get; set; }
     public int BookingCoverageId { get; set; }
@@ -200,6 +200,13 @@ public class Handler : IRequestHandler<DirectRegistrationCommand, Result>
             };
             _context.BusinessAddress.Add(businessAddress);
 
+            var freezer = new Freezer
+            {
+                AsseteTag = request.Freezer,
+            };
+
+            _context.Freezers.Add(freezer);
+
             var directClients = new Domain.Clients
             {
                 Fullname = request.OwnersName,
@@ -215,7 +222,7 @@ public class Handler : IRequestHandler<DirectRegistrationCommand, Result>
                 RepresentativePosition = request.AuthorizedRepresentativePosition,
                 ClusterId = request.ClusterId,
                 PriceModeId = request.PriceModeId,
-                Freezer = request.Freezer,
+                FreezerId = freezer.Id,
                 CustomerType = request.TypeOfCustomer,
                 DirectDelivery = request.DirectDelivery,
                 BookingCoverageId = request.BookingCoverageId,

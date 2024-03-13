@@ -82,6 +82,8 @@ public class RegisterClient : ControllerBase
     {
         private readonly ArcanaDbContext _context;
 
+
+
         public Handler(ArcanaDbContext context)
         {
             _context = context;

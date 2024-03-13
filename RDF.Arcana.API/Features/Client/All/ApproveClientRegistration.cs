@@ -68,6 +68,8 @@ public class ApproveClientRegistration : ControllerBase
 
         public async Task<Result> Handle(ApprovedClientRegistrationCommand request, CancellationToken cancellationToken)
         {
+
+            //Validate client if exisit
             var requestedClient = await _context.Requests
                 .Include(client => client.Clients)
                 .ThenInclude(lf => lf.ListingFees)
@@ -81,10 +83,12 @@ public class ApproveClientRegistration : ControllerBase
 
             #region Registration Approvers
 
+            //Get all the approvers for the request 
             var registrationApprovers = await _context.RequestApprovers
                 .Where(rq => rq.RequestId == request.RegistrationRequestId)
                 .ToListAsync(cancellationToken);
             
+            //Get the current approval level of current approver
             var currentApproverLevel = registrationApprovers
                 .FirstOrDefault(approver => approver.ApproverId == requestedClient.CurrentApproverId)?.Level;
             
@@ -93,6 +97,7 @@ public class ApproveClientRegistration : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.RegistrationApproval);
             }
             
+            //Add new approval
             var newApproval = new Approval(
                 requestedClient.Id,
                 requestedClient.CurrentApproverId,
@@ -101,16 +106,20 @@ public class ApproveClientRegistration : ControllerBase
                 true
             );
             
+            //Validate if there is a next level for this approval
             var nextLevel = currentApproverLevel.Value + 1;
             var nextApprover = registrationApprovers
                 .FirstOrDefault(approver => approver.Level == nextLevel);
 
+            //Get the succeeding approver
             var suceedingApprover = registrationApprovers.FirstOrDefault(ap => ap.Level ==  nextLevel + 1);
 
             if(suceedingApprover == null )
             {
                 requestedClient.NextApproverId = null;
             }
+
+            //If no approver, approve the request
             
             if (nextApprover == null)
             {
@@ -135,6 +144,7 @@ public class ApproveClientRegistration : ControllerBase
                 await _context.Notifications.AddAsync(notification, cancellationToken);
                 
             }
+            //Send the request to the next approver
             else
             {
                 var notificationForCurrentApprover = new Domain.Notification
@@ -161,6 +171,8 @@ public class ApproveClientRegistration : ControllerBase
             #endregion
 
             #region Listing Fee Approvals
+
+            //Approval of listing fee
             if(requestedClient.Clients.ListingFees.Count > 0 && request.ListingFeeRequestId is not null)
             {
                 var listingFees = await _context.Requests

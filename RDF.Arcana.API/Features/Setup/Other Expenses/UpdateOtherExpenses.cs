@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Update.Internal;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
@@ -59,11 +58,21 @@ public class UpdateOtherExpenses : ControllerBase
             var existingOtherExpenses = await _context.OtherExpenses.FirstOrDefaultAsync(oe => oe.Id == request.OtherExpensesId,
                     cancellationToken);
 
+            var alreadyExisit = await _context.OtherExpenses
+                .AnyAsync(oe => 
+                oe.ExpenseType == request.ExpenseType && 
+                oe.Id != request.OtherExpensesId, 
+                cancellationToken);
+
             if (existingOtherExpenses is null)
             {
                 return OtherExpensesErrors.NotFound();
             }
 
+            if (alreadyExisit)
+            {
+                return OtherExpensesErrors.AlreadyExist(request.ExpenseType);
+            }
             existingOtherExpenses.ExpenseType = request.ExpenseType;
             existingOtherExpenses.UpdatedAt = DateTime.Now;
 

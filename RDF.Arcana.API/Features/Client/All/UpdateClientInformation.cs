@@ -9,7 +9,6 @@ using RDF.Arcana.API.Features.Setup.Mode_Of_Payment;
 using RDF.Arcana.API.Features.Setup.Store_Type;
 using RDF.Arcana.API.Features.Setup.Term_Days;
 using RDF.Arcana.API.Features.Setup.Terms;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Client.All;
@@ -75,7 +74,7 @@ public class UpdateClientInformation : ControllerBase
         public string AuthorizedRepresentative { get; set; }
         public string AuthorizedRepresentativePosition { get; set; }
         public int ClusterId { get; set; }
-        public bool Freezer { get; set; }
+        public string Freezer { get; set; }
         public string TypeOfCustomer { get; set; }
         public bool DirectDelivery { get; set; }
         public int BookingCoverageId { get; set; }
@@ -131,6 +130,7 @@ public class UpdateClientInformation : ControllerBase
         public async Task<Result> Handle(UpdateClientInformationCommand request, CancellationToken cancellationToken)
         {
             var existingClient = await _context.Clients
+                .Include(fr => fr.Freezer)
                 .Include(st => st.StoreType)
                 .Include(fd => fd.FixedDiscounts)
                 .Include(to => to.Term)
@@ -173,6 +173,43 @@ public class UpdateClientInformation : ControllerBase
                 .Where(x => x.RequestId == existingClient.RequestId)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
+
+            //Validate if the Freezer Asset Tag is already exisit
+            var freezer = await _context.Freezers
+                .FirstOrDefaultAsync(fr => 
+                fr.AsseteTag == request.Freezer,
+                cancellationToken);
+
+            if (request.Freezer is null)
+            {
+                existingClient.FreezerId = null;
+            }
+            else if (freezer == null && request.Freezer is not null)
+            {
+                var newFreezer = new Freezer
+                {
+                    AsseteTag = request.Freezer
+                };
+
+                _context.Freezers.Add(newFreezer);
+
+                existingClient.FreezerId = newFreezer.Id;
+            }
+            else
+            {
+               var alreadyUsedFreezer =  await _context.Clients
+                    .FirstOrDefaultAsync(x => 
+                    x.Freezer.AsseteTag == request.Freezer && 
+                    x.Id != request.ClientId, 
+                    cancellationToken);
+
+                if(alreadyUsedFreezer is not null)
+                {
+                    return ClientErrors.FreezerAlreadyTagged(request.Freezer);
+                }
+
+                existingClient.FreezerId = freezer.Id;
+            }
 
             if (!approver.Any())
             {
@@ -274,7 +311,6 @@ public class UpdateClientInformation : ControllerBase
             existingClient.RepresentativePosition = request.AuthorizedRepresentativePosition;
             existingClient.ClusterId = request.ClusterId;
             existingClient.PriceModeId = request.PriceModeId;
-            existingClient.Freezer = request.Freezer;
             existingClient.CustomerType = request.TypeOfCustomer;
             existingClient.DirectDelivery = request.DirectDelivery;
             existingClient.BookingCoverageId = request.BookingCoverageId;
