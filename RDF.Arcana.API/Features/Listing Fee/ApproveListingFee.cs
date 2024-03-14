@@ -98,7 +98,12 @@ public class ApproveListingFee : ControllerBase
             {
                 return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
-            
+
+            if (listingFees.CurrentApproverId != request.ApprovedBy)
+            {
+                return ApprovalErrors.NotAllowed(Modules.ListingFeeApproval);
+            }
+
             var newApproval = new Approval(
                 listingFees.Id,
                 listingFees.CurrentApproverId,

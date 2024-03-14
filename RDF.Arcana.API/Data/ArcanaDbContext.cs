@@ -55,6 +55,9 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<PriceModeItems> PriceModeItems { get; set; }
     public virtual DbSet<SpecialDiscount> SpecialDiscounts { get; set; }
     public virtual DbSet<Freezer> Freezers { get; set; }
+    public virtual DbSet<Transactions> Transactions { get; set; }
+    public virtual DbSet<TransactionItems> TransactionItems { get; set; }
+    public virtual DbSet<TransactionSales> TransactionSales { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -414,5 +417,20 @@ public class ArcanaDbContext : DbContext
            .HasOne(x => x.ModifiedByUser)
            .WithMany()
            .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<Transactions>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<TransactionItems>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<TransactionSales>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
     }
 }

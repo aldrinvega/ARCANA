@@ -47,6 +47,7 @@ public class UpdateExpenseInformation : ControllerBase
             public int Id { get; set; }
             public int OtherExpenseId { get; set; }
             public decimal Amount { get; set; }
+            public string Remarks { get; set; }
         }
         
     }
@@ -131,6 +132,7 @@ public class UpdateExpenseInformation : ControllerBase
                     {
                         ExpensesId = request.ExpenseId,
                         Amount = expense.Amount,
+                        Remarks = expense.Remarks,
                         OtherExpenseId = expense.OtherExpenseId
                     });
                 }

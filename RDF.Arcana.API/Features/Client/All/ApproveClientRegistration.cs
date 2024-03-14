@@ -79,6 +79,7 @@ public class ApproveClientRegistration : ControllerBase
                 .Include(client => client.Clients)
                 .ThenInclude(lf => lf.ListingFees)
                 .Include(client => client.Clients)
+                .Include(expenses => expenses.Expenses)
                 .Where(client => client.Id == request.RegistrationRequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -184,7 +185,7 @@ public class ApproveClientRegistration : ControllerBase
             #region Listing Fee Approvals
 
             //Approval of listing fee
-            if (requestedClient.Clients.ListingFees.Count > 0 && request.ListingFeeRequestId != 0)
+            if (requestedClient.Clients.ListingFees != null && request.ListingFeeRequestId != 0)
             {
                 var listingFees = await _context.Requests
                 .Include(listing => listing.ListingFee)
