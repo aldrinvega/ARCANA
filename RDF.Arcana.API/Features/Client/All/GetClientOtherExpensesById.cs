@@ -58,6 +58,7 @@ namespace RDF.Arcana.API.Features.Client.All
                 {
                     public string ExpenseType { get; set; }
                     public decimal Amount { get; set; }
+                    public string Remarks { get; set; }
                 }
             }
         }
@@ -89,6 +90,7 @@ namespace RDF.Arcana.API.Features.Client.All
                         Expenses = x.ExpensesRequests.Select(x => new ClientOtherExpensesResult.ExpensesResult.ClientExpensesCollection
                         {
                             Amount = x.Amount,
+                            Remarks = x.Remarks,
                             ExpenseType = x.OtherExpense.ExpenseType
                         })
                     })

@@ -165,7 +165,7 @@ public class GetAllRegisteredClients : ControllerBase
                         Province = client.BusinessAddress.Province
                     },
                     ClusterId = client.ClusterId,
-                    Freezer = client.Freezer.AsseteTag,
+                    Freezer = client.Freezer.AssetTag,
                     CustomerType = client.CustomerType,
                     TermDays = client.TermDays ?? 0,
                     DiscountId = client.DiscountId ?? 0,

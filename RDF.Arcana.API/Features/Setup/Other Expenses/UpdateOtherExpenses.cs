@@ -73,6 +73,7 @@ public class UpdateOtherExpenses : ControllerBase
             {
                 return OtherExpensesErrors.AlreadyExist(request.ExpenseType);
             }
+
             existingOtherExpenses.ExpenseType = request.ExpenseType;
             existingOtherExpenses.UpdatedAt = DateTime.Now;
 

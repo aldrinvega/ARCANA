@@ -92,7 +92,7 @@ public class AddTermsAndCondition : ControllerBase
             {
                 var freezer = new Freezer
                 {
-                    AsseteTag = request.Freezer
+                    AssetTag = request.Freezer
                 };
 
                 await _context.Freezers.AddAsync(freezer, cancellationToken);

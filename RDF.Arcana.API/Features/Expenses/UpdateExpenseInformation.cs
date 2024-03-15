@@ -47,6 +47,7 @@ public class UpdateExpenseInformation : ControllerBase
             public int Id { get; set; }
             public int OtherExpenseId { get; set; }
             public decimal Amount { get; set; }
+            public string Remarks { get; set; }
         }
         
     }
@@ -68,6 +69,8 @@ public class UpdateExpenseInformation : ControllerBase
                 .Where(lf => lf.Id == request.ExpenseId)
                 .Include(x => x.Request)
                 .ThenInclude(x => x.Approvals)
+                .Include(x => x.Request)
+                .ThenInclude(x => x.UpdateRequestTrails)
                 .FirstOrDefaultAsync(cancellationToken);
             
              var approver = await _context.RequestApprovers
@@ -95,6 +98,25 @@ public class UpdateExpenseInformation : ControllerBase
                 expenses.ExpensesRequests.Remove(forRemove);
             }
 
+            //// Check if there are no listing fee items left, and delete the request if true
+            //if (!expenses.ExpensesRequests.Any())
+            //{
+            //    // Remove update request trails
+            //    _context.UpdateRequestTrails.RemoveRange(expenses.Request.UpdateRequestTrails);
+
+            //    // Remove the listing fee entity
+            //    _context.Expenses.Remove(expenses);
+
+            //    // Remove associated approvals
+            //    _context.Approval.RemoveRange(expenses.Request.Approvals);
+
+            //    //Remove the whole request
+            //    _context.Requests.Remove(expenses.Request);
+
+            //    await _context.SaveChangesAsync(cancellationToken);
+            //    return Result.Success();
+            //}
+
             foreach (var expense in request.Expenses)
             {
                 var expensesToAdd = expenses.ExpensesRequests.FirstOrDefault(x => x.Id == expense.Id);
@@ -110,6 +132,7 @@ public class UpdateExpenseInformation : ControllerBase
                     {
                         ExpensesId = request.ExpenseId,
                         Amount = expense.Amount,
+                        Remarks = expense.Remarks,
                         OtherExpenseId = expense.OtherExpenseId
                     });
                 }

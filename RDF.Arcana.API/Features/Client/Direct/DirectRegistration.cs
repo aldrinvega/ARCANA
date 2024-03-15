@@ -202,7 +202,7 @@ public class Handler : IRequestHandler<DirectRegistrationCommand, Result>
 
             var freezer = new Freezer
             {
-                AsseteTag = request.Freezer,
+                AssetTag = request.Freezer,
             };
 
             _context.Freezers.Add(freezer);

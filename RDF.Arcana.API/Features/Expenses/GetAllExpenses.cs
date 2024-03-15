@@ -153,20 +153,20 @@ public class GetAllExpenses : ControllerBase
                 !string.IsNullOrWhiteSpace(request.ExpenseStatus) &&
                              request.ExpenseStatus.ToLower() != Status.UnderReview.ToLower():
                     expenses = expenses.Where(lf => lf.Request.Approvals.Any(x =>
-                        x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive));
+                        x.Status == request.ExpenseStatus && x.ApproverId == request.AccessBy && x.IsActive) && lf.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 case var roleName when roleName.Contains(Roles.Approver):
                     expenses = expenses.Where(lf =>
-                        lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy);
+                        lf.Request.Status == request.ExpenseStatus && lf.Request.CurrentApproverId == request.AccessBy && lf.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 case Roles.Cdo:
-                    expenses = expenses.Where(x => x.Status == request.ExpenseStatus && x.Client.ClusterId == userClusters.ClusterId);
+                    expenses = expenses.Where(x => x.Status == request.ExpenseStatus && x.Client.ClusterId == userClusters.ClusterId && x.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 case Roles.Admin:
-                    expenses = expenses.Where(x => x.Status == request.ExpenseStatus);
+                    expenses = expenses.Where(x => x.Status == request.ExpenseStatus && x.Client.RegistrationStatus != Status.UnderReview);
                     break;
 
                 default:
@@ -178,7 +178,7 @@ public class GetAllExpenses : ControllerBase
 
             if (request.RoleName.Contains(Roles.Approver) && request.ExpenseStatus == Status.UnderReview)
             {
-                expenses = expenses.Where(x => x.Request.CurrentApproverId == request.AccessBy);
+                expenses = expenses.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus != Status.UnderReview);
             }
 
             if (request.Status != null)

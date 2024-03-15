@@ -17,6 +17,7 @@
         <PackageReference Include="B2Net" Version="0.7.5" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
         <PackageReference Include="Carter" Version="7.1.0" />
+        <PackageReference Include="ClosedXML" Version="0.102.2" />
         <PackageReference Include="CloudinaryDotNet" Version="1.22.0" />
         <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
         <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="7.0.0" />
@@ -58,6 +59,7 @@
 
 
     <ItemGroup>
+		
       <Compile Remove="Abstractions\Messaging\ICommandHandler.cs" />
       <Compile Remove="Abstractions\Messaging\IQueryHandler.cs" />
       <Compile Remove="Abstractions\Messaging\ICommand.cs" />

@@ -10,6 +10,7 @@ using RDF.Arcana.API.Features.Setup.Store_Type;
 using RDF.Arcana.API.Features.Setup.Term_Days;
 using RDF.Arcana.API.Features.Setup.Terms;
 using System.Security.Claims;
+using static RDF.Arcana.API.Features.Listing_Fee.GetAllClientsInListingFee.GetAllClientsInListingFeeResult;
 
 namespace RDF.Arcana.API.Features.Client.All;
 [Route("api/Client"), ApiController]
@@ -24,7 +25,10 @@ public class UpdateClientInformation : ControllerBase
     }
 
     [HttpPut("UpdateClientInformation/{id:int}")]
-    public async Task<IActionResult> UpdateClient(UpdateClientInformationCommand command, [FromRoute] int id)
+    public async Task<IActionResult> UpdateClient(UpdateClientInformationCommand command, 
+        [FromRoute] int id, 
+        [FromQuery] int listingFeeRequestId, 
+        [FromQuery] int otherExpensesRequestId)
     {
         try
         {
@@ -40,7 +44,8 @@ public class UpdateClientInformation : ControllerBase
             }
 
             command.ClientId = id;
-
+            command.ListingFeeRequestId = listingFeeRequestId;
+            command.ExpensesRequestId = otherExpensesRequestId;
 
             var result = await _mediator.Send(command);
 
@@ -62,6 +67,9 @@ public class UpdateClientInformation : ControllerBase
         public string RoleName { get; set; }
 
         public int ClientId { get; set; }
+        public int? ListingFeeRequestId { get; set; }
+        public int? ExpensesRequestId { get; set; }
+        public int Expense { get; set; }
         public string OwnersName { get; set; }
         public OwnersAddressToUpdate OwnersAddress { get; set; }
         public string EmailAddress { get; set; }
@@ -144,6 +152,12 @@ public class UpdateClientInformation : ControllerBase
                 .Include(clients => clients.Request)
                 .ThenInclude(approval => approval.Approvals)
                 .Include(clients => clients.ClientModeOfPayment)
+                .Include(lf => lf.ListingFees)
+                .ThenInclude(rq => rq.Request)
+                .ThenInclude(ap => ap.Approvals)
+                .Include(ex => ex.Expenses)
+                .ThenInclude(rq => rq.Request)
+                .ThenInclude(ap => ap.Approvals)
                 .FirstOrDefaultAsync(client => client.Id == request.ClientId, cancellationToken);
 
             
@@ -174,10 +188,22 @@ public class UpdateClientInformation : ControllerBase
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
 
+            //Get all the existing approver for the listing fee request
+            var listingFeeApprover = await _context.RequestApprovers
+                .Where(x => x.RequestId == existingClient.RequestId)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
+
+            //Get all the existing approver for the request
+            var expensesApprover = await _context.RequestApprovers
+                .Where(x => x.RequestId == existingClient.RequestId)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
+
             //Validate if the Freezer Asset Tag is already exisit
             var freezer = await _context.Freezers
                 .FirstOrDefaultAsync(fr => 
-                fr.AsseteTag == request.Freezer,
+                fr.AssetTag == request.Freezer,
                 cancellationToken);
 
             if (request.Freezer is null)
@@ -188,7 +214,7 @@ public class UpdateClientInformation : ControllerBase
             {
                 var newFreezer = new Freezer
                 {
-                    AsseteTag = request.Freezer
+                    AssetTag = request.Freezer
                 };
 
                 _context.Freezers.Add(newFreezer);
@@ -199,7 +225,7 @@ public class UpdateClientInformation : ControllerBase
             {
                var alreadyUsedFreezer =  await _context.Clients
                     .FirstOrDefaultAsync(x => 
-                    x.Freezer.AsseteTag == request.Freezer && 
+                    x.Freezer.AssetTag == request.Freezer && 
                     x.Id != request.ClientId, 
                     cancellationToken);
 
@@ -356,8 +382,53 @@ public class UpdateClientInformation : ControllerBase
                 };
 
                 await _context.Notifications.AddAsync(notification, cancellationToken);
+
+
+                //if(existingClient.RegistrationStatus == Status.Rejected)
+                //{
+                //    //Expenses
+
+                //    var expenses = await _context.Requests
+                //        .Include(x => x.Expenses)
+                //        .FirstOrDefaultAsync(x => x.Id == request.ExpensesRequestId, cancellationToken);
+                //    if (expenses is not null)
+                //    {
+                //        expenses.Status = Status.UnderReview;
+                //        expenses.CurrentApproverId = listingFeeApprover.First().ApproverId;
+                //        expenses.Expenses.Status = Status.UnderReview;
+
+                //        foreach (var approval in expenses.Approvals)
+                //        {
+                //            approval.IsActive = false;
+                //        }
+                //        await _context.SaveChangesAsync(cancellationToken);
+
+                //    }
+
+
+                //    //Listing Fee
+
+                //    var listingFee = await _context.Requests
+                //        .Include(x => x.ListingFee)
+                //        .FirstOrDefaultAsync(x => x.Id == request.ListingFeeRequestId, cancellationToken);
+                //    if (listingFee is not null)
+                //    {
+                //        listingFee.Status = Status.UnderReview;
+                //        listingFee.CurrentApproverId = listingFeeApprover.First().ApproverId;
+                //        listingFee.ListingFee.Status = Status.UnderReview;
+
+                //        foreach (var approval in listingFee.Approvals)
+                //        {
+                //            approval.IsActive = false;
+                //        }
+                //        await _context.SaveChangesAsync(cancellationToken);
+
+                //    }
+                //}
+
+               
+
             }
-            
 
             if (request.FixedDiscount.DiscountPercentage.HasValue)
             {

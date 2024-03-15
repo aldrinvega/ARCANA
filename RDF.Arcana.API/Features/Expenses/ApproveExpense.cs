@@ -88,7 +88,12 @@ public class ApproveExpense : ControllerBase
             {
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
-            
+
+            if (expenses.CurrentApproverId != request.ApprovedBy)
+            {
+                return ApprovalErrors.NotAllowed(Modules.OtherExpensesApproval);
+            }
+
             var newApproval = new Approval(
                 expenses.Id,
                 expenses.CurrentApproverId,

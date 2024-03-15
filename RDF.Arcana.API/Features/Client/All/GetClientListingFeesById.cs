@@ -81,7 +81,7 @@ namespace RDF.Arcana.API.Features.Client.All
                     .ThenInclude(i => i.Item)
                     .ThenInclude(u => u.Uom)
                     .Where(cl => cl.ClientId == request.ClientId)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken: cancellationToken);
 
                 var listingFee =  new ClientListingFees
                 {

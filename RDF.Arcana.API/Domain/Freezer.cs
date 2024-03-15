@@ -4,5 +4,5 @@ namespace RDF.Arcana.API.Domain;
 
 public class Freezer : BaseEntity
 {
-    public string AsseteTag { get; set; }
+    public string AssetTag { get; set; }
 }
