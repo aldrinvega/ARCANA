@@ -23,7 +23,7 @@ public class ApproveClientRegistration : ControllerBase
     }
 
     [HttpPut("ApproveClientRegistration/{id:int}")]
-    public async Task<IActionResult> ApproveForRegularRegistration([FromRoute] int id, [FromQuery] int ListingFeeRequestId, [FromQuery] int OtherExpensesId)
+    public async Task<IActionResult> ApproveForRegularRegistration([FromRoute] int id, [FromQuery] int ListingFeeRequestId, [FromQuery] int OtherExpensesRequestId)
     {
         try
         {
@@ -36,7 +36,7 @@ public class ApproveClientRegistration : ControllerBase
             {
                 RegistrationRequestId = id,
                 ListingFeeRequestId = ListingFeeRequestId,
-                OtherExpensesId = OtherExpensesId,
+                OtherExpensesRequestId = OtherExpensesRequestId,
                 UserId = userId
             };
             var result = await _mediator.Send(command);
@@ -58,7 +58,7 @@ public class ApproveClientRegistration : ControllerBase
     {
         public int? ListingFeeRequestId { get; set; }
         public int RegistrationRequestId { get; set; }
-        public int? OtherExpensesId { get; set; }
+        public int? OtherExpensesRequestId { get; set; }
         public int UserId { get; set; }
     }
 
@@ -79,7 +79,7 @@ public class ApproveClientRegistration : ControllerBase
                 .Include(client => client.Clients)
                 .ThenInclude(lf => lf.ListingFees)
                 .Include(client => client.Clients)
-                .Include(expenses => expenses.Expenses)
+                .ThenInclude(expenses => expenses.Expenses)
                 .Where(client => client.Id == request.RegistrationRequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -198,7 +198,7 @@ public class ApproveClientRegistration : ControllerBase
                 }
 
                 var approvers = await _context.RequestApprovers
-                    .Where(module => module.RequestId == request.OtherExpensesId)
+                    .Where(module => module.RequestId == request.OtherExpensesRequestId)
                     .ToListAsync(cancellationToken);
                 var currentListingFeeApproverLevel = approvers
                     .FirstOrDefault(approver =>
@@ -248,11 +248,11 @@ public class ApproveClientRegistration : ControllerBase
             }
             #endregion
 
-            if (requestedClient.Clients.Expenses != null && request.OtherExpensesId != 0)
+            if (requestedClient.Clients.Expenses != null && request.OtherExpensesRequestId != 0)
             {
                 var expenses = await _context.Requests
                 .Include(expenses => expenses.Expenses)
-                .Where(ex => ex.Id == request.OtherExpensesId && ex.Expenses.ClientId == requestedClient.Clients.Id)
+                .Where(ex => ex.Id == request.OtherExpensesRequestId && ex.Expenses.ClientId == requestedClient.Clients.Id)
                 .FirstOrDefaultAsync(cancellationToken);
 
                 if (expenses is null)
@@ -261,7 +261,7 @@ public class ApproveClientRegistration : ControllerBase
                 }
 
                 var approvers = await _context.RequestApprovers
-                    .Where(module => module.RequestId == request.OtherExpensesId)
+                    .Where(module => module.RequestId == request.OtherExpensesRequestId)
                     .ToListAsync(cancellationToken);
                 var currentExpensesApproverLevel = approvers
                     .FirstOrDefault(approver =>

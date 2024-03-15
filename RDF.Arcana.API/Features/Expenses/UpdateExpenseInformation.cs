@@ -98,24 +98,24 @@ public class UpdateExpenseInformation : ControllerBase
                 expenses.ExpensesRequests.Remove(forRemove);
             }
 
-            // Check if there are no listing fee items left, and delete the request if true
-            if (!expenses.ExpensesRequests.Any())
-            {
-                // Remove update request trails
-                _context.UpdateRequestTrails.RemoveRange(expenses.Request.UpdateRequestTrails);
+            //// Check if there are no listing fee items left, and delete the request if true
+            //if (!expenses.ExpensesRequests.Any())
+            //{
+            //    // Remove update request trails
+            //    _context.UpdateRequestTrails.RemoveRange(expenses.Request.UpdateRequestTrails);
 
-                // Remove the listing fee entity
-                _context.Expenses.Remove(expenses);
+            //    // Remove the listing fee entity
+            //    _context.Expenses.Remove(expenses);
 
-                // Remove associated approvals
-                _context.Approval.RemoveRange(expenses.Request.Approvals);
+            //    // Remove associated approvals
+            //    _context.Approval.RemoveRange(expenses.Request.Approvals);
 
-                //Remove the whole request
-                _context.Requests.Remove(expenses.Request);
+            //    //Remove the whole request
+            //    _context.Requests.Remove(expenses.Request);
 
-                await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success();
-            }
+            //    await _context.SaveChangesAsync(cancellationToken);
+            //    return Result.Success();
+            //}
 
             foreach (var expense in request.Expenses)
             {
