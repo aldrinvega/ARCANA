@@ -12,7 +12,7 @@ public class Transactions : BaseEntity
 
     public virtual Clients Client { get; set; }
     public virtual User AddedByUser { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 
     public virtual ICollection<TransactionItems> TransactionItems { get; set; }
 }
