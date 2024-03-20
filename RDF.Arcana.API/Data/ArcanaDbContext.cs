@@ -58,6 +58,9 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Transactions> Transactions { get; set; }
     public virtual DbSet<TransactionItems> TransactionItems { get; set; }
     public virtual DbSet<TransactionSales> TransactionSales { get; set; }
+    public virtual DbSet<CashAdvancePayment> CashAdvancePayments { get; set; }
+    public virtual DbSet<ChequeAdvancePayment> ChequeAdvancePayments { get; set; }
+    public virtual DbSet<OnlineAdvancePayment> OnlineAdvancePayments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -432,5 +435,33 @@ public class ArcanaDbContext : DbContext
            .HasOne(x => x.AddedByUser)
            .WithMany()
            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<CashAdvancePayment>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
+        modelBuilder.Entity<CashAdvancePayment>()
+           .HasOne(x => x.ModifiedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<OnlineAdvancePayment>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
+        modelBuilder.Entity<OnlineAdvancePayment>()
+           .HasOne(x => x.ModifedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<ChequeAdvancePayment>()
+           .HasOne(x => x.AddedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.AddedBy);
+        modelBuilder.Entity<ChequeAdvancePayment>()
+           .HasOne(x => x.ModifiedByUser)
+           .WithMany()
+           .HasForeignKey(x => x.ModifiedBy);
+
     }
 }
