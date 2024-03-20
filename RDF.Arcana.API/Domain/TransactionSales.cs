@@ -17,11 +17,16 @@ public class TransactionSales : BaseEntity
     public decimal AddVat { get; set; }
     [Column(TypeName = "decimal(10,2)")]
     public decimal TotalAmountDue { get; set; }
-
+    public decimal Discount { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public decimal SpecialDiscount { get; set; }
+    public decimal SpecialDiscountAmount { get; set; }
+    public decimal SubTotal { get; set; }
     public int AddedBy { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime UopdatedAt{ get; set; }
+    public DateTime UpdatedAt{ get; set; }
     public bool IsActive { get; set; }
+    public string ChargeInvoiceNo { get; set; }
 
 
     public virtual User AddedByUser { get; set; }

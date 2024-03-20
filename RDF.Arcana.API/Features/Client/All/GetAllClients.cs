@@ -112,6 +112,7 @@ public class GetAllClients : ControllerBase
         public string Latitude { get; set; }
         public string Requestor { get; set; }
         public string RequestorMobileNumber { get; set; }
+        public string RequestorEmailaddress { get; set; }
         public string Terms { get; set; }
         public string CurrentApprover { get; set; }
         public string CurrentApproverPhoneNumber { get; set; }
@@ -364,6 +365,7 @@ public class GetAllClients : ControllerBase
                     Latitude = client.Latitude,
                     Requestor = client.AddedByUser.Fullname,
                     RequestorMobileNumber = client.AddedByUser.MobileNumber,
+                    //RequestorEmailaddress = client.AddedByUser.
                     Terms = client.Term.Terms.TermType,
                     CurrentApprover = client.Request.CurrentApprover.Fullname,
                     CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber,
