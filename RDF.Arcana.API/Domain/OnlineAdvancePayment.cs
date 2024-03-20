@@ -11,7 +11,7 @@ public class OnlineAdvancePayment : BaseEntity
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; }
     public int AddedBy { get; set; }
-    public int ModifiedBy { get; set; }
+    public int? ModifiedBy { get; set; }
     public bool IsActive { get; set; } = true;
 
     public virtual Clients Client { get; set; }

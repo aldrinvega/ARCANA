@@ -22,7 +22,6 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Discount> Discounts { get; set; }
     public virtual DbSet<TermDays> TermDays { get; set; }
     public virtual DbSet<Clients> Clients { get; set; }
-    /*public virtual DbSet<Approvals> Approvals { get; set; }*/
     public virtual DbSet<ClientDocuments> ClientDocuments { get; set; }
     public virtual DbSet<FixedDiscounts> FixedDiscounts { get; set; }
     public virtual DbSet<VariableDiscounts> VariableDiscounts { get; set; }
@@ -58,9 +57,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<Transactions> Transactions { get; set; }
     public virtual DbSet<TransactionItems> TransactionItems { get; set; }
     public virtual DbSet<TransactionSales> TransactionSales { get; set; }
-    public virtual DbSet<CashAdvancePayment> CashAdvancePayments { get; set; }
-    public virtual DbSet<ChequeAdvancePayment> ChequeAdvancePayments { get; set; }
-    public virtual DbSet<OnlineAdvancePayment> OnlineAdvancePayments { get; set; }
+    public virtual DbSet<AdvancePayment> AdvancePayments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -436,29 +433,11 @@ public class ArcanaDbContext : DbContext
            .WithMany()
            .HasForeignKey(x => x.AddedBy);
 
-        modelBuilder.Entity<CashAdvancePayment>()
+        modelBuilder.Entity<AdvancePayment>()
            .HasOne(x => x.AddedByUser)
            .WithMany()
            .HasForeignKey(x => x.AddedBy);
-        modelBuilder.Entity<CashAdvancePayment>()
-           .HasOne(x => x.ModifiedByUser)
-           .WithMany()
-           .HasForeignKey(x => x.ModifiedBy);
-
-        modelBuilder.Entity<OnlineAdvancePayment>()
-           .HasOne(x => x.AddedByUser)
-           .WithMany()
-           .HasForeignKey(x => x.AddedBy);
-        modelBuilder.Entity<OnlineAdvancePayment>()
-           .HasOne(x => x.ModifedByUser)
-           .WithMany()
-           .HasForeignKey(x => x.ModifiedBy);
-
-        modelBuilder.Entity<ChequeAdvancePayment>()
-           .HasOne(x => x.AddedByUser)
-           .WithMany()
-           .HasForeignKey(x => x.AddedBy);
-        modelBuilder.Entity<ChequeAdvancePayment>()
+        modelBuilder.Entity<AdvancePayment>()
            .HasOne(x => x.ModifiedByUser)
            .WithMany()
            .HasForeignKey(x => x.ModifiedBy);

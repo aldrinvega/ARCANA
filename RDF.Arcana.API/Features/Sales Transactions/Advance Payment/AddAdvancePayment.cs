@@ -9,11 +9,11 @@ using RDF.Arcana.API.Features.Client.Errors;
 namespace RDF.Arcana.API.Features.Sales_Transactions.Advance_Payment;
 [Route("api/advance-payment")]
 
-public class AddCashAdvancePayment : ControllerBase
+public class AddAdvancePayment : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public AddCashAdvancePayment(IMediator mediator)
+    public AddAdvancePayment(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -44,7 +44,16 @@ public class AddCashAdvancePayment : ControllerBase
     {
         public int ClientId { get; set; }
         public decimal AdvancePaymentAmount { get; set; }
+        public string Payee { get; set; }
+        public DateTime ChequeDate { get; set; }
+        public string BankName { get; set; }
+        public string ChequeNo { get; set; }
+        public DateTime DateReceived { get; set; }
+        public decimal ChequeAmount { get; set; }
+        public string AccountName { get; set; }
+        public string AccountNo { get; set; }
         public int AddedBy { get; set; }
+        public bool IsActive { get; set; }
     }
     
     public class Handler : IRequestHandler<AddCashAdvancePaymentCommand, Result>
@@ -68,14 +77,14 @@ public class AddCashAdvancePayment : ControllerBase
                 return ClientErrors.NotFound();
             }
 
-            var cashAdvancePayment = new CashAdvancePayment
+            var advancePayment = new AdvancePayment
             {
                 ClientId = request.ClientId,
                 AdvancePaymentAmount = request.AdvancePaymentAmount,
                 AddedBy = request.AddedBy
             };
 
-            await _context.CashAdvancePayments.AddAsync(cashAdvancePayment, cancellationToken);
+            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

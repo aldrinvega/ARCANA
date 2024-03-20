@@ -2,7 +2,7 @@
 
 namespace RDF.Arcana.API.Domain;
 
-public class ChequeAdvancePayment : BaseEntity
+public class AdvancePayment : BaseEntity
 {
     public int ClientId { get; set; }
     public decimal AdvancePaymentAmount { get; set; }

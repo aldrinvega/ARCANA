@@ -1,9 +1,10 @@
 ﻿using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using static RDF.Arcana.API.Features.Sales_Transactions.Advance_Payment.AdvancePaymentErrors;
 
 namespace RDF.Arcana.API.Features.Sales_Transactions.Advance_Payment;
 
-public class UpdateAdvancePaymentStatus
+public class UpdateCashAdvancePaymentStatus
 {
     public class UpdateCashAdvancePaymentStatusCommand : IRequest<Result>
     {
@@ -22,7 +23,17 @@ public class UpdateAdvancePaymentStatus
 
         public async Task<Result> Handle(UpdateCashAdvancePaymentStatusCommand request, CancellationToken cancellationToken)
         {
-            var existingAdvancePayment = await _context.CashAdvancePayments.FirstOrDefaultAsync(cap => cap.Id == ) 
+                var existingAdvancePayment =
+                    await _context.AdvancePayments.FirstOrDefaultAsync(cap => cap.Id == request.AdvancePaymentId, cancellationToken);
+
+                if (existingAdvancePayment is null)
+                {
+                    return NotFound();
+                }
+
+                existingAdvancePayment.IsActive = !existingAdvancePayment.IsActive;
+
+                return Result.Success();
         };
     }
 }
