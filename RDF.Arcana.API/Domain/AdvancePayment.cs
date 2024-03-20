@@ -12,8 +12,10 @@ public class ChequeAdvancePayment : BaseEntity
     public string ChequeNo { get; set; }
     public DateTime DateReceived { get; set; }
     public decimal ChequeAmount { get; set; }
+    public string AccountName { get; set; }
+    public string AccountNo { get; set; }
     public int AddedBy { get; set; }
-    public int ModifiedBy { get; set; }
+    public int? ModifiedBy { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
