@@ -1,5 +1,9 @@
 ﻿using System.Security.Claims;
+using System.Web;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
@@ -25,6 +29,7 @@ public class AddNewItems : ControllerBase
     {
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }
+        public IFormFile ItemImageLink { get; set; }
         public int AddedBy { get; set; }
         public int UomId { get; set; }
         public int ProductSubCategoryId { get; set; }
@@ -34,16 +39,24 @@ public class AddNewItems : ControllerBase
     public class Handler : IRequestHandler<AddNewItemsCommand, Result>
     {
         private readonly ArcanaDbContext _context;
+        private readonly Cloudinary _cloudinary;
 
-        public Handler(ArcanaDbContext context)
+        public Handler(ArcanaDbContext context, IOptions<CloudinaryOptions> options)
         {
-            _context = context;
+            _context = context; 
+            var account = new Account(
+                options.Value.Cloudname,
+                options.Value.ApiKey,
+                options.Value.ApiSecret
+            );
+
+            _cloudinary = new Cloudinary(account);
         }
 
         public async Task<Result> Handle(AddNewItemsCommand request, CancellationToken cancellationToken)
         {
             
-            
+            ImageUploadResult attachmentsUploadResult = null;
             
             var existingItem = await _context.Items.FirstOrDefaultAsync(x => 
                     x.ItemCode == request.ItemCode, 
@@ -74,11 +87,27 @@ public class AddNewItems : ControllerBase
             {
                 return MeatTypeErrors.NotFound();
             }
+            
+            if (request.ItemImageLink.Length > 0)
+            {
+                await using var stream = request.ItemImageLink.OpenReadStream();
+
+                var attachmentsParams = new ImageUploadParams
+                {
+                    File = new FileDescription(request.ItemImageLink.FileName, stream),
+                    PublicId = request.ItemImageLink.FileName
+                };
+
+                attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
+                
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
             var items = new Domain.Items
             {
                 ItemCode = request.ItemCode,
                 ItemDescription = request.ItemDescription,
+                ItemImageLink = attachmentsUploadResult?.SecureUrl.ToString(),
                 UomId = request.UomId,
                 ProductSubCategoryId = request.ProductSubCategoryId,
                 AddedBy = request.AddedBy,
@@ -95,10 +124,11 @@ public class AddNewItems : ControllerBase
     }
     
     [HttpPost("AddNewItem")]
-    public async Task<IActionResult> AddNewItem(AddNewItemsCommand command)
+    public async Task<ActionResult<AddNewItemsCommand>> AddNewItem([FromForm]AddNewItemsCommand command)
     {
         try
         {
+            
             if (User.Identity is ClaimsIdentity identity 
                 && int.TryParse(identity.FindFirst("id")?.Value, out var userId))
             {

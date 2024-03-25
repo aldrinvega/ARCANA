@@ -14,67 +14,74 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="018c03ae-e9c3-42a5-937f-0e19ab05e75d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/AllMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/AllMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/ApproveClientRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/ApproveClientRegistration.cs" afterDir="false" />
+    <list default="true" id="8d583bfd-2316-4b28-9718-b20c194f3827" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/GetAdvancePayments.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/UpdateAdvancePaymentStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Aracana.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Aracana.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/AdvancePayment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/AdvancePayment.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Items.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Items.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/GetAllClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/GetAllClients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Direct/DirectRegistration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Prospecting/Register/RegisterClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/RegularClientsMappingProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/Regular/RegularClientsMappingProfile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Expenses/AddNewExpenses.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Expenses/AddNewExpenses.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Expenses/ApproveExpense.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Expenses/ApproveExpense.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Expenses/GetAllExpenses.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Expenses/GetAllExpenses.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/AddNewListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ApproveListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/GetAllListingFee.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/GetAllListingFee.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ListingFeeMappingExtension.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Listing Fee/ListingFeeMappingExtension.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/GetAllNotification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/GetAllNotification.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/ReadNotification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Notification/ReadNotification.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Special Discount/ApproveSpecialDiscountRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Special Discount/ApproveSpecialDiscountRequest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Special Discount/GetAllSpecialDiscounts.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Special Discount/GetAllSpecialDiscounts.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Special Discount/RequestSpecialDiscount.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Special Discount/RequestSpecialDiscount.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/GetUsersAsync.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Users/MapperProfile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/AddAdvancePayment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/AddAdvancePayment.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/UpdateCashAdvancePaymentStatus.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/AddNewItems.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/AddNewItems.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/ArcanaDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/ArcanaDbContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="EditorConfigPreviewManager">
-    <editorConfig file="$PROJECT_DIR$/../../.editorconfig" previewFile="$PROJECT_DIR$/RDF.Arcana.API/Features/Price Mode/DeletePriceModeItem.cs" />
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 6
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;aldrinvega&quot;
+  }
 }</component>
-  <component name="ProjectId" id="2cLYrpTHlhj1YrqHSoe9c0gSgfQ" />
+  <component name="GitHubPullRequestState">{
+  &quot;prStates&quot;: []
+}</component>
+  <component name="GitLabMergeRequestsSettings">{}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/aldrinvega/ARCANA&quot;,
+    &quot;accountId&quot;: &quot;7e4485fb-5771-4ad6-884f-95cb4480b057&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2dwb8pFtGsS5rcATIQVLTYWZ6jB" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.RDF.Arcana.API: http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.RDF.Arcana.API: IIS Express.executor&quot;: &quot;Run&quot;,
     &quot;.NET Launch Settings Profile.RDF.Arcana.API: https.executor&quot;: &quot;Run&quot;,
-    &quot;ATTACH_DIALOG_SELECTED_CONTAINER&quot;: &quot;arcana.database&quot;,
     &quot;Docker.RDF.Arcana.API/Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;aracana-aldrinvega-dev&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;arcana-aldrinvega-dev&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.stylelint&quot;: &quot;&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -169,59 +176,59 @@
       <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" singleton="false" server-name="Docker">
+    <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
       <deployment type="docker-compose.yml">
         <settings>
-          <option name="envFilePath" value="" />
           <option name="secondarySourceFiles">
             <list>
-              <option value="docker-compose.override.yml" />
+              <option value="C:\Users\avega\Source\Repos\aldrinvega\ARCANA\docker-compose.override.yml" />
             </list>
           </option>
           <option name="sourceFilePath" value="docker-compose.yml" />
         </settings>
       </deployment>
       <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
-      <method v="2">
-        <option name="Build" default="false" projectName="RDF.Arcana.API" projectPath="$PROJECT_DIR$/RDF.Arcana.API/RDF.Arcana.API.csproj" />
-      </method>
+      <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue=".NET Launch Settings Profile.RDF.Arcana.API: http" />
-      <item itemvalue=".NET Launch Settings Profile.RDF.Arcana.API: https" />
-      <item itemvalue=".NET Launch Settings Profile.RDF.Arcana.API: IIS Express" />
-      <item itemvalue="Docker.RDF.Arcana.API/Dockerfile" />
-      <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
-      <item itemvalue="Publish to IIS.RDF.Arcana.API: FolderProfile" />
-      <item itemvalue="Publish to IIS.RDF.Arcana.API: FolderProfile1" />
-      <item itemvalue="Publish to IIS.RDF.Arcana.API: IIS" />
-    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="018c03ae-e9c3-42a5-937f-0e19ab05e75d" name="Changes" comment="" />
-      <created>1707892528698</created>
+      <changelist id="8d583bfd-2316-4b28-9718-b20c194f3827" name="Changes" comment="" />
+      <created>1710921935494</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1707892528698</updated>
-      <workItem from="1707892530463" duration="3839000" />
-      <workItem from="1707897528924" duration="4264000" />
-      <workItem from="1707902311054" duration="60000" />
-      <workItem from="1708394130709" duration="795000" />
-      <workItem from="1708406289766" duration="1215000" />
-      <workItem from="1709261478476" duration="1498000" />
-      <workItem from="1709263225404" duration="931000" />
-      <workItem from="1709278007040" duration="2946000" />
+      <updated>1710921935494</updated>
+      <workItem from="1710921935494" duration="6000" />
+      <workItem from="1710922703072" duration="2154000" />
+      <workItem from="1710925361065" duration="3210000" />
+      <workItem from="1710937172851" duration="552000" />
+      <workItem from="1710947834365" duration="1798000" />
+      <workItem from="1710982096976" duration="436000" />
+      <workItem from="1710982616457" duration="3117000" />
+      <workItem from="1711066548440" duration="602000" />
+      <workItem from="1711280672153" duration="4003000" />
     </task>
+    <task id="LOCAL-00001" summary="-">
+      <option name="closed" value="true" />
+      <created>1710937382402</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1710937382402</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="-" />
+    <option name="LAST_COMMIT_MESSAGE" value="-" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
