@@ -15,19 +15,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d583bfd-2316-4b28-9718-b20c194f3827" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/GetAdvancePayments.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/UpdateAdvancePaymentStatus.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Aracana.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Aracana.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/AdvancePayment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/AdvancePayment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Items.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Items.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/GetAllClients.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Client/All/GetAllClients.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Freebies/RequestFreebies.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/AddAdvancePayment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/AddAdvancePayment.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/UpdateCashAdvancePaymentStatus.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/AddNewItems.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Setup/Items/AddNewItems.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/ArcanaDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/ArcanaDbContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +41,9 @@
     &quot;accountId&quot;: &quot;7e4485fb-5771-4ad6-884f-95cb4480b057&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock://C:/Users/avega/source/repos/aldrinvega/ARCANA/RDF.Arcana.API/Features/Price Mode/GetAllItemsForPriceModeByPriceModeCode.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -208,6 +199,7 @@
       <workItem from="1710982616457" duration="3117000" />
       <workItem from="1711066548440" duration="602000" />
       <workItem from="1711280672153" duration="4003000" />
+      <workItem from="1711326358305" duration="1087000" />
     </task>
     <task id="LOCAL-00001" summary="-">
       <option name="closed" value="true" />
@@ -217,7 +209,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710937382402</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add: photo upload on items setup">
+      <option name="closed" value="true" />
+      <created>1711326489337</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1711326489337</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,7 +228,8 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="-" />
-    <option name="LAST_COMMIT_MESSAGE" value="-" />
+    <MESSAGE value="add: photo upload on items setup" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: photo upload on items setup" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

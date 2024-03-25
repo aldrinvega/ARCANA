@@ -1,9 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
+using System.Web;
+using Microsoft.AspNetCore.Mvc;
+using MySqlX.XDevAPI;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Setup.Meat_Type;
 using RDF.Arcana.API.Features.Setup.Product_Sub_Category;
 using RDF.Arcana.API.Features.Setup.UOM;
+using static RDF.Arcana.API.Features.Client.All.UpdateClientAttachment.UpdateAttachmentsCommand;
+using B2Net;
+using Microsoft.Extensions.Options;
 
 namespace RDF.Arcana.API.Features.Setup.Items;
 
@@ -30,15 +38,24 @@ public class UpdateItem : ControllerBase
         public int MeatTypeId { get; set; }
         public decimal Price { get; set; }
         public DateTime EffectivityDate { get; set; }
+        public IFormFile ItemImageLink { get; set; }
     }
     
     public class Handler : IRequestHandler<UpdateItemCommand, Result>
     {
         private readonly ArcanaDbContext _context;
+        private readonly Cloudinary _cloudinary;
     
-        public Handler(ArcanaDbContext context)
+        public Handler(ArcanaDbContext context, IOptions<CloudinaryOptions> options)
         {
             _context = context;
+            var account = new Account(
+            options.Value.Cloudname,
+            options.Value.ApiKey,
+                options.Value.ApiSecret
+            );
+
+            _cloudinary = new Cloudinary(account);
         }
     
         public async Task<Result> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
@@ -76,23 +93,41 @@ public class UpdateItem : ControllerBase
                      return ItemErrors.NotFound(request.Id);
                  }
              }
-             
-             existingItem.ItemCode = request.ItemCode;
-             existingItem.ItemDescription = request.ItemDescription;
-             existingItem.UomId = request.UomId;
-             existingItem.ProductSubCategoryId = request.ProductSubCategoryId;
-             existingItem.MeatTypeId = request.MeatTypeId;
-             existingItem.UpdatedAt = DateTime.Now;
-             existingItem.ModifiedBy = request.ModifiedBy ?? Roles.Admin;
-         
-             await _context.SaveChangesAsync(cancellationToken);
+
+            // If the new attachment is a file, upload it and update the relevant record in the database.
+            if (request.ItemImageLink is not null)
+            {
+                await using var stream = request.ItemImageLink.OpenReadStream();
+
+                var attachmentsParams = new ImageUploadParams
+                {
+                    File = new FileDescription(request.ItemImageLink.FileName, stream),
+                    PublicId =
+                        $"{request.ItemImageLink.FileName}"
+                };
+
+                var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
+
+                // If an existing ClientDocument already exists, update DocumentPath
+                existingItem.ItemImageLink = attachmentsUploadResult.SecureUrl.ToString();
+            }
+
+            existingItem.ItemCode = request.ItemCode;
+            existingItem.ItemDescription = request.ItemDescription;
+            existingItem.UomId = request.UomId;
+            existingItem.ProductSubCategoryId = request.ProductSubCategoryId;
+            existingItem.MeatTypeId = request.MeatTypeId;
+            existingItem.UpdatedAt = DateTime.Now;
+            existingItem.ModifiedBy = request.ModifiedBy ?? Roles.Admin;
+
+            await _context.SaveChangesAsync(cancellationToken);
 
              return Result.Success();
          }
     }
 
     [HttpPut("UpdateItem/{id:int}")]
-    public async Task<IActionResult> Update(UpdateItemCommand command, [FromRoute] int id)
+    public async Task<IActionResult> Update([FromForm]UpdateItemCommand command, [FromRoute] int id)
     {
         try
         {

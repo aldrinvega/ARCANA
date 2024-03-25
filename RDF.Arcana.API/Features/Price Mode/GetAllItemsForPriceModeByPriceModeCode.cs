@@ -136,7 +136,7 @@ namespace RDF.Arcana.API.Features.Price_Mode
                     ProductSubCategoryName = pm.Item.ProductSubCategory.ProductSubCategoryName,
                     IsActive = pm.IsActive,
                     CurrentPrice = pm.ItemPriceChanges
-                            .OrderByDescending(p => p.EffectivityDate)
+                            .OrderBy(p => p.EffectivityDate)
                             .First(pc => pc.EffectivityDate <= now).Price
                 }).OrderBy(x => x.ItemCode);
 

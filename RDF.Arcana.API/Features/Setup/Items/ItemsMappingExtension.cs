@@ -13,6 +13,7 @@ public static class ItemsMappingExtension
             ItemId = items.Id,
             ItemCode = items.ItemCode,
             ItemDescription = items.ItemDescription,
+            ItemImageLink = items.ItemImageLink,
             Uom = items.Uom?.UomCode,
             ProductCategory = items.ProductSubCategory.ProductCategory.ProductCategoryName,
             ProductSubCategoryName = items.ProductSubCategory.ProductSubCategoryName,
