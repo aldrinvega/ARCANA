@@ -43,6 +43,7 @@ public class AddAdvancePayment : ControllerBase
     public class AddCashAdvancePaymentCommand : IRequest<Result>
     {
         public int ClientId { get; set; }
+        public string PaymentMethod { get; set; }
         public decimal AdvancePaymentAmount { get; set; }
         public string Payee { get; set; }
         public DateTime ChequeDate { get; set; }
@@ -53,7 +54,6 @@ public class AddAdvancePayment : ControllerBase
         public string AccountName { get; set; }
         public string AccountNo { get; set; }
         public int AddedBy { get; set; }
-        public bool IsActive { get; set; }
     }
     
     public class Handler : IRequestHandler<AddCashAdvancePaymentCommand, Result>
@@ -80,7 +80,17 @@ public class AddAdvancePayment : ControllerBase
             var advancePayment = new AdvancePayment
             {
                 ClientId = request.ClientId,
+                PaymentMethod = request.PaymentMethod,
                 AdvancePaymentAmount = request.AdvancePaymentAmount,
+                RemainingBalance = request.AdvancePaymentAmount,
+                Payee = request.Payee,
+                ChequeDate = request.ChequeDate,
+                BankName = request.BankName,
+                ChequeNo = request.ChequeNo,
+                DateReceived = request.DateReceived,
+                ChequeAmount = request.ChequeAmount,
+                AccountName = request.AccountName,
+                AccountNo = request.AccountNo,
                 AddedBy = request.AddedBy
             };
 

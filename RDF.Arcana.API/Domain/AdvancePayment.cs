@@ -5,7 +5,9 @@ namespace RDF.Arcana.API.Domain;
 public class AdvancePayment : BaseEntity
 {
     public int ClientId { get; set; }
+    public string PaymentMethod { get; set; }
     public decimal AdvancePaymentAmount { get; set; }
+    public decimal RemainingBalance { get; set; }
     public string Payee { get; set; }
     public DateTime ChequeDate { get; set; }
     public string BankName { get; set; }
@@ -17,7 +19,7 @@ public class AdvancePayment : BaseEntity
     public int AddedBy { get; set; }
     public int? ModifiedBy { get; set; }
     public bool IsActive { get; set; } = true;
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; }
 
     public virtual User AddedByUser { get; set; }

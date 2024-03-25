@@ -69,6 +69,7 @@ namespace RDF.Arcana.API.Features.Price_Mode
             public int ItemId { get; set; }
             public string ItemCode { get; set; }
             public string ItemDescription { get; set; }
+            public string ItemImageLink { get; set; }
             public string Uom { get; set; }
             public string ProductSubCategoryName { get; set; }
             public string MeatType { get; set; }
@@ -116,10 +117,10 @@ namespace RDF.Arcana.API.Features.Price_Mode
                     priceModeItems = priceModeItems.Where(pmi => pmi.IsActive == request.Status);
                 }
 
-            if (request.PriceModeId is not null)
-            {
-                priceModeItems = priceModeItems.Where(pmi => pmi.PriceModeId == request.PriceModeId);
-            }
+                if (request.PriceModeId is not null)
+                {
+                    priceModeItems = priceModeItems.Where(pmi => pmi.PriceModeId == request.PriceModeId);
+                }
 
                 var result = priceModeItems.Select(pm => new GetAllItemsForPriceModeResult
                 {
@@ -129,6 +130,7 @@ namespace RDF.Arcana.API.Features.Price_Mode
                     ItemId = pm.ItemId,
                     ItemCode = pm.Item.ItemCode,
                     ItemDescription = pm.Item.ItemDescription,
+                    ItemImageLink = pm.Item.ItemImageLink,
                     Uom = pm.Item.Uom.UomCode,
                     MeatType = pm.Item.MeatType.MeatTypeName,
                     ProductSubCategoryName = pm.Item.ProductSubCategory.ProductSubCategoryName,

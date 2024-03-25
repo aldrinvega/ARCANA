@@ -112,7 +112,7 @@ public class GetAllClients : ControllerBase
         public string Latitude { get; set; }
         public string Requestor { get; set; }
         public string RequestorMobileNumber { get; set; }
-        public string RequestorEmailaddress { get; set; }
+        public string RequestorEmailAddress { get; set; }
         public string Terms { get; set; }
         public string CurrentApprover { get; set; }
         public string CurrentApproverPhoneNumber { get; set; }
@@ -187,8 +187,8 @@ public class GetAllClients : ControllerBase
                 //To get the Approved Request, Approval table need to access and the role need to be Approver
                 case var roleName when roleName.Contains(Roles.Approver) &&
                       (!string.IsNullOrWhiteSpace(request.RegistrationStatus) &&
-                      request.RegistrationStatus.ToLower() != Status.UnderReview.ToLower() &&
-                      request.RegistrationStatus.ToLower() != Status.Voided.ToLower()):
+                      !string.Equals(request.RegistrationStatus, Status.UnderReview, StringComparison.CurrentCultureIgnoreCase) &&
+                      !string.Equals(request.RegistrationStatus, Status.Voided, StringComparison.CurrentCultureIgnoreCase)):
                     regularClients = regularClients.Where(clients => clients.Request.Approvals.Any(x =>
                         x.Status == request.RegistrationStatus && x.ApproverId == request.AccessBy &&
                         x.IsActive == true));
@@ -201,7 +201,10 @@ public class GetAllClients : ControllerBase
                 case Roles.Cdo:
                 {
                     
-                    var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
+                    var userClusters = await _context.CdoClusters
+                        .FirstOrDefaultAsync(x => 
+                            x.UserId == request.AccessBy, 
+                            cancellationToken);
 
                         if (request.RegistrationStatus is Status.ForReleasing or Status.Released or Status.Voided)
                         {
@@ -365,7 +368,7 @@ public class GetAllClients : ControllerBase
                     Latitude = client.Latitude,
                     Requestor = client.AddedByUser.Fullname,
                     RequestorMobileNumber = client.AddedByUser.MobileNumber,
-                    //RequestorEmailaddress = client.AddedByUser.
+                    // RequestorEmailAddress = client.AddedByUser.
                     Terms = client.Term.Terms.TermType,
                     CurrentApprover = client.Request.CurrentApprover.Fullname,
                     CurrentApproverPhoneNumber = client.Request.CurrentApprover.MobileNumber,
