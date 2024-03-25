@@ -65,6 +65,7 @@ public class GetItemsAsync : ControllerBase
         public int ItemId { get; set; }
         public string ItemCode { get; set; }
         public string ItemDescription { get; set; }
+        public string ItemImageLink { get; set; }
         public string Uom { get; set; }
         public string ProductCategory { get; set; }
         public string ProductSubCategoryName { get; set; }
