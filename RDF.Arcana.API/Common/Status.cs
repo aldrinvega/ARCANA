@@ -35,6 +35,7 @@ public static class Status
     public const string PendingSPDiscount = "Pending Sp. Discount";
     public const string ApprovedSpDiscount = "Approved Sp. Discount";
     public const string RejectedSpDiscount = "Rejected Sp. Discount";
+    public const string Paid = "Paid";
 
 }
 

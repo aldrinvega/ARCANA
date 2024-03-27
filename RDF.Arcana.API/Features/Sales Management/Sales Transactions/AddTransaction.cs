@@ -130,7 +130,8 @@ public class AddTransaction : ControllerBase
             var transaction = new Transactions
             {
                 ClientId = request.ClientId,
-                AddedBy = request.AddedBy,
+                Status = Status.Pending,
+                AddedBy = request.AddedBy
             };
 
             //Add and save to database
