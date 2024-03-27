@@ -6,10 +6,9 @@ using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Setup.Items;
-using static RDF.Arcana.API.Features.Sales_Transactions.AddTransaction.AddnewTransactionResult;
 
-namespace RDF.Arcana.API.Features.Sales_Transactions;
-[Route("api/sales-transaction")]
+namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
+[Route("api/sales-transaction"), ApiController]
 
 public class AddTransaction : ControllerBase
 {
@@ -48,22 +47,18 @@ public class AddTransaction : ControllerBase
         public int ClientId { get; set; }
         public int AddedBy { get; set; }
         public ICollection<Item> Items { get; set; }
-
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
         public string ChargeInvoiceNo { get; set; }
-
         public class Item
         {
             public int ItemId { get; set; }
             public int Quantity { get; set; }
             public int UnitPrice { get; set; }
         }
-
-
     }
 
-    public class AddnewTransactionResult
+    public class AddNewTransactionResult
     {
         public int TransactionNo { get; set; }
         public int ClientId { get; set; }
@@ -117,7 +112,7 @@ public class AddTransaction : ControllerBase
 
         public async Task<Result> Handle(AddtransactionCommand request, CancellationToken cancellationToken)
         {
-            List<Item> itemsCollection = new();
+            List<AddNewTransactionResult.Item> itemsCollection = new();
 
             var existingClient = await _context
                 .Clients
@@ -169,7 +164,7 @@ public class AddTransaction : ControllerBase
                     .Select(i => new { i.ItemCode, i.ItemDescription, i.Uom.UomCode })
                     .FirstOrDefaultAsync(cancellationToken);
 
-                itemsCollection.Add(new Item
+                itemsCollection.Add(new AddNewTransactionResult.Item
                 {
                     ItemId = item.ItemId,
                     ItemCode = itemDetails.ItemCode,
@@ -250,12 +245,12 @@ public class AddTransaction : ControllerBase
             await _context.SaveChangesAsync(cancellationToken);
 
 
-            var result = new AddnewTransactionResult
+            var result = new AddNewTransactionResult
             {
                 TransactionNo = newTransactionSales.TransactionId,
                 ClientId = transaction.ClientId,
                 BusinessName = transaction.Client.BusinessName,
-                BusinessAddress = new BusinessAddressResult
+                BusinessAddress = new AddNewTransactionResult.BusinessAddressResult
                 {
                     Province = transaction.Client.BusinessAddress.Province,
                     City = transaction.Client.BusinessAddress.City,

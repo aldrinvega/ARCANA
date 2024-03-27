@@ -15,7 +15,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d583bfd-2316-4b28-9718-b20c194f3827" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/GetAdvancePaymentsByClientId.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/UpdateAdvancePayment.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/VoidAdvancePayment.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Payment Transaction/AddNewPaymentTransaction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/GetAllTransactions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/SalesTransactionErrors.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/UploadSalesInvoice.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/AdvancePayment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/AdvancePayment.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Transactions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/Transactions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/AddTransaction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/AddTransaction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/AddAdvancePayment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/AddAdvancePayment.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/AdvancePaymentErrors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/AdvancePaymentErrors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/GetAdvancePayments.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/GetAdvancePayments.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/Advance Payment/UpdateAdvancePaymentStatus.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Advance Payment/UpdateAdvancePaymentStatus.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Transactions/GetClientsForPOSAsync.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/GetClientsForPOSAsync.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/ArcanaDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Migrations/ArcanaDbContextModelSnapshot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +58,8 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/avega/source/repos/aldrinvega/ARCANA/RDF.Arcana.API/Features/Price Mode/GetAllItemsForPriceModeByPriceModeCode.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/AddTransaction.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/avega/source/repos/aldrinvega/ARCANA/RDF.Arcana.API/Features/Sales Management/Sales Transactions/GetAllTransactions.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -200,6 +217,8 @@
       <workItem from="1711066548440" duration="602000" />
       <workItem from="1711280672153" duration="4003000" />
       <workItem from="1711326358305" duration="1087000" />
+      <workItem from="1711412412103" duration="13812000" />
+      <workItem from="1711464315158" duration="992000" />
     </task>
     <task id="LOCAL-00001" summary="-">
       <option name="closed" value="true" />
