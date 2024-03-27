@@ -38,7 +38,7 @@ public class VoidAdvancePayment : ControllerBase
     public class VoidAdvancePaymentCommand : IRequest<Result>
     {
         public int Id { get; set; }
-        public int Reason { get; set; }
+        public string Reason { get; set; }
     }
     
     public class Handler : IRequestHandler<VoidAdvancePaymentCommand, Result>
@@ -63,6 +63,7 @@ public class VoidAdvancePayment : ControllerBase
             }
 
             existingAdvancePayment.Status = Status.Voided;
+            existingAdvancePayment.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
 
