@@ -6,6 +6,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Sales_transactions;
+[Route("api/sales-transaction"), ApiController]
 
 public class UploadSalesInvoice : ControllerBase
 {
