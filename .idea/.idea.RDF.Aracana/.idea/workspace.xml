@@ -15,7 +15,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d583bfd-2316-4b28-9718-b20c194f3827" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/PaymentMethods.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/PaymentTransaction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/TransactionErrors.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/ArcanaDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/ArcanaDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TransactionSales.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TransactionSales.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Payment Transaction/AddNewPaymentTransaction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Payment Transaction/AddNewPaymentTransaction.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +49,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/avega/source/repos/aldrinvega/ARCANA/RDF.Arcana.API/Features/Price Mode/GetAllItemsForPriceModeByPriceModeCode.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/AddTransaction.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -200,6 +207,9 @@
       <workItem from="1711066548440" duration="602000" />
       <workItem from="1711280672153" duration="4003000" />
       <workItem from="1711326358305" duration="1087000" />
+      <workItem from="1711412412103" duration="13812000" />
+      <workItem from="1711464315158" duration="992000" />
+      <workItem from="1711604351341" duration="4248000" />
     </task>
     <task id="LOCAL-00001" summary="-">
       <option name="closed" value="true" />

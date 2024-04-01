@@ -292,9 +292,6 @@ public class GetAllClients : ControllerBase
                                             x.RequestId != null);
                     break;
                 }
-
-                default:
-                    break;
             }
 
             //Get all the under review request for the Approver

@@ -35,6 +35,9 @@ public static class Status
     public const string PendingSPDiscount = "Pending Sp. Discount";
     public const string ApprovedSpDiscount = "Approved Sp. Discount";
     public const string RejectedSpDiscount = "Rejected Sp. Discount";
+    public const string Paid = "Paid";
+    public const string Received = "Received";
+    public const string Cleared = "Cleared";
 
 }
 
@@ -42,6 +45,8 @@ public static class Origin
 {
     public const string Direct = "Direct";
     public const string Prospecting = "Prospecting";
+    public const string Manual = "Manual";
+    public const string Excess = "Exccess";
 }
 
 public static class CustomerType
