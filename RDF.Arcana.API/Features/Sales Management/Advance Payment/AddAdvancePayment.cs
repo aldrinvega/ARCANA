@@ -91,7 +91,8 @@ public class AddAdvancePayment : ControllerBase
                 ChequeAmount = request.ChequeAmount,
                 AccountName = request.AccountName,
                 AccountNo = request.AccountNo,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                Origin = Origin.Manual
             };
 
             await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);

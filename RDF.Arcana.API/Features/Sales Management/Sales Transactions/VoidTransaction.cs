@@ -57,6 +57,41 @@ public class VoidTransaction : ControllerBase
                 return SalesTransactionErrors.NotFound();
             }
 
+            var paymentTransactions = await _context.PaymentTransactions
+                .Where(pt => pt.TransactionId == request.TransactionId)
+                .ToListAsync(cancellationToken);
+
+            var advancePayments = await _context.AdvancePayments
+                .Where(ap => 
+                ap.ClientId == existingTransaction.ClientId && 
+                ap.IsActive && ap.Status != Status.Voided)
+                .ToListAsync(cancellationToken);
+
+            var totalPayments = paymentTransactions.Sum(payment => payment.TotalAmountReceived);
+
+            for (var i = 0; i < paymentTransactions.Count; i++)
+            {
+                var paymentTransaction = paymentTransactions[i];
+                if (paymentTransaction.PaymentMethod == PaymentMethods.AdvancePayment)
+                {
+                    foreach (var advancePayment in advancePayments)
+                    {
+                        if(advancePayment.Origin == Origin.Manual)
+                        {
+                          advancePayment.RemainingBalance = advancePayment.AdvancePaymentAmount;
+                        }
+                        else
+                        {
+                            advancePayment.IsActive = false;
+                        }
+                    }
+                }
+                if(paymentTransaction.PaymentMethod != PaymentMethods.AdvancePayment)
+                {
+                    paymentTransaction.IsActive = false;
+                }
+            }
+            
             existingTransaction.Status = Status.Voided;
             existingTransaction.Reason = request.Reason;
 
