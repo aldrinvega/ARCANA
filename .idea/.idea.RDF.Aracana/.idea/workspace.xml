@@ -15,14 +15,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d583bfd-2316-4b28-9718-b20c194f3827" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/PaymentMethods.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/PaymentTransaction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/TransactionErrors.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RDF.Aracana/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Common/Status.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Data/ArcanaDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Data/ArcanaDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TransactionSales.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Domain/TransactionSales.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Payment Transaction/AddNewPaymentTransaction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Payment Transaction/AddNewPaymentTransaction.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,6 +203,7 @@
       <workItem from="1711412412103" duration="13812000" />
       <workItem from="1711464315158" duration="992000" />
       <workItem from="1711604351341" duration="4248000" />
+      <workItem from="1712025828642" duration="2584000" />
     </task>
     <task id="LOCAL-00001" summary="-">
       <option name="closed" value="true" />
@@ -235,6 +229,17 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="-" />

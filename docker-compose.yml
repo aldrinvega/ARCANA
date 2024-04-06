@@ -33,6 +33,6 @@ services:
       - ./secrets:/var/opt/mssql/secrets
       - arcana-volume:/var/lib/mysql
      ports:
-        - "5003:1433"
+        - "6003:1433"
 volumes:
   arcana-volume:
