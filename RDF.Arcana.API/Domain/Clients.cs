@@ -70,4 +70,5 @@ public class Clients : BaseEntity
     public virtual ICollection<SpecialDiscount> SpecialDiscounts { get; set; }
     public virtual PriceMode PriceMode { get; set; }
     public virtual Freezer Freezer { get; set; }
+    public virtual ICollection<Transactions> Transactions { get; set; } 
 }

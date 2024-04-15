@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Esf;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
@@ -117,6 +118,8 @@ public class AddTransaction : ControllerBase
             var existingClient = await _context
                 .Clients
                 .Include(x => x.BusinessAddress)
+                .Include(cl => cl.Term)
+                .ThenInclude(cl => cl.Terms)
                 .FirstOrDefaultAsync(cl => 
                 cl.Id == request.ClientId, 
                 cancellationToken);
@@ -124,6 +127,28 @@ public class AddTransaction : ControllerBase
             if (existingClient == null)
             {
                 return ClientErrors.NotFound();
+            }
+            var items = request.Items.Select(items => new
+            {
+                items.ItemId,
+                items.Quantity,
+                items.UnitPrice,
+                Amount = items.UnitPrice * items.Quantity,
+            });
+
+            // Calculate the subtotal for the items purchased
+            var subTotal = items.Sum(x => x.Amount);
+
+            if (existingClient.Term.Terms.TermType == Common.Terms.CreditLimit)
+            {
+                
+                var creditLimit = existingClient.Term.CreditLimit;
+                if (creditLimit < subTotal)
+                {
+                    return TransactionErrors.CreditLimitExceeded();
+
+                }
+
             }
 
             //Add new transaction
@@ -185,16 +210,7 @@ public class AddTransaction : ControllerBase
 
             //Calculate sales
 
-            var items = request.Items.Select(items => new
-            {
-                items.ItemId,
-                items.Quantity,
-                items.UnitPrice,
-                Amount =  items.UnitPrice * items.Quantity,
-            });
-
-            // Calculate the subtotal for the items purchased
-            var subTotal = items.Sum(x => x.Amount);
+            
 
             // Get the total discount percentage
             var totalDiscount = request.Discount + request.SpecialDiscount;
@@ -222,6 +238,8 @@ public class AddTransaction : ControllerBase
 
             // AddVat is the same as the VAT amount
             var addVat = vatAmount;
+
+            
 
             // Create and save the transaction sales record
             var newTransactionSales = new TransactionSales

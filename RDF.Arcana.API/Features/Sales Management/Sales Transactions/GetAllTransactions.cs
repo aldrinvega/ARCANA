@@ -58,6 +58,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public string Search { get; set; }
             public bool? Status { get; set; }
             public string TransactionStatus { get; set; }
+            public string DateFrom { get; set; }
+            public string DateTo { get; set; }
         }
 
         public class GetAllTransactionQueryResult
@@ -83,10 +85,19 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public Task<PagedList<GetAllTransactionQueryResult>> Handle(GetAllTransactionsQuery request,
                 CancellationToken cancellationToken)
             {
+                
                 IQueryable<Transactions> transactions = _context.Transactions
                     .Include(x => x.TransactionItems)
                     .Include(ts => ts.TransactionSales);
 
+                if (!string.IsNullOrEmpty(request.DateFrom) && !string.IsNullOrEmpty(request.DateFrom))
+                {
+                    var fromDate = DateTime.Parse(request.DateFrom);
+                    var toDate = DateTime.Parse(request.DateTo);
+
+                    transactions = transactions.Where(t =>
+                    t.CreatedAt >= fromDate && t.CreatedAt <= toDate);
+                }
 
                 if (!string.IsNullOrEmpty(request.Search))
                 {
