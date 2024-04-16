@@ -115,12 +115,13 @@ public class GetClientsForPOSAsync : ControllerBase
 
 
             if (request.RoleName.Contains(Roles.Admin))
-            { 
+            {               
                 clients = await _context.Clients
                     .Include(to => to.Term)
                     .Include(t => t.Transactions)
-                    .Where(x => x.RegistrationStatus == Status.Approved || 
-                                x.Transactions.Any(ts => ts.Status != Status.Pending))
+                    .Where(x => x.RegistrationStatus == Status.Approved &&
+                                (x.Term.TermsId != 2 || (x.Transactions.Any(ts => ts.Status == Status.Paid) ||
+                                x.Transactions.Count == 0)))
                     .Select(cl => new GetClientsForPOSAsyncResult
                     {
                         ClientId = cl.Id,

@@ -80,6 +80,8 @@ public class GetTransactionById : ControllerBase
             public string City { get; set; }
             public string Province { get; set; }
         }
+
+        public decimal DiscountPercentage { get; set; }
     }
     
     public class Handler : IRequestHandler<GetTransactionByIdQuery, Result>
@@ -137,7 +139,9 @@ public class GetTransactionById : ControllerBase
                 VatableSales = existingTransaction.TransactionSales.VatableSales,
                 VatExemptSales = existingTransaction.TransactionSales.VatExemptSales,
                 ZeroRatedSales = existingTransaction.TransactionSales.ZeroRatedSales,
-                VatAmount = existingTransaction.TransactionSales.VatAmount
+                VatAmount = existingTransaction.TransactionSales.VatAmount,
+                DiscountPercentage = (existingTransaction.TransactionSales.Discount + 
+                                     existingTransaction.TransactionSales.SpecialDiscountAmount) / 100
             };
             
             return Result.Success(result);

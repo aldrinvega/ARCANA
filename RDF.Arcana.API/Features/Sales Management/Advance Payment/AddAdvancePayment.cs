@@ -77,6 +77,10 @@ public class AddAdvancePayment : ControllerBase
                 return ClientErrors.NotFound();
             }
 
+            //Add Filter based on Payment method
+            if(request.PaymentMethod == AdvancePaymentMethods.Cash) { }
+
+
             var advancePayment = new AdvancePayment
             {
                 ClientId = request.ClientId,

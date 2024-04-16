@@ -71,6 +71,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public DateTime CreatedAt { get; set; }
             public string ChargeInvoiceNo { get; set; }
             public string AddedBy { get; set; }
+            public decimal TotalAmountDue { get; set; }
+            public string CIAttachment { get; set; }
         }
 
         public class Handler : IRequestHandler<GetAllTransactionsQuery, PagedList<GetAllTransactionQueryResult>>
@@ -165,6 +167,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     CreatedAt = result.CreatedAt,
                     ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
                     AddedBy = result.AddedByUser.Fullname,
+                    TotalAmountDue = result.TransactionSales.TotalAmountDue,
+                    CIAttachment = result.SalesInvoice
 
                 });
 

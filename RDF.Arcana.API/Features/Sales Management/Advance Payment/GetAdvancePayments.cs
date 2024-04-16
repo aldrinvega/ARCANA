@@ -42,6 +42,7 @@ public class GetAdvancePayments : ControllerBase
                 advancePayments.TotalPages,
                 advancePayments.HasPreviousPage,
                 advancePayments.HasNextPage
+                
             };
 
             var successResult = Result.Success(result);
@@ -63,6 +64,7 @@ public class GetAdvancePayments : ControllerBase
 
     public class GetAdvancePaymentResult
     {
+        public int Id { get; set; }
         public int ClientId { get; set; }
         public string Fullname { get; set; }
         public string BusinessName { get; set; }
@@ -78,6 +80,7 @@ public class GetAdvancePayments : ControllerBase
         public string AccountName { get; set; }
         public string AccountNo { get; set; }
         public string AddedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAdvancePaymentsAsyncQuery, PagedList<GetAdvancePaymentResult>>
@@ -111,6 +114,7 @@ public class GetAdvancePayments : ControllerBase
 
             var result = advancePayments.Select(ap => new GetAdvancePaymentResult
             {
+                Id = ap.Id,
                 ClientId = ap.ClientId,
                 Fullname = ap.Client.Fullname,
                 BusinessName = ap.Client.BusinessName,
@@ -125,7 +129,8 @@ public class GetAdvancePayments : ControllerBase
                 ChequeAmount = ap.ChequeAmount,
                 AccountName = ap.AccountName,
                 AccountNo = ap.AccountNo,
-                AddedBy = ap.AddedByUser.Fullname
+                AddedBy = ap.AddedByUser.Fullname,
+                CreatedAt = ap.CreatedAt
             });
 
             return PagedList<GetAdvancePaymentResult>.CreateAsync(result, request.PageNumber, request.PageSize);
