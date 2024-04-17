@@ -60,6 +60,7 @@ public class GetAdvancePayments : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public string PaymentMethod { get; set; }
     }
 
     public class GetAdvancePaymentResult
@@ -110,6 +111,11 @@ public class GetAdvancePayments : ControllerBase
             if (request.Status is not null)
             {
                 advancePayments = advancePayments.Where(ap => ap.IsActive == request.Status);
+            }
+
+            if(!string.IsNullOrEmpty(request.PaymentMethod))
+            {
+                advancePayments = advancePayments.Where(ap => ap.PaymentMethod == request.PaymentMethod);
             }
 
             var result = advancePayments.Select(ap => new GetAdvancePaymentResult

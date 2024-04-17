@@ -60,6 +60,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public string TransactionStatus { get; set; }
             public string DateFrom { get; set; }
             public string DateTo { get; set; }
+            public string Terms  { get; set; }
         }
 
         public class GetAllTransactionQueryResult
@@ -90,7 +91,18 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                 
                 IQueryable<Transactions> transactions = _context.Transactions
                     .Include(x => x.TransactionItems)
-                    .Include(ts => ts.TransactionSales);
+                    .Include(ts => ts.TransactionSales)
+                    .Include(cl => cl.Client)
+                    .ThenInclude(to => to.Term)
+                    .ThenInclude(td => td.TermDays)
+                    .Include(cl => cl.Client)
+                    .ThenInclude(to => to.Term)
+                    .ThenInclude(t => t.Terms);
+
+                if (!string.IsNullOrEmpty(request.Terms))
+                {
+                    transactions = transactions.Where(tr => tr.Client.Term.Terms.TermType == request.Terms);
+                }
 
                 if (!string.IsNullOrEmpty(request.DateFrom) && !string.IsNullOrEmpty(request.DateFrom))
                 {
@@ -106,8 +118,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     transactions = transactions.Where(t =>
                         t.Client.Fullname.Contains(request.Search) &&
                         t.Client.BusinessName.Contains(request.Search) &&
-                        t.TransactionSales.ChargeInvoiceNo.Contains(request.Search)
-                    );
+                        t.TransactionSales.ChargeInvoiceNo.Contains(request.Search));
                 }
 
                 if (request.Status != null)
@@ -117,7 +128,14 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
 
                 if (!string.IsNullOrEmpty(request.TransactionStatus))
                 {
-                    transactions = transactions.Where(t => t.Status == request.TransactionStatus);
+                    if(request.TransactionStatus == Status.Overdue && transactions.Any(cl => cl.Client.Term.Terms.TermType == Common.Terms.OneUpOneDown))
+                    {
+                        transactions = transactions.Where(result => result.CreatedAt.AddDays(result.Client.Term.TermDays.Days) < DateTime.Now);
+                    }
+                    else
+                    {
+                        transactions = transactions.Where(t => t.Status == request.TransactionStatus);
+                    }
                 }
 
                 // if (request.TransactionStatus == Status.Voided)
@@ -147,7 +165,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                         TransactionNo = result.Id,
                         ClientId = result.ClientId,
                         BusinessName = result.Client.BusinessName,
-                        Status = result.Status,
+                        Status = (result.Client.Term.Terms.TermType == Common.Terms.OneUpOneDown && result.CreatedAt.AddDays(result.Client.Term.TermDays.Days) < DateTime.Now) ? Status.Overdue : result.Status,
                         CreatedAt = result.CreatedAt,
                         ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
                         AddedBy = result.AddedByUser.Fullname,
@@ -163,7 +181,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     TransactionNo = result.Id,
                     ClientId = result.ClientId,
                     BusinessName = result.Client.BusinessName,
-                    Status = result.Status,
+                    Status = (result.Client.Term.Terms.TermType == Common.Terms.OneUpOneDown && result.CreatedAt.AddDays(result.Client.Term.TermDays.Days) < DateTime.Now) ? Status.Overdue : result.Status,
                     CreatedAt = result.CreatedAt,
                     ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
                     AddedBy = result.AddedByUser.Fullname,
