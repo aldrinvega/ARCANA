@@ -110,7 +110,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     var toDate = DateTime.Parse(request.DateTo);
 
                     transactions = transactions.Where(t =>
-                    t.CreatedAt >= fromDate && t.CreatedAt <= toDate);
+                    t.CreatedAt.Date >= fromDate.Date && t.CreatedAt.Date <= toDate.Date)
+                                .OrderByDescending(d => d.CreatedAt);
                 }
 
                 if (!string.IsNullOrEmpty(request.Search))

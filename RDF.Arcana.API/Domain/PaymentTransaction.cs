@@ -5,6 +5,7 @@ namespace RDF.Arcana.API.Domain;
 public class PaymentTransaction : BaseEntity
 {
     public int TransactionId { get; set; }
+    public int PaymentRecordId { get; set; }
     public string PaymentMethod { get; set; }
     public decimal PaymentAmount { get; set; }
     public decimal TotalAmountReceived { get; set; }
@@ -23,4 +24,5 @@ public class PaymentTransaction : BaseEntity
     
     public virtual Transactions Transactions { get; set; }
     public virtual User AddedByUser { get; set; }
+    public virtual PaymentRecords PaymentRecord { get; set; }
 }

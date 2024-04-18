@@ -59,6 +59,8 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<TransactionSales> TransactionSales { get; set; }
     public virtual DbSet<AdvancePayment> AdvancePayments { get; set; }
     public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+    public virtual DbSet<PaymentRecords> PaymentRecords { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -448,6 +450,15 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
 
+        modelBuilder.Entity<PaymentRecords>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
+        modelBuilder.Entity<PaymentRecords>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
 
     }
 }

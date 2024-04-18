@@ -80,6 +80,17 @@ public class AddNewPaymentTransaction : BaseApiController
                 {
                     return TransactionErrors.NotFound();
                 }
+
+                //Create New PAyment Records
+
+                var paymentRecord = new PaymentRecords
+                {                   
+                    AddedBy = transactions.AddedBy,
+                    ModifiedBy = transactions.AddedBy
+                };
+
+                await _context.PaymentRecords.AddAsync(paymentRecord, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
             }
 
             ////Validate if the Payment amount is sufficient to cover the transaction amount
@@ -87,6 +98,8 @@ public class AddNewPaymentTransaction : BaseApiController
             //{
             //    return PaymentTransactionsErrors.InsufficientFunds();
             //}
+
+            
 
             foreach (var transactions in request.TransactionId)
             {
@@ -134,6 +147,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         var paymentTransaction = new PaymentTransaction
                         {
                             TransactionId = transaction.Id,
+                            //PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = request.PaymentMethod,
                             PaymentAmount = request.PaymentAmount,
                             TotalAmountReceived = request.TotalAmountReceived,
@@ -175,6 +189,7 @@ public class AddNewPaymentTransaction : BaseApiController
                     var paymentTransaction = new PaymentTransaction
                     {
                         TransactionId = transaction.Id,
+                        //PaymentRecordId = paymentRecord.Id,
                         PaymentMethod = request.PaymentMethod,
                         PaymentAmount = request.PaymentAmount,
                         TotalAmountReceived = request.TotalAmountReceived,
