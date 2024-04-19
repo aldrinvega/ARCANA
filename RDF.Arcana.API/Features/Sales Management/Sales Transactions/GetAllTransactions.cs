@@ -170,6 +170,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                         CreatedAt = result.CreatedAt,
                         ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
                         AddedBy = result.AddedByUser.Fullname,
+                        TotalAmountDue = result.TransactionSales.TotalAmountDue,
+                        CIAttachment = result.SalesInvoice
 
                     });
 
