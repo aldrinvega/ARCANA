@@ -132,17 +132,20 @@ public class AddNewPaymentTransaction : BaseApiController
                     foreach (var advancePayment in advancePayments)
                     {
                         decimal remainingToPay;
-                        if (advancePayment.RemainingBalance < amountToPay)
+                        if (advancePayment.RemainingBalance <= amountToPay)
                         {
                             remainingToPay = amountToPay - advancePayment.RemainingBalance;
                             advancePayment.RemainingBalance = 0;
                             transaction.TransactionSales.Balance = remainingToPay < 0 ? 0 : remainingToPay;
                             transaction.Status = Status.Paid;
+                            request.PaymentAmount = 0;
                         }
                         else
                         {
                             advancePayment.RemainingBalance -= amountToPay;
                             remainingToPay = 0;
+                            // Update the remaining payment amount
+                            request.PaymentAmount -= amountToPay;
                         }
 
                         var paymentTransaction = new PaymentTransaction

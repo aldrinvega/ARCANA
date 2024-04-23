@@ -117,8 +117,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                 if (!string.IsNullOrEmpty(request.Search))
                 {
                     transactions = transactions.Where(t =>
-                        t.Client.Fullname.Contains(request.Search) &&
-                        t.Client.BusinessName.Contains(request.Search) &&
+                        t.Client.Fullname.Contains(request.Search) ||
+                        t.Client.BusinessName.Contains(request.Search) ||
                         t.TransactionSales.ChargeInvoiceNo.Contains(request.Search));
                 }
 
