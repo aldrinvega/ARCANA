@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RDF.Arcana.API.Data;
 
@@ -11,9 +12,11 @@ using RDF.Arcana.API.Data;
 namespace RDF.Arcana.API.Migrations
 {
     [DbContext(typeof(ArcanaDbContext))]
-    partial class ArcanaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240424062215_addReasonToPaymentRecordEntity")]
+    partial class addReasonToPaymentRecordEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,45 +258,45 @@ namespace RDF.Arcana.API.Migrations
                             Id = 1,
                             AddedBy = 1,
                             BookingCoverage = "F1",
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7128),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7265),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7131)
+                            UpdatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7266)
                         },
                         new
                         {
                             Id = 2,
                             AddedBy = 1,
                             BookingCoverage = "F2",
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7148),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7271),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7149)
+                            UpdatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7272)
                         },
                         new
                         {
                             Id = 3,
                             AddedBy = 1,
                             BookingCoverage = "F3",
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7158),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7274),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7159)
+                            UpdatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7296)
                         },
                         new
                         {
                             Id = 4,
                             AddedBy = 1,
                             BookingCoverage = "F4",
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7162),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7298),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7226)
+                            UpdatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7299)
                         },
                         new
                         {
                             Id = 5,
                             AddedBy = 1,
                             BookingCoverage = "F5",
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7229),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7301),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7230)
+                            UpdatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7302)
                         });
                 });
 
@@ -403,10 +406,6 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("payment_record_id");
 
-                    b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("reason");
-
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("status");
@@ -423,10 +422,6 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("ModifiedBy")
                         .HasDatabaseName("ix_cleared_payments_modified_by");
-
-                    b.HasIndex("PaymentRecordId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_cleared_payments_payment_record_id");
 
                     b.ToTable("cleared_payments", (string)null);
                 });
@@ -1425,7 +1420,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 1,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7403),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7397),
                             IsActive = true,
                             Payment = "Cash",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1434,7 +1429,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 2,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7410),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7401),
                             IsActive = true,
                             Payment = "Online/Check",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1634,6 +1629,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("cheque_no");
 
+                    b.Property<int?>("ClearedPaymentsId")
+                        .HasColumnType("int")
+                        .HasColumnName("cleared_payments_id");
+
                     b.Property<DateTime>("DateReceived")
                         .HasColumnType("datetime2")
                         .HasColumnName("date_received");
@@ -1683,6 +1682,9 @@ namespace RDF.Arcana.API.Migrations
 
                     b.HasIndex("AddedBy")
                         .HasDatabaseName("ix_payment_transactions_added_by");
+
+                    b.HasIndex("ClearedPaymentsId")
+                        .HasDatabaseName("ix_payment_transactions_cleared_payments_id");
 
                     b.HasIndex("PaymentRecordId")
                         .HasDatabaseName("ix_payment_transactions_payment_record_id");
@@ -2232,7 +2234,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 1,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7315),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7344),
                             IsActive = true,
                             TermType = "COD",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -2241,7 +2243,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 2,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7341),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7362),
                             IsActive = true,
                             TermType = "1 Up 1 Down",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -2250,7 +2252,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 3,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(7346),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7364),
                             IsActive = true,
                             TermType = "Credit Type",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -2648,12 +2650,12 @@ namespace RDF.Arcana.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 42, 989, DateTimeKind.Local).AddTicks(8670),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 11, 741, DateTimeKind.Local).AddTicks(9710),
                             Fullname = "Admin",
                             IsActive = true,
                             IsPasswordChanged = false,
-                            Password = "$2a$11$RK/W0fPK1TDEGGA4wnQmSuZh7o4BttcimP4UQc3rkpXjHkflgG9ta",
-                            UpdatedAt = new DateTime(2024, 4, 24, 16, 9, 42, 989, DateTimeKind.Local).AddTicks(8693),
+                            Password = "$2a$11$CUJQfnk2RNKd8/qCTRmbc.I6UnncRdyVFmACPuWNQwa0xTEuSlqKa",
+                            UpdatedAt = new DateTime(2024, 4, 24, 14, 22, 11, 741, DateTimeKind.Local).AddTicks(9734),
                             UserRolesId = 1,
                             Username = "admin"
                         });
@@ -2708,7 +2710,7 @@ namespace RDF.Arcana.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 4, 24, 16, 9, 43, 404, DateTimeKind.Local).AddTicks(6857),
+                            CreatedAt = new DateTime(2024, 4, 24, 14, 22, 12, 445, DateTimeKind.Local).AddTicks(7013),
                             IsActive = true,
                             Permissions = "[\"User Management\",\"User Account\",\"User Role\",\"Company\",\"Department\",\"Location\",\"Masterlist\",\"Products\",\"Meat Type\",\"UOM\",\"Discount Type\",\"Terms\",\"Customer Registration\",\"Prospect\",\"Direct\",\"Freebies\",\"Inventory\",\"Setup\",\"Product Category\",\"Product Sub Category\",\"Unit of Measurements\",\"Store Type\",\"Discount\",\"Term Days\",\"Approval\",\"Freebie Approval\",\"Direct Approval\",\"Admin Dashboard\",\"Direct Registration\",\"Listing Fee\",\"Registration Approval\",\"Sp. Discount Approval\",\"Listing Fee Approval\",\"Business Type\",\"Registration\",\"Customer Management\",\"Product Setup\",\"Variable Discount\"]",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2863,18 +2865,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasForeignKey("ModifiedBy")
                         .HasConstraintName("fk_cleared_payments_users_modified_by_user_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.PaymentRecords", "PaymentRecord")
-                        .WithOne("ClearedPayments")
-                        .HasForeignKey("RDF.Arcana.API.Domain.ClearedPayments", "PaymentRecordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_cleared_payments_payment_records_payment_record_id");
-
                     b.Navigation("AddedByUser");
 
                     b.Navigation("ModifiedByUser");
-
-                    b.Navigation("PaymentRecord");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.ClientDocuments", b =>
@@ -3332,6 +3325,11 @@ namespace RDF.Arcana.API.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_payment_transactions_users_added_by_user_id");
 
+                    b.HasOne("RDF.Arcana.API.Domain.ClearedPayments", null)
+                        .WithMany("PaymentTransactions")
+                        .HasForeignKey("ClearedPaymentsId")
+                        .HasConstraintName("fk_payment_transactions_cleared_payments_cleared_payments_id");
+
                     b.HasOne("RDF.Arcana.API.Domain.PaymentRecords", "PaymentRecord")
                         .WithMany("PaymentTransactions")
                         .HasForeignKey("PaymentRecordId")
@@ -3744,6 +3742,11 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("AddedByUser");
                 });
 
+            modelBuilder.Entity("RDF.Arcana.API.Domain.ClearedPayments", b =>
+                {
+                    b.Navigation("PaymentTransactions");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.Clients", b =>
                 {
                     b.Navigation("ClientDocuments");
@@ -3808,8 +3811,6 @@ namespace RDF.Arcana.API.Migrations
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.PaymentRecords", b =>
                 {
-                    b.Navigation("ClearedPayments");
-
                     b.Navigation("PaymentTransactions");
                 });
 

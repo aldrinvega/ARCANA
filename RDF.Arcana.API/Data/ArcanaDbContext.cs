@@ -35,9 +35,10 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ListingFee> ListingFees { get; set; }
     public virtual DbSet<ListingFeeItems> ListingFeeItems { get; set; }
     public virtual DbSet<UpdateRequestTrail> UpdateRequestTrails { get; set; }
-    
+    public virtual DbSet<ClearedPayments> ClearedPayments { get; set; }
+
     //Approver 
-    
+
     public virtual DbSet<Request> Requests { get; set; }
     public virtual DbSet<Approval> Approval { get; set; }
     public virtual DbSet<Approver> Approvers { get; set; }
@@ -460,5 +461,14 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.ModifiedBy);
 
+        modelBuilder.Entity<ClearedPayments>()
+            .HasOne(x => x.ModifiedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy);
+
+        modelBuilder.Entity<ClearedPayments>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
     }
 }

@@ -136,7 +136,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         {
                             remainingToPay = amountToPay - advancePayment.RemainingBalance;
                             advancePayment.RemainingBalance = 0;
-                            transaction.TransactionSales.Balance = remainingToPay < 0 ? 0 : remainingToPay;
+                            transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
                             transaction.Status = Status.Paid;
                             request.PaymentAmount = 0;
                         }
@@ -188,7 +188,7 @@ public class AddNewPaymentTransaction : BaseApiController
                     var remainingToPay = amountToPay - request.PaymentAmount;
 
                     // Update the remaining balance of the transaction
-                    transaction.TransactionSales.Balance = remainingToPay < 0 ? 0 : remainingToPay;
+                    transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
 
                     var paymentTransaction = new PaymentTransaction
                     {
@@ -223,7 +223,7 @@ public class AddNewPaymentTransaction : BaseApiController
                     }
                     else
                     {
-                        transaction.TransactionSales.Balance = remainingToPay < 0 ? 0 : remainingToPay;
+                        transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
                     }
                 }
             }

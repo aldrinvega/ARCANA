@@ -39,6 +39,7 @@ public static class Status
     public const string Received = "Received";
     public const string Cleared = "Cleared";
     public const string Overdue = "Over due";
+   
 }
 
 //public static class Terms

@@ -9,11 +9,11 @@ using RDF.Arcana.API.Domain;
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 {
     [Microsoft.AspNetCore.Mvc.Route("api/payment-transaction"), ApiController]
-    public class GetPaymentTransactionByStatus : ControllerBase
+    public class GetAllPaymentTransactions : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public GetPaymentTransactionByStatus(IMediator mediator)
+        public GetAllPaymentTransactions(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -55,16 +55,31 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 
         public class GetPaymentTransactionByStatusQuery : UserParams, IRequest<PagedList<GetPaymentTransactionByStatusResult>>
         {
-            public string Status { get; set; }           
+            public string Status { get; set; }
+            public string Search { get; set; }
+            public string PaymentStatus { get; set; }
         }
 
         public class GetPaymentTransactionByStatusResult
         {
+            public int TransactionId { get; set; }
             public int ClientId { get; set; }
+            public string BusinessName { get; set; }
+            public string FullName { get; set; }
+            public string ChargeInvoiceNo { get; set; }
+            public decimal TotalAmountDue { get; set; }
+            public decimal RemainingBalance { get; set; }
             public DateTime CreatedAt { get; set; }
             public DateTime UpdatedAt { get; set; }
             public string Reason { get; set; }
             public string Status { get; set; }
+            public ICollection<PaymentTransaction> PaymentTransactions { get; set; }
+
+
+            public class PaymentTransaction
+            {
+
+            }
         }
 
         public class Handler : IRequestHandler<GetPaymentTransactionByStatusQuery, PagedList<GetPaymentTransactionByStatusResult>>
@@ -79,16 +94,33 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public Task<PagedList<GetPaymentTransactionByStatusResult>> Handle(GetPaymentTransactionByStatusQuery request,
                 CancellationToken cancellationToken)
             {
-                IQueryable<Transactions> transactions = _context.Transactions;
 
-                if(!string.IsNullOrEmpty(request.Status))
+                IQueryable<Transactions> transactions = _context.Transactions
+                    .Include(c => c.Client)
+                    .Include(ts => ts.TransactionSales);
+
+
+                if (int.TryParse(request.Search, out int transactionId) && !string.IsNullOrEmpty(request.Search))
                 {
-                    transactions = transactions.Where(tr => tr.Status == request.Status);
+                    transactions = transactions.Where(tr => tr.Id == transactionId);
+                }
+                else
+                {
+                    transactions = transactions.Where(tx => 
+                                   tx.Client.BusinessName.Contains(request.Search) ||
+                                   tx.Client.Fullname.Contains(request.Search) ||
+                                   tx.TransactionSales.ChargeInvoiceNo.Contains(request.Search));
                 }
 
                 var result = transactions.Select(result => new GetPaymentTransactionByStatusResult
                 {
+                    TransactionId = result.Id,
                     ClientId = result.ClientId,
+                    BusinessName = result.Client.BusinessName,
+                    FullName = result.Client.Fullname,
+                    ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
+                    TotalAmountDue = result.TransactionSales.TotalAmountDue,
+                    RemainingBalance = result.TransactionSales.RemainingBalance,
                     CreatedAt = result.CreatedAt,   
                     UpdatedAt = result.UpdatedAt,
                     Reason = result.Reason,

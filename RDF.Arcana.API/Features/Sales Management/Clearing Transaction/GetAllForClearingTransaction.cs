@@ -88,7 +88,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
                 if (!string.IsNullOrEmpty(request.Search))
                 {
-                    transactions = transactions.Where(tr => tr.Client.BusinessName == request.Search);
+                    transactions = transactions.Where(tr => tr.Client.BusinessName.Contains(request.Search));
                 }
 
                 var result = transactions.Select(result => new GetAllForClearingTransactionResult
