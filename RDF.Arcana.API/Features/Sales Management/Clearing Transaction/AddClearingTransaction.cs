@@ -1,16 +1,16 @@
 ﻿
-using Microsoft.AspNetCore.Components;
+
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using static RDF.Arcana.API.Features.Sales_Transactions.Advance_Payment.AddAdvancePayment;
+
 using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/clearing-transation")]
+    [Route("api/clearing-transation")]
     public class AddClearingTransaction : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -61,25 +61,34 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
             public async Task<Result> Handle(AddClearingTransactionCommand request, CancellationToken cancellationToken)
             {
-                //var existingTransaction = await _context.PaymentRecords
-                //    .FirstOrDefaultAsync(tr =>
-                //        tr.Id == request.PaymentRecordId,
-                //        cancellationToken);
+                var existingTransaction = await _context.PaymentRecords
+                    .FirstOrDefaultAsync(tr =>
+                        tr.Id == request.PaymentRecordId,
+                        cancellationToken);
 
-                //if (existingTransaction != null)
-                //{
-                //    return ClearingErrors.NotFound();
-                //}
+                if (existingTransaction is null)
+                {
+                    return ClearingErrors.NotFound();
+                }
 
+                var existingCleared = await _context.ClearedPayments
+                    .FirstOrDefaultAsync(c =>
+                        c.PaymentRecordId == request.PaymentRecordId,
+                        cancellationToken);
+                if (existingCleared is not null)
+                {
+                    return ClearingErrors.AlreadyExist();
+                }
 
 
                 var clearedPayment = new ClearedPayments
                 {
                     PaymentRecordId = request.PaymentRecordId,
-                    AddedBy = request.AddedBy,
+                    AddedBy = request.AddedBy,  
                     ModifiedBy = request.ModifiedBy,
                     Status = Status.Cleared
                 };
+
 
                 var statusCleared = await _context.PaymentRecords
                         .FirstOrDefaultAsync(tr =>
@@ -87,6 +96,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
                             cancellationToken);
 
                 statusCleared.Status = Status.Cleared;
+
 
                 await _context.ClearedPayments.AddAsync(clearedPayment, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);

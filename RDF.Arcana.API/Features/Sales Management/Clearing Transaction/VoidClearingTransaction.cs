@@ -20,7 +20,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
         {
             try
             {
-                command.PaymentRecordId = id;
+                command.Id = id;
                 var result = await _mediator.Send(command);
 
                 return result.IsFailure ? BadRequest(result) : Ok(result);
@@ -34,7 +34,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
         public class VoidClearingTransactionCommand : IRequest<Result>
         {
-            public int PaymentRecordId { get; set; }
+            public int Id { get; set; }
             public string Reason { get; set; }
         }
 
@@ -49,16 +49,32 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
             public async Task<Result> Handle(VoidClearingTransactionCommand request, CancellationToken cancellationToken)
             {
-                var existingPayment = await _context.PaymentRecords
-                    .FirstOrDefaultAsync(p => p.Id == request.PaymentRecordId);
+                var existingTransaction = await _context.PaymentRecords
+                    .FirstOrDefaultAsync(tr =>
+                        tr.Id == request.Id,
+                        cancellationToken);
 
-                var existingClear = await _context.ClearedPayments
-                    .FirstOrDefaultAsync(c => c.PaymentRecordId == request.PaymentRecordId);
+                if (existingTransaction is null)
+                {
+                    return ClearingErrors.NotFound();
+                }
+               
+                var existingPayment = await _context.PaymentRecords
+                    .FirstOrDefaultAsync(p => p.Id == request.Id);
+
+
+                if(existingPayment.Status == Status.Cleared)
+                {
+                    return ClearingErrors.Cleared();
+                }
+
+                if (existingPayment.Status == Status.Voided)
+                {
+                    return ClearingErrors.Voided();
+                }
 
                 existingPayment.Status = Status.Voided;
-                existingClear.Status = Status.Voided;
                 existingPayment.Reason = request.Reason;
-                existingClear.Reason = request.Reason;
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();
