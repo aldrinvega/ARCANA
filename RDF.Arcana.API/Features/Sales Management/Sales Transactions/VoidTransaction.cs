@@ -50,6 +50,7 @@ public class VoidTransaction : ControllerBase
         public async Task<Result> Handle(VoidtransactionCommand request, CancellationToken cancellationToken)
         {
             var existingTransaction = await _context.Transactions
+                .Include(ts => ts.TransactionSales)
                 .FirstOrDefaultAsync(t => t.Id == request.TransactionId, cancellationToken);
 
             if (existingTransaction is null)
@@ -61,39 +62,47 @@ public class VoidTransaction : ControllerBase
                 .Where(pt => pt.TransactionId == request.TransactionId)
                 .ToListAsync(cancellationToken);
 
-            var advancePayments = await _context.AdvancePayments
-                .Where(ap => 
-                ap.ClientId == existingTransaction.ClientId && 
-                ap.IsActive && ap.Status != Status.Voided)
-                .ToListAsync(cancellationToken);
-
-            var totalPayments = paymentTransactions.Sum(payment => payment.TotalAmountReceived);
-
-            for (var i = 0; i < paymentTransactions.Count; i++)
+            if (paymentTransactions.Any(x => x.Status != Status.Voided))
             {
-                var paymentTransaction = paymentTransactions[i];
-                if (paymentTransaction.PaymentMethod == PaymentMethods.AdvancePayment)
+                return TransactionErrors.AlreadyHasPayment();
+            }
+            else
+            {
+                var advancePayments = await _context.AdvancePayments
+               .Where(ap =>
+               ap.ClientId == existingTransaction.ClientId &&
+               ap.IsActive && ap.Status != Status.Voided)
+               .ToListAsync(cancellationToken);
+
+                var totalPayments = paymentTransactions.Sum(payment => payment.TotalAmountReceived);
+
+                for (var i = 0; i < paymentTransactions.Count; i++)
                 {
-                    foreach (var advancePayment in advancePayments)
+                    var paymentTransaction = paymentTransactions[i];
+                    if (paymentTransaction.PaymentMethod == PaymentMethods.AdvancePayment)
                     {
-                        if(advancePayment.Origin == Origin.Manual)
+                        foreach (var advancePayment in advancePayments)
                         {
-                          advancePayment.RemainingBalance = advancePayment.AdvancePaymentAmount;
-                        }
-                        else
-                        {
-                            advancePayment.IsActive = false;
+                            if (advancePayment.Origin == Origin.Manual)
+                            {
+                                advancePayment.RemainingBalance = advancePayment.AdvancePaymentAmount;
+                            }
+                            else
+                            {
+                                advancePayment.IsActive = false;
+                            }
                         }
                     }
+                    if (paymentTransaction.PaymentMethod != PaymentMethods.AdvancePayment)
+                    {
+                        paymentTransaction.IsActive = false;
+                    }
                 }
-                if(paymentTransaction.PaymentMethod != PaymentMethods.AdvancePayment)
-                {
-                    paymentTransaction.IsActive = false;
-                }
+
+                existingTransaction.Status = Status.Voided;
+                existingTransaction.Reason = request.Reason;
+                existingTransaction.TransactionSales.RemainingBalance = existingTransaction.TransactionSales.TotalAmountDue;
             }
-            
-            existingTransaction.Status = Status.Voided;
-            existingTransaction.Reason = request.Reason;
 
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();

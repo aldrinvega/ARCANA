@@ -25,7 +25,7 @@ public class TransactionSales : BaseEntity
     public int AddedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt{ get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
     public string ChargeInvoiceNo { get; set; }
     public decimal RemainingBalance { get; set; }
 

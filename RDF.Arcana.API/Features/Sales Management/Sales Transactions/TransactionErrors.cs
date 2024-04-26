@@ -7,4 +7,5 @@ public static class TransactionErrors
     public static Error NotFound() => new("Transaction.NotFound", "No transaction found");
     public static Error AlreadyPaid() => new("Transaction.AlreadyPaid", "This transaction is already paid");
     public static Error CreditLimitExceeded() => new("Transaction.CreditLimitExceeded", "Not enough credit limit");
+    public static Error AlreadyHasPayment() => new("Transaction.AlreadyHasPayment", "This has payment transaction");
 }

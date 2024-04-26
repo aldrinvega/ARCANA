@@ -78,9 +78,6 @@ public class AddAdvancePayment : ControllerBase
                 return ClientErrors.NotFound();
             }
 
-            
-
-
             var advancePayment = new AdvancePayment
             {
                 ClientId = request.ClientId,

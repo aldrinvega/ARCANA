@@ -19,5 +19,5 @@ public class TransactionItems : BaseEntity
     public virtual Transactions Transaction { get; set; }
     public virtual Items Item { get; set; }
     public virtual User AddedByUser { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 }

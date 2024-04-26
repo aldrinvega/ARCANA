@@ -7,6 +7,7 @@ public class ExpensesRequest : BaseEntity
     public int ExpensesId  { get; set; }
     public int OtherExpenseId { get; set; }
     public decimal Amount { get; set; }
+    public bool IsOneTime { get; set; }
     public string Remarks { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;

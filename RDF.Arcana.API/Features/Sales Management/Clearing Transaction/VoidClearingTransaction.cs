@@ -49,12 +49,18 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
             public async Task<Result> Handle(VoidClearingTransactionCommand request, CancellationToken cancellationToken)
             {
-                var existingTransaction = await _context.PaymentRecords
+                var paymentRecord = await _context.PaymentRecords
+                    .Include(pt  => pt.PaymentTransactions)
+                    .ThenInclude(t => t.Transaction)
                     .FirstOrDefaultAsync(tr =>
                         tr.Id == request.Id,
                         cancellationToken);
 
-                if (existingTransaction is null)
+                //paymentRecord.PaymentTransactions.
+
+
+
+                if (paymentRecord is null)
                 {
                     return ClearingErrors.NotFound();
                 }
@@ -74,7 +80,10 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
                 }
 
                 existingPayment.Status = Status.Voided;
+                existingPayment.IsActive = false;
                 existingPayment.Reason = request.Reason;
+
+                
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return Result.Success();

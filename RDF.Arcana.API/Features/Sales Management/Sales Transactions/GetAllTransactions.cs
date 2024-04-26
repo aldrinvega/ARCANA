@@ -72,6 +72,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public DateTime CreatedAt { get; set; }
             public string ChargeInvoiceNo { get; set; }
             public string AddedBy { get; set; }
+            public decimal RemainingBalance { get; set; }
             public decimal TotalAmountDue { get; set; }
             public string CIAttachment { get; set; }
         }
@@ -170,6 +171,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                         CreatedAt = result.CreatedAt,
                         ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
                         AddedBy = result.AddedByUser.Fullname,
+                        RemainingBalance = result.TransactionSales.RemainingBalance,
                         TotalAmountDue = result.TransactionSales.TotalAmountDue,
                         CIAttachment = result.SalesInvoice
 
@@ -188,9 +190,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     CreatedAt = result.CreatedAt,
                     ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
                     AddedBy = result.AddedByUser.Fullname,
+                    RemainingBalance = result.TransactionSales.RemainingBalance,
                     TotalAmountDue = result.TransactionSales.TotalAmountDue,
                     CIAttachment = result.SalesInvoice
-
                 });
 
                 return PagedList<GetAllTransactionQueryResult>.CreateAsync(result, request.PageNumber,

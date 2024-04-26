@@ -84,13 +84,8 @@ public class AddNewPaymentTransaction : BaseApiController
                 
             }
 
-            ////Validate if the Payment amount is sufficient to cover the transaction amount
-            //if (totalAmount > request.PaymentAmount)
-            //{
-            //    return PaymentTransactionsErrors.InsufficientFunds();
-            //}
 
-            //Create New PAyment Records
+            //Create New Payment Records
 
             var paymentRecord = new PaymentRecords
             {
@@ -115,7 +110,7 @@ public class AddNewPaymentTransaction : BaseApiController
                     return TransactionErrors.NotFound();
                 }
 
-                var amountToPay = transaction.TransactionSales.TotalAmountDue;
+                var amountToPay = transaction.TransactionSales.RemainingBalance;
 
                 //For advance payment transactions
                 if (request.PaymentMethod == PaymentMethods.AdvancePayment)
@@ -139,6 +134,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
                             transaction.Status = Status.Paid;
                             request.PaymentAmount = 0;
+
                         }
                         else
                         {
@@ -219,38 +215,42 @@ public class AddNewPaymentTransaction : BaseApiController
                     if (remainingToPay <= 0)
                     {
                         transaction.Status = Status.Paid;
+                        await _context.SaveChangesAsync(cancellationToken);
                         continue; 
                     }
                     else
                     {
                         transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
+                        await _context.SaveChangesAsync(cancellationToken);
+                    }
+
+                    if (request.PaymentAmount > 0)
+                    {
+                        var advancePayment = new AdvancePayment
+                        {
+                            ClientId = request.ClientId,
+                            PaymentMethod = request.PaymentMethod,
+                            AdvancePaymentAmount = request.PaymentAmount,
+                            RemainingBalance = request.PaymentAmount,
+                            Payee = request.Payee,
+                            ChequeDate = request.ChequeDate,
+                            BankName = request.BankName,
+                            ChequeNo = request.ChequeNo,
+                            DateReceived = request.DateReceived,
+                            ChequeAmount = request.ChequeAmount,
+                            AccountName = request.AccountName,
+                            AccountNo = request.AccountNo,
+                            AddedBy = request.AddedBy,
+                            Origin = Origin.Excess
+                        };
+
+                        await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken);
                     }
                 }
             }
 
-            if(request.PaymentAmount > 0)
-            {
-                var advancePayment = new AdvancePayment
-                {
-                    ClientId = request.ClientId,
-                    PaymentMethod = request.PaymentMethod,
-                    AdvancePaymentAmount = request.PaymentAmount,
-                    RemainingBalance = request.PaymentAmount,
-                    Payee = request.Payee,
-                    ChequeDate = request.ChequeDate,
-                    BankName = request.BankName,
-                    ChequeNo = request.ChequeNo,
-                    DateReceived = request.DateReceived,
-                    ChequeAmount = request.ChequeAmount,
-                    AccountName = request.AccountName,
-                    AccountNo = request.AccountNo,
-                    AddedBy = request.AddedBy,
-                    Origin = Origin.Excess
-                };
-
-                await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-            }
+            
 
             return Result.Success();
         }

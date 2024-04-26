@@ -95,6 +95,7 @@ public class GetAllExpenses : ControllerBase
             public int Id { get; set; }
             public string ExpenseType { get; set; }
             public decimal Amount { get; set; }
+            public bool IsOneTime { get; set; }
         }
         public IEnumerable<ExpensesApprovalHistory> ApprovalHistories { get; set; }
         public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
@@ -204,7 +205,8 @@ public class GetAllExpenses : ControllerBase
                 {
                     Id = er.Id,
                     ExpenseType = er.OtherExpense.ExpenseType,
-                    Amount = er.Amount
+                    Amount = er.Amount,
+                    IsOneTime = er.IsOneTime,
                 }),
                 TotalAmount = oe.ExpensesRequests.Sum(er => er.Amount),
                 Requestor = oe.AddedByUser.Fullname,

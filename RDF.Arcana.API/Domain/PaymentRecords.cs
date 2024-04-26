@@ -11,7 +11,8 @@ namespace RDF.Arcana.API.Domain
         public int? ModifiedBy { get; set; }
         public bool IsActive { get; set; } = true;
         public string Status { get; set; }
-        public string Reason { get; set; }       
+        public string Reason { get; set; }
+        
         public virtual ClearedPayments ClearedPayments { get; set; }
         public virtual User AddedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }

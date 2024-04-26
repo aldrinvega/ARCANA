@@ -10,8 +10,8 @@ services:
       context: .
       dockerfile: RDF.Arcana.API/Dockerfile
     ports:
-    - "5000:5000"
-    - "5001:5001"
+    - "5078:5078"
+    - "5079:5079"
     depends_on: 
       - arcana.database
     networks: 
@@ -33,6 +33,6 @@ services:
       - ./secrets:/var/opt/mssql/secrets
       - arcana-volume:/var/lib/mysql
      ports:
-        - "5003:1433"
+        - "5070:1433"
 volumes:
   arcana-volume:
