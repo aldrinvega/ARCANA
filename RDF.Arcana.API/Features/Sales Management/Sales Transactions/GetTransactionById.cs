@@ -140,8 +140,8 @@ public class GetTransactionById : ControllerBase
                 VatExemptSales = existingTransaction.TransactionSales.VatExemptSales,
                 ZeroRatedSales = existingTransaction.TransactionSales.ZeroRatedSales,
                 VatAmount = existingTransaction.TransactionSales.VatAmount,
-                DiscountPercentage = (existingTransaction.TransactionSales.Discount + 
-                                     existingTransaction.TransactionSales.SpecialDiscountAmount) / 100
+                DiscountPercentage = existingTransaction.TransactionSales.Discount + 
+                                     existingTransaction.TransactionSales.SpecialDiscount
             };
             
             return Result.Success(result);
