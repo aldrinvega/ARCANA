@@ -93,6 +93,10 @@ public class UpdateClientAttachment : ControllerBase
                             // If the new attachment is a file, upload it and update the relevant record in the database.
                             if (newAttachment.Attachment.Length > 0)
                             {
+
+                                //var stream = newAttachment.Attachment.OpenReadStream();
+
+                                //var fileId = await _blobService.UploadAsync(stream, newAttachment.Attachment.ContentType, cancellationToken: cancellationToken);
                                 await using var stream = newAttachment.Attachment.OpenReadStream();
 
                                 var attachmentsParams = new ImageUploadParams

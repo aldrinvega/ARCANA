@@ -104,7 +104,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                        if(totalAmountDues > 0)
                         {
                           totalAmountDues -= paymentTransaction.TotalAmountReceived;
-                          paymentTransaction.Transaction.TransactionSales.RemainingBalance += paymentTransaction.TotalAmountReceived;
+                            var toAdd = paymentTransaction.Transaction.TransactionSales.RemainingBalance - paymentTransaction.TotalAmountReceived;
+                          paymentTransaction.Transaction.TransactionSales.RemainingBalance += toAdd;
                             paymentTransaction.Status = Status.Voided;
                         }
                     }

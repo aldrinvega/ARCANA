@@ -61,6 +61,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public string DateFrom { get; set; }
             public string DateTo { get; set; }
             public string Terms  { get; set; }
+            public int? ClientId { get; set; }
         }
 
         public class GetAllTransactionQueryResult
@@ -99,6 +100,11 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     .Include(cl => cl.Client)
                     .ThenInclude(to => to.Term)
                     .ThenInclude(t => t.Terms);
+
+                if(request.ClientId != null)
+                {
+                    transactions = transactions.Where(tr => tr.ClientId == request.ClientId);
+                }
 
                 if (!string.IsNullOrEmpty(request.Terms))
                 {

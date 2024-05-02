@@ -16,7 +16,7 @@ services:
       - arcana.database
     networks: 
       - rdf.arcana.api
-
+ 
   arcana.database: 
      image: mcr.microsoft.com/mssql/server:2022-latest
      container_name: arcana.database
@@ -34,5 +34,16 @@ services:
       - arcana-volume:/var/lib/mysql
      ports:
         - "5070:1433"
+
+  arcana-blob-storage:
+      image: mcr.microsoft.com/azure-storage/azurite:latest
+      container_name: arcana.blob-storage
+      volumes: 
+        - ./.containers/blob_storage/data:/data
+      ports: 
+        - "10000:10000"
+        - "10001:10001"
+      command: "azurite-blob --blobHost 0.0.0.0 -l /data"
+
 volumes:
   arcana-volume:

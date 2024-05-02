@@ -1,15 +1,19 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using Azure.Storage.Blobs;
 using Carter;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RDF.Arcana.API.Abstractions.Storage;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Behaviors;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -17,6 +21,8 @@ var config = builder.Configuration;
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
+builder.Services.AddSingleton<IBlobService, BlobService>();
+builder.Services.AddSingleton(_ => new BlobServiceClient(config.GetConnectionString("BlobStorage")));
 
 builder.Services.AddMediatR(x =>
 {

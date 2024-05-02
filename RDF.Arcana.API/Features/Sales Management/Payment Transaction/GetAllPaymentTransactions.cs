@@ -77,7 +77,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                 public decimal RemainingBalance { get; set; }
                 public int ClientId { get; set; }
                 public string BusinessName { get; set; }
-                public string FullName { get; set; }
+                public string FullName { get; set; }                                                   
                 public string PaymentMethod { get; set; }
                 public decimal PaymentAmount { get; set; }
                 public decimal TotalAmountReceived { get; set; }
