@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using RDF.Arcana.API.Common;
 
 namespace RDF.Arcana.API.Domain;
 
 public class UserRoles : BaseEntity
 {
+    [Required]
     public string UserRoleName { get; set; }
     public ICollection<string> Permissions { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;

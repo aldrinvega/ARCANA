@@ -42,7 +42,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/avega/source/repos/aldrinvega/ARCANA/RDF.Arcana.API/Features/Price Mode/GetAllItemsForPriceModeByPriceModeCode.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/RDF.Arcana.API/Features/Sales Management/Sales Transactions/AddTransaction.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -200,6 +200,10 @@
       <workItem from="1711066548440" duration="602000" />
       <workItem from="1711280672153" duration="4003000" />
       <workItem from="1711326358305" duration="1087000" />
+      <workItem from="1711412412103" duration="13812000" />
+      <workItem from="1711464315158" duration="992000" />
+      <workItem from="1711604351341" duration="4248000" />
+      <workItem from="1712025828642" duration="2584000" />
     </task>
     <task id="LOCAL-00001" summary="-">
       <option name="closed" value="true" />
@@ -225,6 +229,17 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="-" />

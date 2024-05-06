@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Setup.UserRoles.Exceptions;
@@ -62,28 +63,43 @@ public class AddNewUserRoles : ControllerBase
 
         public async Task<Result> Handle(AddNewUserRolesCommand request, CancellationToken cancellationToken)
         {
-            var existingUserRole = await _context.UserRoles
-                .Include(x => x.Users)
-                .FirstOrDefaultAsync(x => x.UserRoleName == request.RoleName,
-                    cancellationToken);
+            try
+            {
+                var existingUserRole = await _context.UserRoles
+                    .Include(x => x.Users)
+                    .FirstOrDefaultAsync(x => x.UserRoleName == request.RoleName, cancellationToken);
 
-            if (existingUserRole is not null)
+                if (existingUserRole is not null)
+                {
+                    return UserRoleErrors.AlreadyExist(request.RoleName);
+                }
+
+                var userRole = new Domain.UserRoles
+                {
+                    UserRoleName = request.RoleName,
+                    Permissions = request.Permissions,
+                    AddedBy = request.AddedBy,
+                    IsActive = true
+                };
+
+                // Use the execution strategy for transaction handling
+                var strategy = _context.Database.CreateExecutionStrategy();
+                await strategy.ExecuteAsync(async () =>
+                {
+                    using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+                    await _context.UserRoles.AddAsync(userRole, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    await transaction.CommitAsync(cancellationToken);
+                });
+
+                return Result.Success();
+            }
+            catch (Exception)
             {
                 return UserRoleErrors.AlreadyExist(request.RoleName);
             }
-
-            var userRole = new Domain.UserRoles
-            {
-                UserRoleName = request.RoleName,
-                Permissions = request.Permissions,
-                AddedBy = request.AddedBy,
-                IsActive = true
-            };
-
-            await _context.UserRoles.AddAsync(userRole, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return Result.Success();
         }
     }
 }

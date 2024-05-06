@@ -58,6 +58,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<TransactionItems> TransactionItems { get; set; }
     public virtual DbSet<TransactionSales> TransactionSales { get; set; }
     public virtual DbSet<AdvancePayment> AdvancePayments { get; set; }
+    public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,7 +71,13 @@ public class ArcanaDbContext : DbContext
                     (c1, c2) => c1.SequenceEqual(c2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
-        
+
+        //Unique Constraints
+
+        modelBuilder.Entity<UserRoles>()
+               .HasIndex(u => u.UserRoleName)
+               .IsUnique();
+
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.AddedByUser)
             .WithMany(x => x.Clients)
@@ -441,6 +448,12 @@ public class ArcanaDbContext : DbContext
            .HasOne(x => x.ModifiedByUser)
            .WithMany()
            .HasForeignKey(x => x.ModifiedBy);
+        
+        modelBuilder.Entity<PaymentTransaction>()
+            .HasOne(x => x.AddedByUser)
+            .WithMany()
+            .HasForeignKey(x => x.AddedBy);
+
 
     }
 }
