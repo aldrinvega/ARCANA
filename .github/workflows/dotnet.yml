@@ -33,7 +33,7 @@ jobs:
                 NUGET_AUTH_TOKEN: '%NUGET_AUTH_TOKEN%'
 
             - name: Install dependencies
-              run: dotnet restore ./RDF.Arcana.sln
+              run: dotnet restore ./RDF.Arcana.API/RDF.Arcana.sln
               env:
                 NUGET_AUTH_TOKEN: ${{ github.token }}
                   
@@ -51,13 +51,24 @@ jobs:
             # Push files to the "deploy" branch
             - name: Deploy
               run: |
+                # Clone the deploy branch
                 git clone --depth 1 --single-branch -b deploy git@github.com:${{ github.repository }}.git deploy
+    
+                # Move the .git folder to preserve history
                 mv deploy/.git deploy-.git
                 rm -rf deploy
+    
+                # Recreate the deploy folder and move back the .git folder
                 mkdir deploy
                 mv deploy-.git deploy/.git
+    
+                # Copy the published artifacts to the deploy folder
+                cp -R ./RDF.Arcana.API/bin/Release/net7.0/publish/* deploy/
+    
+                # Change directory to the deploy folder
                 cd deploy
-                cp -R ../bin/Release/net7.0/publish .
+    
+                # Add changes, commit if there are differences, and push to deploy branch
                 git add .
                 git diff --staged --quiet || git commit -m "Update Artifacts"
                 git push
