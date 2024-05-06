@@ -36,7 +36,6 @@ public abstract class AuthenticateUser
             Permission = user.UserRoles?.Permissions;
             IsPasswordChanged = user.IsPasswordChanged;
             ProfilePicture = user.ProfilePicture;
-            Name = user.Fullname;
         }
 
         public int Id { get; set; }
@@ -53,7 +52,6 @@ public abstract class AuthenticateUser
 
         public bool IsPasswordChanged { get; set; }
         public string ProfilePicture { get; set; }
-        public string Name { get; set; }
     }
 
     public class Handler : IRequestHandler<AuthenticateUserQuery, Result>
