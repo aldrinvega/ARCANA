@@ -64,6 +64,7 @@ public class GetClientsForPOSAsync : ControllerBase
         public decimal? DiscountPercentage { get; set; }
         public bool? VariableDiscount { get; set; }
         public decimal? SpecialDiscount { get; set; }
+        public int? CreditLimit { get; set; }
     }
 
     public class Handler : IRequestHandler<GetClientsForPOSAsyncQuery, Result>
@@ -86,7 +87,11 @@ public class GetClientsForPOSAsync : ControllerBase
                 clients = await _context.Clients
                     .Include(fd => fd.FixedDiscounts)
                     .Include(sp => sp.SpecialDiscounts)
-                    .Where(x => x.RegistrationStatus == Status.Approved && x.ClusterId == userClusters.ClusterId)
+                    .Include(to => to.Term)
+                    .Include(t => t.Transactions)
+                    .Where(x => x.RegistrationStatus == Status.Approved &&
+                                x.ClusterId == userClusters.ClusterId)
+                    .Where(x => x.Transactions.Any(ts => ts.Status != Status.Pending))
                     .Select(cl => new GetClientsForPOSAsyncResult
                     {
                         ClientId = cl.Id,
@@ -95,7 +100,8 @@ public class GetClientsForPOSAsync : ControllerBase
                         PriceModeId = cl.PriceModeId,
                         VariableDiscount = cl.VariableDiscount,
                         DiscountPercentage = cl.FixedDiscounts.DiscountPercentage,
-                        SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount
+                        SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount,
+                        CreditLimit = cl.Term.CreditLimit                      
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 
@@ -109,9 +115,13 @@ public class GetClientsForPOSAsync : ControllerBase
 
 
             if (request.RoleName.Contains(Roles.Admin))
-            { 
+            {               
                 clients = await _context.Clients
-                    .Where(x => x.RegistrationStatus == Status.Approved)
+                    .Include(to => to.Term)
+                    .Include(t => t.Transactions)
+                    .Where(x => x.RegistrationStatus == Status.Approved &&
+                                (x.Term.TermsId != 2 || (x.Transactions.Any(ts => ts.Status == Status.Paid) ||
+                                x.Transactions.Count == 0)))
                     .Select(cl => new GetClientsForPOSAsyncResult
                     {
                         ClientId = cl.Id,
@@ -120,7 +130,8 @@ public class GetClientsForPOSAsync : ControllerBase
                         PriceModeId = cl.PriceModeId,
                         VariableDiscount = cl.VariableDiscount,
                         DiscountPercentage = cl.FixedDiscounts.DiscountPercentage,
-                        SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount
+                        SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount,
+                        CreditLimit = cl.Term.CreditLimit
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 

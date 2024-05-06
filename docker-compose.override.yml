@@ -4,10 +4,10 @@ services:
   rdf.arcana.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:5000;http://+:5001
+      - ASPNETCORE_URLS=https://+:5078;http://+:5079
     ports:
-      - "5000"
-      - "5001"
+      - "5078"
+      - "5079"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

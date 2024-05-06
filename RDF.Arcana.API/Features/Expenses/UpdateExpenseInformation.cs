@@ -47,6 +47,7 @@ public class UpdateExpenseInformation : ControllerBase
             public int Id { get; set; }
             public int OtherExpenseId { get; set; }
             public decimal Amount { get; set; }
+            public bool IsOneTime { get; set; }
             public string Remarks { get; set; }
         }
         
@@ -124,6 +125,7 @@ public class UpdateExpenseInformation : ControllerBase
                 if (expensesToAdd != null)
                 {
                     expensesToAdd.Amount = expense.Amount;
+                    expensesToAdd.IsOneTime = expense.IsOneTime;
                     expensesToAdd.UpdatedAt = DateTime.UtcNow;
                 }
                 else
@@ -132,9 +134,10 @@ public class UpdateExpenseInformation : ControllerBase
                     {
                         ExpensesId = request.ExpenseId,
                         Amount = expense.Amount,
+                        IsOneTime = expense.IsOneTime,
                         Remarks = expense.Remarks,
                         OtherExpenseId = expense.OtherExpenseId
-                    });
+                    }) ;
                 }
             }
             expenses.Request.Status = Status.UnderReview;

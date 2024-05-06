@@ -54,6 +54,7 @@ public class AddAdvancePayment : ControllerBase
         public string AccountName { get; set; }
         public string AccountNo { get; set; }
         public int AddedBy { get; set; }
+        
     }
     
     public class Handler : IRequestHandler<AddCashAdvancePaymentCommand, Result>

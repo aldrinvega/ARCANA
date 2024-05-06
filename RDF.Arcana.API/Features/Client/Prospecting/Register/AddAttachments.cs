@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using RDF.Arcana.API.Abstractions.Storage;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
@@ -85,6 +86,10 @@ public class AddAttachments : ControllerBase
 
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
             {
+                //var stream = documents.Attachment.OpenReadStream();
+
+                //var fileId = await _blobService.UploadAsync(stream, documents.Attachment.ContentType, cancellationToken);
+
                 await using var stream = documents.Attachment.OpenReadStream();
 
                 var attachmentsParams = new ImageUploadParams

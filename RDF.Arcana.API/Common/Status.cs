@@ -38,9 +38,14 @@ public static class Status
     public const string Paid = "Paid";
     public const string Received = "Received";
     public const string Cleared = "Cleared";
-
+    public const string Overdue = "Over due";
+   
 }
 
+//public static class Terms
+//{
+//    public const string = "Over due";
+//}
 public static class Origin
 {
     public const string Direct = "Direct";

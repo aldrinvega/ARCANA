@@ -6,6 +6,7 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -105,6 +106,7 @@ public class GetAllListingFee : ControllerBase
         public string CurrentApproverNumber { get; set; }
         public string NextApprover { get; set; }
         public string NextApproverMobileNumber { get; set; }
+        public decimal RemainingBalance { get; set; }
         public IEnumerable<ListingItem> ListingItems { get; set; }
         public IEnumerable<ListingFeeApprovalHistory> ListingFeeApprovalHistories { get; set; }
         //public IEnumerable<RequestApproversForListingFee> Approvers { get; set; }
@@ -135,7 +137,17 @@ public class GetAllListingFee : ControllerBase
             public int Level { get; set; }
         }
     }
+    public class ListingFeeTotal
+    {
+        public int ClientId { get; set; }
+        public decimal Total { get; set; }
+    }
 
+    public class ListingFeePayment
+    {
+        public int ClientId { get; set; }
+        public decimal AmountSum { get; set; }
+    }
     public class Handler : IRequestHandler<GetAllListingFeeQuery, PagedList<ClientsWithListingFee>>
     {
         private readonly ArcanaDbContext _context;
@@ -165,6 +177,20 @@ public class GetAllListingFee : ControllerBase
                 .AsSingleQuery();
 
             var userClusters = await _context.CdoClusters.FirstOrDefaultAsync(x => x.UserId == request.AccessBy, cancellationToken);
+
+            var totalListingFee = await _context.ListingFees
+                .Where(lf => lf.IsActive)
+                .GroupBy(lf => lf.ClientId)
+                .Select(g => new ListingFeeTotal { ClientId = g.Key, Total = g.Sum(x => x.Total) })
+                .ToListAsync(cancellationToken);
+
+            var userListingFeePayments = await _context.Transactions
+                .Where(pt => pt.PaymentTransactions.Any(p => p.PaymentMethod == PaymentMethods.ListingFee))
+                .GroupBy(x => x.ClientId)
+                .Select(x => new ListingFeePayment { ClientId = x.Key, AmountSum = x.SelectMany(t => t.PaymentTransactions)
+                    .Where(p => p.PaymentMethod == PaymentMethods.ListingFee)
+                    .Sum(p => p.TotalAmountReceived) })
+                .ToListAsync(cancellationToken);
 
             if (!string.IsNullOrEmpty(request.Search))
 
@@ -213,6 +239,8 @@ public class GetAllListingFee : ControllerBase
                 listingFees = listingFees.Where(x => x.IsActive == request.Status);
             }
 
+            
+
             var result = listingFees.Select(listingFee => new ClientsWithListingFee
             {
                 ClientId = listingFee.ClientId,
@@ -224,6 +252,7 @@ public class GetAllListingFee : ControllerBase
                 RequestId = listingFee.RequestId,
                 Status = listingFee.Status,
                 Total = listingFee.Total,
+                RemainingBalance = CalculateRemainingBalance(listingFee, totalListingFee, userListingFeePayments),
                 ListingItems = listingFee.ListingFeeItems.Select(li =>
                     new ClientsWithListingFee.ListingItem
                     {
@@ -235,7 +264,7 @@ public class GetAllListingFee : ControllerBase
                         UnitCost = li.UnitCost
                     }).ToList(),
                 ListingFeeApprovalHistories = listingFee.Request.Approvals.OrderByDescending(a => a.CreatedAt)
-                    .Select( a => new ClientsWithListingFee.ListingFeeApprovalHistory
+                    .Select(a => new ClientsWithListingFee.ListingFeeApprovalHistory
                     {
                         Module = a.Request.Module,
                         Approver = a.Approver.Fullname,
@@ -250,14 +279,24 @@ public class GetAllListingFee : ControllerBase
                 CurrentApproverNumber = listingFee.Request.CurrentApprover.MobileNumber,
                 NextApprover = listingFee.Request.NextApprover.Fullname,
                 NextApproverMobileNumber = listingFee.Request.NextApprover.MobileNumber
-                //Approvers = listingFee.Request.RequestApprovers.Select(x => new ClientsWithListingFee.RequestApproversForListingFee
-                //{
-                //    Name = x.Approver.Fullname,
-                //    Level = x.Level
-                //})
+
             }).OrderBy(x => x.ClientId);
 
             return await PagedList<ClientsWithListingFee>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
+
+        private static decimal CalculateRemainingBalance(ListingFee listingFee, List<ListingFeeTotal> totalListingFee, List<ListingFeePayment> userListingFeePayments)
+        {
+            var totalListingFeeForClient = totalListingFee.FirstOrDefault(lf => lf.ClientId == listingFee.ClientId);
+            var userListingFeePaymentsForClient = userListingFeePayments.FirstOrDefault(lp => lp.ClientId == listingFee.ClientId);
+
+            var answer = totalListingFeeForClient?.Total - userListingFeePaymentsForClient?.AmountSum;
+
+            return (decimal)((totalListingFeeForClient?.Total - userListingFeePaymentsForClient?.AmountSum) == null ? 
+                totalListingFeeForClient?.Total : 
+                totalListingFeeForClient?.Total - userListingFeePaymentsForClient?.AmountSum);
+        }
+
+
     }
 }

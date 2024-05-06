@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
@@ -42,6 +43,7 @@ public class GetAdvancePayments : ControllerBase
                 advancePayments.TotalPages,
                 advancePayments.HasPreviousPage,
                 advancePayments.HasNextPage
+                
             };
 
             var successResult = Result.Success(result);
@@ -59,10 +61,13 @@ public class GetAdvancePayments : ControllerBase
     {
         public string Search { get; set; }
         public bool? Status { get; set; }
+        public string PaymentMethod { get; set; }
+        public string AdvancePaymentStatus { get; set; }
     }
 
     public class GetAdvancePaymentResult
     {
+        public int Id { get; set; }
         public int ClientId { get; set; }
         public string Fullname { get; set; }
         public string BusinessName { get; set; }
@@ -78,6 +83,7 @@ public class GetAdvancePayments : ControllerBase
         public string AccountName { get; set; }
         public string AccountNo { get; set; }
         public string AddedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
     
     public class Handler : IRequestHandler<GetAdvancePaymentsAsyncQuery, PagedList<GetAdvancePaymentResult>>
@@ -93,6 +99,7 @@ public class GetAdvancePayments : ControllerBase
             CancellationToken cancellationToken)
         {
             IQueryable<AdvancePayment> advancePayments = _context.AdvancePayments
+                
                 .Include(cl => cl.Client)
                 .Include(u => u.AddedByUser);
 
@@ -109,8 +116,22 @@ public class GetAdvancePayments : ControllerBase
                 advancePayments = advancePayments.Where(ap => ap.IsActive == request.Status);
             }
 
-            var result = advancePayments.Select(ap => new GetAdvancePaymentResult
+            if(!string.IsNullOrEmpty(request.PaymentMethod))
             {
+                advancePayments = advancePayments.Where(ap => ap.PaymentMethod == request.PaymentMethod);
+            }
+
+            if (!string.IsNullOrEmpty(request.AdvancePaymentStatus ) && request.AdvancePaymentStatus != Status.Voided)
+            {
+                advancePayments = advancePayments.Where(ap => ap.Status == request.AdvancePaymentStatus && ap.Status != Status.Voided);
+            }
+
+            if(request.AdvancePaymentStatus == Status.Voided)
+            {
+               var voided = advancePayments.Where(ap => ap.Status == Status.Voided).
+                    Select(ap => new GetAdvancePaymentResult
+            {
+                Id = ap.Id,
                 ClientId = ap.ClientId,
                 Fullname = ap.Client.Fullname,
                 BusinessName = ap.Client.BusinessName,
@@ -125,7 +146,33 @@ public class GetAdvancePayments : ControllerBase
                 ChequeAmount = ap.ChequeAmount,
                 AccountName = ap.AccountName,
                 AccountNo = ap.AccountNo,
-                AddedBy = ap.AddedByUser.Fullname
+                AddedBy = ap.AddedByUser.Fullname,
+                CreatedAt = ap.CreatedAt
+            });
+
+            return PagedList<GetAdvancePaymentResult>.CreateAsync(voided, request.PageNumber, request.PageSize);
+            }
+
+
+            var result = advancePayments.Select(ap => new GetAdvancePaymentResult
+            {
+                Id = ap.Id,
+                ClientId = ap.ClientId,
+                Fullname = ap.Client.Fullname,
+                BusinessName = ap.Client.BusinessName,
+                PaymentMethod = ap.PaymentMethod,
+                RemainingBalance = ap.RemainingBalance,
+                AdvancePaymentAmount = ap.AdvancePaymentAmount,
+                Payee = ap.Payee,
+                ChequeDate = ap.ChequeDate,
+                BankName = ap.BankName,
+                ChequeNo = ap.ChequeNo,
+                DateReceived = ap.DateReceived,
+                ChequeAmount = ap.ChequeAmount,
+                AccountName = ap.AccountName,
+                AccountNo = ap.AccountNo,
+                AddedBy = ap.AddedByUser.Fullname,
+                CreatedAt = ap.CreatedAt
             });
 
             return PagedList<GetAdvancePaymentResult>.CreateAsync(result, request.PageNumber, request.PageSize);

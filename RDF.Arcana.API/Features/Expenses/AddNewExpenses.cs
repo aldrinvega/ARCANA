@@ -53,6 +53,7 @@ public class AddNewExpenses : ControllerBase
             public int OtherExpenseId { get; set; }
             public string Remarks { get; set; }
             public decimal Amount { get; set; }
+            public bool IsOneTime { get; set; }
         }
         public int AddedBy { get; set; }
        
@@ -116,7 +117,8 @@ public class AddNewExpenses : ControllerBase
                 ClientId = request.ClientId,
                 RequestId = newRequest.Id,
                 Status = Status.UnderReview,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                
             };
                 
             await _context.Expenses.AddAsync(newExpenses, cancellationToken);
@@ -130,7 +132,8 @@ public class AddNewExpenses : ControllerBase
                     ExpensesId = newExpenses.Id,
                     OtherExpenseId = expenses.OtherExpenseId,
                     Remarks = expenses.Remarks,
-                    Amount = expenses.Amount
+                    Amount = expenses.Amount,
+                    IsOneTime = expenses.IsOneTime
                 };
 
                 await _context.ExpensesRequests.AddAsync(newExpensesRequest, cancellationToken);
@@ -159,7 +162,7 @@ public class AddNewExpenses : ControllerBase
                 Requestor = requestor.Fullname,
                 RequestorMobileNumber = requestor.MobileNumber,
                 Approver = approvers.First().User.Fullname,
-                ApproverMobileNumber = approvers.First().User.MobileNumber
+                ApproverMobileNumber = approvers.First().User.MobileNumber,
             };
             return Result.Success(result);
         }

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.Esf;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
@@ -73,6 +74,7 @@ public class AddTransaction : ControllerBase
         public decimal DiscountAmount { get; set; }
         public decimal TotalSales { get; set; }
         public decimal TotalAmountDue { get; set; }
+        public decimal RemainingBalance { get; set; }
         public decimal AmountDue { get; set; }
         public decimal AddVat { get; set; }
         public decimal VatableSales { get; set; }
@@ -117,13 +119,44 @@ public class AddTransaction : ControllerBase
             var existingClient = await _context
                 .Clients
                 .Include(x => x.BusinessAddress)
+                .Include(cl => cl.Term)
+                .ThenInclude(cl => cl.Terms)
                 .FirstOrDefaultAsync(cl => 
-                cl.Id == request.ClientId, 
+                cl.Id == request.ClientId,
                 cancellationToken);
+
+            var existingChargeInvoice = await _context.TransactionSales.AnyAsync(ts => ts.ChargeInvoiceNo == request.ChargeInvoiceNo);
+
+            if (existingChargeInvoice)
+            {
+                return TransactionErrors.ChargeInvoiceAlreadyExist(request.ChargeInvoiceNo);
+            }
 
             if (existingClient == null)
             {
                 return ClientErrors.NotFound();
+            }
+            var items = request.Items.Select(items => new
+            {
+                items.ItemId,
+                items.Quantity,
+                items.UnitPrice,
+                Amount = items.UnitPrice * items.Quantity,
+            });
+
+            // Calculate the subtotal for the items purchased
+            var subTotal = items.Sum(x => x.Amount);
+
+            if (existingClient.Term.Terms.TermType == Common.Terms.CreditLimit)
+            {
+                
+                var creditLimit = existingClient.Term.CreditLimit;
+                if (creditLimit < subTotal)
+                {
+                    return TransactionErrors.CreditLimitExceeded();
+
+                }
+
             }
 
             //Add new transaction
@@ -185,16 +218,7 @@ public class AddTransaction : ControllerBase
 
             //Calculate sales
 
-            var items = request.Items.Select(items => new
-            {
-                items.ItemId,
-                items.Quantity,
-                items.UnitPrice,
-                Amount =  items.UnitPrice * items.Quantity,
-            });
-
-            // Calculate the subtotal for the items purchased
-            var subTotal = items.Sum(x => x.Amount);
+            
 
             // Get the total discount percentage
             var totalDiscount = request.Discount + request.SpecialDiscount;
@@ -206,15 +230,17 @@ public class AddTransaction : ControllerBase
 
             var userDiscount = subTotal * (request.Discount / 100);
 
-            var amountDue = subTotal - discountAmount;
+            var totalSales = subTotal - discountAmount;
 
             // Calculate the vatable sales (total sales before VAT)
             var vatableSales = (subTotal - discountAmount) / VATCalculations.VAT;
             vatableSales = Math.Round(vatableSales, 2);
 
             // Calculate the VAT amount based on the vatable sales and the VAT rate
-            var vatAmount = subTotal - vatableSales;
+            var vatAmount = totalSales - vatableSales;
             vatAmount = Math.Round(vatAmount, 2);
+
+            var amountDue = totalSales - vatAmount;
 
             // Calculate the total amount due (total sales including VAT)
             var totalAmountDue = vatableSales + vatAmount;
@@ -223,11 +249,12 @@ public class AddTransaction : ControllerBase
             // AddVat is the same as the VAT amount
             var addVat = vatAmount;
 
+
             // Create and save the transaction sales record
             var newTransactionSales = new TransactionSales
             {
                 TransactionId = transaction.Id,
-                TotalSales = subTotal,
+                TotalSales = totalSales,
                 VatableSales = vatableSales,
                 SubTotal = subTotal,
                 AmountDue = amountDue, 
@@ -239,6 +266,7 @@ public class AddTransaction : ControllerBase
                 VatAmount = vatAmount,
                 ChargeInvoiceNo = request.ChargeInvoiceNo,
                 AddVat = addVat,
+                RemainingBalance = totalAmountDue,
                 AddedBy = request.AddedBy
             };
 
@@ -268,6 +296,7 @@ public class AddTransaction : ControllerBase
                 AmountDue = newTransactionSales.AmountDue,
                 AddVat = newTransactionSales.AddVat,
                 TotalAmountDue = newTransactionSales.TotalAmountDue,
+                RemainingBalance = newTransactionSales.RemainingBalance,
                 DiscountAmount = discountAmount,
                 VatAmount = newTransactionSales.VatAmount,
                 VatExemptSales = newTransactionSales.VatExemptSales,

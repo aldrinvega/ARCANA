@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using RDF.Arcana.API.Abstractions.Storage;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
@@ -89,31 +90,30 @@ public class AddAttachmentsForDirectClient : ControllerBase
             var uploadTasks = new List<Task>();
             foreach (var documents in request.Attachments.Where(documents => documents.Attachment.Length > 0))
             {
-                uploadTasks.Add(Task.Run(async () =>
+                //var strean = documents.Attachment.OpenReadStream();
+
+                //var fileId = await _blobService.UploadAsync(strean, documents.Attachment.ContentType, cancellationToken);
+                await using var stream = documents.Attachment.OpenReadStream();
+
+                var attachmentsParams = new ImageUploadParams
                 {
-                    await using var stream = documents.Attachment.OpenReadStream();
+                    File = new FileDescription(documents.Attachment.FileName, stream),
+                    PublicId =
+                        $"{HttpUtility.UrlEncode(existingClient.BusinessName)}/{documents.Attachment.FileName}"
+                };
 
-                    var attachmentsParams = new ImageUploadParams
-                    {
-                        File = new FileDescription(documents.Attachment.FileName, stream),
-                        PublicId =
-                            $"{HttpUtility.UrlEncode(existingClient.BusinessName)}/{documents.Attachment.FileName}"
-                    };
+                var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
-                    var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
+                var attachments = new ClientDocuments
+                {
+                    DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
+                    ClientId = existingClient.Id,
+                    DocumentType = documents.DocumentType
+                };
 
-                    var attachments = new ClientDocuments
-                    {
-                        DocumentPath = attachmentsUploadResult.SecureUrl.ToString(),
-                        ClientId = existingClient.Id,
-                        DocumentType = documents.DocumentType
-                    };
-
-                    await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
-                    existingClient.RegistrationStatus = Status.UnderReview;
-                    await _context.SaveChangesAsync(cancellationToken);
-
-                }, cancellationToken));
+                await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
+                existingClient.RegistrationStatus = Status.UnderReview;
+                await _context.SaveChangesAsync(cancellationToken);
             }
             
             await Task.WhenAll(uploadTasks);

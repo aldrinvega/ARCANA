@@ -20,4 +20,5 @@ public class Transactions : BaseEntity
 
     public virtual TransactionSales TransactionSales { get; set; }
     public virtual ICollection<TransactionItems> TransactionItems { get; set; }
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; }
 }

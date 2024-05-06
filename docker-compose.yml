@@ -10,13 +10,13 @@ services:
       context: .
       dockerfile: RDF.Arcana.API/Dockerfile
     ports:
-    - "5000:5000"
-    - "5001:5001"
+    - "5078:5078"
+    - "5079:5079"
     depends_on: 
       - arcana.database
     networks: 
       - rdf.arcana.api
-
+ 
   arcana.database: 
      image: mcr.microsoft.com/mssql/server:2022-latest
      container_name: arcana.database
@@ -33,6 +33,16 @@ services:
       - ./secrets:/var/opt/mssql/secrets
       - arcana-volume:/var/lib/mysql
      ports:
-        - "6003:1433"
+        - "5070:1433"
+
+  arcana-blob-storage:
+      image: mcr.microsoft.com/azure-storage/azurite:latest
+      container_name: arcana.blob-storage
+      volumes: 
+        - ./.containers/blob_storage/data:/data
+      ports: 
+        - "10000:10000"
+        - "10001:10001"
+      command: "azurite-blob --blobHost 0.0.0.0 -l /data"
 volumes:
   arcana-volume:

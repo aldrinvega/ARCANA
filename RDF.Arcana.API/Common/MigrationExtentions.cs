@@ -11,6 +11,6 @@ namespace RDF.Arcana.API.Common
             using ArcanaDbContext dbContext = scope.ServiceProvider.GetRequiredService<ArcanaDbContext>();
 
             dbContext.Database.Migrate();
-        } 
+        }
     }
 }
