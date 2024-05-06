@@ -248,7 +248,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             transaction.Status = Status.Paid;
                             payment.PaymentAmount = excessAmount;
                             await _context.SaveChangesAsync(cancellationToken);
-                            continue;
                         }
                         else
                         {
@@ -257,7 +256,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             await _context.SaveChangesAsync(cancellationToken);
                         }
 
-                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0)
+                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0 && amountToPay <= 0)
                         {
                             var advancePayment = new AdvancePayment
                             {
