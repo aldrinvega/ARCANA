@@ -5,7 +5,6 @@ using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
 
-
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction;
 
 [Route("api/payment"), ApiController]
@@ -48,7 +47,6 @@ public class AddNewPaymentTransaction : BaseApiController
             public decimal ChequeAmount { get; set; }
             public string AccountName { get; set; }
             public string AccountNo { get; set; }
-            
         }
     
     }
@@ -188,6 +186,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
                                 transaction.Status = Status.Paid;
                                 payment.PaymentAmount = 0;
+                                await _context.SaveChangesAsync(cancellationToken);
                             }
                             else
                             {
@@ -196,6 +195,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 remainingToPay = 0;
                                 transaction.Status = Status.Paid;
                                 payment.PaymentAmount = excessAmount;
+                                await _context.SaveChangesAsync(cancellationToken);
                                 break;
                             }
 
