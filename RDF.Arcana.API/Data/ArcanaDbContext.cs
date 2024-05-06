@@ -74,7 +74,13 @@ public class ArcanaDbContext : DbContext
                     (c1, c2) => c1.SequenceEqual(c2),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
-        
+
+        //Unique Constraints
+
+        modelBuilder.Entity<UserRoles>()
+               .HasIndex(u => u.UserRoleName)
+               .IsUnique();
+
         modelBuilder.Entity<Clients>()
             .HasOne(x => x.AddedByUser)
             .WithMany(x => x.Clients)
