@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.ExtendedProperties;
+using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
@@ -89,53 +90,94 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                        .Select(g => g.First())
                        .Sum(x => x.Transaction.TransactionSales.TotalAmountDue);
 
-
-
-                for (int ap = 0; ap < advancePayments.Count; ap++)
+                foreach(var paymentTransaction in paymentTransactions)
                 {
-                    Domain.AdvancePayment advancePayment = advancePayments[ap];
-                    if (advancePayment.AdvancePaymentAmount == advancePayment.RemainingBalance && totalAdvancePayment > 0)
-                    {
-                        return PaymentTransactionsErrors.AlreadyFulfilled();
-                    }
+                    var transactions = await _context.Transactions
+                        .Include(ts => ts.TransactionSales)
+                        .FirstOrDefaultAsync(ts => ts.Id == paymentTransaction.TransactionId);
 
-                    foreach(var paymentTransaction in paymentTransactions.Where(pt => pt.PaymentMethod == PaymentMethods.AdvancePayment))
+                    decimal amountPaid = 0;
+
+                    if(paymentTransaction.PaymentMethod == PaymentMethods.AdvancePayment)
                     {
-                       if(totalAmountDues > 0)
+                        foreach(var advancePayment in advancePayments)
                         {
-                          totalAmountDues -= paymentTransaction.TotalAmountReceived;
-                            var toAdd = paymentTransaction.Transaction.TransactionSales.RemainingBalance - paymentTransaction.TotalAmountReceived;
-                          paymentTransaction.Transaction.TransactionSales.RemainingBalance += toAdd;
+                            totalAmountDues -= paymentTransaction.TotalAmountReceived;
+                            var toAdd = transactions.TransactionSales.RemainingBalance - paymentTransaction.TotalAmountReceived;
+                            transactions.TransactionSales.RemainingBalance += toAdd;
                             paymentTransaction.Status = Status.Voided;
+
+                            var toDeduct = advancePayment.AdvancePaymentAmount - advancePayment.RemainingBalance;
+
+                            if(toDeduct > 0)
+                            {
+                                if (totalAdvancePayment > 0)
+                                {
+                                    totalAdvancePayment -= toDeduct;
+                                    advancePayment.RemainingBalance += toDeduct;
+
+                                    await _context.SaveChangesAsync(cancellationToken);
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
                         }
                     }
 
-                    var toDeduct = advancePayment.AdvancePaymentAmount - advancePayment.RemainingBalance;
-
-                    if(toDeduct > 0)
-                    {  
-                        if(totalAdvancePayment > 0)
-                        {
-                            totalAdvancePayment -= toDeduct;
-                            advancePayment.RemainingBalance += toDeduct;
-
-                            await _context.SaveChangesAsync(cancellationToken);
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
+                    
                 }
+
+                //foreach (Domain.AdvancePayment advancePayment in advancePayments)
+                //{
+                //    if (advancePayment.AdvancePaymentAmount == advancePayment.RemainingBalance && totalAdvancePayment > 0)
+                //    {
+                //        return PaymentTransactionsErrors.AlreadyFulfilled();
+                //    }
+
+                //    foreach(var paymentTransaction in paymentTransactions.Where(pt => pt.PaymentMethod == PaymentMethods.AdvancePayment))
+                //    {
+                //       if(totalAmountDues > 0)
+                //        {
+                //          totalAmountDues -= paymentTransaction.TotalAmountReceived;
+                //            var toAdd = paymentTransaction.Transaction.TransactionSales.RemainingBalance - paymentTransaction.TotalAmountReceived;
+                //          paymentTransaction.Transaction.TransactionSales.RemainingBalance += toAdd;
+                //            paymentTransaction.Status = Status.Voided;
+                //        }
+                //    }
+
+                //    var toDeduct = advancePayment.AdvancePaymentAmount - advancePayment.RemainingBalance;
+
+                //    if(toDeduct > 0)
+                //    {  
+                //        if(totalAdvancePayment > 0)
+                //        {
+                //            totalAdvancePayment -= toDeduct;
+                //            advancePayment.RemainingBalance += toDeduct;
+
+                //            await _context.SaveChangesAsync(cancellationToken);
+                //        }
+                //        else
+                //        {
+                //            continue;
+                //        }
+                //    }
+                //}
 
                 foreach (var paymentTransaction in paymentTransactions.Where(pt => pt.PaymentMethod != PaymentMethods.AdvancePayment))
                 {
-                  
+
+                    var transactions = await _context.Transactions
+                        .Include(ts => ts.TransactionSales)
+                        .FirstOrDefaultAsync(ts => ts.Id == paymentTransaction.TransactionId);
+
+
                     paymentTransaction.Status = Status.Voided;
                     if (totalAmountDues > 0)
                     {
                             totalAmountDues -= paymentTransaction.TotalAmountReceived;
-                            paymentTransaction.Transaction.TransactionSales.RemainingBalance += paymentTransaction.TotalAmountReceived;
+                            transactions.TransactionSales.RemainingBalance += paymentTransaction.TotalAmountReceived;
                      }
                 }
 
