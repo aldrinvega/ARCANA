@@ -64,7 +64,9 @@ jobs:
             git add .
             git commit -m "Update Artifacts for Development Branch"
             git remote add origin git@github.com:aldrinvega/ARCANA.git
-            git push --force --quiet origin development:deploy-dev
+            git fetch origin
+            git checkout --quiet -b deploy-dev origin/development || git checkout --quiet -b deploy-dev
+            git push --force --quiet origin deploy-dev
           else
             echo "Skipping deployment for branch: ${{ github.ref }}"
           fi
