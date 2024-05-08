@@ -80,7 +80,7 @@ jobs:
                 mv deploy-dev/.git deploy-dev-.git
                 rm -rf deploy-dev
                 mkdir deploy-dev
-                mv deploy-dev.git deploy/.git
+                mv deploy-dev-.git deploy-dev/.git
                 cd deploy-dev
                 cp -R ../RDF.Arcana.API/bin/Release/net7.0/publish .
                 git add .
