@@ -481,3 +481,4 @@ appsettings.json
 
 dotnet.yaml
 **/dotnet.yaml
+/.github/workflows/dotnet.yml
