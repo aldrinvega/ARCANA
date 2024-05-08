@@ -3,7 +3,7 @@ name: create-release
 on:
     push:
         branches:
-            - 'master'
+            - 'development'
 jobs:
     build:
         name: create-release
@@ -76,12 +76,12 @@ jobs:
 
             - name: Deploy
               run: |
-                git clone --depth 1 --single-branch -b deploy git@github.com:${{ github.repository }}.git deploy
-                mv deploy/.git deploy-.git
-                rm -rf deploy
-                mkdir deploy
-                mv deploy-.git deploy/.git
-                cd deploy
+                git clone --depth 1 --single-branch -b deploy-dev git@github.com:${{ github.repository }}.git deploy-dev
+                mv deploy-dev/.git deploy-.git
+                rm -rf deploy-dev
+                mkdir deploy-dev
+                mv deploy-dev-.git deploy/.git
+                cd deploy-dev
                 cp -R ../RDF.Arcana.API/bin/Release/net7.0/publish .
                 git add .
                 git diff --staged --quiet || git commit -m "Update Artifacts"
