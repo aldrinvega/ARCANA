@@ -39,17 +39,11 @@ public abstract class AuthenticateUser
         }
 
         public int Id { get; set; }
-
         public string Fullname { get; set; }
-
         public string Username { get; set; }
-
         public string RoleName { get; set; }
-
         public ICollection<string> Permission { get; set; }
-        
         public string Token { get; set; }
-
         public bool IsPasswordChanged { get; set; }
         public string ProfilePicture { get; set; }
     }
