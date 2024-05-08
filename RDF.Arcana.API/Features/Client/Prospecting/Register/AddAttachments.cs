@@ -77,7 +77,7 @@ public class AddAttachments : ControllerBase
                 .Include(x => x.ClientDocuments)
                 .FirstOrDefaultAsync(
                     x => x.Id == request.ClientId &&
-                         x.RegistrationStatus == "Pending registration", cancellationToken);
+                         x.RegistrationStatus == Status.UnderReview, cancellationToken);
 
             if (existingClient == null)
             {
@@ -109,7 +109,6 @@ public class AddAttachments : ControllerBase
                 };
 
                 await _context.ClientDocuments.AddAsync(attachments, cancellationToken);
-                existingClient.RegistrationStatus = "Under review";
                 await _context.SaveChangesAsync(cancellationToken);
             }
             return Result.Success();
