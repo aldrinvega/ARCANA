@@ -37,7 +37,7 @@ public class AddApproversPerModule : ControllerBase
     public record AddApproversPerModuleCommand : IRequest<Result>
     {
 
-        public string ModuleName { get; set; }
+        public string? ModuleName { get; set; }
         public IEnumerable<Approver> Approvers { get; set; }
         public class Approver
         {
@@ -77,7 +77,8 @@ public class AddApproversPerModule : ControllerBase
                 }
 
                 if (user is null) continue;
-                if (!user.UserRoles.Permissions.Contains(request.ModuleName))
+                if (!(user.UserRoles.Permissions == null) &&
+                        !user.UserRoles.Permissions.Contains(request.ModuleName))
                 {
                     return ApprovalErrors.NoAccess(request.ModuleName, user.Fullname);
                 }
