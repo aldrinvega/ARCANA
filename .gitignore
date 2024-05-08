@@ -478,3 +478,6 @@ $RECYCLE.BIN/
 
 appsettings.json
 **/appsettings.json
+
+dotnet.yaml
+**/dotnet.yaml
