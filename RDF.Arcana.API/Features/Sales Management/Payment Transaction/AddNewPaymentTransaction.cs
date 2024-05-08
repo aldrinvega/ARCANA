@@ -131,7 +131,17 @@ public class AddNewPaymentTransaction : BaseApiController
                     decimal excessAmount = payment.PaymentAmount - amountToPay;
                     decimal paymentAmount = payment.PaymentAmount;
 
-                    
+                    if (excessAmount >= 0)
+                    {
+                        // Use excess amount to pay the next transaction
+                        payment.PaymentAmount -= excessAmount;
+                        amountToPay = 0;
+                    }
+                    else
+                    {
+                        // Not enough to cover the full amount, use entire payment
+                        amountToPay -= payment.PaymentAmount;
+                    }
                     //For advance payment transactions
                     if (payment.PaymentMethod == PaymentMethods.AdvancePayment)
                     {
@@ -269,18 +279,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
                             await _context.SaveChangesAsync(cancellationToken);
                         }
-                    }
-
-                    if (excessAmount >= 0)
-                    {
-                        // Use excess amount to pay the next transaction
-                        payment.PaymentAmount -= excessAmount;
-                        amountToPay = 0;
-                    }
-                    else
-                    {
-                        // Not enough to cover the full amount, use entire payment
-                        amountToPay -= payment.PaymentAmount;
                     }
                 } 
             }

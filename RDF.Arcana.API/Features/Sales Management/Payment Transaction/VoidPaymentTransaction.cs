@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.ExtendedProperties;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 
@@ -96,8 +95,6 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         .Include(ts => ts.TransactionSales)
                         .FirstOrDefaultAsync(ts => ts.Id == paymentTransaction.TransactionId);
 
-                    decimal amountPaid = 0;
-
                     if(paymentTransaction.PaymentMethod == PaymentMethods.AdvancePayment)
                     {
                         foreach(var advancePayment in advancePayments)
@@ -125,7 +122,6 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                             }
                         }
                     }
-
                     
                 }
 
