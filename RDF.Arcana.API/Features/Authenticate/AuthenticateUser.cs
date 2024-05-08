@@ -64,6 +64,7 @@ public abstract class AuthenticateUser
         public async Task<Result> Handle(AuthenticateUserQuery command,
             CancellationToken cancellationToken)
         {
+
             var user = await _context.Users
                 .Include(x => x.UserRoles)
                 .SingleOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
