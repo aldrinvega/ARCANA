@@ -91,6 +91,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 
                 foreach(var paymentTransaction in paymentTransactions)
                 {
+
+                    //Sakin to
                     var transactions = await _context.Transactions
                         .Include(ts => ts.TransactionSales)
                         .FirstOrDefaultAsync(ts => ts.Id == paymentTransaction.TransactionId);
