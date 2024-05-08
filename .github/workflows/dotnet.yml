@@ -56,13 +56,13 @@ jobs:
           git push --force --quiet git@github.com:aldrinvega/ARCANA.git master:deploy
           elif [ "${{ github.ref }}" = "refs/heads/development" ]; then
               # Deploy to 'deploy-development' folder for development branch changes
-          mkdir deploy-development
-          cp -R ./RDF.Arcana.API/bin/Release/net7.0/publish deploy-development/
-          cd deploy-development
+          mkdir deploy-dev
+          cp -R ./RDF.Arcana.API/bin/Release/net7.0/publish deploy-dev/
+          cd deploy-dev
           git init
           git add .
           git commit -m "Update Artifacts for Development Branch"
-          git push --force --quiet git@github.com:aldrinvega/ARCANA.git development:deploy-development
+          git push --force --quiet git@github.com:aldrinvega/ARCANA.git development:deploy-dev
           else
             echo "Skipping deployment for branch: ${{ github.ref }}"
           fi
