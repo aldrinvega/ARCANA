@@ -196,7 +196,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 amountToPay -= advancePayment.RemainingBalance;
                                 amountToPayAdvancePayment = remainingToPay;
                                 payment.PaymentAmount = amountToPayAdvancePayment;
-
+                                
                                 advancePayment.RemainingBalance = 0;
                                 await _context.SaveChangesAsync(cancellationToken);
                             }
@@ -277,6 +277,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         {
                             transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
                             payment.PaymentAmount = 0;
+                            transaction.Status = Status.Pending;
                             await _context.SaveChangesAsync(cancellationToken);
                         }
 

@@ -6,7 +6,7 @@ using RDF.Arcana.API.Domain;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 {
-    [Route("api/payment-transactionV2"), ApiController]
+    [Route("api/payment-transaction"), ApiController]
     public class VoidPaymentTransactionV2 : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -15,7 +15,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             _mediator = mediator;
         }
 
-        [HttpPut("{id}/void")]
+        [HttpPut("{id}/voidV2")]
         public async Task<IActionResult> Void([FromBody] VoidPaymentTransactionV2Command command, [FromRoute] int id)
         {
             try
@@ -84,8 +84,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         {
                             if(advancePayment.AdvancePaymentAmount <= totalAPtoVoid)
                             {
-                                advancePayment.RemainingBalance = advancePayment.AdvancePaymentAmount;
-                                totalAPtoVoid -= advancePayment.AdvancePaymentAmount;
+                                var totalAPToReturn = advancePayment.AdvancePaymentAmount - advancePayment.RemainingBalance;
+                                advancePayment.RemainingBalance += totalAPToReturn;
+                                totalAPtoVoid -= totalAPToReturn;
 
                                 advancePayment.UpdatedAt = DateTime.Now;
                                 advancePayment.Status = Status.Refunded;
@@ -105,7 +106,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         payment.Status = Status.Voided;
                         payment.Reason = request.Reason;
                     }
-                    
+                                        
                     //if(payment.PaymentMethod == PaymentMethods.ListingFee)
                     //{
                     //    decimal totalLFtoVoid = payment.PaymentAmount;
