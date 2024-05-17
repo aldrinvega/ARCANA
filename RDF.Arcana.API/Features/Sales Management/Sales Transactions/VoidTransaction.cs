@@ -58,13 +58,13 @@ public class VoidTransaction : ControllerBase
                 return SalesTransactionErrors.NotFound();
             }
 
-            var paymentTransactions = await _context.PaymentTransactions
+             var paymentTransactions = await _context.PaymentTransactions
                 .Where(pt => pt.TransactionId == request.TransactionId)
                 .ToListAsync(cancellationToken);
 
-            if (paymentTransactions.Any(x => x.Status != Status.Voided))
+            if (paymentTransactions.Any(x => x.Status == Status.Voided))
             {
-                return TransactionErrors.AlreadyHasPayment();
+                return TransactionErrors.NotFound();
             }
             else
             {
@@ -74,22 +74,31 @@ public class VoidTransaction : ControllerBase
                ap.IsActive && ap.Status != Status.Voided)
                .ToListAsync(cancellationToken);
 
-                var totalPayments = paymentTransactions.Sum(payment => payment.TotalAmountReceived);
+                //var totalPayments = paymentTransactions.Sum(payment => payment.TotalAmountReceived);
 
                 for (var i = 0; i < paymentTransactions.Count; i++)
                 {
                     var paymentTransaction = paymentTransactions[i];
                     if (paymentTransaction.PaymentMethod == PaymentMethods.AdvancePayment)
                     {
+                        //carry on the remainingToPay on the next Advance Payment
+                        decimal remainingToReturn = 0;
                         foreach (var advancePayment in advancePayments)
                         {
-                            if (advancePayment.Origin == Origin.Manual)
+                            //paymentTransaction.PaymentAmount += remainingToReturn;
+                            if (advancePayment.AdvancePaymentAmount >= paymentTransaction.PaymentAmount)
                             {
-                                advancePayment.RemainingBalance = advancePayment.AdvancePaymentAmount;
+                                advancePayment.RemainingBalance += paymentTransaction.PaymentAmount;
+                                remainingToReturn = 0;
+                                paymentTransaction.Status = Status.Voided;
+                                paymentTransaction.Reason = request.Reason;
+                                break;
                             }
                             else
                             {
-                                advancePayment.IsActive = false;
+                                remainingToReturn = paymentTransaction.PaymentAmount - advancePayment.AdvancePaymentAmount;
+                                advancePayment.RemainingBalance = advancePayment.AdvancePaymentAmount;
+                                paymentTransaction.PaymentAmount = remainingToReturn;
                             }
                         }
                     }
@@ -101,6 +110,7 @@ public class VoidTransaction : ControllerBase
 
                 existingTransaction.Status = Status.Voided;
                 existingTransaction.Reason = request.Reason;
+                
                 existingTransaction.TransactionSales.RemainingBalance = existingTransaction.TransactionSales.TotalAmountDue;
             }
 
