@@ -14,7 +14,7 @@ namespace RDF.Arcana.API.Features.Listing_Fee
             _mediator = mediator;
         }
 
-        [HttpGet("GetAllListingFeeTotals")]
+        [HttpGet("GetAllListingFeeBalance")]
         public async Task<IActionResult> GetAll()
         {
             var query = new GetAllListingFeeTotalsQuery();

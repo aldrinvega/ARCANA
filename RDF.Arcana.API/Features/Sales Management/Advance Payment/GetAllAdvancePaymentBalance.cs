@@ -14,7 +14,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Advance_Payment
             _mediator = mediator;
         }
 
-        [HttpGet("GetAllAdvancePaymentTotals")]
+        [HttpGet("GetAllAdvancePaymentBalance")]
         public async Task<IActionResult> GetAll()
         {
             var query = new GetAllAdvancePaymentTotalsQuery();

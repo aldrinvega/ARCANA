@@ -47,6 +47,7 @@ public class AddNewPaymentTransaction : BaseApiController
             public decimal ChequeAmount { get; set; }
             public string AccountName { get; set; }
             public string AccountNo { get; set; }
+            public int AddedBy { get; set; } = 1;
         }
     
     }
@@ -134,8 +135,8 @@ public class AddNewPaymentTransaction : BaseApiController
                     if (excessAmount > 0)
                     {
                         // Use excess amount to pay the next transaction
-                        payment.PaymentAmount -= excessAmount;
-                        amountToPay = 0;
+                        //payment.PaymentAmount -= excessAmount;
+                        //amountToPay = 0;
                     }
                     //else
                     //{
@@ -224,15 +225,80 @@ public class AddNewPaymentTransaction : BaseApiController
 
                     }
 
+
+                    if (payment.PaymentMethod == PaymentMethods.Cheque)
+                    {
+                        var transactionSales = await _context.TransactionSales
+                            .FirstOrDefaultAsync(ts => ts.TransactionId == transaction.Id);
+
+                        decimal totalAmountDue = transactionSales.TotalAmountDue;
+
+                        if(payment.PaymentAmount >  totalAmountDue) 
+                        {
+                            decimal excessChequeAmount = payment.PaymentAmount - totalAmountDue;
+
+                            var paymentTransaction = new PaymentTransaction
+                            {
+                                TransactionId = transaction.Id,
+                                PaymentRecordId = paymentRecord.Id,
+                                PaymentMethod = payment.PaymentMethod,
+                                PaymentAmount = totalAmountDue,
+                                TotalAmountReceived = payment.PaymentAmount,
+                                Payee = payment.Payee,
+                                ChequeDate = payment.ChequeDate,
+                                BankName = payment.BankName,
+                                ChequeNo = payment.ChequeNo,
+                                DateReceived = DateTime.Now,
+                                ChequeAmount = payment.PaymentAmount,
+                                AccountName = payment.AccountName,
+                                AccountNo = payment.AccountNo,
+                                AddedBy = request.AddedBy,
+                                Status = Status.Received,
+                            };
+
+                            await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+                            await _context.SaveChangesAsync(cancellationToken);
+
+                            var advancePayment = new AdvancePayment
+                            {
+                                ClientId = transactionSales.Transaction.ClientId,
+                                PaymentMethod = payment.PaymentMethod,
+                                AdvancePaymentAmount = excessChequeAmount,
+                                RemainingBalance = excessChequeAmount,
+                                Payee = payment.Payee,
+                                ChequeDate = payment.ChequeDate,
+                                BankName = payment.BankName,
+                                ChequeNo = payment.ChequeNo,
+                                DateReceived = payment.DateReceived,
+                                ChequeAmount = excessChequeAmount,
+                                AccountName = payment.AccountName,
+                                AccountNo = payment.AccountNo,
+                                AddedBy = payment.AddedBy,
+                                Origin = Origin.Excess,
+                                PaymentTransactionId = paymentTransaction.Id
+
+                            };
+                            transactionSales.Transaction.Status = Status.Paid;
+                            transactionSales.RemainingBalance = 0;
+                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
+
+                        
+
+                            
+
+                        
+                    }
+
+
                     //For Cash, Cheque, and Online payments
-                    if (payment.PaymentMethod == PaymentMethods.Cheque ||
-                        payment.PaymentMethod == PaymentMethods.ListingFee ||
+                    if (payment.PaymentMethod == PaymentMethods.ListingFee ||
                         payment.PaymentMethod == PaymentMethods.Online ||
                         payment.PaymentMethod == PaymentMethods.Cash)
                     {
                         var amountToPayOthers = request.Payments.Where(pm => pm.PaymentMethod == PaymentMethods.Cash ||
                              pm.PaymentMethod == PaymentMethods.Online ||
-                             pm.PaymentMethod == PaymentMethods.Cheque ||
                              pm.PaymentMethod == PaymentMethods.ListingFee ||
                              pm.PaymentMethod == PaymentMethods.OffSet)
                             .Sum(pa => pa.PaymentAmount);
