@@ -131,7 +131,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 
                 if (!string.IsNullOrEmpty(request.PaymentStatus))
                 {
-                    paymentTransactions = paymentTransactions.Where(tr => tr.Status == request.PaymentStatus);
+                    paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => tr.Status == request.PaymentStatus));
                 }
 
                 var result = paymentTransactions.Select(result => new GetPaymentTransactionByStatusResult

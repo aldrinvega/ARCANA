@@ -59,6 +59,7 @@ builder.Services.AddDbContext<ArcanaDbContext>(x =>
 //builder.Services.AddDbContext<ArcanaDbContext>(
 //    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
 
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
