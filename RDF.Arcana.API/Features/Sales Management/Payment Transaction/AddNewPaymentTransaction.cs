@@ -283,6 +283,34 @@ public class AddNewPaymentTransaction : BaseApiController
                             await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
                             await _context.SaveChangesAsync(cancellationToken);
                         }
+                        else
+                        {
+                            var remainingBal = totalAmountDue - payment.PaymentAmount;
+                            transactionSales.RemainingBalance = remainingBal;
+
+                            var paymentTransaction = new PaymentTransaction
+                            {
+                                TransactionId = transaction.Id,
+                                PaymentRecordId = paymentRecord.Id,
+                                PaymentMethod = payment.PaymentMethod,
+                                PaymentAmount = payment.PaymentAmount,
+                                TotalAmountReceived = payment.TotalAmountReceived,
+                                Payee = payment.Payee,
+                                ChequeDate = payment.ChequeDate,
+                                BankName = payment.BankName,
+                                ChequeNo = payment.ChequeNo,
+                                DateReceived = DateTime.Now,
+                                ChequeAmount = payment.ChequeAmount,
+                                AccountName = payment.AccountName,
+                                AccountNo = payment.AccountNo,
+                                AddedBy = request.AddedBy,
+                                Status = Status.Received,
+
+                            };
+
+                            await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
 
                         
 
