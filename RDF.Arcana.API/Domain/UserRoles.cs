@@ -6,7 +6,6 @@ namespace RDF.Arcana.API.Domain;
 
 public class UserRoles : BaseEntity
 {
-    [Required]
     public string UserRoleName { get; set; }
     public ICollection<string> Permissions { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;

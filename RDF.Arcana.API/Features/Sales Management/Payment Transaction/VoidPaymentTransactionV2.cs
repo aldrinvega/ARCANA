@@ -106,6 +106,22 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         payment.Status = Status.Voided;
                         payment.Reason = request.Reason;
                     }
+
+                    if(payment.PaymentMethod == PaymentMethods.Cheque)
+                    {
+                        payment.Status = Status.Voided;
+                        payment.Reason = request.Reason;
+
+                        var ChequeAP = await _context.AdvancePayments
+                            .Where(ap => ap.PaymentTransactionId == payment.Id)
+                            .ToListAsync(cancellationToken);
+
+                        foreach (var item in ChequeAP)
+                        {
+                            item.Status = Status.Voided;
+                            item.Reason = request.Reason;
+                        }
+                    }
                                         
                     //if(payment.PaymentMethod == PaymentMethods.ListingFee)
                     //{

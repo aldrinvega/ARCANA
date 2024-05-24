@@ -5,6 +5,7 @@ namespace RDF.Arcana.API.Domain;
 public class AdvancePayment : BaseEntity
 {
     public int ClientId { get; set; }
+    public int? PaymentTransactionId { get; set; }
     public string PaymentMethod { get; set; }
     public decimal AdvancePaymentAmount { get; set; }
     public decimal RemainingBalance { get; set; }
@@ -27,4 +28,5 @@ public class AdvancePayment : BaseEntity
     public virtual User AddedByUser { get; set; }
     public virtual User ModifiedByUser { get; set; }
     public virtual Clients Client { get; set; }
+    public virtual PaymentTransaction PaymentTransaction { get; set; }
 }

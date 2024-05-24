@@ -61,6 +61,10 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     {
                         return TransactionErrors.AlreadyHasPayment();
                     }
+                    else if (transaction is not null && transaction.Status is Status.Voided)
+                    {
+                        return TransactionErrors.Voided();
+                    }
                     else
                     {
                         return TransactionErrors.NotFound();

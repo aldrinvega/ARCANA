@@ -91,7 +91,7 @@ public class GetClientsForPOSAsync : ControllerBase
                     .Include(t => t.Transactions)
                     .Where(x => x.RegistrationStatus == Status.Approved &&
                                 x.ClusterId == userClusters.ClusterId)
-                    .Where(x => x.Transactions.Any(ts => ts.Status != Status.Pending))
+                    //.Where(x => x.Transactions.Any(ts => ts.Status != Status.Pending))
                     .Select(cl => new GetClientsForPOSAsyncResult
                     {
                         ClientId = cl.Id,
@@ -142,7 +142,7 @@ public class GetClientsForPOSAsync : ControllerBase
                         cl.BusinessName.Contains(request.Search)).ToList();
                 }
             }
-
+           
             return Result.Success(clients);
 
 
