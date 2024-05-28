@@ -318,15 +318,60 @@ public class AddNewPaymentTransaction : BaseApiController
 
                         
                     }
+                    
+                    if (payment.PaymentMethod == PaymentMethods.Online)
+                    {
+                        var amountToPayOnline = request.Payments.Sum(pa => pa.PaymentAmount);
 
+                        var remainingToPay = amountToPayOnline - payment.PaymentAmount;
+
+                        transaction.TransactionSales.RemainingBalance = remainingToPay <= 0 ? 0 : remainingToPay;
+                        var paymentTransaction = new PaymentTransaction
+                        {
+                            TransactionId = transaction.Id,
+                            PaymentRecordId = paymentRecord.Id,
+                            PaymentMethod = payment.PaymentMethod,
+                            PaymentAmount = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
+                            Payee = payment.Payee,
+                            ChequeDate = payment.ChequeDate,
+                            BankName = payment.BankName,
+                            ChequeNo = payment.ChequeNo,
+                            DateReceived = DateTime.Now,
+                            ChequeAmount = payment.ChequeAmount,
+                            AccountName = payment.AccountName,
+                            AccountNo = payment.AccountNo,
+                            AddedBy = request.AddedBy,
+                            Status = Status.Received
+                        };
+
+                        var onlinePayment = new OnlinePayment
+                        {
+                            ClientId = transaction.ClientId,
+                            OnlinePaymentName = payment.BankName,
+                            AccountName = payment.AccountName,
+                            AccountNo = payment.AccountNo,
+                            PaymentAmount = payment.PaymentAmount,
+                            ReferenceNumber = payment.ChequeNo,
+                            CreatedAt = DateTime.Now,
+                            AddedBy = request.AddedBy,
+                            Status = Status.Received
+
+                        };
+
+                        await _context.OnlinePayments.AddAsync(onlinePayment, cancellationToken);
+                        await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        transaction.Status = remainingToPay <= 0 ? Status.Paid : Status.Pending;
+                        await _context.SaveChangesAsync(cancellationToken);
+                    }
 
                     //For Cash, Cheque, and Online payments
                     if (payment.PaymentMethod == PaymentMethods.ListingFee ||
-                        payment.PaymentMethod == PaymentMethods.Online ||
                         payment.PaymentMethod == PaymentMethods.Cash)
                     {
                         var amountToPayOthers = request.Payments.Where(pm => pm.PaymentMethod == PaymentMethods.Cash ||
-                             pm.PaymentMethod == PaymentMethods.Online ||
                              pm.PaymentMethod == PaymentMethods.ListingFee ||
                              pm.PaymentMethod == PaymentMethods.OffSet)
                             .Sum(pa => pa.PaymentAmount);

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RDF.Arcana.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddOnlinePaymentEntity : Migration
+    public partial class AddOnlinePaymentEntityV2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,15 +18,18 @@ namespace RDF.Arcana.API.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     client_id = table.Column<int>(type: "int", nullable: false),
-                    online_method = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    online_payment_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     account_name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     account_no = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     payment_amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    reference_number = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: true),
                     added_by = table.Column<int>(type: "int", nullable: false),
                     modified_by = table.Column<int>(type: "int", nullable: true),
-                    is_active = table.Column<bool>(type: "bit", nullable: false)
+                    is_active = table.Column<bool>(type: "bit", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    remarks = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,84 +58,84 @@ namespace RDF.Arcana.API.Migrations
                 keyColumn: "id",
                 keyValue: 1,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5110), new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5115) });
+                values: new object[] { new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1940), new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1941) });
 
             migrationBuilder.UpdateData(
                 table: "booking_coverages",
                 keyColumn: "id",
                 keyValue: 2,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5127), new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5129) });
+                values: new object[] { new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1944), new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1945) });
 
             migrationBuilder.UpdateData(
                 table: "booking_coverages",
                 keyColumn: "id",
                 keyValue: 3,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5138), new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5141) });
+                values: new object[] { new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1947), new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1947) });
 
             migrationBuilder.UpdateData(
                 table: "booking_coverages",
                 keyColumn: "id",
                 keyValue: 4,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5148), new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5202) });
+                values: new object[] { new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1949), new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1962) });
 
             migrationBuilder.UpdateData(
                 table: "booking_coverages",
                 keyColumn: "id",
                 keyValue: 5,
                 columns: new[] { "created_at", "updated_at" },
-                values: new object[] { new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5210), new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5213) });
+                values: new object[] { new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1964), new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1964) });
 
             migrationBuilder.UpdateData(
                 table: "mode_of_payments",
                 keyColumn: "id",
                 keyValue: 1,
                 column: "created_at",
-                value: new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5485));
+                value: new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(2066));
 
             migrationBuilder.UpdateData(
                 table: "mode_of_payments",
                 keyColumn: "id",
                 keyValue: 2,
                 column: "created_at",
-                value: new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5499));
+                value: new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(2070));
 
             migrationBuilder.UpdateData(
                 table: "terms",
                 keyColumn: "id",
                 keyValue: 1,
                 column: "created_at",
-                value: new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5327));
+                value: new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(2003));
 
             migrationBuilder.UpdateData(
                 table: "terms",
                 keyColumn: "id",
                 keyValue: 2,
                 column: "created_at",
-                value: new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5391));
+                value: new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(2028));
 
             migrationBuilder.UpdateData(
                 table: "terms",
                 keyColumn: "id",
                 keyValue: 3,
                 column: "created_at",
-                value: new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(5400));
+                value: new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(2031));
 
             migrationBuilder.UpdateData(
                 table: "user_roles",
                 keyColumn: "id",
                 keyValue: 1,
                 column: "created_at",
-                value: new DateTime(2024, 5, 27, 10, 51, 57, 857, DateTimeKind.Local).AddTicks(4833));
+                value: new DateTime(2024, 5, 28, 14, 52, 54, 363, DateTimeKind.Local).AddTicks(1863));
 
             migrationBuilder.UpdateData(
                 table: "users",
                 keyColumn: "id",
                 keyValue: 1,
                 columns: new[] { "created_at", "password", "updated_at" },
-                values: new object[] { new DateTime(2024, 5, 27, 10, 51, 57, 29, DateTimeKind.Local).AddTicks(3898), "$2a$11$7xNqUX/f1JG0iGO4Gk7yweGtTEZDW27qJFTM2A.IrH2SsBPwNsn0S", new DateTime(2024, 5, 27, 10, 51, 57, 29, DateTimeKind.Local).AddTicks(4022) });
+                values: new object[] { new DateTime(2024, 5, 28, 14, 52, 54, 86, DateTimeKind.Local).AddTicks(5304), "$2a$11$7JdGZ4RTFTlPOC/JmfThQeR8lyqKpMd1T69r1ao/rceSY21ai20LO", new DateTime(2024, 5, 28, 14, 52, 54, 86, DateTimeKind.Local).AddTicks(5388) });
 
             migrationBuilder.CreateIndex(
                 name: "ix_online_payments_added_by",

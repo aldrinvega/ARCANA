@@ -493,9 +493,5 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.ModifiedBy);
 
-        modelBuilder.Entity<OnlinePayment>()
-            .HasOne(x => x.PaymentTransaction)
-            .WithMany()
-            .HasForeignKey(x => x.PaymentTransactionId);
     }
 }
