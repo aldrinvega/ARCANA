@@ -66,6 +66,10 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     .Where(ap => ap.ClientId == paymentTransactions.First().Transaction.ClientId)
                     .ToListAsync(cancellationToken);
 
+                var onlinePayments = await _context.OnlinePayments
+                    .Where(op => op.ClientId == paymentTransactions.First().Transaction.ClientId)
+                    .ToListAsync(cancellationToken);
+
                 //var listingFees = await _context.ListingFees
                 //    .Where(lf => lf.ClientId == paymentTransactions.First().Transaction.ClientId)
                 //    .ToListAsync(cancellationToken);
@@ -122,7 +126,21 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                             item.Reason = request.Reason;
                         }
                     }
-                                        
+
+                    if (payment.PaymentMethod == PaymentMethods.Online)
+                    {
+                        payment.Status = Status.Voided;
+                        payment.Reason = request.Reason;
+
+                        foreach (var onlinePayment in onlinePayments)
+                        {
+                            onlinePayment.Status = Status.Voided;
+                            onlinePayment.Remarks = request.Reason;
+                            onlinePayment.UpdatedAt = DateTime.Now;
+                        }
+                        
+                    }
+
                     //if(payment.PaymentMethod == PaymentMethods.ListingFee)
                     //{
                     //    decimal totalLFtoVoid = payment.PaymentAmount;
