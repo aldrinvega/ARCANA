@@ -67,7 +67,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     .ToListAsync(cancellationToken);
 
                 var onlinePayments = await _context.OnlinePayments
-                    .Where(op => op.ClientId == paymentTransactions.First().Transaction.ClientId)
+                    .Where(op => op.PaymentRecord.Id == request.PaymentRecordId)
                     .ToListAsync(cancellationToken);
 
                 //var listingFees = await _context.ListingFees
@@ -138,7 +138,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                             onlinePayment.Remarks = request.Reason;
                             onlinePayment.UpdatedAt = DateTime.Now;
                         }
-                        
+
                     }
 
                     //if(payment.PaymentMethod == PaymentMethods.ListingFee)

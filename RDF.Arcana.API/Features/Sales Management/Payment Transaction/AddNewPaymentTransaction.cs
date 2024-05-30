@@ -323,7 +323,7 @@ public class AddNewPaymentTransaction : BaseApiController
                     {
                         var amountToPayOnline = request.Payments.Sum(pa => pa.PaymentAmount);
 
-                        var remainingToPay = amountToPayOnline - payment.PaymentAmount;
+                        var remainingToPay = transaction.TransactionSales.RemainingBalance - payment.PaymentAmount;
 
                         transaction.TransactionSales.RemainingBalance = remainingToPay <= 0 ? 0 : remainingToPay;
                         var paymentTransaction = new PaymentTransaction
@@ -348,6 +348,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         var onlinePayment = new OnlinePayment
                         {
                             ClientId = transaction.ClientId,
+                            PaymentRecord = paymentRecord,
                             OnlinePaymentName = payment.BankName,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,

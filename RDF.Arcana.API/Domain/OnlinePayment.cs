@@ -21,6 +21,7 @@ namespace RDF.Arcana.API.Domain
         public virtual Clients Client { get; set; }
         public virtual User AddedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }
+        public virtual PaymentRecords PaymentRecord { get; set; }
 
     }
 }
