@@ -57,6 +57,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public bool? Status { get; set; }
             public string Search { get; set; }
             public string PaymentStatus { get; set; }
+            public string PaymentMethods{ get; set; }
         }
 
         public class GetPaymentTransactionByStatusResult
@@ -132,6 +133,12 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                 if (!string.IsNullOrEmpty(request.PaymentStatus))
                 {
                     paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => tr.Status == request.PaymentStatus));
+                }
+
+                if (!string.IsNullOrEmpty(request.PaymentMethods))
+                {
+                    paymentTransactions = paymentTransactions
+                        .Where(pt => pt.PaymentTransactions.Any(pm => pm.PaymentMethod == request.PaymentMethods));
                 }
 
                 var result = paymentTransactions.Select(result => new GetPaymentTransactionByStatusResult

@@ -47,7 +47,9 @@ public class AddNewPaymentTransaction : BaseApiController
             public decimal ChequeAmount { get; set; }
             public string AccountName { get; set; }
             public string AccountNo { get; set; }
-            public int AddedBy { get; set; } = 1;
+            public int AddedBy { get; set; }
+            public string OnlinePlatform { get; set; }
+            public string ReferenceNo { get; set; }
         }
     
     }
@@ -178,6 +180,8 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             AddedBy = request.AddedBy,
                             Status = Status.Received,
+                            OnlinePlatform = payment.OnlinePlatform,
+                            Reason = payment.ReferenceNo
                         };
 
                         await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -254,6 +258,8 @@ public class AddNewPaymentTransaction : BaseApiController
                                 AccountNo = payment.AccountNo,
                                 AddedBy = request.AddedBy,
                                 Status = Status.Received,
+                                OnlinePlatform = payment.OnlinePlatform,
+                                Reason = payment.ReferenceNo
                             };
 
                             await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -305,6 +311,8 @@ public class AddNewPaymentTransaction : BaseApiController
                                 AccountNo = payment.AccountNo,
                                 AddedBy = request.AddedBy,
                                 Status = Status.Received,
+                                OnlinePlatform = payment.OnlinePlatform,
+                                Reason = payment.ReferenceNo
 
                             };
 
@@ -342,18 +350,20 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
                             AddedBy = request.AddedBy,
-                            Status = Status.Received
+                            Status = Status.Received,
+                            OnlinePlatform = payment.OnlinePlatform,
+                            Reason = payment.ReferenceNo
                         };
 
                         var onlinePayment = new OnlinePayment
                         {
                             ClientId = transaction.ClientId,
                             PaymentRecord = paymentRecord,
-                            OnlinePaymentName = payment.BankName,
+                            OnlinePaymentName = payment.OnlinePlatform,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
                             PaymentAmount = payment.PaymentAmount,
-                            ReferenceNumber = payment.ChequeNo,
+                            ReferenceNumber = payment.ReferenceNo,
                             CreatedAt = DateTime.Now,
                             AddedBy = request.AddedBy,
                             Status = Status.Received
@@ -368,7 +378,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         await _context.SaveChangesAsync(cancellationToken);
                     }
 
-                    //For Cash, Cheque, and Online payments
+                    //For Cash, Cheque,
                     if (payment.PaymentMethod == PaymentMethods.ListingFee ||
                         payment.PaymentMethod == PaymentMethods.Cash)
                     {
@@ -401,6 +411,8 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             AddedBy = request.AddedBy,
                             Status = Status.Received,
+                            OnlinePlatform = payment.OnlinePlatform,
+                            Reason = payment.ReferenceNo
 
                         };
 

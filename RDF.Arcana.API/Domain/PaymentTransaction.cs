@@ -17,6 +17,8 @@ public class PaymentTransaction : BaseEntity
     public decimal ChequeAmount { get; set; }
     public string AccountName { get; set; }
     public string AccountNo { get; set; }
+    public string OnlinePlatform { get; set; }
+    public string ReferenceNo { get; set; }
     public int AddedBy { get; set; }
     public bool IsActive { get; set; } = true;
     public string Status { get; set; }
