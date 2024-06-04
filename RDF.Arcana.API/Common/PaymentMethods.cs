@@ -2,10 +2,13 @@
 
 public static class PaymentMethods
 {
-    public const string Cash = "CASH";
-    public const string Online = "ONLINE";
-    public const string AdvancePayment = "ADVANCE PAYMENT";
-    public const string ListingFee = "LISTING FEE";
-    public const string OffSet = "OFFSET";
-    public const string Cheque = "CHEQUE";
+    public const string Cash = "Cash";
+    public const string Online = "Online";
+    public const string AdvancePayment = "Advance Payment";
+    public const string ListingFee = "Listing Fee";
+    public const string OffSet = "Offset";
+    public const string Cheque = "Cheque";
+
+    public const string GCash = "GCash";
+    public const string PayMaya = "PayMaya";
 }

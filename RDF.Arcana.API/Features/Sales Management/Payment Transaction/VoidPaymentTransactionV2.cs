@@ -36,25 +36,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
         {
             public int PaymentRecordId { get; set; }
             public string Reason { get; set; }
-            public ICollection<Payment> PaymentTransactions { get; set; }
-
-            public class Payment
-            {
-                public string PaymentMethod { get; set; }
-                public decimal PaymentAmount { get; set; }
-                public decimal TotalAmountReceived { get; set; }
-                public string Payee { get; set; }
-                public DateTime ChequeDate { get; set; }
-                public string BankName { get; set; }
-                public string ChequeNo { get; set; }
-                public DateTime DateReceived { get; set; }
-                public decimal ChequeAmount { get; set; }
-                public string AccountName { get; set; }
-                public string AccountNo { get; set; }
-                public int AddedBy { get; set; }
-                public string OnlinePlatform { get; set; }
-                public string ReferenceNo { get; set; }
-            }
+            public string OnlinePlatform { get; set; }
+            
         }
 
         public class Handler : IRequestHandler<VoidPaymentTransactionV2Command, Result>
@@ -85,15 +68,14 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     .Where(ap => ap.ClientId == paymentTransactions.First().Transaction.ClientId)
                     .ToListAsync(cancellationToken);
 
-                var onlinePayments = await _context.OnlinePayments
-                    .Where(op => op.PaymentRecord.Id == request.PaymentRecordId)
-                    .ToListAsync(cancellationToken);
+                
 
                 //var listingFees = await _context.ListingFees
                 //    .Where(lf => lf.ClientId == paymentTransactions.First().Transaction.ClientId)
                 //    .ToListAsync(cancellationToken);
 
                 var transactionSales = await _context.TransactionSales
+                    .Include(t => t.Transaction)
                     .Where(ts => ts.TransactionId == paymentTransactions.First().TransactionId)
                     .ToListAsync(cancellationToken);
 
@@ -148,14 +130,37 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 
                     if (payment.PaymentMethod == PaymentMethods.Online)
                     {
+                        var onlinePayments = await _context.OnlinePayments
+                            .Where(pr => pr.PaymentRecord.Id == request.PaymentRecordId)
+                            .ToListAsync(cancellationToken);
+
                         payment.Status = Status.Voided;
                         payment.Reason = request.Reason;
 
                         foreach (var onlinePayment in onlinePayments)
                         {
-                            onlinePayment.Status = Status.Voided;
-                            onlinePayment.Remarks = request.Reason;
-                            onlinePayment.UpdatedAt = DateTime.Now;
+                            decimal amountToReturn = 0;
+                            if (request.OnlinePlatform == PaymentMethods.GCash)
+                            {
+                                onlinePayment.Status = Status.Voided;
+                                onlinePayment.Remarks = request.Reason;
+                                onlinePayment.UpdatedAt = DateTime.Now;
+
+                                amountToReturn = onlinePayment.PaymentAmount;
+                                payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;                                
+
+                            }
+
+                            else if (request.OnlinePlatform == PaymentMethods.PayMaya)
+                            {
+                                onlinePayment.Status = Status.Voided;
+                                onlinePayment.Remarks = request.Reason;
+                                onlinePayment.UpdatedAt = DateTime.Now;
+
+                                amountToReturn = onlinePayment.PaymentAmount;
+                                payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;
+                            }
+
                         }
 
                     }
@@ -177,9 +182,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     payment.Reason = request.Reason;                                        
                 }
 
-                foreach(var transaction in transactionSales)
+                foreach (var transactionSale in transactionSales)
                 {
-                    transaction.RemainingBalance = transaction.TotalAmountDue;
+                    transactionSale.RemainingBalance = transactionSale.TotalAmountDue;
                 }
 
                 paymentTransactions.First().Transaction.Status = Status.Pending;

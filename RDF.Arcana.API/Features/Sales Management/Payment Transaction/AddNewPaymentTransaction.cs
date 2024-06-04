@@ -319,11 +319,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
                             await _context.SaveChangesAsync(cancellationToken);
                         }
-
-                        
-
-                            
-
                         
                     }
                     
@@ -342,17 +337,13 @@ public class AddNewPaymentTransaction : BaseApiController
                             PaymentAmount = payment.PaymentAmount,
                             TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
-                            ChequeDate = payment.ChequeDate,
-                            BankName = payment.BankName,
-                            ChequeNo = payment.ChequeNo,
                             DateReceived = DateTime.Now,
-                            ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            AddedBy = request.AddedBy,
-                            Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            Reason = payment.ReferenceNo
+                            ReferenceNo = payment.ReferenceNo,
+                            AddedBy = request.AddedBy,
+                            Status = Status.Received
                         };
 
                         var onlinePayment = new OnlinePayment
