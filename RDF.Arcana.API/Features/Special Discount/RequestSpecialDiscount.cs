@@ -109,6 +109,8 @@ public class RequestSpecialDiscount : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
             }
 
+            //
+            
             var newRequest = new Request(
                 Modules.SpecialDiscountApproval,
                 request.AddedBy,
