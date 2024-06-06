@@ -50,6 +50,7 @@ public class AddNewPaymentTransaction : BaseApiController
             public int AddedBy { get; set; }
             public string OnlinePlatform { get; set; }
             public string ReferenceNo { get; set; }
+            public string WithholdingAttachment { get; set; }
         }
     
     }
@@ -166,6 +167,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         var paymentTransaction = new PaymentTransaction
                         {
                             TransactionId = transaction.Id,
+                            AddedBy = request.AddedBy,
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
@@ -178,10 +180,10 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            AddedBy = request.AddedBy,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            Reason = payment.ReferenceNo
+                            ReferenceNo = payment.ReferenceNo,
+                            WithholdingAttachment = payment.WithholdingAttachment
                         };
 
                         await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -244,22 +246,23 @@ public class AddNewPaymentTransaction : BaseApiController
                             var paymentTransaction = new PaymentTransaction
                             {
                                 TransactionId = transaction.Id,
+                                AddedBy = request.AddedBy,
                                 PaymentRecordId = paymentRecord.Id,
                                 PaymentMethod = payment.PaymentMethod,
-                                PaymentAmount = totalAmountDue,
-                                TotalAmountReceived = payment.PaymentAmount,
+                                PaymentAmount = payment.PaymentAmount,
+                                TotalAmountReceived = payment.TotalAmountReceived,
                                 Payee = payment.Payee,
                                 ChequeDate = payment.ChequeDate,
                                 BankName = payment.BankName,
                                 ChequeNo = payment.ChequeNo,
                                 DateReceived = DateTime.Now,
-                                ChequeAmount = payment.PaymentAmount,
+                                ChequeAmount = payment.ChequeAmount,
                                 AccountName = payment.AccountName,
                                 AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
                                 Status = Status.Received,
                                 OnlinePlatform = payment.OnlinePlatform,
-                                Reason = payment.ReferenceNo
+                                ReferenceNo = payment.ReferenceNo,
+                                WithholdingAttachment = payment.WithholdingAttachment
                             };
 
                             await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -297,6 +300,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             var paymentTransaction = new PaymentTransaction
                             {
                                 TransactionId = transaction.Id,
+                                AddedBy = request.AddedBy,
                                 PaymentRecordId = paymentRecord.Id,
                                 PaymentMethod = payment.PaymentMethod,
                                 PaymentAmount = payment.PaymentAmount,
@@ -309,10 +313,10 @@ public class AddNewPaymentTransaction : BaseApiController
                                 ChequeAmount = payment.ChequeAmount,
                                 AccountName = payment.AccountName,
                                 AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
                                 Status = Status.Received,
                                 OnlinePlatform = payment.OnlinePlatform,
-                                Reason = payment.ReferenceNo
+                                ReferenceNo = payment.ReferenceNo,
+                                WithholdingAttachment = payment.WithholdingAttachment
 
                             };
 
@@ -332,18 +336,23 @@ public class AddNewPaymentTransaction : BaseApiController
                         var paymentTransaction = new PaymentTransaction
                         {
                             TransactionId = transaction.Id,
+                            AddedBy = request.AddedBy,
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
                             TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
+                            ChequeDate = payment.ChequeDate,
+                            BankName = payment.BankName,
+                            ChequeNo = payment.ChequeNo,
                             DateReceived = DateTime.Now,
+                            ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
+                            Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
-                            AddedBy = request.AddedBy,
-                            Status = Status.Received
+                            WithholdingAttachment = payment.WithholdingAttachment
                         };
 
                         var onlinePayment = new OnlinePayment
@@ -369,9 +378,10 @@ public class AddNewPaymentTransaction : BaseApiController
                         await _context.SaveChangesAsync(cancellationToken);
                     }
 
-                    //For Cash, Cheque,
+                    //For Cash, Listing, Withholding
                     if (payment.PaymentMethod == PaymentMethods.ListingFee ||
-                        payment.PaymentMethod == PaymentMethods.Cash)
+                        payment.PaymentMethod == PaymentMethods.Cash ||
+                        payment.PaymentMethod == PaymentMethods.Withholding)
                     {
                         var amountToPayOthers = request.Payments.Where(pm => pm.PaymentMethod == PaymentMethods.Cash ||
                              pm.PaymentMethod == PaymentMethods.ListingFee ||
@@ -388,6 +398,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         var paymentTransaction = new PaymentTransaction
                         {
                             TransactionId = transaction.Id,
+                            AddedBy = request.AddedBy,
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
@@ -400,10 +411,10 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            AddedBy = request.AddedBy,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            Reason = payment.ReferenceNo
+                            ReferenceNo = payment.ReferenceNo,
+                            WithholdingAttachment = payment.WithholdingAttachment
 
                         };
 

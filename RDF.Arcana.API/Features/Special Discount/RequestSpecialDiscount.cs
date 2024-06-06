@@ -86,7 +86,7 @@ public class RequestSpecialDiscount : ControllerBase
             {
                 return ClientErrors.NotFound();
             }
-
+            
             var withPendinRequest = await _context.SpecialDiscounts
                 .AnyAsync(x => 
                 x.ClientId == request.ClientId && 
@@ -98,19 +98,48 @@ public class RequestSpecialDiscount : ControllerBase
                 return SpecialDiscountErrors.PendingRequest(client.BusinessName);
             }
 
+
             var approvers = await _context.Approvers
                 .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.SpecialDiscountApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
 
+
             if (!approvers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
             }
 
-            //
-            
+
+            //has fixed discount
+            //if (client.FixedDiscountId is not null)
+            //{
+            //    var fixedDiscount = await _context.FixedDiscounts
+            //        .Where(fd => fd.Id == client.FixedDiscountId)
+            //        .FirstOrDefaultAsync();
+
+            //    var totalFix_Sp = (fixedDiscount.DiscountPercentage + discount) * 100;
+
+            //    if (totalFix_Sp <= 10)
+            //    {
+            //        //this should be CDO
+            //        approvers.Where(a => a.ModuleName == Modules.RegistrationApproval)
+            //            .OrderBy(x => x.Level);
+            //    }
+            //    else if (totalFix_Sp > 10 && totalFix_Sp <= 15)
+            //    {
+            //        approvers.Where(a => a.ModuleName == Modules.RegistrationApproval)
+            //            .OrderBy(x => x.Level);
+            //    }
+            //    else
+            //    {
+            //        approvers.Where(a => a.ModuleName == Modules.SpecialDiscountApproval)
+            //            .OrderBy(x => x.Level);
+            //    }
+
+            //}
+
             var newRequest = new Request(
                 Modules.SpecialDiscountApproval,
                 request.AddedBy,
