@@ -51,6 +51,7 @@ public class AddNewPaymentTransaction : BaseApiController
             public string OnlinePlatform { get; set; }
             public string ReferenceNo { get; set; }
             public string WithholdingAttachment { get; set; }
+            public DateTime WithholdingDateReceived { get; set; }
         }
     
     }
@@ -376,6 +377,84 @@ public class AddNewPaymentTransaction : BaseApiController
 
                         transaction.Status = remainingToPay <= 0 ? Status.Paid : Status.Pending;
                         await _context.SaveChangesAsync(cancellationToken);
+                    }
+
+                    if (payment.PaymentMethod == PaymentMethods.Withholding)
+                    {
+                        var amountToPayWithholding = request.Payments.Where(pm => pm.PaymentMethod == PaymentMethods.Withholding)
+                            .Sum(pa => pa.PaymentAmount);
+
+                        // Calculate the remaining amount to pay for this transaction
+                        var remainingToPay = amountToPay - amountToPayWithholding;
+
+
+                        // Update the remaining balance of the transaction
+                        transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
+
+                        var paymentTransaction = new PaymentTransaction
+                        {
+                            TransactionId = transaction.Id,
+                            AddedBy = request.AddedBy,
+                            PaymentRecordId = paymentRecord.Id,
+                            PaymentMethod = payment.PaymentMethod,
+                            PaymentAmount = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
+                            Payee = payment.Payee,
+                            ChequeDate = payment.ChequeDate,
+                            BankName = payment.BankName,
+                            ChequeNo = payment.ChequeNo,
+                            DateReceived = DateTime.Now,
+                            ChequeAmount = payment.ChequeAmount,
+                            AccountName = payment.AccountName,
+                            AccountNo = payment.AccountNo,
+                            Status = Status.Received,
+                            OnlinePlatform = payment.OnlinePlatform,
+                            ReferenceNo = payment.ReferenceNo,
+                            WithholdingAttachment = payment.WithholdingAttachment,
+                            WithholdingDateReceived = DateTime.Now
+
+                        };
+
+                        await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        if (remainingToPay <= 0)
+                        {
+                            transaction.Status = Status.Paid;
+                            payment.PaymentAmount = excessAmount;
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
+                        else
+                        {
+                            transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
+                            payment.PaymentAmount = 0;
+                            transaction.Status = Status.Pending;
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
+
+                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0 && amountToPayWithholding <= 0)
+                        {
+                            var advancePayment = new AdvancePayment
+                            {
+                                ClientId = transaction.ClientId,
+                                PaymentMethod = payment.PaymentMethod,
+                                AdvancePaymentAmount = payment.PaymentAmount,
+                                RemainingBalance = payment.PaymentAmount,
+                                Payee = payment.Payee,
+                                ChequeDate = payment.ChequeDate,
+                                BankName = payment.BankName,
+                                ChequeNo = payment.ChequeNo,
+                                DateReceived = payment.DateReceived,
+                                ChequeAmount = payment.ChequeAmount,
+                                AccountName = payment.AccountName,
+                                AccountNo = payment.AccountNo,
+                                AddedBy = request.AddedBy,
+                                Origin = Origin.Excess
+                            };
+
+                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
                     }
 
                     //For Cash, Listing, Withholding

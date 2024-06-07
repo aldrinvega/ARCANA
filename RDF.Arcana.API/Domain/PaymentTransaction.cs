@@ -24,6 +24,7 @@ public class PaymentTransaction : BaseEntity
     public string Status { get; set; }
     public string Reason { get; set; }
     public string WithholdingAttachment { get; set; }
+    public DateTime WithholdingDateReceived { get; set; }
 
     public virtual Transactions Transaction { get; set; }
     public virtual User AddedByUser { get; set; }

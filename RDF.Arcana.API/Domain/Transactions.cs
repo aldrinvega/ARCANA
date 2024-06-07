@@ -11,6 +11,7 @@ public class Transactions : BaseEntity
     public DateTime UpdatedAt { get; set; }
     public int AddedBy { get; set; }
     public string SalesInvoice { get; set; }
+    public DateTime SalesInvoiceDateReceived { get; set; }
 
     public virtual Clients Client { get; set; }
     public virtual User AddedByUser { get; set; }
