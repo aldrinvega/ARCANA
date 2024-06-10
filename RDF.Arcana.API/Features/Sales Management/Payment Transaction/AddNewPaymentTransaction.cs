@@ -50,8 +50,6 @@ public class AddNewPaymentTransaction : BaseApiController
             public int AddedBy { get; set; }
             public string OnlinePlatform { get; set; }
             public string ReferenceNo { get; set; }
-            public string WithholdingAttachment { get; set; }
-            public DateTime WithholdingDateReceived { get; set; }
         }
     
     }
@@ -184,7 +182,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
-                            WithholdingAttachment = payment.WithholdingAttachment
                         };
 
                         await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -263,7 +260,6 @@ public class AddNewPaymentTransaction : BaseApiController
                                 Status = Status.Received,
                                 OnlinePlatform = payment.OnlinePlatform,
                                 ReferenceNo = payment.ReferenceNo,
-                                WithholdingAttachment = payment.WithholdingAttachment
                             };
 
                             await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -317,7 +313,6 @@ public class AddNewPaymentTransaction : BaseApiController
                                 Status = Status.Received,
                                 OnlinePlatform = payment.OnlinePlatform,
                                 ReferenceNo = payment.ReferenceNo,
-                                WithholdingAttachment = payment.WithholdingAttachment
 
                             };
 
@@ -353,7 +348,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
-                            WithholdingAttachment = payment.WithholdingAttachment
                         };
 
                         var onlinePayment = new OnlinePayment
@@ -410,8 +404,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
-                            WithholdingAttachment = payment.WithholdingAttachment,
-                            WithholdingDateReceived = DateTime.Now
 
                         };
 
@@ -493,7 +485,6 @@ public class AddNewPaymentTransaction : BaseApiController
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
-                            WithholdingAttachment = payment.WithholdingAttachment
 
                         };
 

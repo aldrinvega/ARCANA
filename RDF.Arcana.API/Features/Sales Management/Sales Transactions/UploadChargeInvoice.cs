@@ -4,21 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Features.Sales_Management.Sales_transactions;
 
-namespace RDF.Arcana.API.Features.Sales_Management.Sales_transactions;
+namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
 [Route("api/sales-transaction"), ApiController]
-
-public class UploadSalesInvoice : ControllerBase
+public class UploadChargeInvoice : ControllerBase
 {
     private readonly IMediator _mediator;
-
-    public UploadSalesInvoice(IMediator mediator)
+    public UploadChargeInvoice(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpPatch("si/{id:int}")]
-    public async Task<ActionResult> Upload([FromForm] UploadSalesInvoiceCommand command, [FromRoute]int id)
+    [HttpPatch("ci/{id:int}")]
+    public async Task<ActionResult> Upload([FromForm] UploadChargeInvoiceCommand command, [FromRoute] int id)
     {
         try
         {
@@ -34,13 +33,13 @@ public class UploadSalesInvoice : ControllerBase
         }
     }
 
-    public class UploadSalesInvoiceCommand : IRequest<Result>
+    public class UploadChargeInvoiceCommand : IRequest<Result>
     {
         public int SalesTransactionId { get; set; }
-        public IFormFile SalesInvoice { get; set; }
+        public IFormFile ChargeInvoice { get; set; }
     }
-    
-    public class Handler : IRequestHandler<UploadSalesInvoiceCommand, Result>
+
+    public class Handler : IRequestHandler<UploadChargeInvoiceCommand, Result>
     {
         private readonly ArcanaDbContext _context;
         private readonly Cloudinary _cloudinary;
@@ -56,38 +55,37 @@ public class UploadSalesInvoice : ControllerBase
 
             _cloudinary = new Cloudinary(account);
         }
-
-        public async Task<Result> Handle(UploadSalesInvoiceCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UploadChargeInvoiceCommand request, CancellationToken cancellationToken)
         {
             var existingSalesTransaction =
                 await _context.Transactions
-                    .FirstOrDefaultAsync(st => 
-                        st.Id == request.SalesTransactionId, 
+                    .FirstOrDefaultAsync(st =>
+                        st.Id == request.SalesTransactionId,
                         cancellationToken);
 
             if (existingSalesTransaction is null)
             {
                 return SalesTransactionErrors.NotFound();
             }
-            
-            if (request.SalesInvoice.Length > 0)
+
+            if (request.ChargeInvoice.Length > 0)
             {
-                await using var stream = request.SalesInvoice.OpenReadStream();
+                await using var stream = request.ChargeInvoice.OpenReadStream();
 
                 var attachmentsParams = new ImageUploadParams
                 {
-                    File = new FileDescription(request.SalesInvoice.FileName, stream),
-                    PublicId = request.SalesInvoice.FileName
+                    File = new FileDescription(request.ChargeInvoice.FileName, stream),
+                    PublicId = request.ChargeInvoice.FileName
                 };
 
-               var  attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
+                var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
-               existingSalesTransaction.SalesInvoice = attachmentsUploadResult.SecureUrl.ToString();
-               existingSalesTransaction.SalesInvoiceDateReceived = DateTime.Now;
-                
+                existingSalesTransaction.ChargeInvoice = attachmentsUploadResult.SecureUrl.ToString();
+                existingSalesTransaction.ChargeInvoiceDateReceived = DateTime.Now;
+
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            
+
             return Result.Success();
         }
     }
