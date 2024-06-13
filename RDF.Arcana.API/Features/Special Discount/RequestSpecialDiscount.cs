@@ -112,7 +112,7 @@ public class RequestSpecialDiscount : ControllerBase
             }
 
 
-            //has fixed discount
+            //has fixed discount 6-13-24
             //if (client.FixedDiscountId is not null)
             //{
             //    var fixedDiscount = await _context.FixedDiscounts

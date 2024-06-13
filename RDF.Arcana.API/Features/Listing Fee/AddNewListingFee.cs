@@ -99,7 +99,7 @@ public class AddNewListingFee : ControllerBase
             {
                 return ClientErrors.NotFound();
             }
-            
+
             foreach (var item in request.ListingItems)
             {
                 var existingRequest = await _context.ListingFeeItems
@@ -113,7 +113,13 @@ public class AddNewListingFee : ControllerBase
                 {
                     return ListingFeeErrors.AlreadyRequested(existingRequest.Item.ItemDescription);
                 }
+
             }
+
+
+            //
+
+            decimal total = request.Total;
 
             var approvers = await _context.Approvers
                 .Include(usr => usr.User)
@@ -125,6 +131,17 @@ public class AddNewListingFee : ControllerBase
             {
                 return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
+
+            
+            if (total <= 1000 && approvers.Count >= 2)
+            {
+                approvers = new List<Approver> { approvers[1] };
+            }
+            else
+            {
+                approvers = new List<Approver> { approvers[0] };
+            }
+
 
             var newRequest = new Request(
                 Modules.ListingFeeApproval,
@@ -175,7 +192,7 @@ public class AddNewListingFee : ControllerBase
                 UserId = request.RequestedBy,
                 Status = Status.PendingListingFee
             };
-
+            
             await _context.Notifications.AddAsync(notification, cancellationToken);
                 
             var notificationForApprover = new Domain.Notification

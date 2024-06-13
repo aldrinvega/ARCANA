@@ -80,17 +80,34 @@ public class AddNewExpenses : ControllerBase
         {
             var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.AddedBy, cancellationToken);
 
+            
+
+            //
+            decimal total = request.Expenses.Sum(a => a.Amount);
+
             var approvers = await _context.Approvers
                 .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.OtherExpensesApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
-                
+
             if (!approvers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
-            
+
+
+            if (total <= 1000 && approvers.Count >= 2)
+            {
+                approvers = new List<Approver> { approvers[1] };
+            }
+            else
+            {
+                approvers = new List<Approver> { approvers[0] };
+            }
+
+
+
             var newRequest = new Request(
                 Modules.OtherExpensesApproval,
                 request.AddedBy,
