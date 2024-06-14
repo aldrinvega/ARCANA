@@ -98,6 +98,7 @@ public class RequestSpecialDiscount : ControllerBase
                 return SpecialDiscountErrors.PendingRequest(client.BusinessName);
             }
 
+            decimal total = request.Discount;
 
             var approvers = await _context.Approvers
                 .Include(usr => usr.User)
@@ -109,6 +110,15 @@ public class RequestSpecialDiscount : ControllerBase
             if (!approvers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
+            }
+
+            if (total <= 5 && approvers.Count >= 2)
+            {
+                approvers = new List<Approver> { approvers[1] };
+            }
+            else
+            {
+                approvers = new List<Approver> { approvers[0] };
             }
 
 
