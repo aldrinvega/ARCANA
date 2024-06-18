@@ -119,7 +119,7 @@ public class AddNewListingFee : ControllerBase
 
             //
 
-            decimal total = request.Total;
+            decimal total = Math.Ceiling(request.Total);
 
             var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
@@ -133,9 +133,7 @@ public class AddNewListingFee : ControllerBase
             }
 
             var selectedApprover = approvers.FirstOrDefault(a => a.MinValue <= total && a.MaxValue >= total);
-
-            
-
+           
 
             var newRequest = new Request(
                 Modules.ListingFeeApproval,

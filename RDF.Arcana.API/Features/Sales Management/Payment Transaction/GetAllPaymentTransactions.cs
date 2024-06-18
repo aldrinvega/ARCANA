@@ -58,6 +58,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public string Search { get; set; }
             public string PaymentStatus { get; set; }
             public string PaymentMethods{ get; set; }
+
         }
 
         public class GetPaymentTransactionByStatusResult
@@ -109,15 +110,30 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                 IQueryable<PaymentRecords> paymentTransactions = _context.PaymentRecords
                     .Include(c => c.PaymentTransactions)
                     .ThenInclude(pt => pt.Transaction)
-                    .ThenInclude(c => c.Client);
+                    .ThenInclude(ts => ts.TransactionSales)
 
+                    .Include(c => c.PaymentTransactions)
+                    .ThenInclude(pt => pt.Transaction)
+                    .ThenInclude(ts => ts.Client);
+
+                bool searchHandled = false;
 
                 if (int.TryParse(request.Search, out int transactionId) && !string.IsNullOrEmpty(request.Search))
                 {
                     paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => tr.TransactionId == transactionId));
+                    searchHandled = true;
                 }
 
-                if(!string.IsNullOrEmpty(request.Search))
+                //I cant get the decimal here
+                const decimal tolerance = 0.01m; 
+
+                if (!searchHandled && decimal.TryParse(request.Search, out decimal totalAmount) && !string.IsNullOrEmpty(request.Search))
+                {
+                    paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => Math.Abs(tr.Transaction.TransactionSales.TotalAmountDue - totalAmount) <= tolerance));
+                    searchHandled = true;
+                }
+
+                if (!searchHandled && !string.IsNullOrEmpty(request.Search))
                 {
                     paymentTransactions = paymentTransactions.Where(tx =>
                                    tx.PaymentTransactions.Any(tr => tr.Transaction.Client.BusinessName.Contains(request.Search)) ||

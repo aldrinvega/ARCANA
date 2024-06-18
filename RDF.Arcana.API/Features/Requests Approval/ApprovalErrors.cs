@@ -14,4 +14,5 @@ public class ApprovalErrors
         new Error("Approval.NotAllowed", $"You are not allowed to approve {moduleName} request");
     public static Error ExistingRequest(string moduleName) =>
         new Error("Approval.ExistingRequest", $"There are already approval requests for the module {moduleName}. Please resolve them before updating approvers.");
+    public static Error ExistingFeeRangeOrModule() => new Error("ExistingFeeRangeOrModule", "Please Check Fee Range and Module");
 }

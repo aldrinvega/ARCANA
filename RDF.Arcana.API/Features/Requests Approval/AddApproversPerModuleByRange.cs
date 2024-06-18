@@ -60,11 +60,6 @@ public class AddApproversPerModuleByRange : ControllerBase
         {
             foreach (var approver in request.Approvers)
             {
-                //var existingApprover = await _context.Approvers
-                //    .FirstOrDefaultAsync(ap =>
-                //        ap.UserId == approver.UserId &&
-                //        ap.ModuleName == request.ModuleName,
-                //    cancellationToken);
 
                 var overlappingApprover = await _context.ApproverByRange
                     .FirstOrDefaultAsync(ap =>
@@ -76,27 +71,8 @@ public class AddApproversPerModuleByRange : ControllerBase
 
                 if (overlappingApprover != null)
                 {
-                    return ApprovalErrors.ApproverAlreadyExist(overlappingApprover.ModuleName);
+                    return ApprovalErrors.ExistingFeeRangeOrModule();
                 }
-
-                var user = await _context.Users
-                    .Include(user => user.UserRoles)
-                    .FirstOrDefaultAsync(user =>
-                    user.Id == approver.UserId,
-                    cancellationToken);
-
-                
-
-                //if (existingApprover is not null)
-                //{
-                //    return ApprovalErrors.ApproverAlreadyExist(existingApprover.ModuleName);
-                //}
-
-                if (user is null) continue;
-                //if (!user.UserRoles.Permissions.Contains(request.ModuleName))
-                //{
-                //    return ApprovalErrors.NoAccess(request.ModuleName, user.Fullname);
-                //}
 
                 var newApprover = new ApproverByRange
                 {

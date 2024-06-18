@@ -98,12 +98,12 @@ public class RequestSpecialDiscount : ControllerBase
                 return SpecialDiscountErrors.PendingRequest(client.BusinessName);
             }
 
-            decimal total = request.Discount;
+            decimal total = Math.Ceiling(request.Discount);
 
-            var approvers = await _context.Approvers
+            var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.SpecialDiscountApproval)
-                .OrderBy(x => x.Level)
+                .OrderBy(x => x.MinValue)
                 .ToListAsync(cancellationToken);
 
 
@@ -112,64 +112,27 @@ public class RequestSpecialDiscount : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
             }
 
-            if (total <= 5 && approvers.Count >= 2)
-            {
-                approvers = new List<Approver> { approvers[1] };
-            }
-            else
-            {
-                approvers = new List<Approver> { approvers[0] };
-            }
-
-
-            //has fixed discount 6-13-24
-            //if (client.FixedDiscountId is not null)
-            //{
-            //    var fixedDiscount = await _context.FixedDiscounts
-            //        .Where(fd => fd.Id == client.FixedDiscountId)
-            //        .FirstOrDefaultAsync();
-
-            //    var totalFix_Sp = (fixedDiscount.DiscountPercentage + discount) * 100;
-
-            //    if (totalFix_Sp <= 10)
-            //    {
-            //        //this should be CDO
-            //        approvers.Where(a => a.ModuleName == Modules.RegistrationApproval)
-            //            .OrderBy(x => x.Level);
-            //    }
-            //    else if (totalFix_Sp > 10 && totalFix_Sp <= 15)
-            //    {
-            //        approvers.Where(a => a.ModuleName == Modules.RegistrationApproval)
-            //            .OrderBy(x => x.Level);
-            //    }
-            //    else
-            //    {
-            //        approvers.Where(a => a.ModuleName == Modules.SpecialDiscountApproval)
-            //            .OrderBy(x => x.Level);
-            //    }
-
-            //}
+            var selectedApprover = approvers.FirstOrDefault(a => a.MinValue <= total && a.MaxValue >= total);
 
             var newRequest = new Request(
                 Modules.SpecialDiscountApproval,
                 request.AddedBy,
-                approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
+                selectedApprover.UserId,
+                null,
                 Status.UnderReview
             );
 
             await _context.Requests.AddAsync(newRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
+            var newRequestApprover = new RequestApprovers
             {
-                ApproverId = approver.UserId,
+                ApproverId = selectedApprover.UserId,
                 RequestId = newRequest.Id,
-                Level = approver.Level,
-            }))
-            {
-                _context.RequestApprovers.Add(newRequestApprover);
-            }
+                Level = 1, // Assuming level 1 kasi una lagi
+            };
+
+            _context.RequestApprovers.Add(newRequestApprover);
 
             var requestSpecialDiscount = new SpecialDiscount
             {
