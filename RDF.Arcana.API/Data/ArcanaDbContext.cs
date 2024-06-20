@@ -36,7 +36,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ListingFeeItems> ListingFeeItems { get; set; }
     public virtual DbSet<UpdateRequestTrail> UpdateRequestTrails { get; set; }
     public virtual DbSet<ClearedPayments> ClearedPayments { get; set; }
-    public virtual DbSet<OnlinePayment> OnlinePayments { get; set; }
+    public virtual DbSet<OnlinePayments> OnlinePayments { get; set; }
 
     //Approver 
 
@@ -483,20 +483,6 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
 
-        modelBuilder.Entity<OnlinePayment>()
-            .HasOne(x => x.AddedByUser)
-            .WithMany()
-            .HasForeignKey(x => x.AddedBy);
-
-        modelBuilder.Entity<OnlinePayment>()
-            .HasOne(x => x.ModifiedByUser)
-            .WithMany()
-            .HasForeignKey(x => x.ModifiedBy);
-
-        //modelBuilder.Entity<OnlinePayment>()
-        //    .HasOne(x => x.PaymentRecord)
-        //    .WithMany()
-        //    .HasForeignKey(x => x.PaymentRecordId);
 
     }
 }

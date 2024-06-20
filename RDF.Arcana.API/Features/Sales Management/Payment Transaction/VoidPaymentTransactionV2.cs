@@ -128,42 +128,42 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         }
                     }
 
-                    if (payment.PaymentMethod == PaymentMethods.Online)
-                    {
-                        var onlinePayments = await _context.OnlinePayments
-                            .Where(pr => pr.PaymentRecord.Id == request.PaymentRecordId)
-                            .ToListAsync(cancellationToken);
+                    //if (payment.PaymentMethod == PaymentMethods.Online)
+                    //{
+                    //    var onlinePayments = await _context.OnlinePayments
+                    //        .Where(pr => pr.PaymentRecord.Id == request.PaymentRecordId)
+                    //        .ToListAsync(cancellationToken);
 
-                        payment.Status = Status.Voided;
-                        payment.Reason = request.Reason;
+                    //    payment.Status = Status.Voided;
+                    //    payment.Reason = request.Reason;
 
-                        foreach (var onlinePayment in onlinePayments)
-                        {
-                            decimal amountToReturn = 0;
-                            if (request.OnlinePlatform == PaymentMethods.GCash)
-                            {
-                                onlinePayment.Status = Status.Voided;
-                                onlinePayment.Remarks = request.Reason;
-                                onlinePayment.UpdatedAt = DateTime.Now;
+                    //    foreach (var onlinePayment in onlinePayments)
+                    //    {
+                    //        decimal amountToReturn = 0;
+                    //        if (request.OnlinePlatform == PaymentMethods.GCash)
+                    //        {
+                    //            onlinePayment.Status = Status.Voided;
+                    //            onlinePayment.Remarks = request.Reason;
+                    //            onlinePayment.UpdatedAt = DateTime.Now;
 
-                                amountToReturn = onlinePayment.PaymentAmount;
-                                payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;                                
+                    //            amountToReturn = onlinePayment.PaymentAmount;
+                    //            payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;                                
 
-                            }
+                    //        }
 
-                            else if (request.OnlinePlatform == PaymentMethods.PayMaya)
-                            {
-                                onlinePayment.Status = Status.Voided;
-                                onlinePayment.Remarks = request.Reason;
-                                onlinePayment.UpdatedAt = DateTime.Now;
+                    //        else if (request.OnlinePlatform == PaymentMethods.PayMaya)
+                    //        {
+                    //            onlinePayment.Status = Status.Voided;
+                    //            onlinePayment.Remarks = request.Reason;
+                    //            onlinePayment.UpdatedAt = DateTime.Now;
 
-                                amountToReturn = onlinePayment.PaymentAmount;
-                                payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;
-                            }
+                    //            amountToReturn = onlinePayment.PaymentAmount;
+                    //            payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;
+                    //        }
 
-                        }
+                    //    }
 
-                    }
+                    //}
 
                     //if(payment.PaymentMethod == PaymentMethods.ListingFee)
                     //{

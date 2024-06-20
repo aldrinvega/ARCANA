@@ -322,56 +322,56 @@ public class AddNewPaymentTransaction : BaseApiController
                         
                     }
                     
-                    if (payment.PaymentMethod == PaymentMethods.Online)
-                    {
-                        var amountToPayOnline = request.Payments.Sum(pa => pa.PaymentAmount);
+                    //if (payment.PaymentMethod == PaymentMethods.Online)
+                    //{
+                    //    var amountToPayOnline = request.Payments.Sum(pa => pa.PaymentAmount);
 
-                        var remainingToPay = transaction.TransactionSales.RemainingBalance - payment.PaymentAmount;
+                    //    var remainingToPay = transaction.TransactionSales.RemainingBalance - payment.PaymentAmount;
 
-                        transaction.TransactionSales.RemainingBalance = remainingToPay <= 0 ? 0 : remainingToPay;
-                        var paymentTransaction = new PaymentTransaction
-                        {
-                            TransactionId = transaction.Id,
-                            AddedBy = request.AddedBy,
-                            PaymentRecordId = paymentRecord.Id,
-                            PaymentMethod = payment.PaymentMethod,
-                            PaymentAmount = payment.PaymentAmount,
-                            TotalAmountReceived = payment.TotalAmountReceived,
-                            Payee = payment.Payee,
-                            ChequeDate = payment.ChequeDate,
-                            BankName = payment.BankName,
-                            ChequeNo = payment.ChequeNo,
-                            DateReceived = DateTime.Now,
-                            ChequeAmount = payment.ChequeAmount,
-                            AccountName = payment.AccountName,
-                            AccountNo = payment.AccountNo,
-                            Status = Status.Received,
-                            OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
-                        };
+                    //    transaction.TransactionSales.RemainingBalance = remainingToPay <= 0 ? 0 : remainingToPay;
+                    //    var paymentTransaction = new PaymentTransaction
+                    //    {
+                    //        TransactionId = transaction.Id,
+                    //        AddedBy = request.AddedBy,
+                    //        PaymentRecordId = paymentRecord.Id,
+                    //        PaymentMethod = payment.PaymentMethod,
+                    //        PaymentAmount = payment.PaymentAmount,
+                    //        TotalAmountReceived = payment.TotalAmountReceived,
+                    //        Payee = payment.Payee,
+                    //        ChequeDate = payment.ChequeDate,
+                    //        BankName = payment.BankName,
+                    //        ChequeNo = payment.ChequeNo,
+                    //        DateReceived = DateTime.Now,
+                    //        ChequeAmount = payment.ChequeAmount,
+                    //        AccountName = payment.AccountName,
+                    //        AccountNo = payment.AccountNo,
+                    //        Status = Status.Received,
+                    //        OnlinePlatform = payment.OnlinePlatform,
+                    //        ReferenceNo = payment.ReferenceNo,
+                    //    };
 
-                        var onlinePayment = new OnlinePayment
-                        {
-                            ClientId = transaction.ClientId,
-                            PaymentRecord = paymentRecord,
-                            OnlinePaymentName = payment.OnlinePlatform,
-                            AccountName = payment.AccountName,
-                            AccountNo = payment.AccountNo,
-                            PaymentAmount = payment.PaymentAmount,
-                            ReferenceNumber = payment.ReferenceNo,
-                            CreatedAt = DateTime.Now,
-                            AddedBy = request.AddedBy,
-                            Status = Status.Received
+                    //    var onlinePayment = new OnlinePayment
+                    //    {
+                    //        ClientId = transaction.ClientId,
+                    //        PaymentRecord = paymentRecord,
+                    //        OnlinePaymentName = payment.OnlinePlatform,
+                    //        AccountName = payment.AccountName,
+                    //        AccountNo = payment.AccountNo,
+                    //        PaymentAmount = payment.PaymentAmount,
+                    //        ReferenceNumber = payment.ReferenceNo,
+                    //        CreatedAt = DateTime.Now,
+                    //        AddedBy = request.AddedBy,
+                    //        Status = Status.Received
 
-                        };
+                    //    };
 
-                        await _context.OnlinePayments.AddAsync(onlinePayment, cancellationToken);
-                        await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
-                        await _context.SaveChangesAsync(cancellationToken);
+                    //    await _context.OnlinePayments.AddAsync(onlinePayment, cancellationToken);
+                    //    await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+                    //    await _context.SaveChangesAsync(cancellationToken);
 
-                        transaction.Status = remainingToPay <= 0 ? Status.Paid : Status.Pending;
-                        await _context.SaveChangesAsync(cancellationToken);
-                    }
+                    //    transaction.Status = remainingToPay <= 0 ? Status.Paid : Status.Pending;
+                    //    await _context.SaveChangesAsync(cancellationToken);
+                    //}
 
                     if (payment.PaymentMethod == PaymentMethods.Withholding)
                     {

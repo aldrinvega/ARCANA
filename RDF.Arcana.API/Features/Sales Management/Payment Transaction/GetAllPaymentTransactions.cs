@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using static RDF.Arcana.API.Features.Sales_Management.Payment_Transaction.GetAllPaymentTransactions.GetPaymentTransactionByStatusResult;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 {
@@ -68,8 +69,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public DateTime UpdatedAt { get; set; }
             public string Status { get; set; }
             public IEnumerable<PaymentTransaction> PaymentTransactions { get; set; }
-
-
+            public string BusinessName { get; set; }
+            public decimal TotalPayment { get; set; }
             public class PaymentTransaction
             {
                 public int Id { get; set; }
@@ -129,7 +130,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 
                 if (!searchHandled && decimal.TryParse(request.Search, out decimal totalAmount) && !string.IsNullOrEmpty(request.Search))
                 {
-                    paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => Math.Abs(tr.Transaction.TransactionSales.TotalAmountDue - totalAmount) <= tolerance));
+                    paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => Math.Abs(tr.TotalAmountReceived - totalAmount) <= tolerance));
                     searchHandled = true;
                 }
 
@@ -163,6 +164,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     CreatedAt = result.CreatedAt,   
                     UpdatedAt = result.UpdatedAt,
                     Status = result.Status,
+                    BusinessName = result.PaymentTransactions.Select(pt => pt.Transaction.Client.BusinessName).FirstOrDefault(),
+                    TotalPayment = result.PaymentTransactions.Sum(pt => pt.PaymentAmount),
                     PaymentTransactions = result.PaymentTransactions.Select(pt => new GetPaymentTransactionByStatusResult.PaymentTransaction
                     {
                         Id = pt.Id,
@@ -184,7 +187,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         ChequeAmount = pt.ChequeAmount,
                         AccountName = pt.AccountName,
                         AccountNo = pt.AccountNo
-                    })
+                    }).ToList()
                 });
 
                 return PagedList<GetPaymentTransactionByStatusResult>.CreateAsync(result, request.PageNumber,
