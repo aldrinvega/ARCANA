@@ -8,8 +8,7 @@ using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Online_Payment
 {
-    [Route("api/OnlinePayment")]
-    [ApiController]
+    [Route("api/OnlinePayment"), ApiController]
     public class AddNewOnlinePayment : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,7 +18,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Online_Payment
         }
 
         [HttpPost("AddNewOnlinePayment")]
-        public async Task<IActionResult> Add(AddNewOnlinePaymentCommand command)
+        public async Task<IActionResult> Add([FromBody]AddNewOnlinePaymentCommand command)
         {
             try
             {
