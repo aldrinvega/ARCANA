@@ -20,4 +20,6 @@ public class GetOnlinePayment
         public int ModifiedBy { get; set; }
         public bool IsActive { get; set; }
     }
+
+    //public class Handler : IrequestHandler : 
 }

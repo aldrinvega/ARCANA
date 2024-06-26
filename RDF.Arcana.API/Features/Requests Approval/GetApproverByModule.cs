@@ -42,7 +42,7 @@ public class GetApproverByModule : ControllerBase
     public record GetApproverByModuleResult
     {
         public string ModuleName { get; set; }
-        public ICollection<Approver> Approvers { get; set; }
+        public IEnumerable<Approver> Approvers { get; set; }
 
         public class Approver
         {
@@ -87,7 +87,7 @@ public class GetApproverByModule : ControllerBase
                 Approvers = approvers
             };
 
-            return Result.Success();
+            return Result.Success(result);
 
         }
     }
