@@ -36,7 +36,7 @@ public class GetApproverByRange : ControllerBase
     }
     public class GetApproverByRangeQuery : IRequest<Result>
     {
-        public string ModuleName { get; set; }
+        public string Search { get; set; }
 
     }
 
@@ -44,6 +44,7 @@ public class GetApproverByRange : ControllerBase
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public string FullName { get; set; }
         public string ModuleName { get; set; }
         public decimal MinValue { get; set; }
         public decimal MaxValue { get; set; }
@@ -62,18 +63,22 @@ public class GetApproverByRange : ControllerBase
         {
             var existingApprovers = await _context.ApproverByRange
                 .Include(u => u.User)
-                .Where(m => m.ModuleName == request.ModuleName)
+                .Where(m => m.ModuleName.Contains(request.Search) ||
+                            m.User.Fullname.Contains(request.Search) ||
+                            m.MinValue.ToString().Contains(request.Search) ||
+                            m.MaxValue.ToString().Contains(request.Search))
                 .ToListAsync(cancellationToken);
 
             if (!existingApprovers.Any())
             {
-                return ApprovalErrors.NoApproversFound(request.ModuleName);
+                return ApprovalErrors.NoApproversFound(request.Search);
             }
 
             var result = existingApprovers.Select(approver => new GetAppproverByModuleResult
             {
                 Id = approver.Id,
                 UserId = approver.UserId,
+                FullName = approver.User.Fullname,
                 ModuleName = approver.ModuleName,
                 MinValue = approver.MinValue,
                 MaxValue = approver.MaxValue,
