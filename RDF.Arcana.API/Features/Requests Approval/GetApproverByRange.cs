@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using static RDF.Arcana.API.Features.Requests_Approval.GetApproverByModule;
 
 namespace RDF.Arcana.API.Features.Requests_Approval;
 
@@ -17,7 +16,7 @@ public class GetApproverByRange : ControllerBase
     }
 
     [HttpGet("GetApproverByRange")]
-    public async Task<IActionResult> GetApprover([FromQuery] GetApproverByRangeQuery query)
+    public async Task<IActionResult> GetApproverByRangeAsync([FromQuery] GetApproverByRangeQuery query)
     {
         try
         {
@@ -63,10 +62,10 @@ public class GetApproverByRange : ControllerBase
         {
             var existingApprovers = await _context.ApproverByRange
                 .Include(u => u.User)
-                .Where(m => m.ModuleName.Contains(request.Search) ||
-                            m.User.Fullname.Contains(request.Search) ||
-                            m.MinValue.ToString().Contains(request.Search) ||
-                            m.MaxValue.ToString().Contains(request.Search))
+                .Where(m => EF.Functions.Like(m.ModuleName, $"%{request.Search}%") ||
+                                EF.Functions.Like(m.User.Fullname, $"%{request.Search}%") ||
+                                EF.Functions.Like(m.MinValue.ToString(), $"%{request.Search}%") ||
+                                EF.Functions.Like(m.MaxValue.ToString(), $"%{request.Search}%"))
                 .ToListAsync(cancellationToken);
 
             if (!existingApprovers.Any())

@@ -85,6 +85,19 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                     return ApprovalErrors.MinMaxError();
                 }
 
+                var overlappingApprovers = await _context.ApproverByRange
+                    .Where(a => a.ModuleName == request.ModuleName &&
+                                a.Id != request.Id &&
+                                ((a.MinValue <= request.MinValue && request.MinValue <= a.MaxValue) ||
+                                 (a.MinValue <= request.MaxValue && request.MaxValue <= a.MaxValue) ||
+                                 (request.MinValue <= a.MinValue && a.MaxValue <= request.MaxValue)))
+                    .ToListAsync(cancellationToken);
+
+                if (overlappingApprovers.Any())
+                {
+                    return ApprovalErrors.MinMaxOverlap();
+                }
+
                 approverToUpdate.UserId = request.UserId;
                 approverToUpdate.ModuleName = request.ModuleName;
                 approverToUpdate.MinValue = request.MinValue;

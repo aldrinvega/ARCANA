@@ -131,15 +131,15 @@ public class AddNewPaymentTransaction : BaseApiController
                         break;
                     }
 
-                    decimal excessAmount = payment.PaymentAmount - amountToPay;
+                    decimal excessAmount = amountToPay - payment.PaymentAmount;
                     decimal paymentAmount = payment.PaymentAmount;
 
-                    if (excessAmount > 0)
-                    {
-                        // Use excess amount to pay the next transaction
-                        //payment.PaymentAmount -= excessAmount;
-                        //amountToPay = 0;
-                    }
+                    //if (excessAmount > 0)
+                    //{
+                    //    Use excess amount to pay the next transaction
+                    //    payment.PaymentAmount -= excessAmount;
+                    //    amountToPay = 0;
+                    //}
                     //else
                     //{
                     //    // Not enough to cover the full amount, use entire payment
