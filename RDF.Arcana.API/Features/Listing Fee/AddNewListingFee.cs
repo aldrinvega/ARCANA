@@ -99,7 +99,7 @@ public class AddNewListingFee : ControllerBase
             {
                 return ClientErrors.NotFound();
             }
-            
+
             foreach (var item in request.ListingItems)
             {
                 var existingRequest = await _context.ListingFeeItems
@@ -113,12 +113,18 @@ public class AddNewListingFee : ControllerBase
                 {
                     return ListingFeeErrors.AlreadyRequested(existingRequest.Item.ItemDescription);
                 }
+
             }
 
-            var approvers = await _context.Approvers
+
+            //
+
+            decimal total = Math.Ceiling(request.Total);
+
+            var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.ListingFeeApproval)
-                .OrderBy(x => x.Level)
+                .OrderBy(x => x.MinValue)
                 .ToListAsync(cancellationToken);
                 
             if (!approvers.Any())
@@ -126,26 +132,28 @@ public class AddNewListingFee : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
 
+            var selectedApprover = approvers.FirstOrDefault(a => a.MinValue <= total && a.MaxValue >= total);
+           
+
             var newRequest = new Request(
                 Modules.ListingFeeApproval,
                 request.RequestedBy,
-                approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
+                selectedApprover.UserId,
+                null,
                 Status.UnderReview
             );
                 
             await _context.Requests.AddAsync(newRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
-                     {
-                         ApproverId = approver.UserId,
-                         RequestId = newRequest.Id,
-                         Level = approver.Level,
-                     }))
+            var newRequestApprover = new RequestApprovers
             {
-                _context.RequestApprovers.Add(newRequestApprover);
-            }
+                ApproverId = selectedApprover.UserId,
+                RequestId = newRequest.Id,
+                Level = 1, // Assuming level 1 kasi una lagi
+            };
+
+            _context.RequestApprovers.Add(newRequestApprover);
 
             var listingFee = new ListingFee
             {
@@ -175,12 +183,12 @@ public class AddNewListingFee : ControllerBase
                 UserId = request.RequestedBy,
                 Status = Status.PendingListingFee
             };
-
+            
             await _context.Notifications.AddAsync(notification, cancellationToken);
                 
             var notificationForApprover = new Domain.Notification
             {
-                UserId = approvers.First().UserId,
+                UserId = selectedApprover.UserId,
                 Status = Status.PendingListingFee 
             };
 
@@ -192,8 +200,8 @@ public class AddNewListingFee : ControllerBase
             {
                 Requestor = requestor.Fullname,
                 RequestorMobileNumber = requestor.MobileNumber,
-                Approver = approvers.First().User.Fullname,
-                ApproverMobileNumber = approvers.First().User.MobileNumber
+                Approver = selectedApprover.User.Fullname,
+                ApproverMobileNumber = selectedApprover.User.MobileNumber
             };
 
             return Result.Success(result);

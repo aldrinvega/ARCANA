@@ -36,6 +36,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
         {
             public int PaymentRecordId { get; set; }
             public string Reason { get; set; }
+            public string OnlinePlatform { get; set; }
+            
         }
 
         public class Handler : IRequestHandler<VoidPaymentTransactionV2Command, Result>
@@ -66,11 +68,14 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     .Where(ap => ap.ClientId == paymentTransactions.First().Transaction.ClientId)
                     .ToListAsync(cancellationToken);
 
+                
+
                 //var listingFees = await _context.ListingFees
                 //    .Where(lf => lf.ClientId == paymentTransactions.First().Transaction.ClientId)
                 //    .ToListAsync(cancellationToken);
 
                 var transactionSales = await _context.TransactionSales
+                    .Include(t => t.Transaction)
                     .Where(ts => ts.TransactionId == paymentTransactions.First().TransactionId)
                     .ToListAsync(cancellationToken);
 
@@ -122,7 +127,44 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                             item.Reason = request.Reason;
                         }
                     }
-                                        
+
+                    //if (payment.PaymentMethod == PaymentMethods.Online)
+                    //{
+                    //    var onlinePayments = await _context.OnlinePayments
+                    //        .Where(pr => pr.PaymentRecord.Id == request.PaymentRecordId)
+                    //        .ToListAsync(cancellationToken);
+
+                    //    payment.Status = Status.Voided;
+                    //    payment.Reason = request.Reason;
+
+                    //    foreach (var onlinePayment in onlinePayments)
+                    //    {
+                    //        decimal amountToReturn = 0;
+                    //        if (request.OnlinePlatform == PaymentMethods.GCash)
+                    //        {
+                    //            onlinePayment.Status = Status.Voided;
+                    //            onlinePayment.Remarks = request.Reason;
+                    //            onlinePayment.UpdatedAt = DateTime.Now;
+
+                    //            amountToReturn = onlinePayment.PaymentAmount;
+                    //            payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;                                
+
+                    //        }
+
+                    //        else if (request.OnlinePlatform == PaymentMethods.PayMaya)
+                    //        {
+                    //            onlinePayment.Status = Status.Voided;
+                    //            onlinePayment.Remarks = request.Reason;
+                    //            onlinePayment.UpdatedAt = DateTime.Now;
+
+                    //            amountToReturn = onlinePayment.PaymentAmount;
+                    //            payment.Transaction.TransactionSales.RemainingBalance += amountToReturn;
+                    //        }
+
+                    //    }
+
+                    //}
+
                     //if(payment.PaymentMethod == PaymentMethods.ListingFee)
                     //{
                     //    decimal totalLFtoVoid = payment.PaymentAmount;
@@ -140,9 +182,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     payment.Reason = request.Reason;                                        
                 }
 
-                foreach(var transaction in transactionSales)
+                foreach (var transactionSale in transactionSales)
                 {
-                    transaction.RemainingBalance = transaction.TotalAmountDue;
+                    transactionSale.RemainingBalance = transactionSale.TotalAmountDue;
                 }
 
                 paymentTransactions.First().Transaction.Status = Status.Pending;
