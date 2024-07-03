@@ -42,7 +42,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
-var connectionString = builder.Configuration.GetConnectionString("Testing");
+var connectionString = builder.Configuration.GetConnectionString("EdLocal");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
