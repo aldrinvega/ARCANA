@@ -19,4 +19,5 @@ public class ApprovalErrors
     public static Error ApproverNotFound() => new Error("ApproverNotFound", "Approver Not Found");
     public static Error MinMaxError() => new Error("MinMaxError", "MinValue should be less than MaxValue");
     public static Result MinMaxOverlap() => new Error("MinMaxOverlap", "The given Min/Max overlaps with an existing Min/Max range.");
+    public static Result InvalidLevel() => new Error("InvalidLevel", "Invalid Level. Level must be between 1 and 5.");
 }

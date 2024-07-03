@@ -42,6 +42,7 @@ namespace RDF.Arcana.API.Features.Requests_Approval
             public decimal MinValue { get; set; }
             public decimal MaxValue { get; set; }
             public bool IsActive { get; set; }
+            public int Level { get; set; }
         }
 
 
@@ -72,7 +73,8 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                     .AnyAsync(a => a.UserId == request.UserId
                     && a.ModuleName == request.ModuleName
                     && a.MinValue == request.MinValue
-                    && a.MaxValue == request.MaxValue,
+                    && a.MaxValue == request.MaxValue
+                    && a.Level == request.Level,
                     cancellationToken);
 
                 if (existingApprover)
@@ -83,6 +85,11 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                 if (request.MinValue >= request.MaxValue)
                 {
                     return ApprovalErrors.MinMaxError();
+                }
+
+                if (request.Level < 1 || request.Level > 5)
+                {
+                    return ApprovalErrors.InvalidLevel();
                 }
 
                 var overlappingApprovers = await _context.ApproverByRange
@@ -102,6 +109,7 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                 approverToUpdate.ModuleName = request.ModuleName;
                 approverToUpdate.MinValue = request.MinValue;
                 approverToUpdate.MaxValue = request.MaxValue;
+                approverToUpdate.Level = request.Level;
 
                 await _context.SaveChangesAsync(cancellationToken);
 
