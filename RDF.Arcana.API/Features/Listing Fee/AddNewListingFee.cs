@@ -211,7 +211,7 @@ public class AddNewListingFee : ControllerBase
                 ApproverMobileNumber = approverLevels.First().User.MobileNumber
             };
 
-            return Result.Success(result);
+            return Result.Success();
         }
     }
 

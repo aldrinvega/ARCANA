@@ -87,36 +87,37 @@ namespace RDF.Arcana.API.Features.Listing_Fee
                 var listingFeeApproval = await _context
                     .ListingFees
                     .Include(r => r.Request)
-                     .ThenInclude(up => up.UpdateRequestTrails)
-                     .Include(r => r.Request)
-                     .ThenInclude(x => x.Approvals)
-                     .ThenInclude(x => x.Approver)
-                     .ThenInclude(x => x.Approver)
-                     .Include(x => x.Request)
-                     .ThenInclude(x => x.RequestApprovers)
-                     .ThenInclude(x => x.Approver)
-                     .FirstOrDefaultAsync(x => x.RequestId == request.Id, cancellationToken);
+                    .ThenInclude(up => up.UpdateRequestTrails)
+                    .Include(r => r.Request)
+                    .ThenInclude(x => x.Approvals)
+                    .ThenInclude(x => x.Approver)
+                    .Include(r => r.Request)
+                    .ThenInclude(x => x.RequestApprovers)
+                    .ThenInclude(x => x.Approver)
+                    .FirstOrDefaultAsync(x => x.RequestId == request.Id, cancellationToken);
 
                 if (listingFeeApproval is null)
                 {
                     return ListingFeeErrors.NotFound();
                 }
 
-                var result = new ListingFeeApprovalHistoryResult
-                {
-                    ApprovalHistories = listingFeeApproval.Request.Approvals == null
+                var approvalHistories = listingFeeApproval.Request.Approvals == null
                     ? null
-                    : listingFeeApproval.Request.Approvals.OrderByDescending(a => a.CreatedAt)
+                    : listingFeeApproval.Request.Approvals
+                        .OrderByDescending(a => a.CreatedAt)
                         .Select(a => new ListingFeeApprovalHistory
                         {
                             Module = a.Request.Module,
                             Approver = a.Approver.Fullname,
                             CreatedAt = a.CreatedAt,
                             Status = a.Status,
-                            Level = a.Approver.Approver.FirstOrDefault().Level,
+                            Level = listingFeeApproval.Request.RequestApprovers.FirstOrDefault(ra => ra.ApproverId == a.ApproverId)?.Level,
                             Reason = a.Reason
+                        });
 
-                        }),
+                var result = new ListingFeeApprovalHistoryResult
+                {
+                    ApprovalHistories = approvalHistories,
                     UpdateHistories = listingFeeApproval.Request.UpdateRequestTrails?.Select(uh => new UpdateHistory
                     {
                         Module = uh.ModuleName,
@@ -132,5 +133,6 @@ namespace RDF.Arcana.API.Features.Listing_Fee
                 return Result.Success(result);
             }
         }
+
     }
 }
