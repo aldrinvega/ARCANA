@@ -69,8 +69,6 @@ public class UpdateExpenseInformation : ControllerBase
                 .Include(x => x.ExpensesRequests)
                 .Where(lf => lf.Id == request.ExpenseId)
                 .Include(x => x.Request)
-                .ThenInclude(x => x.Approvals)
-                .Include(x => x.Request)
                 .ThenInclude(x => x.UpdateRequestTrails)
                 .FirstOrDefaultAsync(cancellationToken);
             
