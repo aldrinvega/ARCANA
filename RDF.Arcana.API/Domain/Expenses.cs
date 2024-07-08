@@ -12,6 +12,7 @@ public class Expenses : BaseEntity
     public string Status { get; set; }
     public int? ModifiedBy { get; set; }
     public int RequestId { get; set; }
+    public decimal Total { get; set; }
 
     public virtual Request Request { get;set; }
     public virtual User AddedByUser { get; set; }

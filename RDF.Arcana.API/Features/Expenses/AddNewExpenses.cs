@@ -92,7 +92,7 @@ public class AddNewExpenses : ControllerBase
                 return ClientErrors.NotFound();
             }
 
-            decimal total = Math.Ceiling(request.Expenses.Sum(a => a.Amount));
+            decimal total = request.Expenses.Sum(a => a.Amount);
 
             var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
@@ -105,7 +105,7 @@ public class AddNewExpenses : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
 
-            var applicableApprovers = approvers.Where(a => a.MinValue <= total && a.MaxValue >= total).ToList();
+            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(total) && a.MaxValue >= Math.Ceiling(total)).ToList();
             if (!applicableApprovers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
@@ -153,7 +153,8 @@ public class AddNewExpenses : ControllerBase
                 ClientId = request.ClientId,
                 RequestId = newRequest.Id,
                 Status = Status.UnderReview,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                Total = total
             };
 
             await _context.Expenses.AddAsync(newExpenses, cancellationToken);
