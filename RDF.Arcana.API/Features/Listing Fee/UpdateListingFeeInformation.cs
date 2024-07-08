@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Listing_Fee.Errors;
-using RDF.Arcana.API.Features.Listing_Fee.Exception;
 using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
