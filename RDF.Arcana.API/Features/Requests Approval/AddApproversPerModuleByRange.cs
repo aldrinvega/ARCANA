@@ -44,6 +44,7 @@ public class AddApproversPerModuleByRange : ControllerBase
             public int UserId { get; set; }
             public decimal MinValue { get; set; }
             public decimal MaxValue { get; set; }
+            public int Level { get; set; }
         }
     }
 
@@ -60,7 +61,10 @@ public class AddApproversPerModuleByRange : ControllerBase
         {
             foreach (var approver in request.Approvers)
             {
-
+                if (approver.Level < 1 || approver.Level > 5) 
+                {
+                    return ApprovalErrors.InvalidLevel();
+                }
                 var overlappingApprover = await _context.ApproverByRange
                     .FirstOrDefaultAsync(ap =>
                         ap.ModuleName == request.ModuleName &&
@@ -79,7 +83,8 @@ public class AddApproversPerModuleByRange : ControllerBase
                     UserId = approver.UserId,
                     ModuleName = request.ModuleName,
                     MinValue = approver.MinValue,
-                    MaxValue = approver.MaxValue
+                    MaxValue = approver.MaxValue,
+                    Level = approver.Level
                 };
                 _context.ApproverByRange.Add(newApprover);
             }

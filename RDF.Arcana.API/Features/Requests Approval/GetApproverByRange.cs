@@ -48,6 +48,7 @@ public class GetApproverByRange : ControllerBase
         public decimal MinValue { get; set; }
         public decimal MaxValue { get; set; }
         public bool IsActive { get; set; }
+        public int Level { get; set; }
     }
 
     public class Handler : IRequestHandler<GetApproverByRangeQuery, Result>
@@ -65,7 +66,8 @@ public class GetApproverByRange : ControllerBase
                 .Where(m => EF.Functions.Like(m.ModuleName, $"%{request.Search}%") ||
                                 EF.Functions.Like(m.User.Fullname, $"%{request.Search}%") ||
                                 EF.Functions.Like(m.MinValue.ToString(), $"%{request.Search}%") ||
-                                EF.Functions.Like(m.MaxValue.ToString(), $"%{request.Search}%"))
+                                EF.Functions.Like(m.MaxValue.ToString(), $"%{request.Search}%") ||
+                                EF.Functions.Like(m.Level.ToString(), $"%{request.Search}%"))
                 .ToListAsync(cancellationToken);
 
             if (!existingApprovers.Any())
@@ -81,7 +83,8 @@ public class GetApproverByRange : ControllerBase
                 ModuleName = approver.ModuleName,
                 MinValue = approver.MinValue,
                 MaxValue = approver.MaxValue,
-                IsActive = approver.IsActive
+                IsActive = approver.IsActive,
+                Level = approver.Level
             }).ToList();
 
             return Result.Success(result);

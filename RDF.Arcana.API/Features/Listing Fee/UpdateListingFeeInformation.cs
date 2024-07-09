@@ -4,7 +4,6 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Listing_Fee.Errors;
-using RDF.Arcana.API.Features.Listing_Fee.Exception;
 using RDF.Arcana.API.Features.Requests_Approval;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
@@ -79,16 +78,6 @@ public class UpdateListingFeeInformation : ControllerBase
                 .Include(x => x.Request)
                 .ThenInclude(x => x.UpdateRequestTrails)
                 .FirstOrDefaultAsync(cancellationToken);
-            
-             var approver = await _context.RequestApprovers
-                .Where(x => x.RequestId == listingFee.RequestId)
-                .OrderBy(x => x.Level)
-                .ToListAsync(cancellationToken);
-                
-            if (!approver.Any())
-            {
-                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
-            }
 
             if (listingFee == null)
             {
@@ -144,43 +133,104 @@ public class UpdateListingFeeInformation : ControllerBase
                     });
                 }
             }
-            listingFee.Request.Status = Status.UnderReview;
-            listingFee.Request.CurrentApproverId = approver.First().ApproverId;
+
             listingFee.Status = Status.UnderReview;
             listingFee.Total = command.Total;
-            
-            foreach (var approval in listingFee.Request.Approvals)
+
+            // Determine the appropriate approvers based on the new Total using ApproverByRange entity
+            var applicableApprovers = await _context.ApproverByRange
+                .Where(ar => ar.ModuleName == Modules.ListingFeeApproval && ar.IsActive && Math.Ceiling(command.Total) >= ar.MinValue)
+                .OrderBy(ar => ar.Level)
+                .ToListAsync(cancellationToken);
+
+            if (!applicableApprovers.Any())
             {
-                approval.IsActive = false;
+                return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
             }
-            
+
+            // Identify the levels of approvers
+            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).First();
+            var approverLevels = applicableApprovers
+                .Where(a => a.Level <= maxLevelApprover.Level)
+                .OrderBy(a => a.Level).ToList();
+
+            // Create or update RequestApprovers for all levels
+            var existingRequestApprovers = await _context.RequestApprovers
+                .Where(x => x.RequestId == listingFee.RequestId)
+                .OrderBy(x => x.Level)
+                .ToListAsync(cancellationToken);
+
+            foreach (var requestApprover in existingRequestApprovers)
+            {
+                _context.RequestApprovers.Remove(requestApprover);
+            }
+
+            var newRequestApprovers = new List<RequestApprovers>();
+            foreach (var approver in approverLevels)
+            {
+                var requestApprover = new RequestApprovers
+                {
+                    ApproverId = approver.UserId,
+                    RequestId = listingFee.RequestId,
+                    Level = approver.Level
+                };
+
+                newRequestApprovers.Add(requestApprover);
+
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = approver.UserId,
+                    Status = Status.PendingListingFee
+                };
+
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
+            }
+
+            _context.RequestApprovers.AddRange(newRequestApprovers);
+
+            listingFee.Request.Status = Status.UnderReview;
+            listingFee.Request.CurrentApproverId = approverLevels.First().UserId;
+
             var newUpdateHistory = new UpdateRequestTrail(
                 listingFee.RequestId,
-                Modules.RegistrationApproval,
+                Modules.ListingFeeApproval,
                 DateTime.Now,
                 listingFee.RequestedBy);
-            
+
             await _context.UpdateRequestTrails.AddAsync(newUpdateHistory, cancellationToken);
-            
-            
-            var notificationForCurrentApprover = new Domain.Notification
-            {
-                UserId = approver.First().ApproverId,
-                Status = Status.PendingListingFee
-            };
-                
-            await _context.Notifications.AddAsync(notificationForCurrentApprover, cancellationToken);
-            
+
             var notification = new Domain.Notification
             {
                 UserId = listingFee.RequestedBy,
                 Status = Status.PendingListingFee
             };
-                
+
             await _context.Notifications.AddAsync(notification, cancellationToken);
-            
+
             await _context.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+
+            // Return result with all approvers
+            var result = new
+            {
+                approvalHistories = newRequestApprovers.Select(a => new
+                {
+                    name = a.ApproverId, // Assuming User has a Fullname property
+                    level = a.Level
+                }).ToList(),
+                updateHistories = listingFee.Request.UpdateRequestTrails.Select(trail => new
+                {
+                    module = trail.ModuleName,
+                    updatedAt = trail.UpdatedAt
+                }).ToList(),
+                approvers = newRequestApprovers.Select(a => new
+                {
+                    name = a.ApproverId, // Assuming User has a Fullname property
+                    level = a.Level
+                }).ToList()
+            };
+
+            return Result.Success(result);
         }
     }
+
 }

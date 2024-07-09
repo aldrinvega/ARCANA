@@ -18,7 +18,7 @@ namespace RDF.Arcana.API.Features.Expenses
         }
 
         [HttpGet("{id}/approval-history")]
-        public async Task<IActionResult> Get([FromRoute]int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
             try
             {
@@ -35,7 +35,8 @@ namespace RDF.Arcana.API.Features.Expenses
                 }
 
                 return Ok(result);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -72,11 +73,11 @@ namespace RDF.Arcana.API.Features.Expenses
             }
         }
 
-        public class Handlaer : IRequestHandler<GetExpensesApprvalHistoryQuery, Result>
+        public class Handler : IRequestHandler<GetExpensesApprvalHistoryQuery, Result>
         {
             private readonly ArcanaDbContext _context;
 
-            public Handlaer(ArcanaDbContext context)
+            public Handler(ArcanaDbContext context)
             {
                 _context = context;
             }
@@ -86,36 +87,37 @@ namespace RDF.Arcana.API.Features.Expenses
                 var otherExpensesApproval = await _context
                     .Expenses
                     .Include(r => r.Request)
-                     .ThenInclude(up => up.UpdateRequestTrails)
-                     .Include(r => r.Request)
-                     .ThenInclude(x => x.Approvals)
-                     .ThenInclude(x => x.Approver)
-                     .ThenInclude(x => x.Approver)
-                     .Include(x => x.Request)
-                     .ThenInclude(x => x.RequestApprovers)
-                     .ThenInclude(x => x.Approver)
-                     .FirstOrDefaultAsync(x => x.RequestId == request.Id, cancellationToken);
+                    .ThenInclude(up => up.UpdateRequestTrails)
+                    .Include(r => r.Request)
+                    .ThenInclude(x => x.Approvals)
+                    .ThenInclude(x => x.Approver)
+                    .Include(r => r.Request)
+                    .ThenInclude(x => x.RequestApprovers)
+                    .ThenInclude(x => x.Approver)
+                    .FirstOrDefaultAsync(x => x.RequestId == request.Id, cancellationToken);
 
                 if (otherExpensesApproval is null)
                 {
                     return ExpensesErrors.NotFound();
                 }
 
-                var result = new OtherExpensesApprovalHistory
-                {
-                    ApprovalHistories = otherExpensesApproval.Request.Approvals == null
+                var approvalHistories = otherExpensesApproval.Request.Approvals == null
                     ? null
-                    : otherExpensesApproval.Request.Approvals.OrderByDescending(a => a.CreatedAt)
+                    : otherExpensesApproval.Request.Approvals
+                        .OrderByDescending(a => a.CreatedAt)
                         .Select(a => new OtherExpensesApprovalHistory.ExpensesApprovalHistory
                         {
                             Module = a.Request.Module,
                             Approver = a.Approver.Fullname,
                             CreatedAt = a.CreatedAt,
                             Status = a.Status,
-                            Level = a.Approver.Approver.FirstOrDefault().Level,
+                            Level = otherExpensesApproval.Request.RequestApprovers.FirstOrDefault(ra => ra.ApproverId == a.ApproverId)?.Level,
                             Reason = a.Reason
+                        });
 
-                        }),
+                var result = new OtherExpensesApprovalHistory
+                {
+                    ApprovalHistories = approvalHistories,
                     UpdateHistories = otherExpensesApproval.Request.UpdateRequestTrails?.Select(uh => new OtherExpensesApprovalHistory.UpdateHistory
                     {
                         Module = uh.ModuleName,
