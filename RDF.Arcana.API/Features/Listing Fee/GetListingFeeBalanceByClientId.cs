@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
-using RDF.Arcana.API.Features.Listing_Fee.Errors;
-using static RDF.Arcana.API.Features.Client.All.GetClientOtherExpensesById;
 
 namespace RDF.Arcana.API.Features.Listing_Fee;
 
@@ -18,8 +16,9 @@ public class GetListingFeeBalanceByClientId : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-        
-            var query = new GetClientOtherExpensesByIdQuery
+        try 
+        {
+            var query = new GetListingFeeBalanceByClientIdQuery
             {
                 ClientId = id
             };
@@ -32,11 +31,11 @@ public class GetListingFeeBalanceByClientId : ControllerBase
             }
 
             return Ok(result);
-        
-        //catch (Exception ex)
-        //{
-        //    return BadRequest(ex.Message);
-        //}
+        }
+        catch (System.Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     public class GetListingFeeBalanceByClientIdQuery : IRequest<Result>
@@ -46,9 +45,16 @@ public class GetListingFeeBalanceByClientId : ControllerBase
 
     public class GetListingFeeBalanceByClientQueryResult
     {
-        public int ClientId { get; set; }
-        public string FullName { get; set; }
-        public decimal RemainingBalance { get; set; }
+        public string BusinessName { get; set; }
+        public decimal TotalBalance { get; set; }
+        public IEnumerable<ListingFee> ListingFees { get; set; }
+        public class ListingFee
+        {
+            public DateTime CreatedAt { get; set; }
+            public DateTime ApprovalDate { get; set; }
+            public string RequestedByFullname { get; set; }
+            public decimal Total { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetListingFeeBalanceByClientIdQuery, Result>
@@ -63,23 +69,27 @@ public class GetListingFeeBalanceByClientId : ControllerBase
         {
             var listingFees = await _context.ListingFees
                 .Include(c => c.Client)
-                .Where(lf => lf.ClientId == request.ClientId && 
+                .Include(u => u.RequestedByUser)
+                .Where(lf => lf.ClientId == request.ClientId &&
                              lf.Status == Status.Approved)
                 .ToListAsync();
 
-            if (!listingFees.Any())
+            var listingFeeResults = listingFees.Select(lf => new GetListingFeeBalanceByClientQueryResult.ListingFee
             {
-                return ListingFeeErrors.NotFound();
-            }
+                CreatedAt = lf.CratedAt,
+                ApprovalDate = lf.ApprovalDate,
+                RequestedByFullname = lf.RequestedByUser.Fullname,
+                Total = lf.Total
+            }).ToList();            
 
-            var result = listingFees.Select(x => new GetListingFeeBalanceByClientQueryResult
+            var result = new GetListingFeeBalanceByClientQueryResult
             {
-                ClientId = request.ClientId,
-                FullName = x.Client.Fullname,
-                RemainingBalance = x.Total
-            });
+                BusinessName = listingFees.First().Client.BusinessName,
+                TotalBalance = listingFeeResults.Sum(lf => lf.Total),
+                ListingFees = listingFeeResults
+            };
 
-            return Result.Success("testdev");
+            return Result.Success(result);
         }
     }
 }

@@ -15,9 +15,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Advance_Payment
         }
 
         [HttpGet("GetAllAdvancePaymentBalance")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllAdvancePaymentTotalsQuery query)
         {
-            var query = new GetAllAdvancePaymentTotalsQuery();
+            
             try
             {
                 var result = await _mediator.Send(query);
@@ -29,7 +29,10 @@ namespace RDF.Arcana.API.Features.Sales_Management.Advance_Payment
             }
         }
 
-        public class GetAllAdvancePaymentTotalsQuery : IRequest<Result> { }
+        public class GetAllAdvancePaymentTotalsQuery : IRequest<Result> 
+        {
+            public string BusinessName { get; set; }
+        }
 
         public class GetAllAdvancePaymentTotalsResult
         {
@@ -61,6 +64,13 @@ namespace RDF.Arcana.API.Features.Sales_Management.Advance_Payment
                     })
                     .OrderBy(ap => ap.BusinessName)
                     .ToListAsync(cancellationToken);
+
+                if (request.BusinessName is not null)
+                {
+                    advancePayments = advancePayments
+                        .Where(ap => ap.BusinessName.ToLower().Contains(request.BusinessName.ToLower()))
+                        .ToList();
+                }
 
                 return Result.Success(advancePayments);
             }
