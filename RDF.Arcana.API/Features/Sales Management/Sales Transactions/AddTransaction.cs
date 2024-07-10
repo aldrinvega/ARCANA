@@ -129,23 +129,33 @@ public class AddTransaction : ControllerBase
                 cl.Id == request.ClientId,
                 cancellationToken);
 
-            var existingChargeInvoice = await _context.TransactionSales.AnyAsync(ts => ts.ChargeInvoiceNo == request.ChargeInvoiceNo);
-
-            if (existingChargeInvoice)
-            {
-                return TransactionErrors.ChargeInvoiceAlreadyExist(request.ChargeInvoiceNo);
-            }
+            
 
             if (existingClient == null)
             {
                 return ClientErrors.NotFound();
             }
 
-            if (request.InvoiceType is not Status.Charge || 
-                request.InvoiceType is not Status.Sales)
+            if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
+                (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
+                (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
             {
-                return TransactionErrors.SICI();
+                if (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales)
+                {
+                    return TransactionErrors.SICI();
+                }
+                else
+                {
+                    return TransactionErrors.InvalidInvoiceNumber();
+                }
             }
+            var existingInvoice = await _context.Transactions.AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo);
+
+            if (existingInvoice)
+            {
+                return TransactionErrors.InvoiceAlreadyExist(request.InvoiceNo);
+            }
+
 
             var items = request.Items.Select(items => new
             {
