@@ -10,4 +10,5 @@ public static class TransactionErrors
     public static Error AlreadyHasPayment() => new("Transaction.AlreadyHasPayment", "This has payment transaction");
     public static Error ChargeInvoiceAlreadyExist(string chargeInvoice) => new("Transaction.ChanrgeInvoiceAlreadyExist", $"Charge invoice {chargeInvoice} is already exist");
     public static Error Voided() => new("Transaction.Voided", "This transaction is already voided");
+    public static Error SICI() => new("SI/CI", "Invalid Invoice Type [Sales/Charge]");
 }

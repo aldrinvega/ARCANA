@@ -14,13 +14,14 @@ public class Transactions : BaseEntity
     public DateTime SalesInvoiceDateReceived { get; set; }
     public string ChargeInvoice { get; set; }
     public DateTime ChargeInvoiceDateReceived { get; set; }
-
-    public virtual Clients Client { get; set; }
-    public virtual User AddedByUser { get; set; }
     public bool IsActive { get; set; } = true;
     public string Status { get; set; }
     public string Reason { get; set; }
+    public string InvoiceType { get; set; }
+    public string InvoiceNo { get; set; }
 
+    public virtual Clients Client { get; set; }
+    public virtual User AddedByUser { get; set; }
     public virtual TransactionSales TransactionSales { get; set; }
     public virtual ICollection<TransactionItems> TransactionItems { get; set; }
     public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; }

@@ -51,6 +51,8 @@ public class AddTransaction : ControllerBase
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
         public string ChargeInvoiceNo { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceType { get; set; }
         public class Item
         {
             public int ItemId { get; set; }
@@ -69,6 +71,8 @@ public class AddTransaction : ControllerBase
         public string ChargeInvoiceNo { get; set; }
         public int AddedBy { get; set; }
         public ICollection<Item> Items { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceType { get; set; }
 
         public decimal Subtotal { get; set; }
         public decimal DiscountAmount { get; set; }
@@ -136,6 +140,13 @@ public class AddTransaction : ControllerBase
             {
                 return ClientErrors.NotFound();
             }
+
+            if (request.InvoiceType is not Status.Charge || 
+                request.InvoiceType is not Status.Sales)
+            {
+                return TransactionErrors.SICI();
+            }
+
             var items = request.Items.Select(items => new
             {
                 items.ItemId,
@@ -164,7 +175,9 @@ public class AddTransaction : ControllerBase
             {
                 ClientId = request.ClientId,
                 Status = Status.Pending,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                InvoiceNo = request.InvoiceNo,
+                InvoiceType = request.InvoiceType
             };
 
             //Add and save to database
@@ -217,7 +230,6 @@ public class AddTransaction : ControllerBase
             }
 
             //Calculate sales
-
             
 
             // Get the total discount percentage
