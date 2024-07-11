@@ -112,7 +112,7 @@ public class RegisterClient : ControllerBase
             };
 
 
-            var approvers = await _context.Approvers
+            var approvers = await _context.ApproverByRange
                 .Include(x => x.User)
                 .Where(x => x.ModuleName == Modules.RegistrationApproval)
                 .OrderBy(x => x.Level)

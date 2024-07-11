@@ -229,17 +229,32 @@ public class GetAllListingFee : ControllerBase
                     break;
             }
 
+            //if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.Approved)
+            //{
+            //    if (request.AccessBy == 2)
+            //    {
+            //        listingFees = listingFees.Where(x => (x.Request.CurrentApproverId - 1) == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
+            //    }
+            //    else
+            //    {
+            //        listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
+            //    }
+            //}
+
             if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.Approved)
             {
-                if (request.AccessBy == 2)
-                {
-                    listingFees = listingFees.Where(x => (x.Request.CurrentApproverId - 1) == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
-                }
-                else
-                {
-                    listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
-                }
+                listingFees = listingFees.Where(x =>
+                    (x.Request.CurrentApproverId == request.AccessBy ||
+                    (x.Request.Approvals.Any(a => a.ApproverId == request.AccessBy && a.Status == Status.Approved))) &&
+                    x.Client.RegistrationStatus == Status.Approved);
             }
+            else if (request.RoleName.Contains(Roles.Approver))
+            {
+                listingFees = listingFees.Where(x =>
+                    x.Request.CurrentApproverId == request.AccessBy &&
+                    x.Client.RegistrationStatus == Status.Approved);
+            }
+
 
             if (request.Status != null)
             {

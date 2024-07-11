@@ -49,8 +49,8 @@ public class GetApproverByRange : ControllerBase
             public int UserId { get; set; }
             public string FullName { get; set; }
             public string ModuleName { get; set; }
-            public decimal MinValue { get; set; }
-            public decimal MaxValue { get; set; }
+            public decimal? MinValue { get; set; }
+            public decimal? MaxValue { get; set; }
             public bool IsActive { get; set; }
             public int Level { get; set; }
         }

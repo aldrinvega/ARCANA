@@ -214,7 +214,7 @@ public class UpdateListingFeeInformation : ControllerBase
             {
                 approvalHistories = newRequestApprovers.Select(a => new
                 {
-                    name = a.ApproverId, // Assuming User has a Fullname property
+                    name = a.ApproverId, 
                     level = a.Level
                 }).ToList(),
                 updateHistories = listingFee.Request.UpdateRequestTrails.Select(trail => new
@@ -224,7 +224,7 @@ public class UpdateListingFeeInformation : ControllerBase
                 }).ToList(),
                 approvers = newRequestApprovers.Select(a => new
                 {
-                    name = a.ApproverId, // Assuming User has a Fullname property
+                    name = a.ApproverId, 
                     level = a.Level
                 }).ToList()
             };
