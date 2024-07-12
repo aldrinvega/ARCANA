@@ -82,8 +82,8 @@ public class UploadSalesInvoice : ControllerBase
 
                var  attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
-               existingSalesTransaction.SalesInvoice = attachmentsUploadResult.SecureUrl.ToString();
-               existingSalesTransaction.SalesInvoiceDateReceived = DateTime.Now;
+               existingSalesTransaction.InvoiceAttach = attachmentsUploadResult.SecureUrl.ToString();
+               existingSalesTransaction.InvoiceAttachDateReceived = DateTime.Now;
                 
                 await _context.SaveChangesAsync(cancellationToken);
             }

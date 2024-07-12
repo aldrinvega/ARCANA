@@ -187,7 +187,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                         AddedBy = result.AddedByUser.Fullname,
                         RemainingBalance = result.TransactionSales.RemainingBalance,
                         TotalAmountDue = result.TransactionSales.TotalAmountDue,
-                        CIAttachment = result.SalesInvoice
+                        CIAttachment = result.InvoiceAttach
 
                     });
 
@@ -207,7 +207,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     AddedBy = result.AddedByUser.Fullname,
                     RemainingBalance = result.TransactionSales.RemainingBalance,
                     TotalAmountDue = result.TransactionSales.TotalAmountDue,
-                    CIAttachment = result.SalesInvoice
+                    CIAttachment = result.InvoiceAttach
                 });
 
                 return PagedList<GetAllTransactionQueryResult>.CreateAsync(result, request.PageNumber,
