@@ -71,10 +71,10 @@ public class GetApproverByRange : ControllerBase
                 .Where(m => m.ModuleName == request.ModuleName)
                 .ToListAsync(cancellationToken);
 
-            if (!existingApprovers.Any())
-            {
-                return ApprovalErrors.NoApproversFound(request.ModuleName);
-            }
+            //if (!existingApprovers.Any())
+            //{
+            //    return ApprovalErrors.NoApproversFound(request.ModuleName);
+            //}
 
             var approvers = existingApprovers.Select(a => new GetAppproverByModuleByRangeResult.Approver
             {
