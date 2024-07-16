@@ -55,7 +55,6 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     if(transaction is not null && transaction.Status is Status.Pending)
                     {
                         transaction.Status = Status.Voided;
-                        transaction.Reason = request.Reason;
                     }
                     else if(transaction is not null && transaction.Status is Status.Paid)
                     {

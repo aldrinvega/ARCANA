@@ -46,6 +46,8 @@ public class GetPaymentReferences : ControllerBase
         public int PaymentTransactionId { get; set; }
         public string PaymentMethod { get; set; }
         public decimal TotalAmountReceived { get; set; }
+        public decimal TotalAmountDue { get; set; }
+        public decimal RemainingBalance { get; set; }
         public string Payee { get; set; }
         public DateTime DateReceived { get; set; }
         public string Status { get; set; }
@@ -63,6 +65,8 @@ public class GetPaymentReferences : ControllerBase
         public string OnlinePlatform { get; set; }
         public string ReferenceNo { get; set; }
 
+        //advancePayment
+        public decimal? ExcessAdvancePayment { get; set; }
 
         public IEnumerable<TransactionResult> Transactions { get; set; }
         public class TransactionResult
@@ -87,6 +91,8 @@ public class GetPaymentReferences : ControllerBase
         public async Task<Result> Handle(GetPaymentReferencesQuery request, CancellationToken cancellationToken)
         {
             IQueryable<PaymentTransaction> paymentTransactions = _context.PaymentTransactions
+                .Include(t => t.Transaction)
+                .ThenInclude(ts => ts.TransactionSales)
                 .Include(t => t.Transaction)
                 .ThenInclude(c => c.Client)
                 .Include(t => t.Transaction)
@@ -130,6 +136,8 @@ public class GetPaymentReferences : ControllerBase
                 PaymentTransactionId = pt.TransactionId,
                 PaymentMethod = pt.PaymentMethod,
                 TotalAmountReceived = pt.TotalAmountReceived,
+                TotalAmountDue = pt.Transaction.TransactionSales.TotalAmountDue,
+                RemainingBalance = pt.Transaction.TransactionSales.RemainingBalance,
                 Payee = pt.Payee,
                 DateReceived = pt.DateReceived,
                 Status = pt.Status,
@@ -142,6 +150,12 @@ public class GetPaymentReferences : ControllerBase
                 ChequeAmount = pt.ChequeAmount,
                 OnlinePlatform = null, 
                 ReferenceNo = pt.ReferenceNo,
+                ExcessAdvancePayment = pt.PaymentMethod == PaymentMethods.Cheque
+                                    ? _context.AdvancePayments
+                                                .Where(ap => ap.PaymentTransactionId == pt.Id)
+                                                .Select(ap => (decimal?)ap.AdvancePaymentAmount)
+                                                .FirstOrDefault() ?? 0
+                                    : (decimal?)null,
                 Transactions = new List<GetPaymentReferencesResult.TransactionResult> 
                 {
                     new GetPaymentReferencesResult.TransactionResult

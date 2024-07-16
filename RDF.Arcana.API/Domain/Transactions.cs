@@ -12,7 +12,6 @@ public class Transactions : BaseEntity
     public int AddedBy { get; set; }
     public bool IsActive { get; set; } = true;
     public string Status { get; set; }
-    public string Reason { get; set; }
     public string InvoiceType { get; set; }
     public string InvoiceNo { get; set; }
     public string InvoiceAttach { get; set; }

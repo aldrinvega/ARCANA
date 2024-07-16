@@ -109,7 +109,6 @@ public class VoidTransaction : ControllerBase
                 }
 
                 existingTransaction.Status = Status.Voided;
-                existingTransaction.Reason = request.Reason;
                 
                 existingTransaction.TransactionSales.RemainingBalance = existingTransaction.TransactionSales.TotalAmountDue;
             }
