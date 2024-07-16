@@ -35,20 +35,25 @@ public class GetApproverByRange : ControllerBase
     }
     public class GetApproverByRangeQuery : IRequest<Result>
     {
-        public string Search { get; set; }
+        public string ModuleName { get; set; }
 
     }
 
-    public class GetAppproverByModuleResult
+    public class GetAppproverByModuleByRangeResult
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public string FullName { get; set; }
-        public string ModuleName { get; set; }
-        public decimal MinValue { get; set; }
-        public decimal MaxValue { get; set; }
-        public bool IsActive { get; set; }
-        public int Level { get; set; }
+        public ICollection<Approver> Approvers { get; set; }
+
+        public class Approver
+        {
+            public int Id { get; set; }
+            public int UserId { get; set; }
+            public string FullName { get; set; }
+            public string ModuleName { get; set; }
+            public decimal? MinValue { get; set; }
+            public decimal? MaxValue { get; set; }
+            public bool IsActive { get; set; }
+            public int Level { get; set; }
+        }
     }
 
     public class Handler : IRequestHandler<GetApproverByRangeQuery, Result>
@@ -63,30 +68,31 @@ public class GetApproverByRange : ControllerBase
         {
             var existingApprovers = await _context.ApproverByRange
                 .Include(u => u.User)
-                .Where(m => EF.Functions.Like(m.ModuleName, $"%{request.Search}%") ||
-                                EF.Functions.Like(m.User.Fullname, $"%{request.Search}%") ||
-                                EF.Functions.Like(m.MinValue.ToString(), $"%{request.Search}%") ||
-                                EF.Functions.Like(m.MaxValue.ToString(), $"%{request.Search}%") ||
-                                EF.Functions.Like(m.Level.ToString(), $"%{request.Search}%"))
+                .Where(m => m.ModuleName == request.ModuleName)
                 .ToListAsync(cancellationToken);
 
             if (!existingApprovers.Any())
             {
-                return ApprovalErrors.NoApproversFound(request.Search);
+                return ApprovalErrors.NoApproversFound(request.ModuleName);
             }
 
-            var result = existingApprovers.Select(approver => new GetAppproverByModuleResult
+            var approvers = existingApprovers.Select(a => new GetAppproverByModuleByRangeResult.Approver
             {
-                Id = approver.Id,
-                UserId = approver.UserId,
-                FullName = approver.User.Fullname,
-                ModuleName = approver.ModuleName,
-                MinValue = approver.MinValue,
-                MaxValue = approver.MaxValue,
-                IsActive = approver.IsActive,
-                Level = approver.Level
+                Id = a.Id,
+                UserId = a.UserId,
+                FullName = a.User.Fullname,
+                ModuleName = a.ModuleName,
+                MinValue = a.MinValue,
+                MaxValue = a.MaxValue,
+                Level = a.Level,
+                IsActive = a.IsActive
+
             }).ToList();
 
+            var result = new GetAppproverByModuleByRangeResult
+            {
+                Approvers = approvers
+            };
             return Result.Success(result);
         }
     }

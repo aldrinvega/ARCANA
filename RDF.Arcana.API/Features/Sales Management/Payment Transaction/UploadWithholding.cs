@@ -83,7 +83,7 @@ public class UploadWithholding : ControllerBase
                 var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
                 existingSalesTransaction.WithholdingAttachment = attachmentsUploadResult.SecureUrl.ToString();
-                existingSalesTransaction.WithholdingDateReceived = DateTime.Now;
+                existingSalesTransaction.DateReceived = DateTime.Now;
 
                 await _context.SaveChangesAsync(cancellationToken);
             }

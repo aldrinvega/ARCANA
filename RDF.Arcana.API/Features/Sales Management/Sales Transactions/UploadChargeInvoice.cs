@@ -80,8 +80,8 @@ public class UploadChargeInvoice : ControllerBase
 
                 var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
-                existingSalesTransaction.ChargeInvoice = attachmentsUploadResult.SecureUrl.ToString();
-                existingSalesTransaction.ChargeInvoiceDateReceived = DateTime.Now;
+                existingSalesTransaction.InvoiceAttach = attachmentsUploadResult.SecureUrl.ToString();
+                existingSalesTransaction.InvoiceAttachDateReceived = DateTime.Now;
 
                 await _context.SaveChangesAsync(cancellationToken);
             }

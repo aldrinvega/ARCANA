@@ -58,7 +58,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public bool? Status { get; set; }
             public string Search { get; set; }
             public string PaymentStatus { get; set; }
-            public string PaymentMethods{ get; set; }
+            public string PaymentMethods { get; set; }
+            public int? TransactionId { get; set; }
+            public int? ClientId { get; set; }
 
         }
 
@@ -142,7 +144,17 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                                    tx.PaymentTransactions.Any(tr => tr.Transaction.TransactionSales.ChargeInvoiceNo.Contains(request.Search)));
                 }
 
-                if(request.Status != null)
+                if (request.TransactionId.HasValue)
+                {
+                    paymentTransactions = paymentTransactions.Where(pt => pt.PaymentTransactions.Any(tr => tr.TransactionId == request.TransactionId.Value));
+                }
+
+                if (request.ClientId.HasValue)
+                {
+                    paymentTransactions = paymentTransactions.Where(pt => pt.PaymentTransactions.Any(tr => tr.Transaction.ClientId == request.ClientId.Value));
+                }
+
+                if (request.Status.HasValue)
                 {
                     paymentTransactions = paymentTransactions.Where(t => t.IsActive == request.Status);
                 }
@@ -188,7 +200,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         AccountName = pt.AccountName,
                         AccountNo = pt.AccountNo
                     }).ToList()
-                });
+                }).OrderByDescending(r => r.BusinessName);
 
                 return PagedList<GetPaymentTransactionByStatusResult>.CreateAsync(result, request.PageNumber,
                     request.PageSize);

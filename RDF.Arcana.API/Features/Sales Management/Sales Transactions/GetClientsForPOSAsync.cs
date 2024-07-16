@@ -65,6 +65,8 @@ public class GetClientsForPOSAsync : ControllerBase
         public bool? VariableDiscount { get; set; }
         public decimal? SpecialDiscount { get; set; }
         public int? CreditLimit { get; set; }
+        public string City { get; set; }
+        public string Province { get; set; }
     }
 
     public class Handler : IRequestHandler<GetClientsForPOSAsyncQuery, Result>
@@ -89,6 +91,7 @@ public class GetClientsForPOSAsync : ControllerBase
                     .Include(sp => sp.SpecialDiscounts)
                     .Include(to => to.Term)
                     .Include(t => t.Transactions)
+                    .Include(a => a.BusinessAddress)
                     .Where(x => x.RegistrationStatus == Status.Approved &&
                                 x.ClusterId == userClusters.ClusterId)
                     //.Where(x => x.Transactions.Any(ts => ts.Status != Status.Pending))
@@ -101,7 +104,9 @@ public class GetClientsForPOSAsync : ControllerBase
                         VariableDiscount = cl.VariableDiscount,
                         DiscountPercentage = cl.FixedDiscounts.DiscountPercentage,
                         SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount,
-                        CreditLimit = cl.Term.CreditLimit                      
+                        CreditLimit = cl.Term.CreditLimit,
+                        City = cl.BusinessAddress.City,
+                        Province = cl.BusinessAddress.Province
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 
@@ -119,6 +124,7 @@ public class GetClientsForPOSAsync : ControllerBase
                 clients = await _context.Clients
                     .Include(to => to.Term)
                     .Include(t => t.Transactions)
+                    .Include(a => a.BusinessAddress)
                     .Where(x => x.RegistrationStatus == Status.Approved &&
                                 (x.Term.TermsId != 2 || (x.Transactions.Any(ts => ts.Status == Status.Paid) ||
                                 x.Transactions.Count == 0)))
@@ -131,7 +137,9 @@ public class GetClientsForPOSAsync : ControllerBase
                         VariableDiscount = cl.VariableDiscount,
                         DiscountPercentage = cl.FixedDiscounts.DiscountPercentage,
                         SpecialDiscount = cl.SpecialDiscounts.First(x => x.IsActive && x.Status == Status.Approved).Discount,
-                        CreditLimit = cl.Term.CreditLimit
+                        CreditLimit = cl.Term.CreditLimit,
+                        City = cl.BusinessAddress.City,
+                        Province = cl.BusinessAddress.Province
                     })
                     .ToListAsync(cancellationToken: cancellationToken);
 

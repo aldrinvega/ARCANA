@@ -48,7 +48,7 @@ public class AddNewPaymentTransaction : BaseApiController
             public string AccountName { get; set; }
             public string AccountNo { get; set; }
             public int AddedBy { get; set; }
-            public string OnlinePlatform { get; set; }
+            public int OnlinePlatform { get; set; }
             public string ReferenceNo { get; set; }
         }
     

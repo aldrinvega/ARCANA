@@ -42,8 +42,8 @@ public class AddApproversPerModuleByRange : ControllerBase
         public class ApproverDto
         {
             public int UserId { get; set; }
-            public decimal MinValue { get; set; }
-            public decimal MaxValue { get; set; }
+            public decimal? MinValue { get; set; }
+            public decimal? MaxValue { get; set; }
             public int Level { get; set; }
         }
     }

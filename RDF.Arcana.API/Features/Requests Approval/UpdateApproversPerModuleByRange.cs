@@ -14,12 +14,12 @@ namespace RDF.Arcana.API.Features.Requests_Approval
             _mediator = mediator;
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateApprover([FromRoute] int id, [FromBody] UpdateApproversPerModuleByRangeCommand command)
+        [HttpPut("UpdateApproversPerModuleByRange")]
+        public async Task<IActionResult> UpdateApprover([FromBody] UpdateApproversPerModuleByRangeCommand command, [FromQuery] string moduleName)
         {
             try
             {
-                command.Id = id;
+                command.ModuleName = moduleName;
                 var result = await _mediator.Send(command);
                 if (result.IsFailure)
                 {
@@ -36,13 +36,17 @@ namespace RDF.Arcana.API.Features.Requests_Approval
 
         public class UpdateApproversPerModuleByRangeCommand : IRequest<Result>
         {
-            public int Id { get; set; }
-            public int UserId { get; set; }
             public string ModuleName { get; set; }
-            public decimal MinValue { get; set; }
-            public decimal MaxValue { get; set; }
-            public bool IsActive { get; set; }
-            public int Level { get; set; }
+            public ICollection<ApproverToUpdatePerModuleByRange> Approvers { get; set; }
+
+            public class ApproverToUpdatePerModuleByRange
+            {
+                public int UserId { get; set; }
+                public decimal? MinValue { get; set; }
+                public decimal? MaxValue { get; set; }
+                public bool IsActive { get; set; }
+                public int Level { get; set; }
+            }
         }
 
 
@@ -56,60 +60,89 @@ namespace RDF.Arcana.API.Features.Requests_Approval
 
             public async Task<Result> Handle(UpdateApproversPerModuleByRangeCommand request, CancellationToken cancellationToken)
             {
-                var approverToUpdate = await _context.ApproverByRange.FindAsync(request.Id);
-                if (approverToUpdate == null)
-                {
-                    return ApprovalErrors.ApproverNotFound();
-                }
-
-                if (request.IsActive != approverToUpdate.IsActive)
-                {
-                    approverToUpdate.IsActive = request.IsActive;
-                    await _context.SaveChangesAsync(cancellationToken);
-                    return Result.Success();
-                }
-
-                var existingApprover = await _context.ApproverByRange
-                    .AnyAsync(a => a.UserId == request.UserId
-                    && a.ModuleName == request.ModuleName
-                    && a.MinValue == request.MinValue
-                    && a.MaxValue == request.MaxValue
-                    && a.Level == request.Level,
-                    cancellationToken);
-
-                if (existingApprover)
-                {
-                    return ApprovalErrors.ApproverExist();
-                }
-
-                if (request.MinValue >= request.MaxValue)
-                {
-                    return ApprovalErrors.MinMaxError();
-                }
-
-                if (request.Level < 1 || request.Level > 5)
-                {
-                    return ApprovalErrors.InvalidLevel();
-                }
-
-                var overlappingApprovers = await _context.ApproverByRange
-                    .Where(a => a.ModuleName == request.ModuleName &&
-                                a.Id != request.Id &&
-                                ((a.MinValue <= request.MinValue && request.MinValue <= a.MaxValue) ||
-                                 (a.MinValue <= request.MaxValue && request.MaxValue <= a.MaxValue) ||
-                                 (request.MinValue <= a.MinValue && a.MaxValue <= request.MaxValue)))
+                var existingApprovers = await _context.ApproverByRange
+                    .Where(a => a.ModuleName == request.ModuleName)
                     .ToListAsync(cancellationToken);
 
-                if (overlappingApprovers.Any())
-                {
-                    return ApprovalErrors.MinMaxOverlap();
-                }
+                var sentUserIds = request.Approvers.Select(a => a.UserId).ToList();
 
-                approverToUpdate.UserId = request.UserId;
-                approverToUpdate.ModuleName = request.ModuleName;
-                approverToUpdate.MinValue = request.MinValue;
-                approverToUpdate.MaxValue = request.MaxValue;
-                approverToUpdate.Level = request.Level;
+                // Remove approvers in the database that do not exist in the request
+                var approversToRemove = existingApprovers.Where(a => !sentUserIds.Contains(a.UserId)).ToList();
+                _context.ApproverByRange.RemoveRange(approversToRemove);
+
+                foreach (var sentApprover in request.Approvers)
+                {
+                    var existingApprover = existingApprovers.FirstOrDefault(a => a.UserId == sentApprover.UserId);
+
+                    if (existingApprover != null) // If the approver exists in the database, update the approver
+                    {
+                        if (sentApprover.IsActive != existingApprover.IsActive)
+                        {
+                            existingApprover.IsActive = sentApprover.IsActive;
+                        }
+
+                        if (sentApprover.MinValue >= sentApprover.MaxValue)
+                        {
+                            return ApprovalErrors.MinMaxError();
+                        }
+
+                        if (sentApprover.Level < 1 || sentApprover.Level > 5)
+                        {
+                            return ApprovalErrors.InvalidLevel();
+                        }
+
+                        //var overlappingApprovers = await _context.ApproverByRange
+                        //    .Where(a => a.ModuleName == request.ModuleName &&
+                        //                a.UserId != sentApprover.UserId &&
+                        //                ((a.MinValue <= sentApprover.MinValue && sentApprover.MinValue <= a.MaxValue) ||
+                        //                 (a.MinValue <= sentApprover.MaxValue && sentApprover.MaxValue <= a.MaxValue) ||
+                        //                 (sentApprover.MinValue <= a.MinValue && a.MaxValue <= sentApprover.MaxValue)))
+                        //    .ToListAsync(cancellationToken);
+
+                        //if (overlappingApprovers.Any())
+                        //{
+                        //    return ApprovalErrors.MinMaxOverlap();
+                        //}
+
+                        existingApprover.MinValue = sentApprover.MinValue;
+                        existingApprover.MaxValue = sentApprover.MaxValue;
+                        existingApprover.Level = sentApprover.Level;
+                    }
+                    else // If the approver does not exist in the database, add the approver
+                    {
+                        if (sentApprover.MinValue >= sentApprover.MaxValue)
+                        {
+                            return ApprovalErrors.MinMaxError();
+                        }
+
+                        if (sentApprover.Level < 1 || sentApprover.Level > 5)
+                        {
+                            return ApprovalErrors.InvalidLevel();
+                        }
+
+                        var overlappingApprovers = await _context.ApproverByRange
+                            .Where(a => a.ModuleName == request.ModuleName &&
+                                        ((a.MinValue <= sentApprover.MinValue && sentApprover.MinValue <= a.MaxValue) ||
+                                         (a.MinValue <= sentApprover.MaxValue && sentApprover.MaxValue <= a.MaxValue) ||
+                                         (sentApprover.MinValue <= a.MinValue && a.MaxValue <= sentApprover.MaxValue)))
+                            .ToListAsync(cancellationToken);
+
+                        if (overlappingApprovers.Any())
+                        {
+                            return ApprovalErrors.MinMaxOverlap();
+                        }
+
+                        _context.ApproverByRange.Add(new ApproverByRange
+                        {
+                            UserId = sentApprover.UserId,
+                            ModuleName = request.ModuleName,
+                            MinValue = sentApprover.MinValue,
+                            MaxValue = sentApprover.MaxValue,
+                            Level = sentApprover.Level,
+                            IsActive = sentApprover.IsActive
+                        });
+                    }
+                }
 
                 await _context.SaveChangesAsync(cancellationToken);
 
