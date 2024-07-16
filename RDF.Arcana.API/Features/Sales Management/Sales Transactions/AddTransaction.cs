@@ -50,9 +50,10 @@ public class AddTransaction : ControllerBase
         public ICollection<Item> Items { get; set; }
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
-        public string ChargeInvoiceNo { get; set; }
+        
         public string InvoiceNo { get; set; }
         public string InvoiceType { get; set; }
+        public DateTime InvoiceAttachDateReceived { get; set; }
         public class Item
         {
             public int ItemId { get; set; }
@@ -187,7 +188,8 @@ public class AddTransaction : ControllerBase
                 Status = Status.Pending,
                 AddedBy = request.AddedBy,
                 InvoiceNo = request.InvoiceNo,
-                InvoiceType = request.InvoiceType
+                InvoiceType = request.InvoiceType,
+                InvoiceAttachDateReceived = DateTime.Now
             };
 
             //Add and save to database
@@ -286,7 +288,6 @@ public class AddTransaction : ControllerBase
                 SpecialDiscount = request.SpecialDiscount / 100, 
                 SpecialDiscountAmount = specialDiscountAmount, 
                 VatAmount = vatAmount,
-                ChargeInvoiceNo = request.ChargeInvoiceNo,
                 AddVat = addVat,
                 RemainingBalance = totalAmountDue,
                 AddedBy = request.AddedBy
