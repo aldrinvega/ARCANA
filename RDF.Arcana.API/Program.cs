@@ -46,10 +46,21 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
-builder.Services.AddDatabaseConfiguration(builder.Configuration, builder.Environment.EnvironmentName);
+//builder.Services.AddDatabaseConfiguration(builder.Configuration, builder.Environment.EnvironmentName);
 
-//builder.Services.AddDbContext<ArcanaDbContext>(
-//    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
+var connectionString = builder.Configuration.GetConnectionString("Testing");
+
+builder.Services.AddDbContext<ArcanaDbContext>(x =>
+{
+	if (connectionString != null)
+	{
+		x.UseSqlServer(connectionString, options =>
+		{
+			options.EnableRetryOnFailure();
+		}).UseSnakeCaseNamingConvention();
+	}
+
+});
 
 
 builder.Services.AddControllers();
