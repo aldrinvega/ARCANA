@@ -145,10 +145,10 @@ public class AddTransaction : ControllerBase
                 {
                     return TransactionErrors.SICI();
                 }
-                else
-                {
-                    return TransactionErrors.InvalidInvoiceNumber();
-                }
+                //else
+                //{
+                //    return TransactionErrors.InvalidInvoiceNumber();
+                //}
             }
             var existingInvoice = await _context.Transactions.AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo);
 
