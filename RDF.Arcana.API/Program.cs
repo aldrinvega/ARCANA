@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 using Azure.Storage.Blobs;
@@ -45,19 +46,7 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
-var connectionString = builder.Configuration.GetConnectionString("Testing");
-
-builder.Services.AddDbContext<ArcanaDbContext>(x =>
-{
-    if (connectionString != null)
-    {
-        x.UseSqlServer(connectionString, options =>
-        {
-            options.EnableRetryOnFailure();
-        }).UseSnakeCaseNamingConvention();
-    }
-
-});
+builder.Services.AddDatabaseConfiguration(builder.Configuration, builder.Environment.EnvironmentName);
 
 //builder.Services.AddDbContext<ArcanaDbContext>(
 //    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
@@ -150,8 +139,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.ApplyMigrations();
-    
+    //app.ApplyMigrations();
 }
 
 
