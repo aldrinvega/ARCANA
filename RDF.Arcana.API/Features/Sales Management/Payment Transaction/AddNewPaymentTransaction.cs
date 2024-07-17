@@ -279,7 +279,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 ChequeAmount = excessChequeAmount,
                                 AccountName = payment.AccountName,
                                 AccountNo = payment.AccountNo,
-                                AddedBy = payment.AddedBy,
+                                AddedBy = request.AddedBy,
                                 Origin = Origin.Excess,
                                 PaymentTransactionId = paymentTransaction.Id
 
