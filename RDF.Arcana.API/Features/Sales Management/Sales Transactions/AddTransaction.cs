@@ -150,7 +150,8 @@ public class AddTransaction : ControllerBase
                     return TransactionErrors.InvalidInvoiceNumber();
                 }
             }
-            var existingInvoice = await _context.Transactions.AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo);
+            var existingInvoice = await _context.Transactions
+                                  .AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo && ts.InvoiceType == request.InvoiceType);
 
             if (existingInvoice)
             {
