@@ -130,8 +130,7 @@ public class AddTransaction : ControllerBase
                 cl.Id == request.ClientId,
                 cancellationToken);
 
-            
-
+           
             if (existingClient == null)
             {
                 return ClientErrors.NotFound();
