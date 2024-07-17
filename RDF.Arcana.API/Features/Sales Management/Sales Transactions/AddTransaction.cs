@@ -51,7 +51,7 @@ public class AddTransaction : ControllerBase
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
         
-        public string InvoiceNo { get; set; }
+        public string ChargeInvoiceNo { get; set; }
         public string InvoiceType { get; set; }
         public DateTime InvoiceAttachDateReceived { get; set; }
         public class Item
@@ -137,24 +137,24 @@ public class AddTransaction : ControllerBase
                 return ClientErrors.NotFound();
             }
 
-            if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
-                (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
-                (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
-            {
-                if (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales)
-                {
-                    return TransactionErrors.SICI();
-                }
-                //else
-                //{
-                //    return TransactionErrors.InvalidInvoiceNumber();
-                //}
-            }
-            var existingInvoice = await _context.Transactions.AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo);
+            //if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
+            //    (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
+            //    (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
+            //{
+            //    if (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales)
+            //    {
+            //        return TransactionErrors.SICI();
+            //    }
+            //    else
+            //    {
+            //        return TransactionErrors.InvalidInvoiceNumber();
+            //    }
+            //}
+            var existingInvoice = await _context.Transactions.AnyAsync(ts => ts.InvoiceNo == request.ChargeInvoiceNo);
 
             if (existingInvoice)
             {
-                return TransactionErrors.InvoiceAlreadyExist(request.InvoiceNo);
+                return TransactionErrors.InvoiceAlreadyExist(request.ChargeInvoiceNo);
             }
 
 
@@ -187,7 +187,7 @@ public class AddTransaction : ControllerBase
                 ClientId = request.ClientId,
                 Status = Status.Pending,
                 AddedBy = request.AddedBy,
-                InvoiceNo = request.InvoiceNo,
+                InvoiceNo = request.ChargeInvoiceNo,
                 InvoiceType = request.InvoiceType,
                 InvoiceAttachDateReceived = DateTime.Now
             };
