@@ -17,7 +17,7 @@ public class UploadSalesInvoice : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPatch("{id:int}")]
+    [HttpPatch("si/{id:int}")]
     public async Task<ActionResult> Upload([FromForm] UploadSalesInvoiceCommand command, [FromRoute]int id)
     {
         try
@@ -82,7 +82,8 @@ public class UploadSalesInvoice : ControllerBase
 
                var  attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
 
-               existingSalesTransaction.SalesInvoice = attachmentsUploadResult.SecureUrl.ToString();
+               existingSalesTransaction.InvoiceAttach = attachmentsUploadResult.SecureUrl.ToString();
+               existingSalesTransaction.InvoiceAttachDateReceived = DateTime.Now;
                 
                 await _context.SaveChangesAsync(cancellationToken);
             }

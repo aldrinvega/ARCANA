@@ -45,7 +45,8 @@ public class GetTransactionById : ControllerBase
         public int TransactionNo { get; set; }
         public int ClientId { get; set; }
         public string BusinessName { get; set; }
-        public string ChargeInvoiceNo { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceType { get; set; }
         public DateTime CreatedAt { get; set; }
         public IEnumerable<Item> Items { get; set; }
         public BusinessAddressResult BusinessAddress { get; set; }
@@ -104,13 +105,19 @@ public class GetTransactionById : ControllerBase
                 .ThenInclude(clients => clients.BusinessAddress)
                 .FirstOrDefaultAsync(t => t.Id == request.TranasctionId, cancellationToken);
 
+            if (existingTransaction is null)
+            {
+                return TransactionErrors.NotFound();
+            }
+
             var result = new GetTransactionByIdResult
             {
                 TransactionNo = existingTransaction.Id,
                 ClientId = existingTransaction.ClientId,
                 BusinessName = existingTransaction.Client.BusinessName,
                 CreatedAt = existingTransaction.CreatedAt,
-                ChargeInvoiceNo = existingTransaction.TransactionSales.ChargeInvoiceNo,
+                InvoiceNo = existingTransaction.InvoiceNo,
+                InvoiceType = existingTransaction.InvoiceType,
                 BusinessAddress = new GetTransactionByIdResult.BusinessAddressResult
                 {
                     HouseNumber = existingTransaction.Client.BusinessAddress.HouseNumber,

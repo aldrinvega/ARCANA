@@ -7,10 +7,8 @@ using static RDF.Arcana.API.Features.Client.All.GetClientApprovalHistory;
 namespace RDF.Arcana.API.Features.Special_Discount;
 
 [Route("api/special-discount"), ApiController]
-
 public class GetSpecialDiscountApprovalHistoryById : ControllerBase
 {
-
     private readonly IMediator _mediator;
 
     public GetSpecialDiscountApprovalHistoryById(IMediator mediator)
@@ -23,12 +21,12 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
     {
         try
         {
-            var command = new GetSpecialDiscountApprovalHistoryByIdCommand
+            var query = new GetSpecialDiscountApprovalHistoryByIdQuery
             {
                 Id = id
             };
 
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(query);
 
             if (result.IsFailure)
             {
@@ -36,23 +34,25 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
             }
 
             return Ok(result);
-        }catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
 
-    public class GetSpecialDiscountApprovalHistoryByIdCommand : IRequest<Result>
+    public class GetSpecialDiscountApprovalHistoryByIdQuery : IRequest<Result>
     {
-        public int Id  { get; set; }
+        public int Id { get; set; }
     }
 
     public class SpecialDiscountApprovalHistoryResult
     {
-        public IEnumerable<ClientApprovalhistory> ApprovalHistories { get; set; }
+        public IEnumerable<ApprovalHistory> ApprovalHistories { get; set; }
         public IEnumerable<UpdateHistory> UpdateHistories { get; set; }
-        public IEnumerable<RequestApproversForClient> Approvers { get; set; }
-        public class ClientApprovalhistory
+        public IEnumerable<RequestApprovers> Approvers { get; set; }
+
+        public class ApprovalHistory
         {
             public string Module { get; set; }
             public string Approver { get; set; }
@@ -61,19 +61,21 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
             public int? Level { get; set; }
             public string Reason { get; set; }
         }
+
         public class UpdateHistory
         {
             public string Module { get; set; }
             public DateTime UpdatedAt { get; set; }
         }
-        public class RequestApproversForClient
+
+        public class RequestApprovers
         {
             public string Name { get; set; }
             public int Level { get; set; }
         }
     }
 
-    public class Handler : IRequestHandler<GetSpecialDiscountApprovalHistoryByIdCommand, Result>
+    public class Handler : IRequestHandler<GetSpecialDiscountApprovalHistoryByIdQuery, Result>
     {
         private readonly ArcanaDbContext _context;
 
@@ -82,7 +84,7 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
             _context = context;
         }
 
-        public async Task<Result> Handle(GetSpecialDiscountApprovalHistoryByIdCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetSpecialDiscountApprovalHistoryByIdQuery request, CancellationToken cancellationToken)
         {
             var specialDiscount = await _context
                 .SpecialDiscounts
@@ -90,7 +92,6 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
                 .ThenInclude(up => up.UpdateRequestTrails)
                 .Include(r => r.Request)
                 .ThenInclude(x => x.Approvals)
-                .ThenInclude(x => x.Approver)
                 .ThenInclude(x => x.Approver)
                 .Include(x => x.Request)
                 .ThenInclude(x => x.RequestApprovers)
@@ -102,27 +103,26 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
                 return SpecialDiscountErrors.NotFound();
             }
 
+            var approverLevels = specialDiscount.Request.RequestApprovers.ToDictionary(x => x.ApproverId, x => x.Level);
+
             var result = new SpecialDiscountApprovalHistoryResult
             {
-                ApprovalHistories = specialDiscount.Request.Approvals == null
-                ? null
-                : specialDiscount.Request.Approvals.OrderByDescending(a => a.CreatedAt)
-                    .Select(a => new SpecialDiscountApprovalHistoryResult.ClientApprovalhistory
+                ApprovalHistories = specialDiscount.Request.Approvals?.OrderByDescending(a => a.CreatedAt)
+                    .Select(a => new SpecialDiscountApprovalHistoryResult.ApprovalHistory
                     {
                         Module = a.Request.Module,
                         Approver = a.Approver.Fullname,
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
-                        Level = a.Approver.Approver.FirstOrDefault().Level,
+                        Level = approverLevels.ContainsKey(a.ApproverId) ? approverLevels[a.ApproverId] : (int?)null,
                         Reason = a.Reason
-
                     }),
                 UpdateHistories = specialDiscount.Request.UpdateRequestTrails?.Select(uh => new SpecialDiscountApprovalHistoryResult.UpdateHistory
                 {
                     Module = uh.ModuleName,
                     UpdatedAt = uh.UpdatedAt
                 }),
-                Approvers = specialDiscount.Request.RequestApprovers.Select(x => new SpecialDiscountApprovalHistoryResult.RequestApproversForClient
+                Approvers = specialDiscount.Request.RequestApprovers.Select(x => new SpecialDiscountApprovalHistoryResult.RequestApprovers
                 {
                     Name = x.Approver.Fullname,
                     Level = x.Level
@@ -130,7 +130,6 @@ public class GetSpecialDiscountApprovalHistoryById : ControllerBase
             };
 
             return Result.Success(result);
-
         }
     }
 }

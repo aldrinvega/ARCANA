@@ -36,6 +36,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<ListingFeeItems> ListingFeeItems { get; set; }
     public virtual DbSet<UpdateRequestTrail> UpdateRequestTrails { get; set; }
     public virtual DbSet<ClearedPayments> ClearedPayments { get; set; }
+    public virtual DbSet<OnlinePayments> OnlinePayments { get; set; }
 
     //Approver 
 
@@ -61,7 +62,7 @@ public class ArcanaDbContext : DbContext
     public virtual DbSet<AdvancePayment> AdvancePayments { get; set; }
     public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
     public virtual DbSet<PaymentRecords> PaymentRecords { get; set; }
-
+    public virtual DbSet<ApproverByRange> ApproverByRange { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -462,6 +463,11 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
 
+        //modelBuilder.Entity<PaymentTransaction>()
+        //    .HasOne(x => x.OnlinePayment)
+        //    .WithMany()
+        //    .HasForeignKey(x => x.OnlinePlatform);
+
         modelBuilder.Entity<PaymentRecords>()
             .HasOne(x => x.AddedByUser)
             .WithMany()
@@ -481,5 +487,7 @@ public class ArcanaDbContext : DbContext
             .HasOne(x => x.AddedByUser)
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
+
+
     }
 }

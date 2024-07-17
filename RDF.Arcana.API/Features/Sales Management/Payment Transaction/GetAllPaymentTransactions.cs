@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using static RDF.Arcana.API.Features.Sales_Management.Payment_Transaction.GetAllPaymentTransactions.GetPaymentTransactionByStatusResult;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 {
@@ -57,6 +58,10 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public bool? Status { get; set; }
             public string Search { get; set; }
             public string PaymentStatus { get; set; }
+            public string PaymentMethods { get; set; }
+            public int? TransactionId { get; set; }
+            public int? ClientId { get; set; }
+
         }
 
         public class GetPaymentTransactionByStatusResult
@@ -66,8 +71,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public DateTime UpdatedAt { get; set; }
             public string Status { get; set; }
             public IEnumerable<PaymentTransaction> PaymentTransactions { get; set; }
-
-
+            public string BusinessName { get; set; }
+            public decimal TotalPayment { get; set; }
             public class PaymentTransaction
             {
                 public int Id { get; set; }
@@ -108,15 +113,30 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                 IQueryable<PaymentRecords> paymentTransactions = _context.PaymentRecords
                     .Include(c => c.PaymentTransactions)
                     .ThenInclude(pt => pt.Transaction)
-                    .ThenInclude(c => c.Client);
+                    .ThenInclude(ts => ts.TransactionSales)
 
+                    .Include(c => c.PaymentTransactions)
+                    .ThenInclude(pt => pt.Transaction)
+                    .ThenInclude(ts => ts.Client);
+
+                bool searchHandled = false;
 
                 if (int.TryParse(request.Search, out int transactionId) && !string.IsNullOrEmpty(request.Search))
                 {
                     paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => tr.TransactionId == transactionId));
+                    searchHandled = true;
                 }
 
-                if(!string.IsNullOrEmpty(request.Search))
+                //I cant get the decimal here
+                const decimal tolerance = 0.01m; 
+
+                if (!searchHandled && decimal.TryParse(request.Search, out decimal totalAmount) && !string.IsNullOrEmpty(request.Search))
+                {
+                    paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => Math.Abs(tr.TotalAmountReceived - totalAmount) <= tolerance));
+                    searchHandled = true;
+                }
+
+                if (!searchHandled && !string.IsNullOrEmpty(request.Search))
                 {
                     paymentTransactions = paymentTransactions.Where(tx =>
                                    tx.PaymentTransactions.Any(tr => tr.Transaction.Client.BusinessName.Contains(request.Search)) ||
@@ -124,14 +144,30 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                                    tx.PaymentTransactions.Any(tr => tr.Transaction.TransactionSales.ChargeInvoiceNo.Contains(request.Search)));
                 }
 
-                if(request.Status != null)
+                if (request.TransactionId.HasValue)
+                {
+                    paymentTransactions = paymentTransactions.Where(pt => pt.PaymentTransactions.Any(tr => tr.TransactionId == request.TransactionId.Value));
+                }
+
+                if (request.ClientId.HasValue)
+                {
+                    paymentTransactions = paymentTransactions.Where(pt => pt.PaymentTransactions.Any(tr => tr.Transaction.ClientId == request.ClientId.Value));
+                }
+
+                if (request.Status.HasValue)
                 {
                     paymentTransactions = paymentTransactions.Where(t => t.IsActive == request.Status);
                 }
 
                 if (!string.IsNullOrEmpty(request.PaymentStatus))
                 {
-                    paymentTransactions = paymentTransactions.Where(tr => tr.Status == request.PaymentStatus);
+                    paymentTransactions = paymentTransactions.Where(tr => tr.PaymentTransactions.Any(tr => tr.Status == request.PaymentStatus));
+                }
+
+                if (!string.IsNullOrEmpty(request.PaymentMethods))
+                {
+                    paymentTransactions = paymentTransactions
+                        .Where(pt => pt.PaymentTransactions.Any(pm => pm.PaymentMethod == request.PaymentMethods));
                 }
 
                 var result = paymentTransactions.Select(result => new GetPaymentTransactionByStatusResult
@@ -140,6 +176,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     CreatedAt = result.CreatedAt,   
                     UpdatedAt = result.UpdatedAt,
                     Status = result.Status,
+                    BusinessName = result.PaymentTransactions.Select(pt => pt.Transaction.Client.BusinessName).FirstOrDefault(),
+                    TotalPayment = result.PaymentTransactions.Sum(pt => pt.PaymentAmount),
                     PaymentTransactions = result.PaymentTransactions.Select(pt => new GetPaymentTransactionByStatusResult.PaymentTransaction
                     {
                         Id = pt.Id,
@@ -161,8 +199,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                         ChequeAmount = pt.ChequeAmount,
                         AccountName = pt.AccountName,
                         AccountNo = pt.AccountNo
-                    })
-                });
+                    }).ToList()
+                }).OrderByDescending(r => r.BusinessName);
 
                 return PagedList<GetPaymentTransactionByStatusResult>.CreateAsync(result, request.PageNumber,
                     request.PageSize);
