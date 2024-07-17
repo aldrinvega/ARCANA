@@ -89,20 +89,7 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                         if (sentApprover.Level < 1 || sentApprover.Level > 5)
                         {
                             return ApprovalErrors.InvalidLevel();
-                        }
-
-                        //var overlappingApprovers = await _context.ApproverByRange
-                        //    .Where(a => a.ModuleName == request.ModuleName &&
-                        //                a.UserId != sentApprover.UserId &&
-                        //                ((a.MinValue <= sentApprover.MinValue && sentApprover.MinValue <= a.MaxValue) ||
-                        //                 (a.MinValue <= sentApprover.MaxValue && sentApprover.MaxValue <= a.MaxValue) ||
-                        //                 (sentApprover.MinValue <= a.MinValue && a.MaxValue <= sentApprover.MaxValue)))
-                        //    .ToListAsync(cancellationToken);
-
-                        //if (overlappingApprovers.Any())
-                        //{
-                        //    return ApprovalErrors.MinMaxOverlap();
-                        //}
+                        }                        
 
                         existingApprover.MinValue = sentApprover.MinValue;
                         existingApprover.MaxValue = sentApprover.MaxValue;
@@ -118,19 +105,7 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                         if (sentApprover.Level < 1 || sentApprover.Level > 5)
                         {
                             return ApprovalErrors.InvalidLevel();
-                        }
-
-                        var overlappingApprovers = await _context.ApproverByRange
-                            .Where(a => a.ModuleName == request.ModuleName &&
-                                        ((a.MinValue <= sentApprover.MinValue && sentApprover.MinValue <= a.MaxValue) ||
-                                         (a.MinValue <= sentApprover.MaxValue && sentApprover.MaxValue <= a.MaxValue) ||
-                                         (sentApprover.MinValue <= a.MinValue && a.MaxValue <= sentApprover.MaxValue)))
-                            .ToListAsync(cancellationToken);
-
-                        if (overlappingApprovers.Any())
-                        {
-                            return ApprovalErrors.MinMaxOverlap();
-                        }
+                        }                       
 
                         _context.ApproverByRange.Add(new ApproverByRange
                         {

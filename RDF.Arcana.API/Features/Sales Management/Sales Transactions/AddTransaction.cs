@@ -135,21 +135,21 @@ public class AddTransaction : ControllerBase
             {
                 return ClientErrors.NotFound();
             }
-
-            //if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
-            //    (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
-            //    (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
-            //{
-            //    if (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales)
-            //    {
-            //        return TransactionErrors.SICI();
-            //    }
-            //    else
-            //    {
-            //        return TransactionErrors.InvalidInvoiceNumber();
-            //    }
-            //}
-            var existingInvoice = await _context.Transactions.AnyAsync(ts => ts.InvoiceNo == request.ChargeInvoiceNo);
+            if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
+                (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
+                (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
+            {
+                if (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales)
+                {
+                    return TransactionErrors.SICI();
+                }
+                else
+                {
+                    return TransactionErrors.InvalidInvoiceNumber();
+                }
+            }
+            var existingInvoice = await _context.Transactions
+                                  .AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo && ts.InvoiceType == request.InvoiceType);
 
             if (existingInvoice)
             {
