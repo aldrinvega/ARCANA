@@ -42,8 +42,8 @@ public static class Status
 
     public const string Refunded = "Refunded";
 
-    public const string Sales = "Sales";
-    public const string Charge = "Charge";
+    public const string Sales = "sales";
+    public const string Charge = "charge";
 }
 
 //public static class Terms

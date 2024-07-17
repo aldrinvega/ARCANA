@@ -51,7 +51,7 @@ public class AddTransaction : ControllerBase
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
         
-        public string InvoiceNo { get; set; }
+        public string ChargeInvoiceNo { get; set; }
         public string InvoiceType { get; set; }
         public DateTime InvoiceAttachDateReceived { get; set; }
         public class Item
@@ -130,13 +130,11 @@ public class AddTransaction : ControllerBase
                 cl.Id == request.ClientId,
                 cancellationToken);
 
-            
-
+           
             if (existingClient == null)
             {
                 return ClientErrors.NotFound();
             }
-
             if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
                 (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
                 (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
@@ -155,7 +153,7 @@ public class AddTransaction : ControllerBase
 
             if (existingInvoice)
             {
-                return TransactionErrors.InvoiceAlreadyExist(request.InvoiceNo);
+                return TransactionErrors.InvoiceAlreadyExist(request.ChargeInvoiceNo);
             }
 
 
@@ -188,7 +186,7 @@ public class AddTransaction : ControllerBase
                 ClientId = request.ClientId,
                 Status = Status.Pending,
                 AddedBy = request.AddedBy,
-                InvoiceNo = request.InvoiceNo,
+                InvoiceNo = request.ChargeInvoiceNo,
                 InvoiceType = request.InvoiceType,
                 InvoiceAttachDateReceived = DateTime.Now
             };
