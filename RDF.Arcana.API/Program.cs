@@ -1,3 +1,4 @@
+using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 using Azure.Storage.Blobs;
@@ -9,11 +10,13 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RDF.Arcana.API.Abstractions.Messaging;
 using RDF.Arcana.API.Abstractions.Storage;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Behaviors;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Storage;
+using RDF.Arcana.API.Services.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -23,6 +26,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddValidatorsFromAssembly(ApplicationAssemblyReference.Assembly);
 builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddSingleton(_ => new BlobServiceClient(config.GetConnectionString("BlobStorage")));
+builder.Services.AddSingleton<IMessageService, MessageService>();
 
 builder.Services.AddMediatR(x =>
 {
@@ -42,22 +46,21 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
+//builder.Services.AddDatabaseConfiguration(builder.Configuration, builder.Environment.EnvironmentName);
+
 var connectionString = builder.Configuration.GetConnectionString("Testing");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
-    if (connectionString != null)
-    {
-        x.UseSqlServer(connectionString, options =>
-        {
-            options.EnableRetryOnFailure();
-        }).UseSnakeCaseNamingConvention();
-    }
+	if (connectionString != null)
+	{
+		x.UseSqlServer(connectionString, options =>
+		{
+			options.EnableRetryOnFailure();
+		}).UseSnakeCaseNamingConvention();
+	}
 
 });
-
-//builder.Services.AddDbContext<ArcanaDbContext>(
-//    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
 
 
 builder.Services.AddControllers();
@@ -135,6 +138,7 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddCarter();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -147,8 +151,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.ApplyMigrations();
-    
+    //app.ApplyMigrations();
 }
 
 

@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RDF.Arcana.API.Abstractions.Messaging;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
@@ -65,10 +67,12 @@ public class ApproveClientRegistration : ControllerBase
     public class Handler : IRequestHandler<ApprovedClientRegistrationCommand, Result>
     {
         private readonly ArcanaDbContext _context;
+        private readonly IMessageService _messageService;
 
-        public Handler(ArcanaDbContext context)
+        public Handler(ArcanaDbContext context, IMessageService messageService)
         {
             _context = context;
+            _messageService = messageService;
         }
 
         public async Task<Result> Handle(ApprovedClientRegistrationCommand request, CancellationToken cancellationToken)
@@ -80,6 +84,8 @@ public class ApproveClientRegistration : ControllerBase
                 .ThenInclude(lf => lf.ListingFees)
                 .Include(client => client.Clients)
                 .ThenInclude(expenses => expenses.Expenses)
+                .Include(ap => ap.CurrentApprover)
+                .Include(rq => rq.Requestor)
                 .Where(client => client.Id == request.RegistrationRequestId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -97,6 +103,7 @@ public class ApproveClientRegistration : ControllerBase
 
             //Get all the approvers for the request 
             var registrationApprovers = await _context.RequestApprovers
+                .Include(ap => ap.Approver)
                 .Where(rq => rq.RequestId == request.RegistrationRequestId)
                 .ToListAsync(cancellationToken);
             
@@ -152,7 +159,15 @@ public class ApproveClientRegistration : ControllerBase
                     UserId = requestedClient.RequestorId,
                     Status = Status.ApprovedClients
                 };
-                
+
+                var messageRequestForRequestor = new MessageRequest
+                {
+                    Message = $"Fresh morning {requestedClient.Requestor.Fullname}! {requestedClient.Clients.BusinessName}'s registration request has been approved. \n\n-Arcana System",
+                    MobileNumber = "+639070998702"
+                };
+
+                var result = await _messageService.SendMessageAsync(messageRequestForRequestor);
+
                 await _context.Notifications.AddAsync(notification, cancellationToken);
                 
             }
@@ -174,7 +189,15 @@ public class ApproveClientRegistration : ControllerBase
                     UserId = nextApprover.ApproverId,
                     Status = Status.PendingClients
                 };
-                
+
+                var messageRequest = new MessageRequest
+                {
+                    Message = $"Fresh morning {nextApprover.Approver.FullIdNo}! You have a new customer approval. \n\n-Arcana System",
+                    MobileNumber = nextApprover.Approver.MobileNumber
+                };
+
+                var result = await _messageService.SendMessageAsync(messageRequest);
+
                 await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
             }
             
@@ -295,6 +318,8 @@ public class ApproveClientRegistration : ControllerBase
                     );
                     await _context.Approval.AddAsync(newExpensesApproval, cancellationToken);
                     await _context.SaveChangesAsync(cancellationToken);
+
+
                 }
 
                 expenses.Status = Status.Approved;
