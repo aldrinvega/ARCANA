@@ -292,28 +292,33 @@ public class AddNewPaymentTransaction : BaseApiController
 
                         if (currentIteration == totalTransactions)
                         {
-                            var advancePayment = new AdvancePayment
+                            if (paymentAmount > 0)
                             {
-                                ClientId = transaction.ClientId,
-                                PaymentMethod = payment.PaymentMethod,
-                                AdvancePaymentAmount = excessAmount,
-                                RemainingBalance = excessAmount,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = payment.DateReceived,
-                                ChequeAmount = excessAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
-                                Origin = Origin.Excess,
-                                PaymentTransactionId = paymentTransaction.Id
-                            };
+                                var advancePayment = new AdvancePayment
+                                {
+                                    ClientId = transaction.ClientId,
+                                    PaymentMethod = payment.PaymentMethod,
+                                    AdvancePaymentAmount = excessAmount,
+                                    RemainingBalance = excessAmount,
+                                    Payee = payment.Payee,
+                                    ChequeDate = payment.ChequeDate,
+                                    BankName = payment.BankName,
+                                    ChequeNo = payment.ChequeNo,
+                                    DateReceived = payment.DateReceived,
+                                    ChequeAmount = excessAmount,
+                                    AccountName = payment.AccountName,
+                                    AccountNo = payment.AccountNo,
+                                    AddedBy = request.AddedBy,
+                                    Origin = Origin.Excess,
+                                    PaymentTransactionId = paymentTransaction.Id
+                                };
 
-                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
+                                await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
+                                await _context.SaveChangesAsync(cancellationToken);
+                            }
                         }
+
+                        payment.PaymentAmount = excessAmount;
                     }
 
 
