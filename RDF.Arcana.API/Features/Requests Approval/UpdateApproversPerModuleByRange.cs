@@ -114,7 +114,7 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                             MinValue = sentApprover.MinValue,
                             MaxValue = sentApprover.MaxValue,
                             Level = sentApprover.Level,
-                            IsActive = sentApprover.IsActive
+                            IsActive = true
                         });
                     }
                 }

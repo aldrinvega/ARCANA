@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Esf;
 using RDF.Arcana.API.Common;
@@ -14,10 +15,12 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
 public class AddTransaction : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IValidator<AddtransactionCommand> _validator;
 
-    public AddTransaction(IMediator mediator)
+    public AddTransaction(IMediator mediator, IValidator<AddtransactionCommand> validator)
     {
         _mediator = mediator;
+        _validator = validator;
     }
 
     [HttpPost]
@@ -25,6 +28,12 @@ public class AddTransaction : ControllerBase
     {
         try
         {
+            var validator = await _validator.ValidateAsync(command);
+
+            if (!validator.IsValid)
+            {
+                return BadRequest(validator);
+            }
 
             if (User.Identity is ClaimsIdentity identity
                && IdentityHelper.TryGetUserId(identity, out var userId))
@@ -51,7 +60,7 @@ public class AddTransaction : ControllerBase
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
         
-        public string ChargeInvoiceNo { get; set; }
+        public string InvoiceNo { get; set; }
         public string InvoiceType { get; set; }
         public DateTime InvoiceAttachDateReceived { get; set; }
         public class Item
@@ -69,7 +78,6 @@ public class AddTransaction : ControllerBase
         public string BusinessName { get; set; }
         public BusinessAddressResult BusinessAddress { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string ChargeInvoiceNo { get; set; }
         public int AddedBy { get; set; }
         public ICollection<Item> Items { get; set; }
         public string InvoiceNo { get; set; }
@@ -153,7 +161,7 @@ public class AddTransaction : ControllerBase
 
             if (existingInvoice)
             {
-                return TransactionErrors.InvoiceAlreadyExist(request.ChargeInvoiceNo);
+                return TransactionErrors.InvoiceAlreadyExist(request.InvoiceNo);
             }
 
 
@@ -186,7 +194,7 @@ public class AddTransaction : ControllerBase
                 ClientId = request.ClientId,
                 Status = Status.Pending,
                 AddedBy = request.AddedBy,
-                InvoiceNo = request.ChargeInvoiceNo,
+                InvoiceNo = request.InvoiceNo,
                 InvoiceType = request.InvoiceType,
                 InvoiceAttachDateReceived = DateTime.Now
             };
@@ -310,7 +318,6 @@ public class AddTransaction : ControllerBase
                     HouseNumber = transaction.Client.BusinessAddress.HouseNumber,
                 },
                 CreatedAt = transaction.CreatedAt,
-                ChargeInvoiceNo = newTransactionSales.ChargeInvoiceNo,
                 Items = itemsCollection,
                 Subtotal = newTransactionSales.SubTotal,
                 VatableSales = newTransactionSales.VatableSales,
