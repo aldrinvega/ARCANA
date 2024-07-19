@@ -139,18 +139,6 @@ public class AddNewPaymentTransaction : BaseApiController
                     decimal excessAmount = amountToPay - payment.PaymentAmount;
                     decimal paymentAmount = payment.PaymentAmount;
 
-                    //if (excessAmount > 0)
-                    //{
-                    //    Use excess amount to pay the next transaction
-                    //    payment.PaymentAmount -= excessAmount;
-                    //    amountToPay = 0;
-                    //}
-                    //else
-                    //{
-                    //    // Not enough to cover the full amount, use entire payment
-                    //    amountToPay -= payment.PaymentAmount;
-                    //}
-
                     //For advance payment transactions
                     if (payment.PaymentMethod == PaymentMethods.AdvancePayment)
                     {
@@ -229,9 +217,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 continue;
                             }
                         }
-
-                        
-
+                      
                     }
 
 
@@ -388,7 +374,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
+                            ReferenceNo = transaction.InvoiceNo
 
                         };
 
@@ -468,7 +454,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
+                            ReferenceNo = transaction.InvoiceNo
 
                         };
 
@@ -488,31 +474,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             transaction.Status = Status.Pending;
                             amountToPay = remainingToPay;
                             await _context.SaveChangesAsync(cancellationToken);
-                        }
-
-                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0 && amountToPayOthers <= 0)
-                        {
-                            var advancePayment = new AdvancePayment
-                            {
-                                ClientId = transaction.ClientId,
-                                PaymentMethod = payment.PaymentMethod,
-                                AdvancePaymentAmount = payment.PaymentAmount,
-                                RemainingBalance = payment.PaymentAmount,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = payment.DateReceived,
-                                ChequeAmount = payment.ChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
-                                Origin = Origin.Excess
-                            };
-
-                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
-                        }
+                        }                       
                     }
                 } 
             }
