@@ -227,19 +227,7 @@ public class GetAllListingFee : ControllerBase
                 case Roles.Admin:
                     listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.RegistrationStatus == Status.Approved);
                     break;
-            }
-
-            //if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.Approved)
-            //{
-            //    if (request.AccessBy == 2)
-            //    {
-            //        listingFees = listingFees.Where(x => (x.Request.CurrentApproverId - 1) == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
-            //    }
-            //    else
-            //    {
-            //        listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
-            //    }
-            //}
+            }           
 
             if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.Approved)
             {
