@@ -50,7 +50,6 @@ public class GetApproverByRange : ControllerBase
             public string FullName { get; set; }
             public string ModuleName { get; set; }
             public decimal? MinValue { get; set; }
-            public decimal? MaxValue { get; set; }
             public bool IsActive { get; set; }
             public int Level { get; set; }
         }
@@ -71,10 +70,6 @@ public class GetApproverByRange : ControllerBase
                 .Where(m => m.ModuleName == request.ModuleName)
                 .ToListAsync(cancellationToken);
 
-            //if (!existingApprovers.Any())
-            //{
-            //    return ApprovalErrors.NoApproversFound(request.ModuleName);
-            //}
 
             var approvers = existingApprovers.Select(a => new GetAppproverByModuleByRangeResult.Approver
             {
@@ -83,7 +78,6 @@ public class GetApproverByRange : ControllerBase
                 FullName = a.User.Fullname,
                 ModuleName = a.ModuleName,
                 MinValue = a.MinValue,
-                MaxValue = a.MaxValue,
                 Level = a.Level,
                 IsActive = a.IsActive
 

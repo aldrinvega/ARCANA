@@ -113,7 +113,7 @@ public class RequestSpecialDiscount : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
             }
 
-            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(request.Discount) && a.MaxValue >= Math.Ceiling(request.Discount)).ToList();
+            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(request.Discount)).ToList();
             if (!applicableApprovers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);

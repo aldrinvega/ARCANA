@@ -47,7 +47,6 @@ public class AddNewPaymentTransaction : BaseApiController
             public decimal ChequeAmount { get; set; }
             public string AccountName { get; set; }
             public string AccountNo { get; set; }
-            public int AddedBy { get; set; }
             public int OnlinePlatform { get; set; }
             public string ReferenceNo { get; set; }
         }
@@ -104,9 +103,15 @@ public class AddNewPaymentTransaction : BaseApiController
                 .OrderByDescending(tid => _context.Transactions
                     .FirstOrDefault(t => t.Id == tid)?.TransactionSales.RemainingBalance ?? 0)
                 .ToList();
+            int totalTransactions = orderedTransactions.Count;
+            int currentIteration = 0;
+
 
             foreach (int transactionId in orderedTransactions)
             {
+                currentIteration++;
+
+
                 var transaction = await _context.Transactions
                     .Include(t => t.TransactionSales)
                     .FirstOrDefaultAsync(t => t.Id == transactionId, cancellationToken);
@@ -133,18 +138,6 @@ public class AddNewPaymentTransaction : BaseApiController
 
                     decimal excessAmount = amountToPay - payment.PaymentAmount;
                     decimal paymentAmount = payment.PaymentAmount;
-
-                    //if (excessAmount > 0)
-                    //{
-                    //    Use excess amount to pay the next transaction
-                    //    payment.PaymentAmount -= excessAmount;
-                    //    amountToPay = 0;
-                    //}
-                    //else
-                    //{
-                    //    // Not enough to cover the full amount, use entire payment
-                    //    amountToPay -= payment.PaymentAmount;
-                    //}
 
                     //For advance payment transactions
                     if (payment.PaymentMethod == PaymentMethods.AdvancePayment)
@@ -224,103 +217,96 @@ public class AddNewPaymentTransaction : BaseApiController
                                 continue;
                             }
                         }
-
-                        
-
+                      
                     }
 
 
                     if (payment.PaymentMethod == PaymentMethods.Cheque)
                     {
                         var transactionSales = await _context.TransactionSales
-                            .FirstOrDefaultAsync(ts => ts.TransactionId == transaction.Id);
+                            .FirstOrDefaultAsync(ts => ts.TransactionId == transaction.Id, cancellationToken);
+
+                        if (transactionSales == null)
+                        {
+                            return TransactionErrors.NotFound();
+                        }
 
                         decimal totalAmountDue = transactionSales.TotalAmountDue;
+                        decimal remainingBalance = transactionSales.RemainingBalance;
+                        excessAmount = 0;
 
-                        if(payment.PaymentAmount >  totalAmountDue) 
+                        if (payment.PaymentAmount > remainingBalance)
                         {
-                            decimal excessChequeAmount = payment.PaymentAmount - totalAmountDue;
-
-                            var paymentTransaction = new PaymentTransaction
-                            {
-                                TransactionId = transaction.Id,
-                                AddedBy = request.AddedBy,
-                                PaymentRecordId = paymentRecord.Id,
-                                PaymentMethod = payment.PaymentMethod,
-                                PaymentAmount = payment.PaymentAmount,
-                                TotalAmountReceived = payment.TotalAmountReceived,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = DateTime.Now,
-                                ChequeAmount = payment.ChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                Status = Status.Received,
-                                OnlinePlatform = payment.OnlinePlatform,
-                                ReferenceNo = payment.ReferenceNo,
-                            };
-
-                            await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
-
-                            var advancePayment = new AdvancePayment
-                            {
-                                ClientId = transactionSales.Transaction.ClientId,
-                                PaymentMethod = payment.PaymentMethod,
-                                AdvancePaymentAmount = excessChequeAmount,
-                                RemainingBalance = excessChequeAmount,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = payment.DateReceived,
-                                ChequeAmount = excessChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
-                                Origin = Origin.Excess,
-                                PaymentTransactionId = paymentTransaction.Id
-
-                            };
-                            transactionSales.Transaction.Status = Status.Paid;
-                            transactionSales.RemainingBalance = 0;
-                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
-                        }
-                        else
-                        {
-                            var remainingBal = totalAmountDue - payment.PaymentAmount;
-                            transactionSales.RemainingBalance = remainingBal;
-
-                            var paymentTransaction = new PaymentTransaction
-                            {
-                                TransactionId = transaction.Id,
-                                AddedBy = request.AddedBy,
-                                PaymentRecordId = paymentRecord.Id,
-                                PaymentMethod = payment.PaymentMethod,
-                                PaymentAmount = payment.PaymentAmount,
-                                TotalAmountReceived = payment.TotalAmountReceived,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = DateTime.Now,
-                                ChequeAmount = payment.ChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                Status = Status.Received,
-                                OnlinePlatform = payment.OnlinePlatform,
-                                ReferenceNo = payment.ReferenceNo,
-
-                            };
-
-                            await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
+                            excessAmount = payment.PaymentAmount - remainingBalance;
+                            payment.PaymentAmount = remainingBalance;
                         }
                         
+                        var paymentTransaction = new PaymentTransaction
+                        {
+                            TransactionId = transaction.Id,
+                            AddedBy = request.AddedBy,
+                            PaymentRecordId = paymentRecord.Id,
+                            PaymentMethod = payment.PaymentMethod,
+                            PaymentAmount = payment.PaymentAmount,
+                            TotalAmountReceived = payment.PaymentAmount,
+                            Payee = payment.Payee,
+                            ChequeDate = payment.ChequeDate,
+                            BankName = payment.BankName,
+                            ChequeNo = payment.ChequeNo,
+                            DateReceived = DateTime.Now,
+                            ChequeAmount = payment.ChequeAmount,
+                            AccountName = payment.AccountName,
+                            AccountNo = payment.AccountNo,
+                            Status = Status.Received,
+                            OnlinePlatform = payment.OnlinePlatform,
+                            ReferenceNo = payment.ChequeNo,
+                        };
+
+                        await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        transactionSales.RemainingBalance -= payment.PaymentAmount;
+                        transactionSales.RemainingBalance = transactionSales.RemainingBalance < 0 ? 0 : transactionSales.RemainingBalance;
+                        transactionSales.UpdatedAt = DateTime.Now;
+
+                        if (transactionSales.RemainingBalance == 0)
+                        {
+                            transaction.Status = Status.Paid;
+                        }
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        if (currentIteration == totalTransactions)
+                        {
+                            if (paymentAmount > 0)
+                            {
+                                var advancePayment = new AdvancePayment
+                                {
+                                    ClientId = transaction.ClientId,
+                                    PaymentMethod = payment.PaymentMethod,
+                                    AdvancePaymentAmount = excessAmount,
+                                    RemainingBalance = excessAmount,
+                                    Payee = payment.Payee,
+                                    ChequeDate = payment.ChequeDate,
+                                    BankName = payment.BankName,
+                                    ChequeNo = payment.ChequeNo,
+                                    DateReceived = payment.DateReceived,
+                                    ChequeAmount = excessAmount,
+                                    AccountName = payment.AccountName,
+                                    AccountNo = payment.AccountNo,
+                                    AddedBy = request.AddedBy,
+                                    Origin = Origin.Excess,
+                                    PaymentTransactionId = paymentTransaction.Id
+                                };
+
+                                await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
+                                await _context.SaveChangesAsync(cancellationToken);
+                            }
+                        }
+                        
+                        payment.PaymentAmount = excessAmount;
                     }
+
 
                     if (payment.PaymentMethod == PaymentMethods.Online)
                     {
@@ -388,7 +374,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
+                            ReferenceNo = transaction.InvoiceNo
 
                         };
 
@@ -408,30 +394,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             transaction.Status = Status.Pending;
                             await _context.SaveChangesAsync(cancellationToken);
                         }
-
-                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0 && amountToPayWithholding <= 0)
-                        {
-                            var advancePayment = new AdvancePayment
-                            {
-                                ClientId = transaction.ClientId,
-                                PaymentMethod = payment.PaymentMethod,
-                                AdvancePaymentAmount = payment.PaymentAmount,
-                                RemainingBalance = payment.PaymentAmount,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = payment.DateReceived,
-                                ChequeAmount = payment.ChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
-                                Origin = Origin.Excess
-                            };
-
-                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
-                        }
+                       
                     }
 
                     //For Cash, Listing,
@@ -468,7 +431,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
+                            ReferenceNo = transaction.InvoiceNo
 
                         };
 
@@ -488,31 +451,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             transaction.Status = Status.Pending;
                             amountToPay = remainingToPay;
                             await _context.SaveChangesAsync(cancellationToken);
-                        }
-
-                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0 && amountToPayOthers <= 0)
-                        {
-                            var advancePayment = new AdvancePayment
-                            {
-                                ClientId = transaction.ClientId,
-                                PaymentMethod = payment.PaymentMethod,
-                                AdvancePaymentAmount = payment.PaymentAmount,
-                                RemainingBalance = payment.PaymentAmount,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = payment.DateReceived,
-                                ChequeAmount = payment.ChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
-                                Origin = Origin.Excess
-                            };
-
-                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
-                        }
+                        }                       
                     }
                 } 
             }

@@ -16,7 +16,7 @@ public class UploadChargeInvoice : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPatch("ci/{id:int}")]
+    [HttpPatch("invoice/{id:int}")]
     public async Task<ActionResult> Upload([FromForm] UploadChargeInvoiceCommand command, [FromRoute] int id)
     {
         try
