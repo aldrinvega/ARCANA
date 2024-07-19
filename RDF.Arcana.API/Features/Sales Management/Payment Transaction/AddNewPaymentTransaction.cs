@@ -163,7 +163,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
-                            TotalAmountReceived = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
                             ChequeDate = payment.ChequeDate,
                             BankName = payment.BankName,
@@ -240,7 +240,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             excessAmount = payment.PaymentAmount - remainingBalance;
                             payment.PaymentAmount = remainingBalance;
                         }
-
+                        
                         var paymentTransaction = new PaymentTransaction
                         {
                             TransactionId = transaction.Id,
@@ -303,7 +303,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 await _context.SaveChangesAsync(cancellationToken);
                             }
                         }
-
+                        
                         payment.PaymentAmount = excessAmount;
                     }
 
@@ -322,7 +322,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
-                            TotalAmountReceived = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
                             ChequeDate = payment.ChequeDate,
                             BankName = payment.BankName,
@@ -363,7 +363,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
-                            TotalAmountReceived = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
                             ChequeDate = payment.ChequeDate,
                             BankName = payment.BankName,
@@ -420,7 +420,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
-                            TotalAmountReceived = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
                             ChequeDate = payment.ChequeDate,
                             BankName = payment.BankName,
