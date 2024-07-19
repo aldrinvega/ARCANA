@@ -125,26 +125,7 @@ public class AddNewListingFee : ControllerBase
             if (!approvers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
-            }
-
-            //var applicableApprovers = approvers.Where(a => a.MinValue <= total && a.MaxValue >= total).ToList();
-            //if (!applicableApprovers.Any())
-            //{
-            //    return ApprovalErrors.ApproverNotFound();
-            //}
-
-            //// Identify the levels of approvers
-            //var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).First();
-            //var approverLevels = approvers.Where(a => a.Level <= maxLevelApprover.Level).OrderBy(a => a.Level).ToList();
-
-            //// Create a new Request
-            //var newRequest = new Request(
-            //    Modules.ListingFeeApproval,
-            //    request.RequestedBy,
-            //    approverLevels.First().UserId, // Initially set to the first approver
-            //    approverLevels.Count > 1 ? approverLevels[1].UserId : (int?)null, // Next approver if exists
-            //    Status.UnderReview
-            //);
+            }            
 
             // Assign the approvers based on MinValue
             var applicableApprovers = approvers.Where(a => a.MinValue <= total).ToList();

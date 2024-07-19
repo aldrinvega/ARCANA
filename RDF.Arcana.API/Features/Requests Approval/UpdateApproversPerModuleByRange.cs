@@ -43,7 +43,6 @@ namespace RDF.Arcana.API.Features.Requests_Approval
             {
                 public int UserId { get; set; }
                 public decimal? MinValue { get; set; }
-                public decimal? MaxValue { get; set; }
                 public bool IsActive { get; set; }
                 public int Level { get; set; }
             }
@@ -75,16 +74,7 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                     var existingApprover = existingApprovers.FirstOrDefault(a => a.UserId == sentApprover.UserId);
 
                     if (existingApprover != null) // If the approver exists in the database, update the approver
-                    {
-                        if (sentApprover.IsActive != existingApprover.IsActive)
-                        {
-                            existingApprover.IsActive = sentApprover.IsActive;
-                        }
-
-                        if (sentApprover.MinValue >= sentApprover.MaxValue)
-                        {
-                            return ApprovalErrors.MinMaxError();
-                        }
+                    {                        
 
                         if (sentApprover.Level < 1 || sentApprover.Level > 5)
                         {
@@ -92,15 +82,11 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                         }                        
 
                         existingApprover.MinValue = sentApprover.MinValue;
-                        existingApprover.MaxValue = sentApprover.MaxValue;
                         existingApprover.Level = sentApprover.Level;
                     }
                     else // If the approver does not exist in the database, add the approver
                     {
-                        if (sentApprover.MinValue >= sentApprover.MaxValue)
-                        {
-                            return ApprovalErrors.MinMaxError();
-                        }
+                        
 
                         if (sentApprover.Level < 1 || sentApprover.Level > 5)
                         {
@@ -112,7 +98,6 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                             UserId = sentApprover.UserId,
                             ModuleName = request.ModuleName,
                             MinValue = sentApprover.MinValue,
-                            MaxValue = sentApprover.MaxValue,
                             Level = sentApprover.Level,
                             IsActive = true
                         });

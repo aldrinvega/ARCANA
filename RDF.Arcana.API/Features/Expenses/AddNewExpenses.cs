@@ -105,7 +105,7 @@ public class AddNewExpenses : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
 
-            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(total) && a.MaxValue >= Math.Ceiling(total)).ToList();
+            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(total)).ToList();
             if (!applicableApprovers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);

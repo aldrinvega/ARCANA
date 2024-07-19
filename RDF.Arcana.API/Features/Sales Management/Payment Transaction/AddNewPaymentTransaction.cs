@@ -259,7 +259,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
+                            ReferenceNo = payment.ChequeNo,
                         };
 
                         await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -394,30 +394,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             transaction.Status = Status.Pending;
                             await _context.SaveChangesAsync(cancellationToken);
                         }
-
-                        if (payment.PaymentMethod == PaymentMethods.Cheque && excessAmount > 0 && amountToPayWithholding <= 0)
-                        {
-                            var advancePayment = new AdvancePayment
-                            {
-                                ClientId = transaction.ClientId,
-                                PaymentMethod = payment.PaymentMethod,
-                                AdvancePaymentAmount = payment.PaymentAmount,
-                                RemainingBalance = payment.PaymentAmount,
-                                Payee = payment.Payee,
-                                ChequeDate = payment.ChequeDate,
-                                BankName = payment.BankName,
-                                ChequeNo = payment.ChequeNo,
-                                DateReceived = payment.DateReceived,
-                                ChequeAmount = payment.ChequeAmount,
-                                AccountName = payment.AccountName,
-                                AccountNo = payment.AccountNo,
-                                AddedBy = request.AddedBy,
-                                Origin = Origin.Excess
-                            };
-
-                            await _context.AdvancePayments.AddAsync(advancePayment, cancellationToken);
-                            await _context.SaveChangesAsync(cancellationToken);
-                        }
+                       
                     }
 
                     //For Cash, Listing,
