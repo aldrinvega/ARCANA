@@ -259,7 +259,7 @@ public class AddNewPaymentTransaction : BaseApiController
                                 AccountNo = payment.AccountNo,
                                 Status = Status.Received,
                                 OnlinePlatform = payment.OnlinePlatform,
-                                ReferenceNo = payment.ReferenceNo,
+                                ReferenceNo = payment.ChequeNo,
                             };
 
                             await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
@@ -468,8 +468,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             AccountNo = payment.AccountNo,
                             Status = Status.Received,
                             OnlinePlatform = payment.OnlinePlatform,
-                            ReferenceNo = payment.ReferenceNo,
-
+                            ReferenceNo = transaction.InvoiceNo,
                         };
 
                         await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);

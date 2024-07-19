@@ -31,5 +31,6 @@ public class PaymentTransaction : BaseEntity
     public virtual Transactions Transaction { get; set; }
     public virtual User AddedByUser { get; set; }
     public virtual PaymentRecords PaymentRecord { get; set; }
+    public virtual AdvancePayment AdvancePayment { get; set; }
 
 }
