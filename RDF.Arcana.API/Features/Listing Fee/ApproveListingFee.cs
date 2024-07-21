@@ -148,8 +148,8 @@ public class ApproveListingFee : ControllerBase
             }
             else
             {
-                listingFees.CurrentApproverId = nextLevel;
-                
+                listingFees.CurrentApproverId = nextApprover.ApproverId;
+
                 var notificationForNextApprover = new Domain.Notification
                 {
                     UserId = nextApprover.ApproverId,

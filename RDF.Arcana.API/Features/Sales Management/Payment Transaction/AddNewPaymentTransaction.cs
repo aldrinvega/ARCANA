@@ -407,7 +407,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             .Sum(pa => pa.PaymentAmount);
 
                         // Calculate the remaining amount to pay for this transaction
-                        var remainingToPay = amountToPay - amountToPayOthers;
+                        var remainingToPay = amountToPay - paymentAmount;
 
 
                         // Update the remaining balance of the transaction

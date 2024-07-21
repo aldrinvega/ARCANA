@@ -129,12 +129,20 @@ public class AddNewListingFee : ControllerBase
 
             // Assign the approvers based on MinValue
             var applicableApprovers = approvers.Where(a => a.MinValue == null || a.MinValue <= total).ToList();
+            
             var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).FirstOrDefault();
             if (maxLevelApprover == null)
             {
                 maxLevelApprover = approvers.Last();
             }
+
             var nextLevel = maxLevelApprover.Level + 1;
+
+            if (!applicableApprovers.Any())
+            {
+                applicableApprovers = approvers.Where(l => l.Level == 1).ToList();
+                nextLevel = approvers.Where(l => l.Level == 1).FirstOrDefault()?.Level ?? 1;
+            }
 
             var approverLevels = approvers.Where(a => a.Level <= nextLevel).OrderBy(a => a.Level).ToList();
 
