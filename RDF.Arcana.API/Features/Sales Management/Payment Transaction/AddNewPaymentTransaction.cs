@@ -121,7 +121,6 @@ public class AddNewPaymentTransaction : BaseApiController
                     return TransactionErrors.NotFound();
                 }
 
-                decimal amountToPay = transaction.TransactionSales.RemainingBalance;
 
                 // Order payments by payment amount (descending)
                 var orderedPayments = request.Payments
@@ -130,6 +129,9 @@ public class AddNewPaymentTransaction : BaseApiController
 
                 foreach (var payment in orderedPayments) 
                 {
+
+                    decimal amountToPay = transaction.TransactionSales.RemainingBalance;
+
                     // If nothing more to pay for this transaction, move to the next
                     if (amountToPay <= 0 || payment.PaymentAmount <= 0)  
                     {
