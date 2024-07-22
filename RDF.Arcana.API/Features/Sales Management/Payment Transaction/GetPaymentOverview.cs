@@ -15,13 +15,9 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 			_mediator = mediator;
 		}
 
-		[HttpGet("overview/{search}")]
-		public async Task<IActionResult> GetPaymentOverviewAsync(string search)
+		[HttpGet("overview")]
+		public async Task<IActionResult> GetPaymentOverviewAsync([FromQuery] GetPaymentOverviewRequest query)
 		{
-			var query = new GetPaymentOverviewRequest
-			{
-				ReferenceNo = search
-			};
 
 			var result = await _mediator.Send(query);
 
@@ -31,7 +27,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 		public class GetPaymentOverviewRequest : IRequest<Result>
 		{
 			public string ReferenceNo { get; set; }
-		}
+            public string PaymentMethod { get; set; }
+        }
 
 		public class GetPaymentOverviewResponse
 		{
@@ -74,7 +71,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 			{
 				// Fetch PaymentRecords along with the necessary navigation properties eagerly loaded
 				var paymentTransactions = await _context.PaymentRecords
-					.Where(pr => pr.PaymentTransactions.Any(pt => pt.ReferenceNo == request.Search))
+					.Where(pr => pr.PaymentTransactions.Any(pt => pt.ReferenceNo == request.ReferenceNo))
 					.Include(pr => pr.PaymentTransactions)
 						.ThenInclude(pt => pt.Transaction)
 							.ThenInclude(t => t.TransactionItems)
@@ -82,7 +79,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 					.Include(pr => pr.PaymentTransactions)
 						.ThenInclude(pt => pt.AddedByUser)
 					.SelectMany(pr => pr.PaymentTransactions)
-					.Where(pt => pt.ReferenceNo == request.Search || (pt.Transaction.InvoiceNo.Contains(request.Search) && pt.PaymentMethod != PaymentMethods.Cheque))
+					.Where(pt => (pt.ReferenceNo == request.ReferenceNo && pt.PaymentMethod == request.PaymentMethod))
 					.ToListAsync(cancellationToken);
 
 				// Perform the grouping and projection in memory
