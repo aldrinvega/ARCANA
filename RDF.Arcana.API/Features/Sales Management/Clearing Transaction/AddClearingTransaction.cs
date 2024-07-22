@@ -43,6 +43,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
         public class AddClearingTransactionCommand : IRequest<Result>
         {
             public List<int> PaymentRecordId { get; set; }
+            public string ATag { get; set; }
             public int AddedBy { get; set; }
             public int? ModifiedBy { get; set; }
 
@@ -70,6 +71,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
                     var clearingTransaction = new ClearedPayments
 					{
 						PaymentTransactionId = paymentTransaction.Id,
+                        ATag = request.ATag,
 						AddedBy = request.AddedBy,
 						ModifiedBy = request.ModifiedBy,
                         Status = Status.ForFiling
