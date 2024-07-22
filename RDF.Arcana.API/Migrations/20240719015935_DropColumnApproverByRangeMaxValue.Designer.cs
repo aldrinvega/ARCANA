@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RDF.Arcana.API.Data;
 
@@ -11,9 +12,11 @@ using RDF.Arcana.API.Data;
 namespace RDF.Arcana.API.Migrations
 {
     [DbContext(typeof(ArcanaDbContext))]
-    partial class ArcanaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240719015935_DropColumnApproverByRangeMaxValue")]
+    partial class DropColumnApproverByRangeMaxValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,9 +172,7 @@ namespace RDF.Arcana.API.Migrations
                         .HasDatabaseName("ix_advance_payments_modified_by");
 
                     b.HasIndex("PaymentTransactionId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_advance_payments_payment_transaction_id")
-                        .HasFilter("[payment_transaction_id] IS NOT NULL");
+                        .HasDatabaseName("ix_advance_payments_payment_transaction_id");
 
                     b.ToTable("advance_payments", (string)null);
                 });
@@ -2903,8 +2904,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_advance_payments_users_modified_by_user_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.PaymentTransaction", "PaymentTransaction")
-                        .WithOne("AdvancePayment")
-                        .HasForeignKey("RDF.Arcana.API.Domain.AdvancePayment", "PaymentTransactionId")
+                        .WithMany()
+                        .HasForeignKey("PaymentTransactionId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .HasConstraintName("fk_advance_payments_payment_transactions_payment_transaction_id");
 
                     b.Navigation("AddedByUser");
@@ -3946,11 +3948,6 @@ namespace RDF.Arcana.API.Migrations
                     b.Navigation("ClearedPayments");
 
                     b.Navigation("PaymentTransactions");
-                });
-
-            modelBuilder.Entity("RDF.Arcana.API.Domain.PaymentTransaction", b =>
-                {
-                    b.Navigation("AdvancePayment");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.PriceMode", b =>
