@@ -82,11 +82,15 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 								.ThenInclude(ti => ti.Item)
 					.Include(pr => pr.PaymentTransactions)
 						.ThenInclude(pt => pt.AddedByUser)
-					.Include(pr => pr.PaymentTransactions)
-						.ThenInclude(pt => pt.AdvancePayment)
 					.SelectMany(pr => pr.PaymentTransactions)
 					.Where(pt => (pt.ReferenceNo == request.ReferenceNo && pt.PaymentMethod == request.PaymentMethod))
 					.ToListAsync(cancellationToken);
+
+
+				var advancePaymentAmount = await _context.AdvancePayments
+					.FirstOrDefaultAsync(x => x.ChequeNo == request.ReferenceNo, cancellationToken: cancellationToken);
+						
+				
 
 				// Perform the grouping and projection in memory
 				var paymentOverview = paymentTransactions
@@ -112,7 +116,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 								Quantity = ti.Quantity,
 								Amount = ti.Amount
 							}).ToList()
-						}).ToList()
+						}).ToList(),
+						AdvancePaymentAmount = advancePaymentAmount?.AdvancePaymentAmount
 					}).ToList();
 
 				return Result.Success(paymentOverview);
