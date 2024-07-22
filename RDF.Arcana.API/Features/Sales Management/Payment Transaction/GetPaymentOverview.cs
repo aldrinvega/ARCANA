@@ -39,12 +39,14 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public decimal TotalAmount { get; set; }
 			public string ModeOfPayment { get; set; }
 			public ICollection<Transaction> Transactions { get; set; }
+			public decimal? AdvancePaymentAmount { get; set; }
 
-            public class Transaction
+			public class Transaction
 			{
                 public int PaymentTransactionId { get; set; }
                 public string InvoiceType { get; set; }
                 public string InvoiceNo { get; set; }
+                public decimal TotalAmount { get; set; }
                 public decimal PaymentAmount { get; set; }
                 public ICollection<TransactionItem> TransactionItems { get; set; }
 
@@ -57,6 +59,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                 public int Quantity { get; set; }
                 public decimal Amount { get; set; }
             }
+			
         }
 
 		public class Handler : IRequestHandler<GetPaymentOverviewRequest, Result>
@@ -79,6 +82,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 								.ThenInclude(ti => ti.Item)
 					.Include(pr => pr.PaymentTransactions)
 						.ThenInclude(pt => pt.AddedByUser)
+					.Include(pr => pr.PaymentTransactions)
+						.ThenInclude(pt => pt.AdvancePayment)
 					.SelectMany(pr => pr.PaymentTransactions)
 					.Where(pt => (pt.ReferenceNo == request.ReferenceNo && pt.PaymentMethod == request.PaymentMethod))
 					.ToListAsync(cancellationToken);
