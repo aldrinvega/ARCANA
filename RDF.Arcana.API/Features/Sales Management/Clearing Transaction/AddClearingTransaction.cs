@@ -42,7 +42,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
         public class AddClearingTransactionCommand : IRequest<Result>
         {
-            public List<int> PaymentRecordId { get; set; }
+            public List<int> PaymentTransactionId { get; set; }
             public string ATag { get; set; }
             public int AddedBy { get; set; }
             public int? ModifiedBy { get; set; }
@@ -61,7 +61,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
             public async Task<Result> Handle(AddClearingTransactionCommand request, CancellationToken cancellationToken)
             {
                 var paymentTransactions = await _context.PaymentTransactions
-					.Where(pt => request.PaymentRecordId.Contains(pt.Id))
+					.Where(pt => request.PaymentTransactionId.Contains(pt.Id))
 					.ToListAsync(cancellationToken);
 
                 foreach (var paymentTransaction in paymentTransactions)
@@ -69,7 +69,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 					paymentTransaction.Status = Status.ForFiling;
 
                     var clearingTransaction = new ClearedPayments
-					{
+					{   
 						PaymentTransactionId = paymentTransaction.Id,
                         ATag = request.ATag,
 						AddedBy = request.AddedBy,
