@@ -43,6 +43,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
             public class Transaction
 			{
                 public int PaymentTransactionId { get; set; }
+                public string InvoiceType { get; set; }
                 public string InvoiceNo { get; set; }
                 public decimal PaymentAmount { get; set; }
                 public ICollection<TransactionItem> TransactionItems { get; set; }
@@ -96,6 +97,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
 						Transactions = g.Select(pt => new GetPaymentOverviewResponse.Transaction
 						{
 							PaymentTransactionId = pt.Id,
+							InvoiceType = pt.Transaction.InvoiceType,
 							InvoiceNo = pt.Transaction.InvoiceNo,
 							PaymentAmount = pt.TotalAmountReceived,
 							TransactionItems = pt.Transaction.TransactionItems.Select(ti => new GetPaymentOverviewResponse.TransactionItem
