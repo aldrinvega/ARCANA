@@ -44,7 +44,7 @@ public static class Status
 
     public const string Sales = "Sales";
     public const string Charge = "Charge";
-    public const string ForFiling = "For filing";
+    public const string ForFiling = "For Filing";
 }
 
 //public static class Terms

@@ -11,6 +11,7 @@ using RDF.Arcana.API.Common.Extension;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
+using RDF.Arcana.API.Domain;
 
 [Route("api/clearing-transaction")]
 [ApiController]
@@ -57,6 +58,7 @@ public class GetAllForClearingTransaction : ControllerBase
     public class GetAllForClearingTransactionQuery : UserParams, IRequest<PagedList<GetAllForClearingTransactionResult>>
     {
         public string Search { get; set; }
+        public string Status { get; set; }
     }
 
     public class GetAllForClearingTransactionResult
@@ -92,7 +94,7 @@ public class GetAllForClearingTransaction : ControllerBase
                 .Include(x => x.PaymentTransactions)
                 .ThenInclude(x => x.Transaction)
                 .Include(x => x.PaymentTransactions)
-                .Where(x => x.Status == null);
+                .Where(x => x.PaymentTransactions.Any(x => x.Status.Contains(request.Status)));
 
             if (!string.IsNullOrEmpty(request.Search))
             {
