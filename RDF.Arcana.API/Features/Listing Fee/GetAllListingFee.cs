@@ -278,7 +278,7 @@ public class GetAllListingFee : ControllerBase
                     {
                         Module = a.Request.Module,
                         Approver = a.Approver.Fullname,
-                        Level = a.Approver.Approver.FirstOrDefault().Level,
+                        //Level = a.Approver.Approver.FirstOrDefault().Level,
                         Reason = a.Request.Approvals.FirstOrDefault().Reason,
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
