@@ -61,7 +61,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
             public async Task<Result> Handle(AddClearingTransactionCommand request, CancellationToken cancellationToken)
             {
                 var paymentTransactions = await _context.PaymentTransactions
-					.Where(pt => request.PaymentTransactionId.Contains(pt.Id))
+					.Where(pt => request.PaymentTransactionIds.Contains(pt.Id))
 					.ToListAsync(cancellationToken);
 
                 foreach (var paymentTransaction in paymentTransactions)
