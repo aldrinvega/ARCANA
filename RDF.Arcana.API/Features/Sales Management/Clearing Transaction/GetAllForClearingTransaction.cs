@@ -68,6 +68,7 @@ public class GetAllForClearingTransaction : ControllerBase
         public string PaymentChannel { get; set; }
         public string ReferenceNo { get; set; }
         public decimal TotalPaymentAmount { get; set; }
+        public int ClearingId { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Invoice> Invoices { get; set; }
 		public class Invoice
@@ -94,6 +95,7 @@ public class GetAllForClearingTransaction : ControllerBase
                 .Include(x => x.PaymentTransactions)
                 .ThenInclude(x => x.Transaction)
                 .Include(x => x.PaymentTransactions)
+                .ThenInclude(x => x.ClearedPayment)
                 .Where(x => x.PaymentTransactions.Any(x => x.Status.Contains(request.Status)));
 
             if (!string.IsNullOrEmpty(request.Search))
