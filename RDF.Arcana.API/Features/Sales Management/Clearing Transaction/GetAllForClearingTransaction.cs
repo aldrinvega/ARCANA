@@ -71,7 +71,8 @@ public class GetAllForClearingTransaction : ControllerBase
         public int ClearingId { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Invoice> Invoices { get; set; }
-		public class Invoice
+        public string ATag { get; set; }
+        public class Invoice
 		{
 			public string InvoiceNo { get; set; }
 		}
@@ -106,7 +107,7 @@ public class GetAllForClearingTransaction : ControllerBase
 
             var groupedResults = paymentTransactions
                 .SelectMany(x => x.PaymentTransactions)
-                .GroupBy(pt => new { pt.PaymentMethod, pt.ReferenceNo, pt.BankName })
+                .GroupBy(pt => new { pt.PaymentMethod, pt.ReferenceNo, pt.BankName, pt.ClearedPayment.ATag})
                 .Select(g => new GetAllForClearingTransactionResult
                 {
                     PaymentMethod = g.Key.PaymentMethod,
@@ -114,6 +115,7 @@ public class GetAllForClearingTransaction : ControllerBase
                     ReferenceNo = g.Key.ReferenceNo,
                     TotalPaymentAmount = g.Sum(pt => pt.PaymentAmount),
                     Date = g.Max(pt => pt.ChequeDate),
+                    ATag = g.Key.ATag,
                     Invoices = g.Select(x => new GetAllForClearingTransactionResult.Invoice{
 						InvoiceNo = x.Transaction.InvoiceNo
                     }).Distinct().ToList()
