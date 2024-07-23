@@ -48,7 +48,7 @@ builder.Services.AddControllers(
 
 //builder.Services.AddDatabaseConfiguration(builder.Configuration, builder.Environment.EnvironmentName);
 
-var connectionString = builder.Configuration.GetConnectionString("Edlocal");
+var connectionString = builder.Configuration.GetConnectionString("Testing");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
