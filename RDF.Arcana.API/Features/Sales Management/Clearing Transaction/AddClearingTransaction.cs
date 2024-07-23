@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 {
-    [Route("api/clearing-transation")]
+    [Route("api/clearing-transaction")]
     public class AddClearingTransaction : ControllerBase
     {
         private readonly IMediator _mediator;
