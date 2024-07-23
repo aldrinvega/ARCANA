@@ -34,7 +34,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
         public class VoidClearingTransactionCommand : IRequest<Result>
         {
-            public int Id { get; set; }
+            public List<int> PaymentTransactionIds { get; set; }
             public string Reason { get; set; }
         }
 
@@ -49,45 +49,35 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
             public async Task<Result> Handle(VoidClearingTransactionCommand request, CancellationToken cancellationToken)
             {
-                var paymentRecord = await _context.PaymentRecords
-                    .Include(pt  => pt.PaymentTransactions)
-                    .ThenInclude(t => t.Transaction)
-                    .FirstOrDefaultAsync(tr =>
-                        tr.Id == request.Id,
-                        cancellationToken);
+				foreach (var paymentTransactionId in request.PaymentTransactionIds)
+				{
+					var paymentTransaction = await _context.ClearedPayments
+						.Include(pt => pt.PaymentTransaction)
+						.ThenInclude(x => x.PaymentRecord)
+						.Include(x => x.PaymentTransaction)
+						.ThenInclude(x => x.Transaction)
+						.FirstOrDefaultAsync(pt => pt.PaymentTransactionId == paymentTransactionId, cancellationToken: cancellationToken);
 
-                //paymentRecord.PaymentTransactions.
+					if (paymentTransaction is not null)
+					{
+						paymentTransaction.Status = Status.ForClearing;
+						paymentTransaction.PaymentTransaction.Status = Status.ForClearing;
+						paymentTransaction.PaymentTransaction.Transaction.Status = Status.ForClearing;
+						paymentTransaction.PaymentTransaction.PaymentRecord.Status = Status.ForClearing;
+						await _context.SaveChangesAsync(cancellationToken);
+					}
+				}
 
-
-
-                if (paymentRecord is null)
-                {
-                    return ClearingErrors.NotFound();
-                }
-               
-                var existingPayment = await _context.PaymentRecords
-                    .FirstOrDefaultAsync(p => p.Id == request.Id);
-
-
-                if(existingPayment.Status == Status.Cleared)
-                {
-                    return ClearingErrors.Cleared();
-                }
-
-                if (existingPayment.Status == Status.Voided)
-                {
-                    return ClearingErrors.Voided();
-                }
-
-                existingPayment.Status = Status.Voided;
-                existingPayment.IsActive = false;
-                existingPayment.Reason = request.Reason;
-
-                
-
-                await _context.SaveChangesAsync(cancellationToken);
-                return Result.Success();
-            }
+				// Check if any payment transactions were found
+				if (request.PaymentTransactionIds.Any())
+				{
+					return Result.Success();
+				}
+				else
+				{
+					return ClearingErrors.NotFound();
+				}
+			}
         }
     }
 }

@@ -24,7 +24,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
 		public class ReturnForFilingPaymentTransactionCommand : IRequest<Result>
 		{
-            public List<int> PaymentTransactionId { get; set; }
+            public List<int> PaymentTransactionIds { get; set; }
         }
 
 		public class Handler : IRequestHandler<ReturnForFilingPaymentTransactionCommand, Result>
@@ -38,7 +38,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
 			public async Task<Result> Handle(ReturnForFilingPaymentTransactionCommand request, CancellationToken cancellationToken)
 			{
-				foreach (var paymentTransactionId in request.PaymentTransactionId)
+				foreach (var paymentTransactionId in request.PaymentTransactionIds)
 				{
 					var paymentTransaction = await _context.ClearedPayments
 						.Include(pt => pt.PaymentTransaction)
@@ -58,7 +58,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 				}
 
 				// Check if any payment transactions were found
-				if (request.PaymentTransactionId.Any())
+				if (request.PaymentTransactionIds.Any())
 				{
 					return Result.Success();
 				}
