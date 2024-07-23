@@ -267,7 +267,7 @@ public class AddNewPaymentTransaction : BaseApiController
                         // Get the total remaining balance for the transactions
                         var totalRemainingBalance = listingFees.Sum(ap => ap.Total);
 
-                        foreach (var currentTransactionId in request.TransactionId)
+                        foreach (var currentTransactionId in orderedTransactions)
                         {
                             var currentTransaction = await _context.Transactions
                                 .Include(t => t.TransactionSales)
@@ -317,6 +317,30 @@ public class AddNewPaymentTransaction : BaseApiController
 
                                 currentTransaction.TransactionSales.RemainingBalance -= paymentAmountForTransaction;
                                 currentTransaction.Status = currentTransaction.TransactionSales.RemainingBalance <= 0 ? Status.Paid : Status.Pending;
+
+
+                                //foreach (var currentListingFee in listingFees)
+                                //{
+                                //    if (amountToPayListingFee <= 0)
+                                //    {
+                                //        break;
+                                //    }
+
+                                //    if (currentListingFee.Total <= amountToPayListingFee)
+                                //    {
+                                //        amountToPayListingFee -= currentListingFee.Total;
+                                //        currentListingFee.Total = 0;
+                                //    }
+                                //    else
+                                //    {
+                                //        currentListingFee.Total -= amountToPayListingFee;
+                                //        amountToPayListingFee = 0;
+                                //    }
+                                //}
+
+
+                                //await _context.SaveChangesAsync(cancellationToken);
+
 
                                 if (currentTransaction.TransactionSales.RemainingBalance <= 0)
                                 {
@@ -382,41 +406,41 @@ public class AddNewPaymentTransaction : BaseApiController
                     //    await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
                     //    await _context.SaveChangesAsync(cancellationToken);
 
-                    //    foreach (var listingFee in listingFees)
+                    //foreach (var listingFee in listingFees)
+                    //{
+
+                    //    decimal remainingToPay;
+                    //    if (listingFee.Total <= amountToPayListingFee)
                     //    {
+                    //        var balance = amountToPay - listingFee.Total;
+                    //        remainingToPay = amountToPayListingFee - listingFee.Total;
+                    //        transaction.TransactionSales.RemainingBalance = balance < 0 ? 0 : balance;
+                    //        amountToPay -= listingFee.Total;
+                    //        amountToPayListingFee = remainingToPay;
+                    //        payment.PaymentAmount = amountToPayListingFee;
 
-                    //        decimal remainingToPay;
-                    //        if (listingFee.Total <= amountToPayListingFee)
-                    //        {
-                    //            var balance = amountToPay - listingFee.Total;
-                    //            remainingToPay = amountToPayListingFee - listingFee.Total;
-                    //            transaction.TransactionSales.RemainingBalance = balance < 0 ? 0 : balance;
-                    //            amountToPay -= listingFee.Total;
-                    //            amountToPayListingFee = remainingToPay;
-                    //            payment.PaymentAmount = amountToPayListingFee;
-
-                    //            listingFee.Total = 0;
-                    //            await _context.SaveChangesAsync(cancellationToken);
-                    //        }
-                    //        else
-                    //        {
-                    //            remainingToPay = amountToPayListingFee;
-                    //            listingFee.Total -= amountToPayListingFee;
-                    //            transaction.TransactionSales.RemainingBalance -= payment.PaymentAmount < 0 ? 0 : payment.PaymentAmount;
-                    //            amountToPay -= remainingToPay;
-                    //            transaction.Status = amountToPay > 0 ? Status.Pending : Status.Paid;
-                    //            payment.PaymentAmount = excessAmount;
-                    //            remainingToPay = 0;
-                    //            await _context.SaveChangesAsync(cancellationToken);
-                    //            break;
-                    //        }
-
-                    //        // Break the loop if the payment amount can cover the total amount due
-                    //        if (remainingToPay == 0)
-                    //        {
-                    //            continue;
-                    //        }
+                    //        listingFee.Total = 0;
+                    //        await _context.SaveChangesAsync(cancellationToken);
                     //    }
+                    //    else
+                    //    {
+                    //        remainingToPay = amountToPayListingFee;
+                    //        listingFee.Total -= amountToPayListingFee;
+                    //        transaction.TransactionSales.RemainingBalance -= payment.PaymentAmount < 0 ? 0 : payment.PaymentAmount;
+                    //        amountToPay -= remainingToPay;
+                    //        transaction.Status = amountToPay > 0 ? Status.Pending : Status.Paid;
+                    //        payment.PaymentAmount = excessAmount;
+                    //        remainingToPay = 0;
+                    //        await _context.SaveChangesAsync(cancellationToken);
+                    //        break;
+                    //    }
+
+                    //    // Break the loop if the payment amount can cover the total amount due
+                    //    if (remainingToPay == 0)
+                    //    {
+                    //        continue;
+                    //    }
+                    //}
 
                     //}
 
