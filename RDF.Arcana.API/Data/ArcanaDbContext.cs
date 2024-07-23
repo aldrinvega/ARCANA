@@ -489,6 +489,8 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
 
+		
 
-    }
+
+	}
 }

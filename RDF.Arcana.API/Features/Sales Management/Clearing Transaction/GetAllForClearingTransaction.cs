@@ -69,6 +69,7 @@ public class GetAllForClearingTransaction : ControllerBase
         public string ReferenceNo { get; set; }
         public decimal TotalPaymentAmount { get; set; }
         public int ClearingId { get; set; }
+        public string Reason { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Invoice> Invoices { get; set; }
         public string ATag { get; set; }
