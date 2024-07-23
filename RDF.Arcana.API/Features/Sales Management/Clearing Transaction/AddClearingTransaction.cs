@@ -73,6 +73,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 					{
 						exisitngClearedPayment.Status = Status.ForFiling;
                         exisitngClearedPayment.ATag = request.ATag;
+                        paymentTransaction.Status = Status.ForFiling;
 					}
                     else
                     {
