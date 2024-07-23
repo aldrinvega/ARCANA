@@ -92,7 +92,8 @@ public class AddNewPaymentTransaction : BaseApiController
             var paymentRecord = new PaymentRecords
             {
                 AddedBy = request.AddedBy,
-                ModifiedBy = request.AddedBy
+                ModifiedBy = request.AddedBy,
+                Status = Status.ForClearing
             };
 
             await _context.PaymentRecords.AddAsync(paymentRecord, cancellationToken);
@@ -172,7 +173,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            Status = Status.Received,
+                            Status = Status.ForClearing,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
                         };
@@ -257,7 +258,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            Status = Status.Received,
+                            Status = Status.ForClearing,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ChequeNo,
                         };
@@ -331,7 +332,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            Status = Status.Received,
+                            Status = Status.ForClearing,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = payment.ReferenceNo,
                         };
@@ -372,7 +373,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            Status = Status.Received,
+                            Status = Status.ForClearing,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = transaction.InvoiceNo
 
@@ -429,7 +430,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             ChequeAmount = payment.ChequeAmount,
                             AccountName = payment.AccountName,
                             AccountNo = payment.AccountNo,
-                            Status = Status.Received,
+                            Status = Status.ForClearing,
                             OnlinePlatform = payment.OnlinePlatform,
                             ReferenceNo = transaction.InvoiceNo
 
