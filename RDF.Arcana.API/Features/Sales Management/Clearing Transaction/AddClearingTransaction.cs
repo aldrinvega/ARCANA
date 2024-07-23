@@ -66,17 +66,28 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
                 foreach (var paymentTransaction in paymentTransactions)
 				{
-					paymentTransaction.Status = Status.ForFiling;
+                    var exisitngClearedPayment = await _context.ClearedPayments
+                        .FirstOrDefaultAsync(pt => pt.PaymentTransactionId == paymentTransaction.Id, cancellationToken);
 
-                    var clearingTransaction = new ClearedPayments
-					{   
-						PaymentTransactionId = paymentTransaction.Id,
-                        ATag = request.ATag,
-						AddedBy = request.AddedBy,
-						ModifiedBy = request.ModifiedBy,
-                        Status = Status.ForFiling
-					};
-					_context.ClearedPayments.Add(clearingTransaction);
+                    if(exisitngClearedPayment is not null)
+					{
+						exisitngClearedPayment.Status = Status.ForFiling;
+                        exisitngClearedPayment.ATag = request.ATag;
+					}
+                    else
+                    {
+						paymentTransaction.Status = Status.ForFiling;
+
+						var clearingTransaction = new ClearedPayments
+						{
+							PaymentTransactionId = paymentTransaction.Id,
+							ATag = request.ATag,
+							AddedBy = request.AddedBy,
+							ModifiedBy = request.ModifiedBy,
+							Status = Status.ForFiling
+						};
+						_context.ClearedPayments.Add(clearingTransaction);
+					}
                     await _context.SaveChangesAsync(cancellationToken);
 				}
 
