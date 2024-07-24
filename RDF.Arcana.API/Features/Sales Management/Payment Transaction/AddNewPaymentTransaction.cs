@@ -127,7 +127,6 @@ public class AddNewPaymentTransaction : BaseApiController
 
                 // Order payments by payment amount (descending)
                 var orderedPayments = request.Payments
-                    .OrderByDescending(p => p.PaymentAmount)
                     .ToList();
 
                 foreach (var payment in orderedPayments) 
