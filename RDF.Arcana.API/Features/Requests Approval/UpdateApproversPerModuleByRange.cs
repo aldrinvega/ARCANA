@@ -74,24 +74,24 @@ namespace RDF.Arcana.API.Features.Requests_Approval
                     var existingApprover = existingApprovers.FirstOrDefault(a => a.UserId == sentApprover.UserId);
 
                     if (existingApprover != null) // If the approver exists in the database, update the approver
-                    {                        
+                    {
 
                         if (sentApprover.Level < 1 || sentApprover.Level > 5)
                         {
                             return ApprovalErrors.InvalidLevel();
-                        }                        
+                        }
 
                         existingApprover.MinValue = sentApprover.MinValue;
                         existingApprover.Level = sentApprover.Level;
                     }
                     else // If the approver does not exist in the database, add the approver
                     {
-                        
+
 
                         if (sentApprover.Level < 1 || sentApprover.Level > 5)
                         {
                             return ApprovalErrors.InvalidLevel();
-                        }                       
+                        }
 
                         _context.ApproverByRange.Add(new ApproverByRange
                         {
