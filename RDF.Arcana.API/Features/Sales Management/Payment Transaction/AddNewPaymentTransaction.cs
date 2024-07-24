@@ -152,6 +152,13 @@ public class AddNewPaymentTransaction : BaseApiController
 
 
 
+
+
+
+
+
+
+
                     if (payment.PaymentMethod == PaymentMethods.Cheque)
                     {
                         var transactionSales = await _context.TransactionSales
@@ -352,87 +359,7 @@ public class AddNewPaymentTransaction : BaseApiController
 
 
 
-
-
-                    //if (payment.PaymentMethod == PaymentMethods.ListingFee)
-                    //{
-                    //    var listingFees = await _context.ListingFees
-                    //        .Where(x =>
-                    //            x.ClientId == transaction.ClientId &&
-                    //            x.IsActive &&
-                    //            x.Status == Status.Approved &&
-                    //            x.Total > 0)
-
-                    //        .ToListAsync(cancellationToken);
-
-                    //    var amountToPayListingFee = request.Payments.Where(pm => pm.PaymentMethod == PaymentMethods.ListingFee)
-                    //        .Sum(pa => pa.PaymentAmount);
-
-
-
-                    //    var remainingBalance = listingFees.Sum(ap => ap.Total);
-
-                    //    var paymentTransaction = new PaymentTransaction
-                    //    {
-                    //        TransactionId = transaction.Id,
-                    //        AddedBy = request.AddedBy,
-                    //        PaymentRecordId = paymentRecord.Id,
-                    //        PaymentMethod = payment.PaymentMethod,
-                    //        PaymentAmount = payment.PaymentAmount,
-                    //        TotalAmountReceived = payment.TotalAmountReceived,
-                    //        Payee = payment.Payee,
-                    //        ChequeDate = payment.ChequeDate,
-                    //        BankName = payment.BankName,
-                    //        ChequeNo = payment.ChequeNo,
-                    //        DateReceived = DateTime.Now,
-                    //        ChequeAmount = payment.ChequeAmount,
-                    //        AccountName = payment.AccountName,
-                    //        AccountNo = payment.AccountNo,
-                    //        Status = Status.Received,
-                    //        OnlinePlatform = payment.OnlinePlatform,
-                    //        ReferenceNo = payment.ReferenceNo,
-                    //    };
-
-                    //    await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
-                    //    await _context.SaveChangesAsync(cancellationToken);
-
-                    //foreach (var listingFee in listingFees)
-                    //{
-
-                    //    decimal remainingToPay;
-                    //    if (listingFee.Total <= amountToPayListingFee)
-                    //    {
-                    //        var balance = amountToPay - listingFee.Total;
-                    //        remainingToPay = amountToPayListingFee - listingFee.Total;
-                    //        transaction.TransactionSales.RemainingBalance = balance < 0 ? 0 : balance;
-                    //        amountToPay -= listingFee.Total;
-                    //        amountToPayListingFee = remainingToPay;
-                    //        payment.PaymentAmount = amountToPayListingFee;
-
-                    //        listingFee.Total = 0;
-                    //        await _context.SaveChangesAsync(cancellationToken);
-                    //    }
-                    //    else
-                    //    {
-                    //        remainingToPay = amountToPayListingFee;
-                    //        listingFee.Total -= amountToPayListingFee;
-                    //        transaction.TransactionSales.RemainingBalance -= payment.PaymentAmount < 0 ? 0 : payment.PaymentAmount;
-                    //        amountToPay -= remainingToPay;
-                    //        transaction.Status = amountToPay > 0 ? Status.Pending : Status.Paid;
-                    //        payment.PaymentAmount = excessAmount;
-                    //        remainingToPay = 0;
-                    //        await _context.SaveChangesAsync(cancellationToken);
-                    //        break;
-                    //    }
-
-                    //    // Break the loop if the payment amount can cover the total amount due
-                    //    if (remainingToPay == 0)
-                    //    {
-                    //        continue;
-                    //    }
-                    //}
-
-                    //}
+                    
 
 
                     if (payment.PaymentMethod == PaymentMethods.AdvancePayment)
@@ -539,6 +466,10 @@ public class AddNewPaymentTransaction : BaseApiController
 
 
 
+
+
+
+
                     if (payment.PaymentMethod == PaymentMethods.Cash ||
                         payment.PaymentMethod == PaymentMethods.Online ||
                         payment.PaymentMethod == PaymentMethods.Withholding)
@@ -598,98 +529,12 @@ public class AddNewPaymentTransaction : BaseApiController
                     }
 
 
-                    //if (payment.PaymentMethod == PaymentMethods.Cash || 
-                    //    payment.PaymentMethod == PaymentMethods.Online ||
-                    //    payment.PaymentMethod == PaymentMethods.Withholding)
-                    //{
-                    //    decimal remainingToPay = amountToPay - paymentAmount;
-
-                    //    var paymentTransaction = new PaymentTransaction
-                    //    {
-                    //        TransactionId = transaction.Id,
-                    //        AddedBy = request.AddedBy,
-                    //        PaymentRecordId = paymentRecord.Id,
-                    //        PaymentMethod = payment.PaymentMethod,
-                    //        PaymentAmount = paymentAmount <= amountToPay ? paymentAmount : amountToPay,
-                    //        TotalAmountReceived = payment.TotalAmountReceived,
-                    //        Payee = payment.Payee,
-                    //        ChequeDate = payment.ChequeDate,
-                    //        BankName = payment.BankName,
-                    //        ChequeNo = payment.ChequeNo,
-                    //        DateReceived = DateTime.Now,
-                    //        ChequeAmount = payment.ChequeAmount,
-                    //        AccountName = payment.AccountName,
-                    //        AccountNo = payment.AccountNo,
-                    //        Status = Status.Received,
-                    //        OnlinePlatform = payment.OnlinePlatform,
-                    //        ReferenceNo = transaction.InvoiceNo
-                    //    };
-
-                    //    await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
-
-                    //    // Update the remaining balance of the transaction
-                    //    transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
-                    //    transaction.Status = remainingToPay <= 0 ? Status.Paid : Status.Pending;
-
-                    //    // If there is excess amount, carry it forward to the next transaction
-                    //    payment.PaymentAmount = remainingToPay < 0 ? Math.Abs(remainingToPay) : 0;
-
-                    //    await _context.SaveChangesAsync(cancellationToken);
-
-                    //    if (payment.PaymentAmount <= 0)
-                    //    {
-                    //        break;
-                    //    }
-                    //}
+                    
 
 
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //OLD CODE FOR REVERT!!!!!!
-                    //if (payment.PaymentMethod == PaymentMethods.Cash ||
-                    //    payment.PaymentMethod == PaymentMethods.Online ||
-                    //    payment.PaymentMethod == PaymentMethods.Withholding)
-
-                    //{                       
-
-                    //    // Calculate the remaining amount to pay for this transaction
-                    //    decimal remainingToPay = amountToPay - paymentAmount;                        
 
 
-                    //    // Update the remaining balance of the transaction
-                    //    transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
 
-                    //    var paymentTransaction = new PaymentTransaction
-                    //    {
-                    //        TransactionId = transaction.Id,
-                    //        AddedBy = request.AddedBy,
-                    //        PaymentRecordId = paymentRecord.Id,
-                    //        PaymentMethod = payment.PaymentMethod,
-                    //        PaymentAmount = payment.PaymentAmount,
-                    //        TotalAmountReceived = payment.TotalAmountReceived,
-                    //        Payee = payment.Payee,
-                    //        ChequeDate = payment.ChequeDate,
-                    //        BankName = payment.BankName,
-                    //        ChequeNo = payment.ChequeNo,
-                    //        DateReceived = DateTime.Now,
-                    //        ChequeAmount = payment.ChequeAmount,
-                    //        AccountName = payment.AccountName,
-                    //        AccountNo = payment.AccountNo,
-                    //        Status = Status.Received,
-                    //        OnlinePlatform = payment.OnlinePlatform,
-                    //        ReferenceNo = transaction.InvoiceNo
-
-                    //    };
-
-                    //    await _context.PaymentTransactions.AddAsync(paymentTransaction, cancellationToken);
-                    //    await _context.SaveChangesAsync(cancellationToken);
-
-                    //    transaction.Status = remainingToPay <= 0 ? Status.Paid : Status.Pending;
-                    //    payment.PaymentAmount = remainingToPay <= 0 ? excessAmount : 0;
-                    //    transaction.TransactionSales.RemainingBalance = remainingToPay < 0 ? 0 : remainingToPay;
-                    //    await _context.SaveChangesAsync(cancellationToken);
-
-                    //}
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
                 }
