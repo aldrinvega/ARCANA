@@ -452,11 +452,12 @@ public class ArcanaDbContext : DbContext
            .HasOne(x => x.ModifiedByUser)
            .WithMany()
            .HasForeignKey(x => x.ModifiedBy);
-        modelBuilder.Entity<AdvancePayment>()
-           .HasOne(x => x.PaymentTransaction)
-           .WithMany()
-           .HasForeignKey(x => x.PaymentTransactionId)
-           .OnDelete(DeleteBehavior.NoAction);
+
+        //modelBuilder.Entity<AdvancePayment>()
+        //   .HasOne(x => x.PaymentTransaction)
+        //   .WithMany()
+        //   .HasForeignKey(x => x.PaymentTransactionId)
+        //   .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<PaymentTransaction>()
             .HasOne(x => x.AddedByUser)
@@ -488,6 +489,8 @@ public class ArcanaDbContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AddedBy);
 
+		
 
-    }
+
+	}
 }
