@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
 using Azure.Storage.Blobs;
@@ -7,7 +6,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Abstractions.Messaging;
@@ -151,7 +149,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    //app.ApplyMigrations();
+    app.ApplyMigrations();
 }
 
 

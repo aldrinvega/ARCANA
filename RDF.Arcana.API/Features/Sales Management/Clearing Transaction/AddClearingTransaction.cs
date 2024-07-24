@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
@@ -10,7 +8,7 @@ using System.Security.Claims;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 {
-    [Route("api/clearing-transation")]
+    [Route("api/clearing-transaction")]
     public class AddClearingTransaction : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -44,7 +42,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
         public class AddClearingTransactionCommand : IRequest<Result>
         {
-            public int PaymentRecordId { get; set; }
+            public List<int> PaymentTransactionIds { get; set; }
+            public string ATag { get; set; }
             public int AddedBy { get; set; }
             public int? ModifiedBy { get; set; }
 
@@ -61,47 +60,40 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
             public async Task<Result> Handle(AddClearingTransactionCommand request, CancellationToken cancellationToken)
             {
-                var existingTransaction = await _context.PaymentRecords
-                    .FirstOrDefaultAsync(tr =>
-                        tr.Id == request.PaymentRecordId,
-                        cancellationToken);
+                var paymentTransactions = await _context.PaymentTransactions
+					.Where(pt => request.PaymentTransactionIds.Contains(pt.Id))
+					.ToListAsync(cancellationToken);
 
-                if (existingTransaction is null)
-                {
-                    return ClearingErrors.NotFound();
-                }
+                foreach (var paymentTransaction in paymentTransactions)
+				{
+                    var exisitngClearedPayment = await _context.ClearedPayments
+                        .FirstOrDefaultAsync(pt => pt.PaymentTransactionId == paymentTransaction.Id, cancellationToken);
 
-                var existingCleared = await _context.ClearedPayments
-                    .FirstOrDefaultAsync(c =>
-                        c.PaymentRecordId == request.PaymentRecordId,
-                        cancellationToken);
-                if (existingCleared is not null)
-                {
-                    return ClearingErrors.AlreadyExist();
-                }
+                    if(exisitngClearedPayment is not null)
+					{
+						exisitngClearedPayment.Status = Status.ForFiling;
+                        exisitngClearedPayment.ATag = request.ATag;
+                        paymentTransaction.Status = Status.ForFiling;
+					}
+                    else
+                    {
+						paymentTransaction.Status = Status.ForFiling;
 
-
-                var clearedPayment = new ClearedPayments
-                {
-                    PaymentRecordId = request.PaymentRecordId,
-                    AddedBy = request.AddedBy,  
-                    ModifiedBy = request.ModifiedBy,
-                    Status = Status.Cleared
-                };
-
-
-                var statusCleared = await _context.PaymentRecords
-                        .FirstOrDefaultAsync(tr =>
-                            tr.Id == request.PaymentRecordId,
-                            cancellationToken);
-
-                statusCleared.Status = Status.Cleared;
-
-
-                await _context.ClearedPayments.AddAsync(clearedPayment, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
+						var clearingTransaction = new ClearedPayments
+						{
+							PaymentTransactionId = paymentTransaction.Id,
+							ATag = request.ATag,
+							AddedBy = request.AddedBy,
+							ModifiedBy = request.ModifiedBy,
+							Status = Status.ForFiling
+						};
+						_context.ClearedPayments.Add(clearingTransaction);
+					}
+                    await _context.SaveChangesAsync(cancellationToken);
+				}
 
                 return Result.Success();
+
             }
         }
     }
