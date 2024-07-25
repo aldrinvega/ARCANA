@@ -125,8 +125,9 @@ public class AddNewPaymentTransaction : BaseApiController
                 }
 
 
-                // Order payments by payment amount (descending)
+                // Order payments by payment amount by their order 
                 var orderedPayments = request.Payments
+                    .Where(p => p.PaymentAmount > 0)
                     .ToList();
 
                 foreach (var payment in orderedPayments) 
@@ -185,7 +186,7 @@ public class AddNewPaymentTransaction : BaseApiController
                             PaymentRecordId = paymentRecord.Id,
                             PaymentMethod = payment.PaymentMethod,
                             PaymentAmount = payment.PaymentAmount,
-                            TotalAmountReceived = payment.PaymentAmount,
+                            TotalAmountReceived = payment.TotalAmountReceived,
                             Payee = payment.Payee,
                             ChequeDate = payment.ChequeDate,
                             BankName = payment.BankName,
@@ -517,6 +518,7 @@ public class AddNewPaymentTransaction : BaseApiController
 
                             // Adjust the payment amount for any remaining balance
                             currentPayment.PaymentAmount -= paymentToApply;
+                            excessAmount = currentPayment.PaymentAmount;
 
                             await _context.SaveChangesAsync(cancellationToken);
 
@@ -525,6 +527,9 @@ public class AddNewPaymentTransaction : BaseApiController
                                 break;
                             }
                         }
+
+                        payment.PaymentAmount = excessAmount;
+                        await _context.SaveChangesAsync(cancellationToken);
                     }
 
 
