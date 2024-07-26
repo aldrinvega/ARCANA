@@ -7,21 +7,21 @@ using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Sales_Management.Sales_transactions;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
-[Route("api/sales-transaction"), ApiController]
-public class UploadChargeInvoice : ControllerBase
+[Route("api/transactions-invoice"), ApiController]
+public class UploadTransactionInvoice : ControllerBase
 {
     private readonly IMediator _mediator;
-    public UploadChargeInvoice(IMediator mediator)
+    public UploadTransactionInvoice(IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    [HttpPatch("invoice/{id:int}")]
+    [HttpPatch("{id:int}")]
     public async Task<ActionResult> Upload([FromForm] UploadChargeInvoiceCommand command, [FromRoute] int id)
     {
         try
         {
-            command.SalesTransactionId = id;
+            command.TransactionId = id;
 
             var result = await _mediator.Send(command);
 
@@ -35,8 +35,8 @@ public class UploadChargeInvoice : ControllerBase
 
     public class UploadChargeInvoiceCommand : IRequest<Result>
     {
-        public int SalesTransactionId { get; set; }
-        public IFormFile ChargeInvoice { get; set; }
+        public int TransactionId { get; set; }
+        public IFormFile InvoiceAttach { get; set; }
     }
 
     public class Handler : IRequestHandler<UploadChargeInvoiceCommand, Result>
@@ -59,8 +59,8 @@ public class UploadChargeInvoice : ControllerBase
         {
             var existingSalesTransaction =
                 await _context.Transactions
-                    .FirstOrDefaultAsync(st =>
-                        st.Id == request.SalesTransactionId,
+                    .FirstOrDefaultAsync(t =>
+                        t.Id == request.TransactionId,
                         cancellationToken);
 
             if (existingSalesTransaction is null)
@@ -68,14 +68,14 @@ public class UploadChargeInvoice : ControllerBase
                 return SalesTransactionErrors.NotFound();
             }
 
-            if (request.ChargeInvoice.Length > 0)
+            if (request.InvoiceAttach.Length > 0)
             {
-                await using var stream = request.ChargeInvoice.OpenReadStream();
+                await using var stream = request.InvoiceAttach.OpenReadStream();
 
                 var attachmentsParams = new ImageUploadParams
                 {
-                    File = new FileDescription(request.ChargeInvoice.FileName, stream),
-                    PublicId = request.ChargeInvoice.FileName
+                    File = new FileDescription(request.InvoiceAttach.FileName, stream),
+                    PublicId = request.InvoiceAttach.FileName
                 };
 
                 var attachmentsUploadResult = await _cloudinary.UploadAsync(attachmentsParams);
