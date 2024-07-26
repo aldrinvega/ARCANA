@@ -173,7 +173,7 @@ public class GetAdvancePayments : ControllerBase
                 AccountNo = ap.AccountNo,
                 AddedBy = ap.AddedByUser.Fullname,
                 CreatedAt = ap.CreatedAt
-            });
+            }).OrderByDescending(d => d.CreatedAt);
 
             return PagedList<GetAdvancePaymentResult>.CreateAsync(result, request.PageNumber, request.PageSize);
         }
