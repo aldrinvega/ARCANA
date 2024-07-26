@@ -128,7 +128,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     transactions = transactions.Where(t =>
                         t.Client.Fullname.Contains(request.Search) ||
                         t.Client.BusinessName.Contains(request.Search) ||
-                        t.TransactionSales.ChargeInvoiceNo.Contains(request.Search));
+                        t.TransactionSales.Remarks.Contains(request.Search));
                 }
 
                 if (request.Status != null)
@@ -208,7 +208,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     RemainingBalance = result.TransactionSales.RemainingBalance,
                     TotalAmountDue = result.TransactionSales.TotalAmountDue,
                     CIAttachment = result.InvoiceAttach
-                });
+                }).OrderByDescending(d => d.CreatedAt);
 
                 return PagedList<GetAllTransactionQueryResult>.CreateAsync(result, request.PageNumber,
                     request.PageSize);

@@ -63,6 +63,7 @@ public class AddTransaction : ControllerBase
         public string InvoiceNo { get; set; }
         public string InvoiceType { get; set; }
         public DateTime InvoiceAttachDateReceived { get; set; }
+        public string Remarks { get; set; }
         public class Item
         {
             public int ItemId { get; set; }
@@ -297,7 +298,8 @@ public class AddTransaction : ControllerBase
                 VatAmount = vatAmount,
                 AddVat = addVat,
                 RemainingBalance = totalAmountDue,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                Remarks = request.Remarks
             };
 
             await _context.TransactionSales.AddAsync(newTransactionSales, cancellationToken);
