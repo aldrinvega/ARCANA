@@ -141,7 +141,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     paymentTransactions = paymentTransactions.Where(tx =>
                                    tx.PaymentTransactions.Any(tr => tr.Transaction.Client.BusinessName.Contains(request.Search)) ||
                                    tx.PaymentTransactions.Any(tr => tr.Transaction.Client.Fullname.Contains(request.Search)) ||
-                                   tx.PaymentTransactions.Any(tr => tr.Transaction.TransactionSales.ChargeInvoiceNo.Contains(request.Search)));
+                                   tx.PaymentTransactions.Any(tr => tr.Transaction.TransactionSales.Remarks.Contains(request.Search)));
                 }
 
                 if (request.TransactionId.HasValue)
@@ -182,7 +182,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction
                     {
                         Id = pt.Id,
                         TransactionId = pt.TransactionId,
-                        ChargeInvoiceNo = pt.Transaction.TransactionSales.ChargeInvoiceNo,
+                        ChargeInvoiceNo = pt.Transaction.TransactionSales.Remarks,
                         TotalAmountDue = pt.Transaction.TransactionSales.TotalAmountDue,
                         RemainingBalance = pt.Transaction.TransactionSales.RemainingBalance,
                         ClientId = pt.Transaction.ClientId,
