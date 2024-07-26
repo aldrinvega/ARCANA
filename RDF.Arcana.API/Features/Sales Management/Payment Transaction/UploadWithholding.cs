@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Features.Sales_Management.Sales_transactions;
-using static RDF.Arcana.API.Features.Sales_Management.Sales_transactions.UploadSalesInvoice;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction;
 [Route("api/payment-transaction"), ApiController]
