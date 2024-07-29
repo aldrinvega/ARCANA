@@ -40,8 +40,6 @@ public class FileClearingTransaction : ControllerBase
                 foreach (var paymentTransactionId in request.PaymentTransactionIds)
                 {
                     var paymentTransaction = await _context.ClearedPayments
-                        .Include(pt => pt.PaymentTransaction)
-                        .ThenInclude(x => x.PaymentRecord)
                         .Include(x => x.PaymentTransaction)
                         .ThenInclude(x => x.Transaction)
                         .FirstOrDefaultAsync(pt => pt.PaymentTransactionId == paymentTransactionId, cancellationToken: cancellationToken);
@@ -51,7 +49,6 @@ public class FileClearingTransaction : ControllerBase
                         paymentTransaction.Status = Status.Cleared;
                         paymentTransaction.PaymentTransaction.Status = Status.Cleared;
                         paymentTransaction.PaymentTransaction.Transaction.Status = Status.Cleared;
-                        paymentTransaction.PaymentTransaction.PaymentRecord.Status = Status.Cleared;
                         await _context.SaveChangesAsync(cancellationToken);
                     }
                 }

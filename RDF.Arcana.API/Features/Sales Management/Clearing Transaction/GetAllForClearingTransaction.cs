@@ -89,42 +89,41 @@ public class GetAllForClearingTransaction : ControllerBase
         {
             _context = context;
         }
+		public async Task<PagedList<GetAllForClearingTransactionResult>> Handle(GetAllForClearingTransactionQuery request,
+			CancellationToken cancellationToken)
+		{
+			var paymentTransactions = _context.PaymentTransactions
+				.Include(pt => pt.Transaction)
+				.Include(pt => pt.ClearedPayment)
+				.Where(pt => pt.Status == request.Status);
 
-        public async Task<PagedList<GetAllForClearingTransactionResult>> Handle(GetAllForClearingTransactionQuery request,
-            CancellationToken cancellationToken)
-        {
-            var paymentTransactions = _context.PaymentRecords
-                .Include(x => x.PaymentTransactions)
-                .ThenInclude(x => x.Transaction)
-                .Include(x => x.PaymentTransactions)
-                .ThenInclude(x => x.ClearedPayment)
-                .Where(x => x.PaymentTransactions.Any(x => x.Status.Contains(request.Status)));
+			if (!string.IsNullOrEmpty(request.Search))
+			{
+				paymentTransactions = paymentTransactions
+					.Where(pt => pt.ReferenceNo.Contains(request.Search));
+			}
 
-            if (!string.IsNullOrEmpty(request.Search))
-            {
-                paymentTransactions = paymentTransactions
-                    .Where(pt => pt.PaymentTransactions.Any(pt => pt.ReferenceNo.Contains(request.Search)));
-            }
-
-            var groupedResults = paymentTransactions
-                .SelectMany(x => x.PaymentTransactions)
-                .GroupBy(pt => new { pt.PaymentMethod, pt.ReferenceNo, pt.BankName, pt.ClearedPayment.ATag, pt.ClearedPayment.Reason})
-                .Select(g => new GetAllForClearingTransactionResult
-                {
-                    PaymentMethod = g.Key.PaymentMethod,
-                    PaymentChannel = g.Key.BankName,
-                    ReferenceNo = g.Key.ReferenceNo,
-                    TotalPaymentAmount = g.Sum(pt => pt.PaymentAmount),
-                    Date = g.Max(pt => pt.ChequeDate),
-                    ATag = g.Key.ATag,
-                    Reason = g.Key.Reason,
-                    Invoices = g.Select(x => new GetAllForClearingTransactionResult.Invoice{
+			var groupedResults = paymentTransactions
+				.GroupBy(pt => new { pt.Id, pt.PaymentMethod, pt.ReferenceNo, pt.BankName, pt.ClearedPayment.ATag, pt.ClearedPayment.Reason })
+				.Select(g => new GetAllForClearingTransactionResult
+				{
+					Id = g.Key.Id,
+					PaymentMethod = g.Key.PaymentMethod,
+					PaymentChannel = g.Key.BankName,
+					ReferenceNo = g.Key.ReferenceNo,
+					TotalPaymentAmount = g.Sum(pt => pt.PaymentAmount),
+					Date = g.Max(pt => pt.ChequeDate),
+					ATag = g.Key.ATag,
+					Reason = g.Key.Reason,
+					Invoices = g.Select(x => new GetAllForClearingTransactionResult.Invoice
+					{
 						InvoiceNo = x.Transaction.InvoiceNo
-                    }).Distinct().ToList()
-                });
+					}).Distinct().ToList()
+				});
 
-            return await PagedList<GetAllForClearingTransactionResult>.CreateAsync(groupedResults, request.PageNumber,
-                request.PageSize);
-        }
-    }
+			return await PagedList<GetAllForClearingTransactionResult>.CreateAsync(groupedResults, request.PageNumber,
+				request.PageSize);
+		}
+
+	}
 }
