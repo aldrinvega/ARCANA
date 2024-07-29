@@ -4,6 +4,7 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
 using RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
+using static RDF.Arcana.API.Features.Sales_Management.Payment_Transaction.AddNewPaymentTransaction.AddNewPaymentTransactionCommand;
 
 namespace RDF.Arcana.API.Features.Sales_Management.Payment_Transaction;
 
@@ -475,14 +476,24 @@ public class AddNewPaymentTransaction : BaseApiController
                         payment.PaymentMethod == PaymentMethods.Withholding)
                     {
                         decimal remainingToPay = amountToPay;
+                        Payment currentPayment = null; 
 
-                        foreach (var currentPayment in orderedPayments)
+                        foreach (var paymentItem in orderedPayments)
                         {
-                            if (currentPayment.PaymentAmount <= 0 || remainingToPay <= 0)
+
+                            if (paymentItem.PaymentMethod != PaymentMethods.Cash &&
+                                paymentItem.PaymentMethod != PaymentMethods.Online &&
+                                paymentItem.PaymentMethod != PaymentMethods.Withholding)
                             {
                                 continue;
                             }
 
+                            if (paymentItem.PaymentAmount <= 0 || remainingToPay <= 0)
+                            {
+                                continue;
+                            }
+
+                            currentPayment = paymentItem; 
                             decimal currentPaymentAmount = currentPayment.PaymentAmount;
 
                             // Calculate the remaining amount to pay for this transaction
@@ -528,12 +539,14 @@ public class AddNewPaymentTransaction : BaseApiController
                             }
                         }
 
-                        payment.PaymentAmount = excessAmount;
+                        if (currentPayment != null && currentPayment.PaymentMethod == payment.PaymentMethod)
+                        {
+                            payment.PaymentAmount = excessAmount;
+                        }
+
                         await _context.SaveChangesAsync(cancellationToken);
                     }
 
-
-                    
 
 
 
