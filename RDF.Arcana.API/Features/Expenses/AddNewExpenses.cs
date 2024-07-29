@@ -105,15 +105,24 @@ public class AddNewExpenses : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
 
-            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(total)).ToList();
-            if (!applicableApprovers.Any())
+            // Assign the approvers based on MinValue
+            var applicableApprovers = approvers.Where(a => a.MinValue == null || a.MinValue <= total).ToList();
+
+            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).FirstOrDefault();
+            if (maxLevelApprover == null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
+                maxLevelApprover = approvers.Last();
             }
 
-            // Identify the levels of approvers
-            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).First();
-            var approverLevels = approvers.Where(a => a.Level <= maxLevelApprover.Level).OrderBy(a => a.Level).ToList();
+            var nextLevel = maxLevelApprover.Level + 1;
+
+            if (!applicableApprovers.Any())
+            {
+                applicableApprovers = approvers.Where(l => l.Level == 1).ToList();
+                nextLevel = approvers.Where(l => l.Level == 1).FirstOrDefault()?.Level ?? 1;
+            }
+
+            var approverLevels = approvers.Where(a => a.Level <= nextLevel).OrderBy(a => a.Level).ToList();
 
             // Create a new Request
             var newRequest = new Request(
