@@ -104,10 +104,14 @@ public class GetAllForClearingTransaction : ControllerBase
 			}
 
 			var groupedResults = paymentTransactions
-				.GroupBy(pt => new { pt.Id, pt.PaymentMethod, pt.ReferenceNo, pt.BankName, pt.ClearedPayment.ATag, pt.ClearedPayment.Reason })
+				.GroupBy(pt => new { 
+                    pt.PaymentMethod, 
+                    pt.ReferenceNo, 
+                    pt.BankName, 
+                    pt.ClearedPayment.ATag, 
+                    pt.Reason })
 				.Select(g => new GetAllForClearingTransactionResult
 				{
-					Id = g.Key.Id,
 					PaymentMethod = g.Key.PaymentMethod,
 					PaymentChannel = g.Key.BankName,
 					ReferenceNo = g.Key.ReferenceNo,
