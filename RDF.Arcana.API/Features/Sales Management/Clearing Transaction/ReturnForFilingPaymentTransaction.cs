@@ -50,6 +50,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 					{
 						paymentTransaction.Status = Status.ForClearing;
 						paymentTransaction.Reason = request.Reason;
+						paymentTransaction.PaymentTransaction.Reason = request.Reason;
 						paymentTransaction.PaymentTransaction.Status = Status.ForClearing;
 						paymentTransaction.PaymentTransaction.Transaction.Status = Status.ForClearing;
 						await _context.SaveChangesAsync(cancellationToken);
