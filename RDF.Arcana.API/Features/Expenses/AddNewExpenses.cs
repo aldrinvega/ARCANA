@@ -4,7 +4,9 @@ using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Helpers;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
+using RDF.Arcana.API.Features.Client.Errors;
 using RDF.Arcana.API.Features.Requests_Approval;
+using RDF.Arcana.API.Features.Users;
 
 namespace RDF.Arcana.API.Features.Expenses;
 
@@ -66,7 +68,7 @@ public class AddNewExpenses : ControllerBase
         public string Approver { get; set; }
         public string ApproverMobileNumber { get; set; }
     }
-    
+
     public class Handler : IRequestHandler<AddNewExpensesCommand, Result>
     {
         private readonly ArcanaDbContext _context;
@@ -80,36 +82,70 @@ public class AddNewExpenses : ControllerBase
         {
             var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.AddedBy, cancellationToken);
 
-            var approvers = await _context.Approvers
+            if (requestor == null)
+            {
+                return UserErrors.NotFound();
+            }
+
+            if (!await _context.Clients.AnyAsync(client => client.Id == request.ClientId, cancellationToken))
+            {
+                return ClientErrors.NotFound();
+            }
+
+            decimal total = request.Expenses.Sum(a => a.Amount);
+
+            var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.OtherExpensesApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
-                
+
             if (!approvers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
             }
-            
+
+            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(total)).ToList();
+            if (!applicableApprovers.Any())
+            {
+                return ApprovalErrors.NoApproversFound(Modules.OtherExpensesApproval);
+            }
+
+            // Identify the levels of approvers
+            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).First();
+            var approverLevels = approvers.Where(a => a.Level <= maxLevelApprover.Level).OrderBy(a => a.Level).ToList();
+
+            // Create a new Request
             var newRequest = new Request(
                 Modules.OtherExpensesApproval,
                 request.AddedBy,
-                approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
+                approverLevels.First().UserId, // Initially set to the first approver
+                approverLevels.Count > 1 ? approverLevels[1].UserId : (int?)null, // Next approver if exists
                 Status.UnderReview
             );
 
             await _context.Requests.AddAsync(newRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
-                     {
-                         ApproverId = approver.UserId,
-                         RequestId = newRequest.Id,
-                         Level = approver.Level,
-                     }))
+            // Create RequestApprovers for all levels
+            for (int i = 0; i < approverLevels.Count; i++)
             {
-                _context.RequestApprovers.Add(newRequestApprover);
+                var requestApprover = new RequestApprovers
+                {
+                    ApproverId = approverLevels[i].UserId,
+                    RequestId = newRequest.Id,
+                    Level = approverLevels[i].Level
+                };
+
+                _context.RequestApprovers.Add(requestApprover);
+
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = approverLevels[i].UserId,
+                    Status = Status.PendingExpenses
+                };
+
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
             }
 
             var newExpenses = new Domain.Expenses
@@ -118,27 +154,26 @@ public class AddNewExpenses : ControllerBase
                 RequestId = newRequest.Id,
                 Status = Status.UnderReview,
                 AddedBy = request.AddedBy,
-                
+                Total = total
             };
-                
+
             await _context.Expenses.AddAsync(newExpenses, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            
 
-            foreach (var expenses in request.Expenses)
+            foreach (var expense in request.Expenses)
             {
                 var newExpensesRequest = new ExpensesRequest
                 {
                     ExpensesId = newExpenses.Id,
-                    OtherExpenseId = expenses.OtherExpenseId,
-                    Remarks = expenses.Remarks,
-                    Amount = expenses.Amount,
-                    IsOneTime = expenses.IsOneTime
+                    OtherExpenseId = expense.OtherExpenseId,
+                    Remarks = expense.Remarks,
+                    Amount = expense.Amount,
+                    IsOneTime = expense.IsOneTime
                 };
 
                 await _context.ExpensesRequests.AddAsync(newExpensesRequest, cancellationToken);
             }
-            
+
             var notification = new Domain.Notification
             {
                 UserId = request.AddedBy,
@@ -146,14 +181,6 @@ public class AddNewExpenses : ControllerBase
             };
 
             await _context.Notifications.AddAsync(notification, cancellationToken);
-                
-            var notificationForApprover = new Domain.Notification
-            {
-                UserId = approvers.First().UserId,
-                Status = Status.PendingExpenses
-            };
-            
-            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -161,10 +188,12 @@ public class AddNewExpenses : ControllerBase
             {
                 Requestor = requestor.Fullname,
                 RequestorMobileNumber = requestor.MobileNumber,
-                Approver = approvers.First().User.Fullname,
-                ApproverMobileNumber = approvers.First().User.MobileNumber,
+                Approver = approverLevels.First().User.Fullname,
+                ApproverMobileNumber = approverLevels.First().User.MobileNumber
             };
-            return Result.Success(result);
+
+            return Result.Success();
         }
     }
+
 }

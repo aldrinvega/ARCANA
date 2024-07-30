@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Esf;
 using RDF.Arcana.API.Common;
@@ -14,10 +15,12 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions;
 public class AddTransaction : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IValidator<AddtransactionCommand> _validator;
 
-    public AddTransaction(IMediator mediator)
+    public AddTransaction(IMediator mediator, IValidator<AddtransactionCommand> validator)
     {
         _mediator = mediator;
+        _validator = validator;
     }
 
     [HttpPost]
@@ -25,6 +28,12 @@ public class AddTransaction : ControllerBase
     {
         try
         {
+            var validator = await _validator.ValidateAsync(command);
+
+            if (!validator.IsValid)
+            {
+                return BadRequest(validator);
+            }
 
             if (User.Identity is ClaimsIdentity identity
                && IdentityHelper.TryGetUserId(identity, out var userId))
@@ -50,7 +59,11 @@ public class AddTransaction : ControllerBase
         public ICollection<Item> Items { get; set; }
         public decimal SpecialDiscount { get; set; }
         public decimal Discount { get; set; }
-        public string ChargeInvoiceNo { get; set; }
+        
+        public string InvoiceNo { get; set; }
+        public string InvoiceType { get; set; }
+        public DateTime InvoiceAttachDateReceived { get; set; }
+        public string Remarks { get; set; }
         public class Item
         {
             public int ItemId { get; set; }
@@ -66,9 +79,10 @@ public class AddTransaction : ControllerBase
         public string BusinessName { get; set; }
         public BusinessAddressResult BusinessAddress { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string ChargeInvoiceNo { get; set; }
         public int AddedBy { get; set; }
         public ICollection<Item> Items { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceType { get; set; }
 
         public decimal Subtotal { get; set; }
         public decimal DiscountAmount { get; set; }
@@ -125,17 +139,33 @@ public class AddTransaction : ControllerBase
                 cl.Id == request.ClientId,
                 cancellationToken);
 
-            var existingChargeInvoice = await _context.TransactionSales.AnyAsync(ts => ts.ChargeInvoiceNo == request.ChargeInvoiceNo);
-
-            if (existingChargeInvoice)
-            {
-                return TransactionErrors.ChargeInvoiceAlreadyExist(request.ChargeInvoiceNo);
-            }
-
+           
             if (existingClient == null)
             {
                 return ClientErrors.NotFound();
             }
+            if ((request.InvoiceType == Status.Charge || request.InvoiceType == Status.Sales) &&
+                (string.IsNullOrEmpty(request.InvoiceNo) || request.InvoiceNo == "string") ||
+                (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales))
+            {
+                if (request.InvoiceType != Status.Charge && request.InvoiceType != Status.Sales)
+                {
+                    return TransactionErrors.SICI();
+                }
+                else
+                {
+                    return TransactionErrors.InvalidInvoiceNumber();
+                }
+            }
+            var existingInvoice = await _context.Transactions
+                                  .AnyAsync(ts => ts.InvoiceNo == request.InvoiceNo && ts.InvoiceType == request.InvoiceType);
+
+            if (existingInvoice)
+            {
+                return TransactionErrors.InvoiceAlreadyExist(request.InvoiceNo);
+            }
+
+
             var items = request.Items.Select(items => new
             {
                 items.ItemId,
@@ -164,7 +194,10 @@ public class AddTransaction : ControllerBase
             {
                 ClientId = request.ClientId,
                 Status = Status.Pending,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                InvoiceNo = request.InvoiceNo,
+                InvoiceType = request.InvoiceType,
+                InvoiceAttachDateReceived = DateTime.Now
             };
 
             //Add and save to database
@@ -217,7 +250,6 @@ public class AddTransaction : ControllerBase
             }
 
             //Calculate sales
-
             
 
             // Get the total discount percentage
@@ -264,10 +296,10 @@ public class AddTransaction : ControllerBase
                 SpecialDiscount = request.SpecialDiscount / 100, 
                 SpecialDiscountAmount = specialDiscountAmount, 
                 VatAmount = vatAmount,
-                ChargeInvoiceNo = request.ChargeInvoiceNo,
                 AddVat = addVat,
                 RemainingBalance = totalAmountDue,
-                AddedBy = request.AddedBy
+                AddedBy = request.AddedBy,
+                Remarks = request.Remarks
             };
 
             await _context.TransactionSales.AddAsync(newTransactionSales, cancellationToken);
@@ -288,7 +320,6 @@ public class AddTransaction : ControllerBase
                     HouseNumber = transaction.Client.BusinessAddress.HouseNumber,
                 },
                 CreatedAt = transaction.CreatedAt,
-                ChargeInvoiceNo = newTransactionSales.ChargeInvoiceNo,
                 Items = itemsCollection,
                 Subtotal = newTransactionSales.SubTotal,
                 VatableSales = newTransactionSales.VatableSales,

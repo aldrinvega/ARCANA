@@ -17,12 +17,21 @@ public class PaymentTransaction : BaseEntity
     public decimal ChequeAmount { get; set; }
     public string AccountName { get; set; }
     public string AccountNo { get; set; }
+    public int? OnlinePlatform { get; set; }
+    public string ReferenceNo { get; set; }
     public int AddedBy { get; set; }
     public bool IsActive { get; set; } = true;
     public string Status { get; set; }
     public string Reason { get; set; }
-    
+    public string WithholdingAttachment { get; set; }
+    public string WithholdingNo { get; set; }
+
+
+
     public virtual Transactions Transaction { get; set; }
     public virtual User AddedByUser { get; set; }
     public virtual PaymentRecords PaymentRecord { get; set; }
+    public virtual AdvancePayment AdvancePayment { get; set; }
+    public virtual ClearedPayments ClearedPayment { get; set; }
+
 }

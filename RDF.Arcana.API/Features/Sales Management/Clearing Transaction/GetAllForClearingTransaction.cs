@@ -1,110 +1,133 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
-using RDF.Arcana.API.Common;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using RDF.Arcana.API.Common.Extension;
+using RDF.Arcana.API.Common;
 using RDF.Arcana.API.Common.Pagination;
 using RDF.Arcana.API.Data;
 using RDF.Arcana.API.Domain;
-using static RDF.Arcana.API.Features.Sales_Management.Sales_Transactions.GetAllTransactions;
 
-namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
+[Route("api/clearing-transaction")]
+[ApiController]
+public class GetAllForClearingTransaction : ControllerBase
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/clearing-transaction"), ApiController]
-    public class GetAllForClearingTransaction : ControllerBase
+    private readonly IMediator _mediator;
+
+    public GetAllForClearingTransaction(IMediator mediator)
     {
-        private readonly IMediator _mediator;
+        _mediator = mediator;
+    }
 
-        public GetAllForClearingTransaction(IMediator mediator)
+    [HttpGet("pages")]
+    public async Task<IActionResult> Get([FromQuery] GetAllForClearingTransactionQuery query)
+    {
+        try
         {
-            _mediator = mediator;
-        }
+            var transactions = await _mediator.Send(query);
 
-        [HttpGet("pages")]
-        public async Task<IActionResult> Get([FromQuery] GetAllForClearingTransactionQuery query)
-        {
-            try
+            Response.AddPaginationHeader(transactions.CurrentPage, transactions.PageSize, transactions.TotalCount,
+                transactions.TotalPages, transactions.HasNextPage, transactions.HasPreviousPage);
+
+            var result = new
             {
-                var transactions = await _mediator.Send(query);
+                transactions,
+                transactions.CurrentPage,
+                transactions.PageSize,
+                transactions.TotalCount,
+                transactions.TotalPages,
+                transactions.HasNextPage,
+                transactions.HasPreviousPage
+            };
 
-                Response.AddPaginationHeader(
-                    transactions.CurrentPage,
-                    transactions.PageSize,
-                    transactions.TotalCount,
-                    transactions.TotalPages,
-                    transactions.HasNextPage,
-                    transactions.HasPreviousPage);
-                var result = new
-                {
-                    transactions,
-                    transactions.CurrentPage,
-                    transactions.PageSize,
-                    transactions.TotalCount,
-                    transactions.TotalPages,
-                    transactions.HasNextPage,
-                    transactions.HasPreviousPage
-                };
+            var successResult = Result.Success(result);
 
-                var successResult = Result.Success(result);
-
-                return Ok(successResult);
-
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            return Ok(successResult);
         }
-
-        public class GetAllForClearingTransactionQuery : UserParams, IRequest<PagedList<GetAllForClearingTransactionResult>>
+        catch (Exception e)
         {
-            public string Search { get; set; }
-        }
-
-        public class GetAllForClearingTransactionResult
-        {
-            public int TxNumber { get; set; }
-            public string BusinessName { get; set; }
-            public DateTime Date { get; set; }
-            public decimal Amount { get; set; }
-            public string PaymentType { get; set; }
-        }
-
-        public class Handler : IRequestHandler<GetAllForClearingTransactionQuery, PagedList<GetAllForClearingTransactionResult>>
-        {
-            private readonly ArcanaDbContext _context;
-
-            public Handler(ArcanaDbContext context)
-            {
-                _context = context;
-            }
-
-            public Task<PagedList<GetAllForClearingTransactionResult>> Handle(GetAllForClearingTransactionQuery request,
-                CancellationToken cancellationToken)
-            {
-                IQueryable<Transactions> transactions = _context.Transactions
-                    .Include(x => x.TransactionSales)
-                    .Include(c => c.Client)
-                    .Where(p => p.Status == Status.Paid);             
-
-                if (!string.IsNullOrEmpty(request.Search))
-                {
-                    transactions = transactions.Where(tr => tr.Client.BusinessName.Contains(request.Search));
-                }
-
-                var result = transactions.Select(result => new GetAllForClearingTransactionResult
-                {
-                    TxNumber = result.TransactionSales.TransactionId,
-                    BusinessName = result.Client.BusinessName,
-                    Date = result.CreatedAt,
-                    Amount = result.TransactionSales.TotalAmountDue,
-                    PaymentType = result.Status
-                });
-
-                return PagedList<GetAllForClearingTransactionResult>.CreateAsync(result, request.PageNumber,
-                    request.PageSize);
-
-
-            }
+            return BadRequest(e.Message);
         }
     }
+
+    public class GetAllForClearingTransactionQuery : UserParams, IRequest<PagedList<GetAllForClearingTransactionResult>>
+    {
+        public string Search { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class GetAllForClearingTransactionResult
+    {
+        public int Id { get; set; }
+        public string PaymentMethod { get; set; }
+        public string PaymentChannel { get; set; }
+        public string ReferenceNo { get; set; }
+        public decimal TotalPaymentAmount { get; set; }
+        public int ClearingId { get; set; }
+        public string Reason { get; set; }
+        public DateTime Date { get; set; }
+        public ICollection<Invoice> Invoices { get; set; }
+        public string ATag { get; set; }
+        public class Invoice
+		{
+			public string InvoiceNo { get; set; }
+		}
+
+	}
+
+
+	public class Handler : IRequestHandler<GetAllForClearingTransactionQuery, PagedList<GetAllForClearingTransactionResult>>
+    {
+        private readonly ArcanaDbContext _context;
+
+        public Handler(ArcanaDbContext context)
+        {
+            _context = context;
+        }
+		public async Task<PagedList<GetAllForClearingTransactionResult>> Handle(GetAllForClearingTransactionQuery request,
+			CancellationToken cancellationToken)
+		{
+			var paymentTransactions = _context.PaymentTransactions
+				.Include(pt => pt.Transaction)
+				.Include(pt => pt.ClearedPayment)
+				.Where(pt => pt.Status == request.Status);
+
+			if (!string.IsNullOrEmpty(request.Search))
+			{
+				paymentTransactions = paymentTransactions
+					.Where(pt => pt.ReferenceNo.Contains(request.Search));
+			}
+
+			var groupedResults = paymentTransactions
+				.GroupBy(pt => new { 
+                    pt.PaymentMethod, 
+                    pt.ReferenceNo, 
+                    pt.BankName, 
+                    pt.ClearedPayment.ATag, 
+                    pt.Reason })
+				.Select(g => new GetAllForClearingTransactionResult
+				{
+					PaymentMethod = g.Key.PaymentMethod,
+					PaymentChannel = g.Key.BankName,
+					ReferenceNo = g.Key.ReferenceNo,
+					TotalPaymentAmount = g.Sum(pt => pt.PaymentAmount),
+					Date = g.Max(pt => pt.ChequeDate),
+					ATag = g.Key.ATag,
+					Reason = g.Key.Reason,
+					Invoices = g.Select(x => new GetAllForClearingTransactionResult.Invoice
+					{
+						InvoiceNo = x.Transaction.InvoiceNo
+					}).Distinct().ToList()
+				});
+
+			return await PagedList<GetAllForClearingTransactionResult>.CreateAsync(groupedResults, request.PageNumber,
+				request.PageSize);
+		}
+
+	}
 }

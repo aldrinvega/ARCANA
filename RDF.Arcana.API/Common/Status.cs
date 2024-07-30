@@ -41,6 +41,12 @@ public static class Status
     public const string Overdue = "Over due";
 
     public const string Refunded = "Refunded";
+
+    public const string Sales = "Sales";
+    public const string Charge = "Charge";
+    public const string ForFiling = "For Filing";
+    public const string ForClearing = "For Clearing";
+    public const string Filed = "Filed";
 }
 
 //public static class Terms

@@ -92,14 +92,13 @@ public class AddNewListingFee : ControllerBase
 
         public async Task<Result> Handle(AddNewListingFeeCommand request, CancellationToken cancellationToken)
         {
-
             var requestor = await _context.Users.FirstOrDefaultAsync(usr => usr.Id == request.RequestedBy, cancellationToken);
 
             if (!await _context.Clients.AnyAsync(client => client.Id == request.ClientId, cancellationToken))
             {
                 return ClientErrors.NotFound();
             }
-            
+
             foreach (var item in request.ListingItems)
             {
                 var existingRequest = await _context.ListingFeeItems
@@ -115,36 +114,69 @@ public class AddNewListingFee : ControllerBase
                 }
             }
 
-            var approvers = await _context.Approvers
+            decimal total = Math.Ceiling(request.Total);
+
+            var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
                 .Where(x => x.ModuleName == Modules.ListingFeeApproval)
                 .OrderBy(x => x.Level)
                 .ToListAsync(cancellationToken);
-                
+
             if (!approvers.Any())
             {
                 return ApprovalErrors.NoApproversFound(Modules.ListingFeeApproval);
+            }            
+
+            // Assign the approvers based on MinValue
+            var applicableApprovers = approvers.Where(a => a.MinValue == null || a.MinValue <= total).ToList();
+            
+            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).FirstOrDefault();
+            if (maxLevelApprover == null)
+            {
+                maxLevelApprover = approvers.Last();
             }
 
+            var nextLevel = maxLevelApprover.Level + 1;
+
+            if (!applicableApprovers.Any())
+            {
+                applicableApprovers = approvers.Where(l => l.Level == 1).ToList();
+                nextLevel = approvers.Where(l => l.Level == 1).FirstOrDefault()?.Level ?? 1;
+            }
+
+            var approverLevels = approvers.Where(a => a.Level <= nextLevel).OrderBy(a => a.Level).ToList();
+
+            // Create a new Request
             var newRequest = new Request(
                 Modules.ListingFeeApproval,
                 request.RequestedBy,
-                approvers.First().UserId,
-                approvers.FirstOrDefault(x => x.Level == 2)?.UserId,
+                approverLevels.First().UserId, // Initially set to the first approver
+                approverLevels.Count > 1 ? approverLevels[1].UserId : (int?)null, // Next approver if exists
                 Status.UnderReview
             );
-                
+
             await _context.Requests.AddAsync(newRequest, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            foreach (var newRequestApprover in approvers.Select(approver => new RequestApprovers
-                     {
-                         ApproverId = approver.UserId,
-                         RequestId = newRequest.Id,
-                         Level = approver.Level,
-                     }))
+            // Create RequestApprovers for all levels
+            for (int i = 0; i < approverLevels.Count; i++)
             {
-                _context.RequestApprovers.Add(newRequestApprover);
+                var requestApprover = new RequestApprovers
+                {
+                    ApproverId = approverLevels[i].UserId,
+                    RequestId = newRequest.Id,
+                    Level = approverLevels[i].Level
+                };
+
+                _context.RequestApprovers.Add(requestApprover);
+
+                var notificationForApprover = new Domain.Notification
+                {
+                    UserId = approverLevels[i].UserId,
+                    Status = Status.PendingListingFee
+                };
+
+                await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
             }
 
             var listingFee = new ListingFee
@@ -160,16 +192,16 @@ public class AddNewListingFee : ControllerBase
             await _context.SaveChangesAsync(cancellationToken);
 
             foreach (var listingFeeItem in request.ListingItems.Select(items => new ListingFeeItems
-                     {
-                         ListingFeeId = listingFee.Id,
-                         ItemId = items.ItemId,
-                         Sku = items.Sku,
-                         UnitCost = items.UnitCost
-                     }))
+            {
+                ListingFeeId = listingFee.Id,
+                ItemId = items.ItemId,
+                Sku = items.Sku,
+                UnitCost = items.UnitCost
+            }))
             {
                 await _context.ListingFeeItems.AddAsync(listingFeeItem, cancellationToken);
             }
-            
+
             var notification = new Domain.Notification
             {
                 UserId = request.RequestedBy,
@@ -177,14 +209,6 @@ public class AddNewListingFee : ControllerBase
             };
 
             await _context.Notifications.AddAsync(notification, cancellationToken);
-                
-            var notificationForApprover = new Domain.Notification
-            {
-                UserId = approvers.First().UserId,
-                Status = Status.PendingListingFee 
-            };
-
-            await _context.Notifications.AddAsync(notificationForApprover, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -192,11 +216,12 @@ public class AddNewListingFee : ControllerBase
             {
                 Requestor = requestor.Fullname,
                 RequestorMobileNumber = requestor.MobileNumber,
-                Approver = approvers.First().User.Fullname,
-                ApproverMobileNumber = approvers.First().User.MobileNumber
+                Approver = approverLevels.First().User.Fullname,
+                ApproverMobileNumber = approverLevels.First().User.MobileNumber
             };
 
-            return Result.Success(result);
+            return Result.Success();
         }
     }
+
 }

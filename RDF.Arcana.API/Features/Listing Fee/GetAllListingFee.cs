@@ -227,12 +227,22 @@ public class GetAllListingFee : ControllerBase
                 case Roles.Admin:
                     listingFees = listingFees.Where(x => x.Status == request.ListingFeeStatus && x.Client.RegistrationStatus == Status.Approved);
                     break;
-            }
+            }           
 
             if (request.RoleName.Contains(Roles.Approver) && request.ListingFeeStatus == Status.Approved)
             {
-                listingFees = listingFees.Where(x => x.Request.CurrentApproverId == request.AccessBy && x.Client.RegistrationStatus == Status.Approved);
+                listingFees = listingFees.Where(x =>
+                    (x.Request.CurrentApproverId == request.AccessBy ||
+                    (x.Request.Approvals.Any(a => a.ApproverId == request.AccessBy && a.Status == Status.Approved))) &&
+                    x.Client.RegistrationStatus == Status.Approved);
             }
+            else if (request.RoleName.Contains(Roles.Approver))
+            {
+                listingFees = listingFees.Where(x =>
+                    x.Request.CurrentApproverId == request.AccessBy &&
+                    x.Client.RegistrationStatus == Status.Approved);
+            }
+
 
             if (request.Status != null)
             {
@@ -268,7 +278,7 @@ public class GetAllListingFee : ControllerBase
                     {
                         Module = a.Request.Module,
                         Approver = a.Approver.Fullname,
-                        Level = a.Approver.Approver.FirstOrDefault().Level,
+                        //Level = a.Approver.Approver.FirstOrDefault().Level,
                         Reason = a.Request.Approvals.FirstOrDefault().Reason,
                         CreatedAt = a.CreatedAt,
                         Status = a.Status,
@@ -300,3 +310,5 @@ public class GetAllListingFee : ControllerBase
 
     }
 }
+
+//approver testing

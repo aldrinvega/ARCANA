@@ -15,9 +15,8 @@ namespace RDF.Arcana.API.Features.Listing_Fee
         }
 
         [HttpGet("GetAllListingFeeBalance")]
-        public async Task<IActionResult> GetAll()
-        {
-            var query = new GetAllListingFeeTotalsQuery();
+        public async Task<IActionResult> GetAll([FromQuery] GetAllListingFeeTotalsQuery query)
+        {            
             try
             {
                 var result = await _mediator.Send(query);
@@ -29,7 +28,11 @@ namespace RDF.Arcana.API.Features.Listing_Fee
             }
         }
 
-        public class GetAllListingFeeTotalsQuery : IRequest<Result> { }
+        public class GetAllListingFeeTotalsQuery : IRequest<Result> 
+        {
+            public string BusinessName { get; set; }
+        }
+
         public class GetAllListingFeesTotalsResult
         {            
             public string BusinessName{ get; set; }
@@ -60,6 +63,13 @@ namespace RDF.Arcana.API.Features.Listing_Fee
                             })
                     .OrderBy(lf => lf.BusinessName)
                     .ToListAsync(cancellationToken);
+
+                if (request.BusinessName is not null)
+                {                   
+                    listingFees = listingFees
+                        .Where(lf => lf.BusinessName.ToLower().Contains(request.BusinessName.ToLower())) 
+                        .ToList();
+                }
 
                 return Result.Success(listingFees);
             }

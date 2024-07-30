@@ -58,6 +58,7 @@ public class GetUserRolesAsync : ControllerBase
         public string Search { get; set; }
         public bool? Status { get; set; }
         public bool? IsTagged { get; set; }
+
     }
 
     public class GetUserRoleAsyncResult

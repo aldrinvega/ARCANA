@@ -13,7 +13,6 @@ namespace RDF.Arcana.API.Domain
         public string Status { get; set; }
         public string Reason { get; set; }
         
-        public virtual ClearedPayments ClearedPayments { get; set; }
         public virtual User AddedByUser { get; set; }
         public virtual User ModifiedByUser { get; set; }
         public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; }

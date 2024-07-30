@@ -15,5 +15,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 
         public static Error Voided() =>
         new("Voided", "Transaction is Already Voided");
+
+        public static Error NotFoundReferece() =>
+        new("Reference.NotFound", "Please input ChequeNo, ReferenceNo, or TransactionNo");
     }
 }

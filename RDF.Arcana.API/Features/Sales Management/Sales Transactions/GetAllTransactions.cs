@@ -58,6 +58,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public string Search { get; set; }
             public bool? Status { get; set; }
             public string TransactionStatus { get; set; }
+            public string InvoiceNo { get; set; }
             public string DateFrom { get; set; }
             public string DateTo { get; set; }
             public string Terms  { get; set; }
@@ -71,7 +72,8 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
             public string BusinessName { get; set; }
             public string Status { get; set; }
             public DateTime CreatedAt { get; set; }
-            public string ChargeInvoiceNo { get; set; }
+            public string InvoiceNo { get; set; }
+            public string InvoiceType { get; set; }
             public string AddedBy { get; set; }
             public decimal RemainingBalance { get; set; }
             public decimal TotalAmountDue { get; set; }
@@ -126,7 +128,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     transactions = transactions.Where(t =>
                         t.Client.Fullname.Contains(request.Search) ||
                         t.Client.BusinessName.Contains(request.Search) ||
-                        t.TransactionSales.ChargeInvoiceNo.Contains(request.Search));
+                        t.TransactionSales.Remarks.Contains(request.Search));
                 }
 
                 if (request.Status != null)
@@ -144,6 +146,11 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     {
                         transactions = transactions.Where(t => t.Status == request.TransactionStatus);
                     }
+                }
+
+                if (!string.IsNullOrEmpty(request.InvoiceNo))
+                {
+                    transactions = transactions.Where(inv => inv.InvoiceNo.ToLower().Contains(request.InvoiceNo.ToLower()));
                 }
 
                 // if (request.TransactionStatus == Status.Voided)
@@ -175,11 +182,12 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                         BusinessName = result.Client.BusinessName,
                         Status = (result.Client.Term.Terms.TermType == Common.Terms.OneUpOneDown && result.CreatedAt.AddDays(result.Client.Term.TermDays.Days) < DateTime.Now) ? Status.Overdue : result.Status,
                         CreatedAt = result.CreatedAt,
-                        ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
+                        InvoiceNo = result.InvoiceNo,
+                        InvoiceType = result.InvoiceType,
                         AddedBy = result.AddedByUser.Fullname,
                         RemainingBalance = result.TransactionSales.RemainingBalance,
                         TotalAmountDue = result.TransactionSales.TotalAmountDue,
-                        CIAttachment = result.SalesInvoice
+                        CIAttachment = result.InvoiceAttach
 
                     });
 
@@ -194,12 +202,13 @@ namespace RDF.Arcana.API.Features.Sales_Management.Sales_Transactions
                     BusinessName = result.Client.BusinessName,
                     Status = (result.Client.Term.Terms.TermType == Common.Terms.OneUpOneDown && result.CreatedAt.AddDays(result.Client.Term.TermDays.Days) < DateTime.Now) ? Status.Overdue : result.Status,
                     CreatedAt = result.CreatedAt,
-                    ChargeInvoiceNo = result.TransactionSales.ChargeInvoiceNo,
+                    InvoiceNo = result.InvoiceNo,
+                    InvoiceType = result.InvoiceType,
                     AddedBy = result.AddedByUser.Fullname,
                     RemainingBalance = result.TransactionSales.RemainingBalance,
                     TotalAmountDue = result.TransactionSales.TotalAmountDue,
-                    CIAttachment = result.SalesInvoice
-                });
+                    CIAttachment = result.InvoiceAttach
+                }).OrderByDescending(d => d.CreatedAt);
 
                 return PagedList<GetAllTransactionQueryResult>.CreateAsync(result, request.PageNumber,
                     request.PageSize);

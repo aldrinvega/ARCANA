@@ -6,7 +6,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RDF.Arcana.API.Abstractions.Messaging;
@@ -45,22 +44,22 @@ builder.Services.AddControllers(
 //
 // builder.Services.AddControllers().AddFluentValidation(UpdateUser
 
+//builder.Services.AddDatabaseConfiguration(builder.Configuration, builder.Environment.EnvironmentName);
+
 var connectionString = builder.Configuration.GetConnectionString("Production");
 
 builder.Services.AddDbContext<ArcanaDbContext>(x =>
 {
-    if (connectionString != null)
-    {
-        x.UseSqlServer(connectionString, options =>
-        {
-            options.EnableRetryOnFailure();
-        }).UseSnakeCaseNamingConvention();
-    }
+	if (connectionString != null)
+	{
+		x.UseSqlServer(connectionString, options =>
+		{
+			options.EnableRetryOnFailure();
+		}).UseSnakeCaseNamingConvention();
+	}
 
 });
 
-//builder.Services.AddDbContext<ArcanaDbContext>(
-//    options => options.UseNpgsql(builder.Configuration.GetConnectionString("postgres")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -151,7 +150,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.ApplyMigrations();
-    
 }
 
 

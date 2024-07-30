@@ -15,7 +15,7 @@ public class Request : BaseEntity
         Module = module;
         RequestorId = requestorId;
         CurrentApproverId = currentApproverId;
-        NextApproverId = nextApproverId;
+        NextApproverId = null;
         Status = status;
     }
     public string Module { get; set; }

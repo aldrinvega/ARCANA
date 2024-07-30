@@ -25,6 +25,44 @@ namespace RDF.Arcana.API.Migrations
             modelBuilder.HasSequence("arcana_hilo_sequence")
                 .IncrementsBy(10);
 
+            modelBuilder.Entity("ApproverByRange", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int")
+                        .HasColumnName("level");
+
+                    b.Property<decimal?>("MinValue")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("min_value");
+
+                    b.Property<string>("ModuleName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("module_name");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_approver_by_range");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_approver_by_range_user_id");
+
+                    b.ToTable("approver_by_range", (string)null);
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.AdvancePayment", b =>
                 {
                     b.Property<int>("Id")
@@ -131,7 +169,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasDatabaseName("ix_advance_payments_modified_by");
 
                     b.HasIndex("PaymentTransactionId")
-                        .HasDatabaseName("ix_advance_payments_payment_transaction_id");
+                        .IsUnique()
+                        .HasDatabaseName("ix_advance_payments_payment_transaction_id")
+                        .HasFilter("[payment_transaction_id] IS NOT NULL");
 
                     b.ToTable("advance_payments", (string)null);
                 });
@@ -262,45 +302,45 @@ namespace RDF.Arcana.API.Migrations
                             Id = 1,
                             AddedBy = 1,
                             BookingCoverage = "F1",
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3616),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7911),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3621)
+                            UpdatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7911)
                         },
                         new
                         {
                             Id = 2,
                             AddedBy = 1,
                             BookingCoverage = "F2",
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3634),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7914),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3635)
+                            UpdatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7915)
                         },
                         new
                         {
                             Id = 3,
                             AddedBy = 1,
                             BookingCoverage = "F3",
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3638),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7916),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3667)
+                            UpdatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7917)
                         },
                         new
                         {
                             Id = 4,
                             AddedBy = 1,
                             BookingCoverage = "F4",
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3673),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7918),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3677)
+                            UpdatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7933)
                         },
                         new
                         {
                             Id = 5,
                             AddedBy = 1,
                             BookingCoverage = "F5",
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3680),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7935),
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3681)
+                            UpdatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7936)
                         });
                 });
 
@@ -390,6 +430,10 @@ namespace RDF.Arcana.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ATag")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("a_tag");
+
                     b.Property<int>("AddedBy")
                         .HasColumnType("int")
                         .HasColumnName("added_by");
@@ -406,9 +450,9 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("int")
                         .HasColumnName("modified_by");
 
-                    b.Property<int>("PaymentRecordId")
+                    b.Property<int>("PaymentTransactionId")
                         .HasColumnType("int")
-                        .HasColumnName("payment_record_id");
+                        .HasColumnName("payment_transaction_id");
 
                     b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)")
@@ -431,9 +475,9 @@ namespace RDF.Arcana.API.Migrations
                     b.HasIndex("ModifiedBy")
                         .HasDatabaseName("ix_cleared_payments_modified_by");
 
-                    b.HasIndex("PaymentRecordId")
+                    b.HasIndex("PaymentTransactionId")
                         .IsUnique()
-                        .HasDatabaseName("ix_cleared_payments_payment_record_id");
+                        .HasDatabaseName("ix_cleared_payments_payment_transaction_id");
 
                     b.ToTable("cleared_payments", (string)null);
                 });
@@ -886,6 +930,10 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("status");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("total");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2")
@@ -1436,7 +1484,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 1,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3892),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(8025),
                             IsActive = true,
                             Payment = "Cash",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1445,7 +1493,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 2,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3902),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(8029),
                             IsActive = true,
                             Payment = "Online/Check",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -1484,6 +1532,45 @@ namespace RDF.Arcana.API.Migrations
                         .HasDatabaseName("ix_notifications_user_id");
 
                     b.ToTable("notifications", (string)null);
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.OnlinePayments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AddedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("added_by");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
+
+                    b.Property<int?>("ModifiedBy")
+                        .HasColumnType("int")
+                        .HasColumnName("modified_by");
+
+                    b.Property<string>("OnlinePlatform")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("online_platform");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_online_payments");
+
+                    b.ToTable("online_payments", (string)null);
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.OtherExpenses", b =>
@@ -1653,6 +1740,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_active");
 
+                    b.Property<int?>("OnlinePlatform")
+                        .HasColumnType("int")
+                        .HasColumnName("online_platform");
+
                     b.Property<string>("Payee")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("payee");
@@ -1673,6 +1764,10 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("reason");
 
+                    b.Property<string>("ReferenceNo")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("reference_no");
+
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("status");
@@ -1684,6 +1779,14 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<int>("TransactionId")
                         .HasColumnType("int")
                         .HasColumnName("transaction_id");
+
+                    b.Property<string>("WithholdingAttachment")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("withholding_attachment");
+
+                    b.Property<string>("WithholdingNo")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("withholding_no");
 
                     b.HasKey("Id")
                         .HasName("pk_payment_transactions");
@@ -2239,7 +2342,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 1,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3779),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7971),
                             IsActive = true,
                             TermType = "COD",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -2248,7 +2351,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 2,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3821),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7995),
                             IsActive = true,
                             TermType = "1 Up 1 Down",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -2257,7 +2360,7 @@ namespace RDF.Arcana.API.Migrations
                         {
                             Id = 3,
                             AddedBy = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3828),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7996),
                             IsActive = true,
                             TermType = "Credit Type",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -2345,10 +2448,6 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("amount_due");
 
-                    b.Property<string>("ChargeInvoiceNo")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("charge_invoice_no");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
@@ -2368,6 +2467,10 @@ namespace RDF.Arcana.API.Migrations
                     b.Property<decimal>("RemainingBalance")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("remaining_balance");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("remarks");
 
                     b.Property<decimal>("SpecialDiscount")
                         .HasColumnType("decimal(18,2)")
@@ -2447,17 +2550,25 @@ namespace RDF.Arcana.API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("InvoiceAttach")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("invoice_attach");
+
+                    b.Property<DateTime>("InvoiceAttachDateReceived")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("invoice_attach_date_received");
+
+                    b.Property<string>("InvoiceNo")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("invoice_no");
+
+                    b.Property<string>("InvoiceType")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("invoice_type");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")
                         .HasColumnName("is_active");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("reason");
-
-                    b.Property<string>("SalesInvoice")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("sales_invoice");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)")
@@ -2655,12 +2766,12 @@ namespace RDF.Arcana.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 54, 378, DateTimeKind.Local).AddTicks(992),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 71, DateTimeKind.Local).AddTicks(3363),
                             Fullname = "Admin",
                             IsActive = true,
                             IsPasswordChanged = false,
-                            Password = "$2a$11$.7Xk0PrCgzUSEy2W88VRSe7jl8epmeDCdzCh7E5m/NB14H7j9LKka",
-                            UpdatedAt = new DateTime(2024, 5, 22, 8, 19, 54, 378, DateTimeKind.Local).AddTicks(1082),
+                            Password = "$2a$11$5rXJHlGmlweEZ0b82ensXup6DiYKOKaJ5Jg70M59R0nqwqAalMtHy",
+                            UpdatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 71, DateTimeKind.Local).AddTicks(3394),
                             UserRolesId = 1,
                             Username = "admin"
                         });
@@ -2715,7 +2826,7 @@ namespace RDF.Arcana.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 5, 22, 8, 19, 55, 6, DateTimeKind.Local).AddTicks(3369),
+                            CreatedAt = new DateTime(2024, 7, 26, 9, 51, 29, 302, DateTimeKind.Local).AddTicks(7829),
                             IsActive = true,
                             Permissions = "[\"User Management\",\"User Account\",\"User Role\",\"Company\",\"Department\",\"Location\",\"Masterlist\",\"Products\",\"Meat Type\",\"UOM\",\"Discount Type\",\"Terms\",\"Customer Registration\",\"Prospect\",\"Direct\",\"Freebies\",\"Inventory\",\"Setup\",\"Product Category\",\"Product Sub Category\",\"Unit of Measurements\",\"Store Type\",\"Discount\",\"Term Days\",\"Approval\",\"Freebie Approval\",\"Direct Approval\",\"Admin Dashboard\",\"Direct Registration\",\"Listing Fee\",\"Registration Approval\",\"Sp. Discount Approval\",\"Listing Fee Approval\",\"Business Type\",\"Registration\",\"Customer Management\",\"Product Setup\",\"Variable Discount\"]",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -2762,6 +2873,18 @@ namespace RDF.Arcana.API.Migrations
                     b.ToTable("variable_discounts", (string)null);
                 });
 
+            modelBuilder.Entity("ApproverByRange", b =>
+                {
+                    b.HasOne("RDF.Arcana.API.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_approver_by_range_users_user_id");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RDF.Arcana.API.Domain.AdvancePayment", b =>
                 {
                     b.HasOne("RDF.Arcana.API.Domain.User", "AddedByUser")
@@ -2784,9 +2907,8 @@ namespace RDF.Arcana.API.Migrations
                         .HasConstraintName("fk_advance_payments_users_modified_by_user_id");
 
                     b.HasOne("RDF.Arcana.API.Domain.PaymentTransaction", "PaymentTransaction")
-                        .WithMany()
-                        .HasForeignKey("PaymentTransactionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithOne("AdvancePayment")
+                        .HasForeignKey("RDF.Arcana.API.Domain.AdvancePayment", "PaymentTransactionId")
                         .HasConstraintName("fk_advance_payments_payment_transactions_payment_transaction_id");
 
                     b.Navigation("AddedByUser");
@@ -2878,18 +3000,18 @@ namespace RDF.Arcana.API.Migrations
                         .HasForeignKey("ModifiedBy")
                         .HasConstraintName("fk_cleared_payments_users_modified_by_user_id");
 
-                    b.HasOne("RDF.Arcana.API.Domain.PaymentRecords", "PaymentRecord")
-                        .WithOne("ClearedPayments")
-                        .HasForeignKey("RDF.Arcana.API.Domain.ClearedPayments", "PaymentRecordId")
+                    b.HasOne("RDF.Arcana.API.Domain.PaymentTransaction", "PaymentTransaction")
+                        .WithOne("ClearedPayment")
+                        .HasForeignKey("RDF.Arcana.API.Domain.ClearedPayments", "PaymentTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_cleared_payments_payment_records_payment_record_id");
+                        .HasConstraintName("fk_cleared_payments_payment_transactions_payment_transaction_id");
 
                     b.Navigation("AddedByUser");
 
                     b.Navigation("ModifiedByUser");
 
-                    b.Navigation("PaymentRecord");
+                    b.Navigation("PaymentTransaction");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.ClientDocuments", b =>
@@ -3825,9 +3947,14 @@ namespace RDF.Arcana.API.Migrations
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.PaymentRecords", b =>
                 {
-                    b.Navigation("ClearedPayments");
-
                     b.Navigation("PaymentTransactions");
+                });
+
+            modelBuilder.Entity("RDF.Arcana.API.Domain.PaymentTransaction", b =>
+                {
+                    b.Navigation("AdvancePayment");
+
+                    b.Navigation("ClearedPayment");
                 });
 
             modelBuilder.Entity("RDF.Arcana.API.Domain.PriceMode", b =>

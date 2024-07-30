@@ -14,4 +14,10 @@ public class ApprovalErrors
         new Error("Approval.NotAllowed", $"You are not allowed to approve {moduleName} request");
     public static Error ExistingRequest(string moduleName) =>
         new Error("Approval.ExistingRequest", $"There are already approval requests for the module {moduleName}. Please resolve them before updating approvers.");
+    public static Error ExistingFeeRangeOrModule() => new Error("ExistingFeeRangeOrModule", "Please Check Fee Range and Module");
+    public static Error ApproverExist() => new Error("ApproverAlreadyExist", "Approver Already Exist");
+    public static Error ApproverNotFound() => new Error("ApproverNotFound", "Approver Not Found");
+    public static Error MinMaxError() => new Error("MinMaxError", "MinValue should be less than MaxValue");
+    public static Result MinMaxOverlap() => new Error("MinMaxOverlap", "The given Min/Max overlaps with an existing Min/Max range.");
+    public static Result InvalidLevel() => new Error("InvalidLevel", "Invalid Level. Level must be between 1 and 5.");
 }
