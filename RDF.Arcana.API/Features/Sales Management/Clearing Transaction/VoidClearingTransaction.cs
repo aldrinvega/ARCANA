@@ -50,7 +50,6 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 			public async Task<Result> Handle(VoidClearingTransactionCommand request, CancellationToken cancellationToken)
 			{
 				var paymentTransactions = await _context.PaymentTransactions
-					.Include(pr => pr.PaymentRecord)
 					.Include(pt => pt.Transaction)
 					.ThenInclude(tr => tr.TransactionSales)
 					.Where(pt => request.PaymentTransactionIds.Contains(pt.Id))
@@ -61,12 +60,12 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 					if (paymentTransaction != null)
 					{
 						paymentTransaction.Status = Status.Voided;
-						paymentTransaction.PaymentRecord.Status = Status.Voided;
 						foreach (var transaction in paymentTransactions)
 						{
 							
 							transaction.Status = Status.Voided;
 							transaction.Transaction.Status = Status.Voided;
+							transaction.Reason = request.Reason;
 							transaction.Transaction.TransactionSales.RemainingBalance += transaction.PaymentAmount;
 							await _context.SaveChangesAsync(cancellationToken);
 						}

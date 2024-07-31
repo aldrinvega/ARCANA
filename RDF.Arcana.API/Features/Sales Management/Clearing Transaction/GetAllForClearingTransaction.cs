@@ -89,7 +89,6 @@ public class GetAllForClearingTransaction : ControllerBase
         {
             _context = context;
         }
-
         public async Task<PagedList<GetAllForClearingTransactionResult>> Handle(GetAllForClearingTransactionQuery request,
             CancellationToken cancellationToken)
         {
@@ -124,8 +123,9 @@ public class GetAllForClearingTransaction : ControllerBase
                 })
                 .OrderBy(pt => pt.Date);
 
-            return await PagedList<GetAllForClearingTransactionResult>.CreateAsync(groupedResults, request.PageNumber,
-                request.PageSize);
-        }
-    }
+			return await PagedList<GetAllForClearingTransactionResult>.CreateAsync(groupedResults, request.PageNumber,
+				request.PageSize);
+		}
+
+	}
 }

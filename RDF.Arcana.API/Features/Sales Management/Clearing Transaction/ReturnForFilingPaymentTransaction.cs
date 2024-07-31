@@ -25,6 +25,7 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 		public class ReturnForFilingPaymentTransactionCommand : IRequest<Result>
 		{
             public List<int> PaymentTransactionIds { get; set; }
+            public string Reason { get; set; }
         }
 
 		public class Handler : IRequestHandler<ReturnForFilingPaymentTransactionCommand, Result>
@@ -41,8 +42,6 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 				foreach (var paymentTransactionId in request.PaymentTransactionIds)
 				{
 					var paymentTransaction = await _context.ClearedPayments
-						.Include(pt => pt.PaymentTransaction)
-						.ThenInclude(x => x.PaymentRecord)
 						.Include(x => x.PaymentTransaction)
 						.ThenInclude(x => x.Transaction)
 						.FirstOrDefaultAsync(pt => pt.PaymentTransactionId == paymentTransactionId, cancellationToken: cancellationToken);
@@ -50,9 +49,10 @@ namespace RDF.Arcana.API.Features.Sales_Management.Clearing_Transaction
 					if (paymentTransaction is not null)
 					{
 						paymentTransaction.Status = Status.ForClearing;
+						paymentTransaction.Reason = request.Reason;
+						paymentTransaction.PaymentTransaction.Reason = request.Reason;
 						paymentTransaction.PaymentTransaction.Status = Status.ForClearing;
 						paymentTransaction.PaymentTransaction.Transaction.Status = Status.ForClearing;
-						paymentTransaction.PaymentTransaction.PaymentRecord.Status = Status.ForClearing;
 						await _context.SaveChangesAsync(cancellationToken);
 					}
 				}

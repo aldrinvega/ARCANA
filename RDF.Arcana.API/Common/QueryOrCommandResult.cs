@@ -17,7 +17,6 @@ public class Result
                 break;
         }
     }
-
     public bool IsSuccess { get; }
 
     public bool IsFailure => !IsSuccess;
