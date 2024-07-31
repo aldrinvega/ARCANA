@@ -108,19 +108,21 @@ public class GetAllForClearingTransaction : ControllerBase
 
             var groupedResults = paymentTransactions
                 .SelectMany(x => x.PaymentTransactions)
-                .GroupBy(pt => new { pt.PaymentMethod, pt.ReferenceNo, pt.BankName, pt.ClearedPayment.ATag})
+                .GroupBy(pt => new { pt.PaymentMethod, pt.ReferenceNo, pt.BankName, pt.ClearedPayment.ATag })
                 .Select(g => new GetAllForClearingTransactionResult
                 {
                     PaymentMethod = g.Key.PaymentMethod,
                     PaymentChannel = g.Key.BankName,
                     ReferenceNo = g.Key.ReferenceNo,
                     TotalPaymentAmount = g.Sum(pt => pt.PaymentAmount),
-                    Date = g.Max(pt => pt.ChequeDate),
+                    Date = g.Max(pt => pt.DateReceived),
                     ATag = g.Key.ATag,
-                    Invoices = g.Select(x => new GetAllForClearingTransactionResult.Invoice{
-						InvoiceNo = x.Transaction.InvoiceNo
+                    Invoices = g.Select(x => new GetAllForClearingTransactionResult.Invoice
+                    {
+                        InvoiceNo = x.Transaction.InvoiceNo
                     }).Distinct().ToList()
-                });
+                })
+                .OrderBy(pt => pt.Date);
 
             return await PagedList<GetAllForClearingTransactionResult>.CreateAsync(groupedResults, request.PageNumber,
                 request.PageSize);
