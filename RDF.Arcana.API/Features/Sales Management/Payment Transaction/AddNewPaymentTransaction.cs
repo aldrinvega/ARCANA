@@ -157,14 +157,6 @@ public class AddNewPaymentTransaction : BaseApiController
                     decimal paymentAmount = payment.PaymentAmount;
 
 
-
-
-
-
-
-
-
-
                     if (payment.PaymentMethod == PaymentMethods.Cheque)
                     {
                         var transactionSales = await _context.TransactionSales
