@@ -10,4 +10,5 @@ public class Roles
     //for GAS and Audit
     public const string GAS = "gas";
     public const string Audit = "audit";
+    public const string Accounting = "accounting";
 }

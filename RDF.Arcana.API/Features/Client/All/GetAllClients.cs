@@ -321,10 +321,12 @@ public class GetAllClients : ControllerBase
             }
 
             //For GAS and Audit
-            if (request.RoleName.ToLower() == Roles.GAS || request.RoleName.ToLower() == Roles.Audit)
+            if (request.RoleName.ToLower() == Roles.GAS ||
+                request.RoleName.ToLower().Contains(Roles.Audit) ||
+                request.RoleName.ToLower().Contains(Roles.Accounting))
             {
                 regularClients = regularClients.Where(c => c.RegistrationStatus == Status.Approved 
-                            && c.IsActive == true);        
+                            && c.IsActive);        
             }
 
             //Get the result
