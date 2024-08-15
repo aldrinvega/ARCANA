@@ -55,6 +55,7 @@
     <ItemGroup>
       <Folder Include="Common\Caching\" />
       <Folder Include="Features\Inventory\" />
+      <Folder Include="Features\Inventory Management\" />
       <Folder Include="Features\Setup\Mode Of Payment\Exception\" />
     </ItemGroup>
 

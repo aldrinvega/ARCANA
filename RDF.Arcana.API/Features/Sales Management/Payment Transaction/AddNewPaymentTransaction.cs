@@ -136,6 +136,11 @@ public class AddNewPaymentTransaction : BaseApiController
 
                     decimal amountToPay = transaction.TransactionSales.RemainingBalance;
 
+                    if (payment.PaymentAmount == 0)
+                    {
+                        continue;
+                    }
+
                     // If nothing more to pay for this transaction, move to the next
                     if (amountToPay <= 0 || payment.PaymentAmount <= 0)  
                     {

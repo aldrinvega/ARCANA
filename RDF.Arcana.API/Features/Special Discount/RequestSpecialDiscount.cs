@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading;
+using DocumentFormat.OpenXml.Vml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RDF.Arcana.API.Common;
@@ -100,7 +101,8 @@ public class RequestSpecialDiscount : ControllerBase
             {
                 return SpecialDiscountErrors.PendingRequest(client.BusinessName);
             }
-           
+
+            decimal total = Math.Ceiling(request.Discount);
 
             var approvers = await _context.ApproverByRange
                 .Include(usr => usr.User)
@@ -113,14 +115,24 @@ public class RequestSpecialDiscount : ControllerBase
                 return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
             }
 
-            var applicableApprovers = approvers.Where(a => a.MinValue <= Math.Ceiling(request.Discount)).ToList();
-            if (!applicableApprovers.Any())
+            // Assign the approvers based on MinValue
+            var applicableApprovers = approvers.Where(a => a.MinValue == null || a.MinValue < total).ToList();
+
+            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).FirstOrDefault();
+            if (maxLevelApprover == null)
             {
-                return ApprovalErrors.NoApproversFound(Modules.SpecialDiscountApproval);
+                maxLevelApprover = approvers.Last();
             }
 
-            var maxLevelApprover = applicableApprovers.OrderByDescending(a => a.Level).First();
-            var approverLevels = approvers.Where(a => a.Level <= maxLevelApprover.Level).OrderBy(a => a.Level).ToList();
+            var nextLevel = maxLevelApprover.Level + 1;
+
+            if (!applicableApprovers.Any())
+            {
+                applicableApprovers = approvers.Where(l => l.Level == 1).ToList();
+                nextLevel = approvers.Where(l => l.Level == 1).FirstOrDefault()?.Level ?? 1;
+            }
+
+            var approverLevels = approvers.Where(a => a.Level <= nextLevel).OrderBy(a => a.Level).ToList();
 
             var newRequest = new Request(
                 Modules.SpecialDiscountApproval,

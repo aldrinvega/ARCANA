@@ -83,6 +83,7 @@ public class GetTransactionById : ControllerBase
         }
 
         public decimal DiscountPercentage { get; set; }
+        public string Remarks { get; set; }
     }
     
     public class Handler : IRequestHandler<GetTransactionByIdQuery, Result>
@@ -148,7 +149,9 @@ public class GetTransactionById : ControllerBase
                 ZeroRatedSales = existingTransaction.TransactionSales.ZeroRatedSales,
                 VatAmount = existingTransaction.TransactionSales.VatAmount,
                 DiscountPercentage = existingTransaction.TransactionSales.Discount + 
-                                     existingTransaction.TransactionSales.SpecialDiscount
+                                     existingTransaction.TransactionSales.SpecialDiscount,
+
+                Remarks = existingTransaction.TransactionSales.Remarks
             };
             
             return Result.Success(result);
