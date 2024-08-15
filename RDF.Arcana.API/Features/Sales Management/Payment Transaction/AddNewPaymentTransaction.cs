@@ -34,7 +34,7 @@ public class AddNewPaymentTransaction : BaseApiController
         public List<int> TransactionId { get; set; }
         public ICollection<Payment> Payments { get; set; }
         public int AddedBy { get; set; }
-
+        public IFormFile WithholdingAttachment { get; set; }
         public class Payment
         {
             public string PaymentMethod { get; set; }
