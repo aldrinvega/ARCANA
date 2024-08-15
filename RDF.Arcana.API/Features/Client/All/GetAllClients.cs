@@ -320,6 +320,15 @@ public class GetAllClients : ControllerBase
                 regularClients = regularClients.Where(x => x.IsActive == request.Status);
             }
 
+            //For GAS and Audit
+            if (request.RoleName.ToLower() == Roles.GAS ||
+                request.RoleName.ToLower().Contains(Roles.Audit) ||
+                request.RoleName.ToLower().Contains(Roles.Accounting))
+            {
+                regularClients = regularClients.Where(c => c.RegistrationStatus == Status.Approved 
+                            && c.IsActive);        
+            }
+
             //Get the result
                 var personalInformation = regularClients.Select(client => new GetAllClientResult
                 {
